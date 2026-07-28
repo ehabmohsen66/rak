@@ -109,43 +109,9 @@ export const AboutHero = ({ onOpenPlanner }) => {
 
           </div>
 
-          {/* Absolute Overlays (Cards, Arrows, Badge) */}
+          {/* Absolute Overlays (Arrows, Badge) */}
           <div className="absolute inset-0 w-full h-full pointer-events-none">
             
-            {/* Floating Glass Card 1 (Bottom Left) */}
-            <motion.div 
-              animate={{ y: [0, -15, 0] }}
-              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-              className="absolute bottom-[8%] left-[2%] md:left-[15%] z-30 pointer-events-auto"
-            >
-              <div className="w-40 md:w-52 aspect-[3/3.5] bg-rak-slate-900/90 backdrop-blur-xl border border-rak-magenta/40 rounded-[2rem] p-5 flex flex-col items-center justify-center rotate-[-12deg] shadow-magenta-sm hover:rotate-0 transition-transform duration-500">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-rak-magenta/20 rounded-full flex items-center justify-center mb-3 border-[2px] border-rak-magenta overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=256&q=80" alt="Avatar" className="w-full h-full object-cover" />
-                </div>
-                <div className="text-center mt-1">
-                  <p className="font-bold text-sm md:text-base text-white">Strategy Director</p>
-                  <p className="text-[10px] md:text-xs text-rak-magenta font-mono mt-0.5">100% In-House</p>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Floating Glass Card 2 (Top Right) */}
-            <motion.div 
-              animate={{ y: [0, -20, 0] }}
-              transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-              className="absolute top-[12%] right-[2%] md:right-[18%] z-30 pointer-events-auto"
-            >
-              <div className="w-40 md:w-52 aspect-[3/3.5] bg-rak-slate-900/90 backdrop-blur-xl border border-rak-magenta/40 rounded-[2rem] p-5 flex flex-col items-center justify-center rotate-[12deg] shadow-magenta-sm hover:rotate-0 transition-transform duration-500">
-                <div className="w-16 h-16 md:w-20 md:h-20 bg-rak-magenta/20 rounded-full flex items-center justify-center mb-3 border-[2px] border-rak-magenta overflow-hidden">
-                  <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=256&q=80" alt="Avatar" className="w-full h-full object-cover" />
-                </div>
-                <div className="text-center mt-1">
-                  <p className="font-bold text-sm md:text-base text-white">Creative Lead</p>
-                  <p className="text-[10px] md:text-xs text-rak-magenta font-mono mt-0.5">360° Execution</p>
-                </div>
-              </div>
-            </motion.div>
-
             {/* Decorative Arrow Left */}
             <div className="absolute bottom-[0%] left-[0%] md:left-[6%] w-20 h-20 md:w-28 md:h-28 z-20">
               <ArrowMagentaLeft />
