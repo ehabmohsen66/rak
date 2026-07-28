@@ -2,6 +2,7 @@ import React from 'react';
 import { ShieldCheck, Target, Eye, Award, Sparkles, CheckCircle2, ArrowUpRight, Quote, HeartHandshake } from 'lucide-react';
 import { BRAND_INFO, VALUES } from '../data/contentData';
 import { AboutHero } from '../components/AboutHero';
+import { TeamMarqueeSection } from '../components/TeamMarqueeSection';
 
 export const AboutPage = ({ onOpenPlanner }) => {
   return (
@@ -80,6 +81,11 @@ export const AboutPage = ({ onOpenPlanner }) => {
             </div>
           ))}
         </div>
+      </section>
+
+      {/* 4.5 CREATIVE TEAM MEMBERS MARQUEE */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <TeamMarqueeSection />
       </section>
 
       {/* 5. CTA SECTION */}
