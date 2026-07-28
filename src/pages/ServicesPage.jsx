@@ -67,7 +67,8 @@ export const ServicesPage = ({ onOpenPlanner }) => {
           return (
             <div 
               key={pillar.id}
-              className="p-8 sm:p-12 rounded-3xl bg-rak-slate-900/80 border border-rak-slate-800 space-y-8 hover:border-rak-magenta/40 transition-all group backdrop-blur-xl"
+              id={pillar.id}
+              className="p-8 sm:p-12 rounded-3xl bg-rak-slate-900/80 border border-rak-slate-800 space-y-8 hover:border-rak-magenta/40 transition-all group backdrop-blur-xl scroll-mt-28"
             >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 
