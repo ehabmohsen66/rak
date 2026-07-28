@@ -17,81 +17,123 @@ import {
 } from 'lucide-react';
 import { BRAND_INFO, SERVICES, PROJECTS, TESTIMONIALS, PILLARS } from '../data/contentData';
 import { AgencyOrchestrationMatrix } from '../components/AgencyOrchestrationMatrix';
+import { useState } from 'react';
 import { HeroAgencyOrchestrationCard } from '../components/HeroAgencyOrchestrationCard';
+import { HeroScanner } from '../components/HeroScanner';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
 
 export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
+  const [heroMode, setHeroMode] = useState('scanner');
   return (
     <div className="space-y-24 sm:space-y-32 pb-16">
       
       {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center pt-24 pb-16 overflow-hidden">
+      <section className="relative min-h-[85vh] flex flex-col justify-center pt-24 pb-12 overflow-hidden">
         
         {/* Background Ambient FX */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-rak-magenta/15 rounded-full blur-[140px] pointer-events-none" />
         <div className="absolute top-10 right-10 w-72 h-72 bg-rak-slate-700/20 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-            
-            {/* Left Content Column */}
-            <div className="lg:col-span-7 space-y-8 text-left">
-              
-              {/* Badge */}
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900/90 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
-                <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '6s' }} />
-                <span>Your One-Stop Agency</span>
-              </div>
-
-              {/* Main Headline */}
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.08]">
-                We Create Big Ideas From Ground Zero & Take Them to <span className="text-gradient-magenta">New Heights.</span>
-              </h1>
-
-              {/* Supporting Value Proposition */}
-              <p className="text-base sm:text-lg text-rak-slate-300 max-w-2xl leading-relaxed font-normal">
-                {BRAND_INFO.description}
-              </p>
-
-              {/* Primary & Secondary Action CTAs */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <button
-                  onClick={onOpenPlanner}
-                  className="relative inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-white bg-rak-magenta rounded-full shadow-magenta-glow hover:bg-rak-magenta-dark transition-all duration-300 group overflow-hidden"
-                >
-                  <span className="relative z-10 flex items-center space-x-2">
-                    <span>Start a Project</span>
-                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </span>
-                </button>
-
-                <button
-                  onClick={() => { setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-rak-slate-200 hover:text-white bg-rak-slate-900/80 hover:bg-rak-slate-800 border border-rak-slate-700/80 rounded-full backdrop-blur-md transition-all"
-                >
-                  <span>Explore RAK4 Creations</span>
-                </button>
-              </div>
-
-              {/* Metrics Bar */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-rak-slate-800/80">
-                {BRAND_INFO.stats.map((stat, i) => (
-                  <div key={i} className="space-y-1">
-                    <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{stat.value}</div>
-                    <div className="text-[11px] font-semibold text-rak-slate-400 leading-tight">{stat.label}</div>
-                    <div className="text-[10px] text-rak-magenta font-mono">{stat.change}</div>
-                  </div>
-                ))}
-              </div>
-
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full space-y-6">
+          
+          {/* Visual Mode Selector Switcher */}
+          <div className="flex items-center justify-center sm:justify-end space-x-2">
+            <span className="text-[11px] font-bold uppercase tracking-wider text-rak-slate-400">Hero Style:</span>
+            <div className="inline-flex p-1 bg-rak-slate-900/90 border border-rak-slate-800 rounded-full backdrop-blur-md">
+              <button
+                onClick={() => setHeroMode('scanner')}
+                className={`px-3 py-1 text-[11px] font-bold rounded-full transition-all ${
+                  heroMode === 'scanner' 
+                    ? 'bg-rak-magenta text-white shadow-magenta-sm' 
+                    : 'text-rak-slate-400 hover:text-white'
+                }`}
+              >
+                ✨ 3D WebGPU Scanner
+              </button>
+              <button
+                onClick={() => setHeroMode('classic')}
+                className={`px-3 py-1 text-[11px] font-bold rounded-full transition-all ${
+                  heroMode === 'classic' 
+                    ? 'bg-rak-magenta text-white shadow-magenta-sm' 
+                    : 'text-rak-slate-400 hover:text-white'
+                }`}
+              >
+                🎯 Orchestration Card
+              </button>
             </div>
-
-            {/* Right Interactive Hero Agency Orchestration Visual */}
-            <div className="lg:col-span-5 relative">
-              <HeroAgencyOrchestrationCard onOpenPlanner={onOpenPlanner} />
-            </div>
-
           </div>
+
+          {heroMode === 'scanner' ? (
+            /* New 3D WebGPU Scanner Hero */
+            <HeroScanner 
+              title="BUILD YOUR CREATIVE FUTURE" 
+              subtitle="AI-Powered Execution & Bold Brand Strategy Under One Roof."
+              onOpenPlanner={onOpenPlanner} 
+            />
+          ) : (
+            /* Classic Split Hero Layout */
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+              
+              {/* Left Content Column */}
+              <div className="lg:col-span-7 space-y-8 text-left">
+                
+                {/* Badge */}
+                <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900/90 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
+                  <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '6s' }} />
+                  <span>Your One-Stop Agency</span>
+                </div>
+
+                {/* Main Headline */}
+                <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.08]">
+                  We Create Big Ideas From Ground Zero & Take Them to <span className="text-gradient-magenta">New Heights.</span>
+                </h1>
+
+                {/* Supporting Value Proposition */}
+                <p className="text-base sm:text-lg text-rak-slate-300 max-w-2xl leading-relaxed font-normal">
+                  {BRAND_INFO.description}
+                </p>
+
+                {/* Primary & Secondary Action CTAs */}
+                <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                  <button
+                    onClick={onOpenPlanner}
+                    className="relative inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-white bg-rak-magenta rounded-full shadow-magenta-glow hover:bg-rak-magenta-dark transition-all duration-300 group overflow-hidden"
+                  >
+                    <span className="relative z-10 flex items-center space-x-2">
+                      <span>Start a Project</span>
+                      <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                    </span>
+                  </button>
+
+                  <button
+                    onClick={() => { setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                    className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-rak-slate-200 hover:text-white bg-rak-slate-900/80 hover:bg-rak-slate-800 border border-rak-slate-700/80 rounded-full backdrop-blur-md transition-all"
+                  >
+                    <span>Explore RAK4 Creations</span>
+                  </button>
+                </div>
+
+                {/* Metrics Bar */}
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-rak-slate-800/80">
+                  {BRAND_INFO.stats.map((stat, i) => (
+                    <div key={i} className="space-y-1">
+                      <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{stat.value}</div>
+                      <div className="text-[11px] font-semibold text-rak-slate-400 leading-tight">{stat.label}</div>
+                      <div className="text-[10px] text-rak-magenta font-mono">{stat.change}</div>
+                    </div>
+                  ))}
+                </div>
+
+              </div>
+
+              {/* Right Interactive Hero Agency Orchestration Visual */}
+              <div className="lg:col-span-5 relative">
+                <HeroAgencyOrchestrationCard onOpenPlanner={onOpenPlanner} />
+              </div>
+
+            </div>
+          )}
+
         </div>
       </section>
 
