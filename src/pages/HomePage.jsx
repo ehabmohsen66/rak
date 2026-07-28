@@ -15,84 +15,136 @@ import {
   ChevronRight,
   Star
 } from 'lucide-react';
+import { motion } from 'framer-motion';
 import { BRAND_INFO, SERVICES, PROJECTS, TESTIMONIALS, PILLARS } from '../data/contentData';
 import { AgencyOrchestrationMatrix } from '../components/AgencyOrchestrationMatrix';
 import { HeroAgencyOrchestrationCard } from '../components/HeroAgencyOrchestrationCard';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
 
 export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
+  const containerVariants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.07,
+        delayChildren: 0.1,
+      },
+    },
+  };
+
+  const wordVariants = {
+    hidden: { opacity: 0, y: 28, filter: 'blur(6px)' },
+    visible: {
+      opacity: 1,
+      y: 0,
+      filter: 'blur(0px)',
+      transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+    },
+  };
+
+  const headlineWords = ["We", "Create", "Big", "Ideas", "From", "Ground", "Zero", "&", "Take", "Them", "to"];
+
   return (
     <div className="space-y-24 sm:space-y-32 pb-16">
       
-      {/* 1. CINEMATIC HERO SECTION */}
-      <section className="relative min-h-[90vh] flex items-center pt-24 pb-16 overflow-hidden">
+      {/* 1. CINEMATIC STAGGER REVEAL HERO SECTION */}
+      <section className="relative min-h-[82vh] flex items-center pt-28 pb-16 overflow-hidden">
         
         {/* Background Ambient FX */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[500px] bg-rak-magenta/15 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute top-10 right-10 w-72 h-72 bg-rak-slate-700/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-rak-magenta/15 rounded-full blur-[150px] pointer-events-none" />
+        <div className="absolute top-12 right-16 w-80 h-80 bg-rak-slate-700/20 rounded-full blur-3xl pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-72 h-72 bg-rak-magenta/10 rounded-full blur-3xl pointer-events-none" />
 
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full text-center">
+          <div className="space-y-8 max-w-5xl mx-auto">
             
-            {/* Left Content Column */}
-            <div className="lg:col-span-7 space-y-8 text-left">
-              
-              {/* Badge */}
-              <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900/90 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
-                <Sparkles className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '6s' }} />
-                <span>Your One-Stop Agency</span>
-              </div>
+            {/* Badge */}
+            <motion.div 
+              initial={{ opacity: 0, y: -12 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="inline-flex items-center space-x-2 px-4 py-2 bg-rak-slate-900/90 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-rak-magenta" />
+              <span>Your One-Stop Agency</span>
+            </motion.div>
 
-              {/* Main Headline */}
-              <h1 className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-white leading-[1.08]">
-                We Create Big Ideas From Ground Zero & Take Them to <span className="text-gradient-magenta">New Heights.</span>
-              </h1>
+            {/* Main Staggered Headline */}
+            <motion.h1 
+              variants={containerVariants}
+              initial="hidden"
+              animate="visible"
+              className="text-4xl sm:text-6xl md:text-7xl lg:text-8xl font-extrabold tracking-tight text-white leading-[1.06] text-center"
+            >
+              {headlineWords.map((word, i) => (
+                <motion.span key={i} variants={wordVariants} className="inline-block mr-[0.24em]">
+                  {word}
+                </motion.span>
+              ))}
+              <motion.span variants={wordVariants} className="inline-block text-gradient-magenta">
+                New Heights.
+              </motion.span>
+            </motion.h1>
 
-              {/* Supporting Value Proposition */}
-              <p className="text-base sm:text-lg text-rak-slate-300 max-w-2xl leading-relaxed font-normal">
-                {BRAND_INFO.description}
-              </p>
+            {/* Concise Subtitle */}
+            <motion.p
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.65 }}
+              className="text-base sm:text-xl text-rak-slate-300 max-w-2xl mx-auto leading-relaxed font-normal pt-2"
+            >
+              Brand strategy, creative production, and digital performance marketing together under one roof.
+            </motion.p>
 
-              {/* Primary & Secondary Action CTAs */}
-              <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <button
-                  onClick={onOpenPlanner}
-                  className="relative inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-white bg-rak-magenta rounded-full shadow-magenta-glow hover:bg-rak-magenta-dark transition-all duration-300 group overflow-hidden"
-                >
-                  <span className="relative z-10 flex items-center space-x-2">
-                    <span>Start a Project</span>
-                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </span>
-                </button>
+            {/* Primary & Secondary Action CTAs */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: 0.8 }}
+              className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4"
+            >
+              <button
+                onClick={onOpenPlanner}
+                className="relative inline-flex items-center justify-center px-9 py-4 text-xs font-bold uppercase tracking-wider text-white bg-rak-magenta rounded-full shadow-magenta-glow hover:bg-rak-magenta-dark hover:scale-105 transition-all duration-300 group overflow-hidden"
+              >
+                <span className="relative z-10 flex items-center space-x-2">
+                  <span>Start a Project</span>
+                  <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                </span>
+              </button>
 
-                <button
-                  onClick={() => { setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-rak-slate-200 hover:text-white bg-rak-slate-900/80 hover:bg-rak-slate-800 border border-rak-slate-700/80 rounded-full backdrop-blur-md transition-all"
-                >
-                  <span>Explore RAK4 Creations</span>
-                </button>
-              </div>
+              <button
+                onClick={() => { setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-rak-slate-200 hover:text-white bg-rak-slate-900/80 hover:bg-rak-slate-800 border border-rak-slate-700/80 rounded-full backdrop-blur-md transition-all hover:scale-105"
+              >
+                <span>Explore RAK4 Creations</span>
+              </button>
+            </motion.div>
 
-              {/* Metrics Bar */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-6 border-t border-rak-slate-800/80">
-                {BRAND_INFO.stats.map((stat, i) => (
-                  <div key={i} className="space-y-1">
-                    <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{stat.value}</div>
-                    <div className="text-[11px] font-semibold text-rak-slate-400 leading-tight">{stat.label}</div>
-                    <div className="text-[10px] text-rak-magenta font-mono">{stat.change}</div>
-                  </div>
-                ))}
-              </div>
-
-            </div>
-
-            {/* Right Interactive Hero Agency Orchestration Visual */}
-            <div className="lg:col-span-5 relative">
-              <HeroAgencyOrchestrationCard onOpenPlanner={onOpenPlanner} />
-            </div>
+            {/* Metrics Bar */}
+            <motion.div 
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.95 }}
+              className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-10 border-t border-rak-slate-800/80 max-w-4xl mx-auto"
+            >
+              {BRAND_INFO.stats.map((stat, i) => (
+                <div key={i} className="space-y-1 p-4 rounded-2xl bg-rak-slate-900/40 border border-rak-slate-800/60 backdrop-blur-sm hover:border-rak-magenta/30 transition-all text-center">
+                  <div className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">{stat.value}</div>
+                  <div className="text-[11px] font-semibold text-rak-slate-400 leading-tight">{stat.label}</div>
+                  <div className="text-[10px] text-rak-magenta font-mono">{stat.change}</div>
+                </div>
+              ))}
+            </motion.div>
 
           </div>
         </div>
+      </section>
+
+      {/* 1.5 DEDICATED AGENCY ORCHESTRATION CARD HIGHLIGHT */}
+      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <HeroAgencyOrchestrationCard onOpenPlanner={onOpenPlanner} />
       </section>
 
       {/* 2. TRUST BAR / CLIENT BRANDS */}
