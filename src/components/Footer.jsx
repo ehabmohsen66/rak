@@ -35,10 +35,6 @@ export const Footer = ({ setActiveTab, onOpenProjectPlanner }) => {
         
         {/* Upper Banner / Conversion Hook */}
         <div className="bg-gradient-to-r from-rak-slate-900 via-rak-slate-900/90 to-rak-slate-900 border border-rak-slate-800 rounded-3xl p-8 lg:p-12 mb-16 shadow-2xl relative overflow-hidden">
-          <div className="absolute -right-10 -bottom-10 opacity-10 pointer-events-none">
-            <BrandLogo className="h-64" />
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8 space-y-3">
               <span className="inline-flex items-center space-x-2 px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest">
