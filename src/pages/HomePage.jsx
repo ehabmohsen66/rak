@@ -24,6 +24,7 @@ import { motion } from 'framer-motion';
 import { BRAND_INFO, SERVICES, PROJECTS, TESTIMONIALS, PILLARS } from '../data/contentData';
 import { AgencyOrchestrationMatrix } from '../components/AgencyOrchestrationMatrix';
 import { HeroAgencyOrchestrationCard } from '../components/HeroAgencyOrchestrationCard';
+import { SmallHeroOrchestration } from '../components/SmallHeroOrchestration';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
 
 const getPillarIcon = (iconName) => {
@@ -157,14 +158,14 @@ export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
               ))}
             </motion.div>
 
-            {/* Interactive Hero Agency Orchestration Engine Card */}
+            {/* Compact Interactive Hero Orchestration Bar */}
             <motion.div
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8, delay: 1.1 }}
-              className="pt-10 max-w-5xl mx-auto text-left"
+              transition={{ duration: 0.7, delay: 1.05 }}
+              className="pt-8 max-w-4xl mx-auto"
             >
-              <HeroAgencyOrchestrationCard onOpenPlanner={onOpenPlanner} />
+              <SmallHeroOrchestration onOpenPlanner={onOpenPlanner} />
             </motion.div>
 
           </div>
