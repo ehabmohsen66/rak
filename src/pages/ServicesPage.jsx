@@ -87,13 +87,13 @@ export const ServicesPage = ({ onOpenPlanner }) => {
                       </span>
                     </div>
 
-                    <div className="absolute bottom-6 left-6 right-6 flex items-center space-x-3 p-4 rounded-xl glass-panel border border-white/10">
-                      <div className="p-2.5 rounded-xl bg-rak-magenta text-white">
+                    <div className="absolute bottom-6 left-6 right-6 flex items-center space-x-3 p-4 rounded-xl bg-rak-slate-950/90 border border-rak-slate-800 backdrop-blur-xl shadow-2xl">
+                      <div className="p-2.5 rounded-xl bg-rak-magenta text-white shrink-0 shadow-magenta-sm">
                         <IconComp className="w-5 h-5" />
                       </div>
                       <div>
-                        <div className="text-xs font-bold text-white">{pillar.title}</div>
-                        <div className="text-[10px] text-rak-slate-300 font-mono">{pillar.subtitle}</div>
+                        <div className="text-xs font-bold text-white tracking-wide">{pillar.title}</div>
+                        <div className="text-[11px] text-rak-slate-200 font-medium mt-0.5 leading-snug">{pillar.subtitle}</div>
                       </div>
                     </div>
                   </div>
