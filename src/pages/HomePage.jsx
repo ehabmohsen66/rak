@@ -1,4 +1,3 @@
-import React from 'react';
 import { 
   ArrowUpRight, 
   Sparkles, 
@@ -13,13 +12,33 @@ import {
   Video, 
   Cpu,
   ChevronRight,
-  Star
+  Star,
+  Compass,
+  BarChart3,
+  Share2,
+  Search,
+  Target,
+  Radio
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { BRAND_INFO, SERVICES, PROJECTS, TESTIMONIALS, PILLARS } from '../data/contentData';
 import { AgencyOrchestrationMatrix } from '../components/AgencyOrchestrationMatrix';
 import { HeroAgencyOrchestrationCard } from '../components/HeroAgencyOrchestrationCard';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
+
+const getPillarIcon = (iconName) => {
+  switch (iconName) {
+    case 'Compass': return Compass;
+    case 'BarChart3': return BarChart3;
+    case 'Share2': return Share2;
+    case 'Code': return Code;
+    case 'Search': return Search;
+    case 'Target': return Target;
+    case 'Video': return Video;
+    case 'Radio': return Radio;
+    default: return Sparkles;
+  }
+};
 
 export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
   const containerVariants = {
@@ -199,38 +218,53 @@ export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
           </button>
         </div>
 
-        {/* Bento Grid Layout */}
+        {/* Bento Grid Layout with Rich Icon Visuals & Watermarks */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {PILLARS.slice(0, 6).map((s, index) => {
             const isLarge = index === 0 || index === 2;
+            const IconComp = getPillarIcon(s.icon);
             return (
               <div 
                 key={s.id}
                 onClick={() => { setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className={`group relative p-8 rounded-3xl bg-rak-slate-900/80 border border-rak-slate-800/80 hover:border-rak-magenta/50 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between ${
+                className={`group relative p-8 sm:p-9 rounded-3xl bg-rak-slate-900/80 border border-rak-slate-800/80 hover:border-rak-magenta/60 hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between backdrop-blur-xl hover:shadow-magenta-glow ${
                   isLarge ? 'md:col-span-8' : 'md:col-span-4'
                 }`}
               >
-                <div className="space-y-4">
+                {/* Background Translucent Vector Icon Watermark */}
+                <IconComp className="w-44 h-44 absolute -right-6 -bottom-6 text-white/[0.03] group-hover:text-rak-magenta/[0.08] transition-all duration-500 pointer-events-none transform group-hover:scale-110 group-hover:rotate-6" />
+
+                <div className="space-y-5 relative z-10">
+                  {/* Top Bar: Icon Badge + Tag Pill + Arrow */}
                   <div className="flex items-center justify-between">
-                    <span className="px-3 py-1 bg-rak-slate-800 border border-rak-slate-700 text-rak-magenta text-[10px] font-bold uppercase tracking-wider rounded-full">
-                      {s.tag}
-                    </span>
+                    <div className="flex items-center space-x-3">
+                      <div className="p-3 rounded-2xl bg-rak-slate-800/90 border border-rak-magenta/30 text-rak-magenta group-hover:bg-rak-magenta group-hover:text-white group-hover:border-rak-magenta transition-all duration-300 shadow-magenta-sm">
+                        <IconComp className="w-6 h-6" />
+                      </div>
+                      <span className="px-3 py-1 bg-rak-slate-800/90 border border-rak-slate-700/80 text-rak-magenta text-[10px] font-bold uppercase tracking-wider rounded-full backdrop-blur-md">
+                        {s.tag}
+                      </span>
+                    </div>
+
                     <ArrowUpRight className="w-5 h-5 text-rak-slate-500 group-hover:text-rak-magenta group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
                   </div>
                   
-                  <h3 className="text-xl sm:text-2xl font-bold text-white group-hover:text-rak-magenta transition-colors">
-                    {s.title}
-                  </h3>
-                  <p className="text-xs sm:text-sm text-rak-slate-400 leading-relaxed max-w-xl">
-                    {s.description}
-                  </p>
+                  {/* Card Title & Description */}
+                  <div className="space-y-2 pt-1">
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white group-hover:text-rak-magenta transition-colors tracking-tight">
+                      {s.title}
+                    </h3>
+                    <p className="text-xs sm:text-sm text-rak-slate-300 leading-relaxed max-w-xl font-normal">
+                      {s.description}
+                    </p>
+                  </div>
                 </div>
 
-                <div className="pt-6 mt-6 border-t border-rak-slate-800/60 flex flex-wrap gap-2">
+                {/* Bottom Items Tags */}
+                <div className="pt-6 mt-6 border-t border-rak-slate-800/80 flex flex-wrap gap-2.5 relative z-10">
                   {s.items.slice(0, 3).map((b, i) => (
-                    <span key={i} className="text-[11px] text-rak-slate-300 font-medium flex items-center space-x-1">
-                      <CheckCircle2 className="w-3 h-3 text-rak-magenta" />
+                    <span key={i} className="text-[11px] text-rak-slate-200 font-semibold px-3 py-1.5 rounded-xl bg-rak-slate-950/60 border border-rak-slate-800/90 flex items-center space-x-1.5 group-hover:border-rak-magenta/20 transition-all">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-rak-magenta" />
                       <span>{b}</span>
                     </span>
                   ))}
