@@ -161,11 +161,6 @@ export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
         </div>
       </section>
 
-      {/* 1.5 DEDICATED AGENCY ORCHESTRATION CARD HIGHLIGHT */}
-      <section className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-        <HeroAgencyOrchestrationCard onOpenPlanner={onOpenPlanner} />
-      </section>
-
       {/* 2. TRUST BAR / CLIENT BRANDS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="p-8 bg-rak-slate-900/60 border border-rak-slate-800 rounded-3xl backdrop-blur-md space-y-6 overflow-hidden">
@@ -195,7 +190,7 @@ export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
         </div>
       </section>
 
-      {/* 2.5 INTER-UNIT AGENCY ORCHESTRATION FRAMEWORK */}
+      {/* 2.5 RAK 360° CREATIVE ENGINE WORKFLOW */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <AgencyOrchestrationMatrix onOpenPlanner={onOpenPlanner} />
       </section>
