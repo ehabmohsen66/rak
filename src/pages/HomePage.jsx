@@ -327,36 +327,41 @@ export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
 
       {/* 5. TESTIMONIALS & SOCIAL PROOF */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-rak-slate-900/90 border border-rak-slate-800 rounded-3xl p-8 sm:p-12 space-y-10 relative overflow-hidden">
+        <div className="bg-rak-slate-900/90 border border-rak-slate-800 rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden backdrop-blur-xl">
           <div className="space-y-2 text-center max-w-2xl mx-auto">
             <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest">Client Testimonials</span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-white">What Executive Leaders Say About RAK.</h2>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">What Executive Leaders Say About RAK.</h2>
+            <p className="text-xs text-rak-slate-400">Hover to pause & read leader reviews</p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {TESTIMONIALS.map((t, i) => (
-              <div key={i} className="p-6 bg-rak-slate-950/80 border border-rak-slate-800/80 rounded-2xl space-y-4 flex flex-col justify-between">
+          <InfiniteSlider gap={24} duration={65} durationOnHover={180} className="py-4">
+            {TESTIMONIALS.map((t) => (
+              <div 
+                key={t.id} 
+                className="w-80 sm:w-96 shrink-0 p-6 sm:p-7 bg-rak-slate-950/90 border border-rak-slate-800/90 hover:border-rak-magenta/40 rounded-2xl space-y-5 flex flex-col justify-between backdrop-blur-md shadow-xl transition-all duration-300 hover:scale-[1.02]"
+              >
                 <div className="space-y-3">
                   <div className="flex text-amber-400 space-x-1">
                     {[...Array(t.rating)].map((_, r) => (
                       <Star key={r} className="w-4 h-4 fill-amber-400" />
                     ))}
                   </div>
-                  <p className="text-xs sm:text-sm text-rak-slate-300 leading-relaxed italic">
+                  <p className="text-xs sm:text-sm text-rak-slate-200 leading-relaxed font-normal italic">
                     "{t.quote}"
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-rak-slate-800/60 flex items-center space-x-3">
-                  <img src={t.avatar} alt={t.author} className="w-10 h-10 rounded-full object-cover border border-rak-magenta" />
+                <div className="pt-4 border-t border-rak-slate-800/70 flex items-center space-x-3">
+                  <img src={t.avatar} alt={t.author} className="w-11 h-11 rounded-full object-cover border-2 border-rak-magenta shrink-0 shadow-magenta-sm" />
                   <div>
-                    <div className="text-xs font-bold text-white">{t.author}</div>
-                    <div className="text-[10px] text-rak-slate-400">{t.role}, {t.company}</div>
+                    <div className="text-xs font-bold text-white tracking-wide">{t.author}</div>
+                    <div className="text-[10px] text-rak-slate-400 font-medium">{t.role}</div>
+                    <div className="text-[10px] text-rak-magenta font-semibold">{t.company}</div>
                   </div>
                 </div>
               </div>
             ))}
-          </div>
+          </InfiniteSlider>
         </div>
       </section>
 

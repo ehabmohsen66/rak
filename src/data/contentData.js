@@ -400,17 +400,66 @@ export const OFFICES = [
 
 export const TESTIMONIALS = [
   {
-    quote: "Your vision + our expertise = something amazing. Working with RAK4Creative transformed our brand identity and market position across 12 countries.",
+    id: 1,
+    quote: "Working with RAK transformed our global brand architecture and market position across 12 countries. Their end-to-end integration is unmatched.",
     author: "Marcus Vance",
     role: "Chief Marketing Officer",
     company: "Apex Global Capital",
+    rating: 5,
     avatar: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=200&auto=format&fit=crop"
   },
   {
-    quote: "RAK4Creative brings brand strategy, creative production, and digital performance marketing together under one roof. Nothing got lost in translation.",
+    id: 2,
+    quote: "RAK brings brand strategy, high-end video production, and performance ads together under one roof. Nothing gets lost in translation between separate agencies.",
     author: "Elena Rostova",
-    role: "VP of Digital Product",
+    role: "VP of Digital Experience",
     company: "Lumina Haute Couture",
+    rating: 5,
     avatar: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop"
+  },
+  {
+    id: 3,
+    quote: "The speed and visual precision RAK delivered for our pharmaceutical campaign exceeded every KPI. They turned complex scientific data into captivating stories.",
+    author: "Dr. Tariq Al-Mansoor",
+    role: "Chief Executive Officer",
+    company: "Benta Pharma Industries",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=200&auto=format&fit=crop"
+  },
+  {
+    id: 4,
+    quote: "From large-scale out-of-home billboards to hyper-targeted digital media, RAK executed our 360° product launch flawlessly.",
+    author: "Sophie Laurent",
+    role: "Global Brand Director",
+    company: "Choucair Group",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop"
+  },
+  {
+    id: 5,
+    quote: "RAK redefined our digital ad performance. Our ROAS increased by 3.8x within the first quarter of launching our omnichannel campaign.",
+    author: "David Sterling",
+    role: "Managing Director",
+    company: "Duracell EMEA",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop"
+  },
+  {
+    id: 6,
+    quote: "Their team creates big ideas from ground zero and executes with lightning speed. Truly a one-stop powerhouse for ambitious brands.",
+    author: "Karim El-Hassan",
+    role: "Head of Growth & Performance",
+    company: "Vanguard Mobility",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop"
+  },
+  {
+    id: 7,
+    quote: "The 3D motion graphics and interactive web platform RAK built for our flagship launch generated record-breaking pre-launch engagement.",
+    author: "Amara Okafor",
+    role: "Chief Strategy Officer",
+    company: "Zenith Real Estate Holdings",
+    rating: 5,
+    avatar: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=200&auto=format&fit=crop"
   }
 ];
