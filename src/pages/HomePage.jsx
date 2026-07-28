@@ -154,7 +154,8 @@ export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
                   <img 
                     src={client.image} 
                     alt={client.name} 
-                    className="max-h-14 max-w-[140px] object-contain transition-all"
+                    className="max-h-14 max-w-[140px] object-contain transition-all filter drop-shadow-sm"
+                    style={{ imageRendering: '-webkit-optimize-contrast' }}
                   />
                 ) : (
                   <span className="text-xs font-bold font-mono text-rak-slate-900 tracking-wider">{client.logo}</span>
