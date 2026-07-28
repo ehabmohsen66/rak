@@ -17,7 +17,6 @@ import {
 
 export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
   const [activeUnit, setActiveUnit] = useState(0);
-  const [isSimulating, setIsSimulating] = useState(true);
 
   const units = [
     {
@@ -118,13 +117,13 @@ export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
     }
   ];
 
+  // Continuous auto-advancing loop across stages without pause
   useEffect(() => {
-    if (!isSimulating) return;
     const interval = setInterval(() => {
       setActiveUnit((prev) => (prev + 1) % units.length);
     }, 4500);
     return () => clearInterval(interval);
-  }, [isSimulating, units.length]);
+  }, [units.length]);
 
   const currentUnit = units[activeUnit];
   const CurrentIcon = currentUnit.icon;
@@ -148,13 +147,10 @@ export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
         </div>
 
         <div className="flex items-center space-x-3">
-          <button
-            onClick={() => setIsSimulating(!isSimulating)}
-            className="inline-flex items-center space-x-2 px-4 py-2 bg-rak-slate-800/80 hover:bg-rak-slate-800 text-rak-slate-300 hover:text-white rounded-full text-xs font-semibold border border-rak-slate-700/80 transition-all"
-          >
-            <Activity className={`w-3.5 h-3.5 ${isSimulating ? 'text-emerald-400 animate-pulse' : 'text-rak-slate-400'}`} />
-            <span>{isSimulating ? 'Auto-Advancing Stages' : 'Paused Stage'}</span>
-          </button>
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-xs font-mono font-semibold">
+            <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+            <span>LIVE WORKFLOW ADVANCING</span>
+          </div>
         </div>
       </div>
 
@@ -167,10 +163,7 @@ export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
           return (
             <button
               key={unit.id}
-              onClick={() => {
-                setActiveUnit(idx);
-                setIsSimulating(false);
-              }}
+              onClick={() => setActiveUnit(idx)}
               className={`flex flex-col items-start p-4 rounded-2xl border transition-all duration-300 text-left ${
                 isActive
                   ? 'bg-rak-slate-900 border-rak-magenta shadow-magenta-sm scale-105 z-10'
