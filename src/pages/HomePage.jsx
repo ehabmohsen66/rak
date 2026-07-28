@@ -144,7 +144,7 @@ export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
             Trusted by Ambitious Enterprises & Global Innovators
           </p>
 
-          <InfiniteSlider gap={28} duration={35} durationOnHover={70} className="py-4">
+          <InfiniteSlider gap={28} duration={90} durationOnHover={180} className="py-4">
             {BRAND_INFO.clients.map((client, i) => (
               <div 
                 key={i} 

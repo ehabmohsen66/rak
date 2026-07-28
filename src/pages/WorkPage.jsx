@@ -59,7 +59,7 @@ export const WorkPage = ({ onSelectProject }) => {
             <span className="text-xs font-mono text-rak-slate-400">One-Stop Agency Execution</span>
           </div>
 
-          <InfiniteSlider gap={28} duration={35} durationOnHover={70} className="py-4">
+          <InfiniteSlider gap={28} duration={90} durationOnHover={180} className="py-4">
             {BRAND_INFO.clients.map((client, i) => (
               <div 
                 key={i} 
