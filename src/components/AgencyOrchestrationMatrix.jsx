@@ -1,136 +1,127 @@
 import React, { useState, useEffect } from 'react';
 import { 
   Compass, 
-  Layers, 
+  Sparkles, 
   Code, 
   TrendingUp, 
   Video, 
-  Target,
-  Activity, 
-  Workflow, 
-  Zap, 
+  Radio,
   CheckCircle2, 
   ArrowRight, 
-  RefreshCw, 
-  ShieldCheck, 
-  Sparkles,
-  GitBranch,
-  Radio,
-  Cpu
+  Zap, 
+  BarChart3,
+  Layers,
+  Activity,
+  Workflow
 } from 'lucide-react';
 
 export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
   const [activeUnit, setActiveUnit] = useState(0);
   const [isSimulating, setIsSimulating] = useState(true);
-  const [telemetryPulse, setTelemetryPulse] = useState(99.9);
-  const [syncSpeed, setSyncSpeed] = useState(12);
 
   const units = [
     {
       id: 'strategy',
-      name: 'Brand Strategy & Intel',
-      code: 'UNIT-01',
+      name: 'Brand Strategy & Ideation',
+      code: 'STAGE 01',
       icon: Compass,
-      tagline: 'Foundational Market Positioning & Core Narrative',
+      tagline: 'Market Research, Audience Insights & Core Narrative',
       color: 'from-amber-500 to-rak-magenta',
-      status: 'Active Matrix Anchor',
-      output: 'Brand Architecture Specs & Persona Datasets',
-      downstreamSync: 'Feeds Design Tokens & Media Buying Strategy',
+      status: 'Ideation & Positioning',
+      output: 'Brand Architecture Specs & Positioning Framework',
+      downstreamSync: 'Feeds Visual Identity & Campaign Strategy',
       metrics: [
-        { label: 'Market Alignment', value: '99.4%' },
+        { label: 'Market Alignment', value: '100%' },
         { label: 'Strategic Intel Score', value: '98/100' },
-        { label: 'Persona Mapping', value: 'Real-time' }
+        { label: 'Persona Mapping', value: 'Complete' }
       ]
     },
     {
       id: 'design',
-      name: 'UI/UX & Design Tokens Engine',
-      code: 'UNIT-02',
-      icon: Layers,
-      tagline: 'Systematic Design Architecture & UI Systems',
+      name: 'Brand Identity & Design Systems',
+      code: 'STAGE 02',
+      icon: Sparkles,
+      tagline: 'Distinct Logos, Color Systems & Visual Architecture',
       color: 'from-rak-magenta to-purple-600',
-      status: 'Token Pipeline Syncing',
-      output: 'Figma Token Schema & React Component Library',
-      downstreamSync: 'Automated CI/CD Sync to Web & Ad Creatives',
+      status: 'Visual Identity Sync',
+      output: 'Logo Guidelines & Comprehensive Brand Guidelines',
+      downstreamSync: 'Syncs Directly to Web & Motion Creatives',
       metrics: [
-        { label: 'Token Sync Latency', value: '< 12ms' },
-        { label: 'Accessibility Audit', value: 'WCAG AAA' },
-        { label: 'Design Consistency', value: '100%' }
-      ]
-    },
-    {
-      id: 'engineering',
-      name: 'Enterprise Web & WebGL Engine',
-      code: 'UNIT-03',
-      icon: Code,
-      tagline: 'High-Performance Frontend & Web Architecture',
-      color: 'from-cyan-500 to-blue-600',
-      status: 'Zero-Latency Runtime',
-      output: 'Vite/Next.js Core & WebGL Shader Pipelines',
-      downstreamSync: 'Telemetry Feedback to Growth Engine',
-      metrics: [
-        { label: 'Lighthouse Score', value: '100/100' },
-        { label: 'First Contentful Paint', value: '0.3s' },
-        { label: 'Shader Render Rate', value: '60 FPS' }
-      ]
-    },
-    {
-      id: 'media-buying',
-      name: 'Media Buying & Performance Ad Ops',
-      code: 'UNIT-04',
-      icon: Target,
-      tagline: 'Omnichannel Paid Media & Dynamic Ad Scaling',
-      color: 'from-indigo-500 to-blue-600',
-      status: 'Ad Bidding Engine Live',
-      output: 'Omnichannel Campaigns (Google, Meta, LinkedIn, TikTok)',
-      downstreamSync: 'Drives Paid Traffic to High-CRO Landing Pages',
-      metrics: [
-        { label: 'ROAS Benchmark', value: '3.8x Avg' },
-        { label: 'Managed Ad Spend', value: '$12.4M+' },
-        { label: 'CPC Optimization', value: '-34% Cost' }
-      ]
-    },
-    {
-      id: 'telemetry',
-      name: 'Growth & CRO Telemetry Engine',
-      code: 'UNIT-05',
-      icon: TrendingUp,
-      tagline: 'Real-Time User Behavior & Conversion Optics',
-      color: 'from-emerald-400 to-teal-600',
-      status: 'Telemetry Stream Live',
-      output: 'A/B Test Signals & Live Bidding Feedback Loop',
-      downstreamSync: 'Triggers Dynamic Ad & Strategy Refinements',
-      metrics: [
-        { label: 'CRO Lift Benchmark', value: '+180%' },
-        { label: 'Live Data Stream', value: '1.2M events/s' },
-        { label: 'Conversion Velocity', value: '3.4x Industry Avg' }
+        { label: 'Brand Consistency', value: '100%' },
+        { label: 'Asset Adaptability', value: 'Universal' },
+        { label: 'Design System Audit', value: 'Passed' }
       ]
     },
     {
       id: 'content',
-      name: 'Creative Content & Motion Studio',
-      code: 'UNIT-06',
+      name: 'Media & Video Production',
+      code: 'STAGE 03',
       icon: Video,
-      tagline: 'Cinematic 3D, Video Ad Creative & Copy Studio',
+      tagline: 'Commercial Video, 3D Motion Graphics & Social Content',
       color: 'from-rose-500 to-rak-magenta',
-      status: 'Assets Streamed',
-      output: 'High-Converting Video Ads, 3D Renders & Copy',
-      downstreamSync: 'Pushed Directly to Media Buying & UI Pipelines',
+      status: 'Cinematic Production',
+      output: 'High-Impact Video Ads, 3D Assets & Social Reels',
+      downstreamSync: 'Pushed Directly to Digital Marketing & Media Buying',
       metrics: [
-        { label: 'Frame Precision', value: '4K Native' },
-        { label: 'Ad CTR Impact', value: '+210%' },
-        { label: 'Brand Voice Score', value: '100%' }
+        { label: 'Production Quality', value: '4K Native' },
+        { label: 'Audience Engagement', value: '+210%' },
+        { label: 'Creative Recall Rate', value: '96%' }
+      ]
+    },
+    {
+      id: 'engineering',
+      name: 'Web & Digital Platforms',
+      code: 'STAGE 04',
+      icon: Code,
+      tagline: 'Custom High-Speed Websites & Web Applications',
+      color: 'from-cyan-500 to-blue-600',
+      status: 'Digital Experience Sync',
+      output: 'Vite/React Core & Interactive Web Interfaces',
+      downstreamSync: 'Optimized Landing Pages for Ad Campaigns',
+      metrics: [
+        { label: 'Performance Score', value: '100/100' },
+        { label: 'Load Time', value: '< 0.5s' },
+        { label: 'User Experience Rating', value: '99.4%' }
+      ]
+    },
+    {
+      id: 'media-buying',
+      name: 'Digital Marketing & Ads',
+      code: 'STAGE 05',
+      icon: TrendingUp,
+      tagline: 'Omnichannel Paid Media, Meta/Google Ads & SEO',
+      color: 'from-indigo-500 to-blue-600',
+      status: 'Ad Campaigns Live',
+      output: 'Omnichannel Campaigns (Google, Meta, LinkedIn, TikTok)',
+      downstreamSync: 'Drives Targeted Traffic & High ROAS Conversions',
+      metrics: [
+        { label: 'ROAS Average', value: '3.8x Avg' },
+        { label: 'Conversion Lift', value: '+180%' },
+        { label: 'Cost Optimization', value: '-34% CPC' }
+      ]
+    },
+    {
+      id: 'ooh',
+      name: 'Out-Of-Home & Print Campaigns',
+      code: 'STAGE 06',
+      icon: Radio,
+      tagline: 'Billboards, Print Media & High-Visibility Offline Branding',
+      color: 'from-emerald-400 to-teal-600',
+      status: '360° Offline Execution',
+      output: 'Billboard Placements, Print Collaterals & Signage',
+      downstreamSync: 'Completes 360° Online & Offline Brand Presence',
+      metrics: [
+        { label: 'Offline Impression Rate', value: 'High' },
+        { label: 'Print Precision', value: 'Ultra HD' },
+        { label: 'Campaign Coverage', value: '360°' }
       ]
     }
   ];
 
-  // Auto-simulate workflow loop across 6 units
   useEffect(() => {
     if (!isSimulating) return;
     const interval = setInterval(() => {
       setActiveUnit((prev) => (prev + 1) % units.length);
-      setTelemetryPulse((prev) => +(99.5 + Math.random() * 0.4).toFixed(2));
-      setSyncSpeed((prev) => Math.floor(8 + Math.random() * 8));
     }, 4500);
     return () => clearInterval(interval);
   }, [isSimulating, units.length]);
@@ -139,207 +130,117 @@ export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
   const CurrentIcon = currentUnit.icon;
 
   return (
-    <section className="relative overflow-hidden rounded-3xl bg-rak-slate-950 border border-rak-slate-800 p-6 sm:p-10 shadow-2xl">
-      {/* Background Ambient Glow & Grid */}
-      <div className="absolute inset-0 bg-grid-pattern opacity-40 pointer-events-none" />
-      <div className="absolute top-0 right-0 w-96 h-96 bg-rak-magenta/10 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute bottom-0 left-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none" />
+    <div className="relative w-full rounded-3xl bg-rak-slate-900/60 border border-rak-slate-800 p-8 sm:p-12 backdrop-blur-xl shadow-2xl space-y-10 overflow-hidden">
+      {/* Background Glow */}
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-rak-magenta/10 rounded-full blur-3xl pointer-events-none" />
 
-      <div className="relative z-10 space-y-10">
-        
-        {/* Header Title */}
-        <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-6 pb-6 border-b border-rak-slate-800/80">
-          <div className="space-y-3">
-            <div className="inline-flex items-center space-x-2 px-3 py-1 bg-rak-slate-900 border border-rak-magenta/40 rounded-full text-rak-magenta text-xs font-bold uppercase tracking-widest">
-              <Workflow className="w-3.5 h-3.5 animate-spin" style={{ animationDuration: '8s' }} />
-              <span>Inter-Unit Orchestration Framework</span>
-            </div>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              Agency Unit Orchestration System.
-            </h2>
-            <p className="text-sm text-rak-slate-300 max-w-2xl leading-relaxed">
-              How RAK 4 CREATIVE’s 6 specialized units—from Strategy & Design to Media Buying & CRO—operate as an interlocked operating engine for enterprise revenue.
-            </p>
+      {/* Header Section */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-rak-slate-800/80 relative z-10">
+        <div className="space-y-3">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest shadow-magenta-sm">
+            <Workflow className="w-3.5 h-3.5" />
+            <span>THE RAK 360° WORKFLOW</span>
           </div>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
+            How We Take Your Big Ideas <br />
+            From <span className="text-gradient-magenta">Ground Zero to New Heights.</span>
+          </h2>
+        </div>
 
-          {/* Simulation Toggle & Live Pulse */}
-          <div className="flex items-center space-x-4 bg-rak-slate-900/90 border border-rak-slate-800 p-2.5 rounded-2xl backdrop-blur-md">
-            <div className="flex items-center space-x-2 px-3 py-1.5 bg-rak-slate-950 rounded-xl border border-rak-slate-800">
-              <Radio className="w-4 h-4 text-emerald-400 animate-pulse" />
-              <span className="text-xs font-mono text-emerald-400 font-bold">LIVE TELEMETRY {telemetryPulse}%</span>
-            </div>
+        <div className="flex items-center space-x-3">
+          <button
+            onClick={() => setIsSimulating(!isSimulating)}
+            className="inline-flex items-center space-x-2 px-4 py-2 bg-rak-slate-800/80 hover:bg-rak-slate-800 text-rak-slate-300 hover:text-white rounded-full text-xs font-semibold border border-rak-slate-700/80 transition-all"
+          >
+            <Activity className={`w-3.5 h-3.5 ${isSimulating ? 'text-emerald-400 animate-pulse' : 'text-rak-slate-400'}`} />
+            <span>{isSimulating ? 'Auto-Advancing Stages' : 'Paused Stage'}</span>
+          </button>
+        </div>
+      </div>
 
+      {/* Interactive Stage Selector Bar */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 relative z-10">
+        {units.map((unit, idx) => {
+          const UnitIcon = unit.icon;
+          const isActive = idx === activeUnit;
+
+          return (
             <button
-              onClick={() => setIsSimulating(!isSimulating)}
-              className={`flex items-center space-x-2 px-3.5 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                isSimulating 
-                  ? 'bg-rak-magenta text-white shadow-magenta-sm' 
-                  : 'bg-rak-slate-800 text-rak-slate-300 hover:text-white'
+              key={unit.id}
+              onClick={() => {
+                setActiveUnit(idx);
+                setIsSimulating(false);
+              }}
+              className={`flex flex-col items-start p-4 rounded-2xl border transition-all duration-300 text-left ${
+                isActive
+                  ? 'bg-rak-slate-900 border-rak-magenta shadow-magenta-sm scale-105 z-10'
+                  : 'bg-rak-slate-900/40 border-rak-slate-800/60 hover:border-rak-slate-700 text-rak-slate-400 hover:text-white'
               }`}
             >
-              <RefreshCw className={`w-3.5 h-3.5 ${isSimulating ? 'animate-spin' : ''}`} />
-              <span>{isSimulating ? 'Auto-Orchestrating' : 'Paused'}</span>
-            </button>
-          </div>
-        </div>
-
-        {/* Unit Selector Pipeline Matrix (6 Units) */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-3">
-          {units.map((unit, index) => {
-            const Icon = unit.icon;
-            const isActive = activeUnit === index;
-            return (
-              <button
-                key={unit.id}
-                onClick={() => {
-                  setActiveUnit(index);
-                  setIsSimulating(false);
-                }}
-                className={`relative p-3.5 rounded-2xl border text-left transition-all duration-300 flex flex-col justify-between space-y-3 ${
-                  isActive
-                    ? 'bg-gradient-to-br from-rak-slate-900 via-rak-slate-900/90 to-rak-slate-800 border-rak-magenta shadow-magenta-sm scale-[1.02]'
-                    : 'bg-rak-slate-900/50 border-rak-slate-800/80 hover:border-rak-slate-700 hover:bg-rak-slate-900/80'
-                }`}
-              >
-                <div className="flex items-center justify-between">
-                  <span className="text-[10px] font-mono font-bold text-rak-slate-400">{unit.code}</span>
-                  <span className={`w-2 h-2 rounded-full ${isActive ? 'bg-rak-magenta animate-ping' : 'bg-rak-slate-700'}`} />
-                </div>
-
-                <div className="flex items-center space-x-2.5">
-                  <div className={`p-2 rounded-xl bg-rak-slate-800 border border-rak-slate-700 ${isActive ? 'text-rak-magenta' : 'text-rak-slate-400'}`}>
-                    <Icon className="w-4 h-4" />
-                  </div>
-                  <div>
-                    <h3 className="text-xs font-bold text-white leading-tight">{unit.name}</h3>
-                  </div>
-                </div>
-
-                {/* Progress Pipeline Indicator */}
-                <div className="w-full bg-rak-slate-800 h-1 rounded-full overflow-hidden">
-                  <div 
-                    className={`h-full bg-gradient-to-r ${unit.color} transition-all duration-500 ${isActive ? 'w-full' : 'w-1/4 opacity-40'}`} 
-                  />
-                </div>
-              </button>
-            );
-          })}
-        </div>
-
-        {/* Detailed Orchestration Active Node Display */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 bg-rak-slate-900/80 border border-rak-slate-800 rounded-3xl p-6 sm:p-8 backdrop-blur-xl">
-          
-          {/* Active Unit Focus */}
-          <div className="lg:col-span-7 space-y-6">
-            
-            <div className="flex items-center space-x-3">
-              <div className={`p-3.5 rounded-2xl bg-gradient-to-br ${currentUnit.color} text-white shadow-lg`}>
-                <CurrentIcon className="w-7 h-7" />
-              </div>
-              <div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-xs font-mono font-bold text-rak-magenta">{currentUnit.code}</span>
-                  <span className="text-xs text-rak-slate-500">•</span>
-                  <span className="text-xs text-emerald-400 font-mono font-semibold">{currentUnit.status}</span>
-                </div>
-                <h3 className="text-2xl sm:text-3xl font-extrabold text-white tracking-tight">
-                  {currentUnit.name}
-                </h3>
-              </div>
-            </div>
-
-            <p className="text-sm text-rak-slate-300 leading-relaxed font-medium">
-              {currentUnit.tagline}
-            </p>
-
-            {/* Inter-Unit Output & Pipeline Handshake */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-              <div className="p-4 rounded-2xl bg-rak-slate-950/80 border border-rak-slate-800 space-y-1.5">
-                <div className="text-[10px] font-mono uppercase text-rak-slate-400 font-bold flex items-center space-x-1.5">
-                  <Zap className="w-3.5 h-3.5 text-amber-400" />
-                  <span>Primary Unit Deliverables</span>
-                </div>
-                <div className="text-xs font-semibold text-white">{currentUnit.output}</div>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-rak-slate-950/80 border border-rak-slate-800 space-y-1.5">
-                <div className="text-[10px] font-mono uppercase text-rak-slate-400 font-bold flex items-center space-x-1.5">
-                  <GitBranch className="w-3.5 h-3.5 text-rak-magenta" />
-                  <span>Automated Downstream Sync</span>
-                </div>
-                <div className="text-xs font-semibold text-white">{currentUnit.downstreamSync}</div>
-              </div>
-            </div>
-
-            {/* Live Metrics Grid */}
-            <div className="grid grid-cols-3 gap-4 pt-4 border-t border-rak-slate-800">
-              {currentUnit.metrics.map((m, idx) => (
-                <div key={idx} className="space-y-1">
-                  <div className="text-lg sm:text-xl font-extrabold text-white tracking-tight">{m.value}</div>
-                  <div className="text-[10px] font-medium text-rak-slate-400 leading-tight">{m.label}</div>
-                </div>
-              ))}
-            </div>
-
-          </div>
-
-          {/* Inter-Unit Flow Diagram & Action */}
-          <div className="lg:col-span-5 flex flex-col justify-between bg-rak-slate-950/90 border border-rak-slate-800/80 rounded-2xl p-6 space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <span className="text-xs font-bold uppercase tracking-wider text-white flex items-center space-x-2">
-                  <Activity className="w-4 h-4 text-rak-magenta" />
-                  <span>Synchronized Pipeline Flow</span>
+              <div className="flex items-center justify-between w-full mb-3">
+                <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${isActive ? 'bg-rak-magenta text-white' : 'bg-rak-slate-800 text-rak-slate-400'}`}>
+                  {unit.code}
                 </span>
-                <span className="text-[10px] font-mono text-rak-magenta">Latency {syncSpeed}ms</span>
+                <UnitIcon className={`w-4 h-4 ${isActive ? 'text-rak-magenta' : 'text-rak-slate-400'}`} />
               </div>
-
-              <div className="space-y-2.5">
-                {units.map((u, i) => {
-                  const isCurrent = i === activeUnit;
-                  const Icon = u.icon;
-                  return (
-                    <div 
-                      key={u.id}
-                      className={`p-2.5 rounded-xl border flex items-center justify-between transition-all ${
-                        isCurrent 
-                          ? 'bg-rak-slate-900 border-rak-magenta/60 text-white shadow-md' 
-                          : 'bg-rak-slate-900/40 border-rak-slate-800/60 text-rak-slate-400'
-                      }`}
-                    >
-                      <div className="flex items-center space-x-2.5">
-                        <Icon className={`w-3.5 h-3.5 ${isCurrent ? 'text-rak-magenta' : 'text-rak-slate-500'}`} />
-                        <span className="text-xs font-semibold">{u.name}</span>
-                      </div>
-                      
-                      {isCurrent ? (
-                        <span className="px-2 py-0.5 text-[9px] font-bold font-mono bg-rak-magenta/20 text-rak-magenta border border-rak-magenta/30 rounded-full animate-pulse">
-                          EXECUTING
-                        </span>
-                      ) : (
-                        <CheckCircle2 className="w-3.5 h-3.5 opacity-40" />
-                      )}
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
-            {/* CTA */}
-            <button
-              onClick={onOpenPlanner}
-              className="w-full py-3.5 px-4 bg-rak-magenta hover:bg-rak-magenta-dark text-white text-xs font-bold uppercase tracking-wider rounded-xl shadow-magenta-sm transition-all flex items-center justify-center space-x-2 group"
-            >
-              <span>Deploy Orchestrated Agency Team</span>
-              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <span className={`text-xs font-bold tracking-tight line-clamp-1 ${isActive ? 'text-white' : 'text-rak-slate-300'}`}>
+                {unit.name}
+              </span>
             </button>
+          );
+        })}
+      </div>
 
+      {/* Selected Stage Detail Display */}
+      <div className="relative z-10 rounded-2xl bg-rak-slate-900/90 border border-rak-slate-800 p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-rak-slate-800/80">
+          <div className="flex items-center space-x-4">
+            <div className={`p-3.5 rounded-2xl bg-gradient-to-r ${currentUnit.color} text-white shadow-lg`}>
+              <CurrentIcon className="w-7 h-7" />
+            </div>
+            <div>
+              <span className="text-xs font-mono font-bold text-rak-magenta uppercase tracking-wider">
+                {currentUnit.code} • {currentUnit.status}
+              </span>
+              <h3 className="text-2xl font-extrabold text-white tracking-tight mt-0.5">
+                {currentUnit.name}
+              </h3>
+            </div>
           </div>
 
+          <button
+            onClick={onOpenPlanner}
+            className="inline-flex items-center space-x-2 px-6 py-3 bg-rak-magenta text-white font-bold text-xs uppercase tracking-wider rounded-full shadow-magenta-glow hover:bg-rak-magenta-dark transition-all hover:scale-105"
+          >
+            <span>Start a Project in this Stage</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
         </div>
 
+        <p className="text-base text-rak-slate-300 leading-relaxed max-w-3xl">
+          {currentUnit.tagline}
+        </p>
+
+        {/* Metrics Grid */}
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
+          {currentUnit.metrics.map((metric, idx) => (
+            <div key={idx} className="p-4 rounded-xl bg-rak-slate-950/60 border border-rak-slate-800/80 space-y-1">
+              <span className="text-[11px] font-mono text-rak-slate-400 uppercase block">{metric.label}</span>
+              <span className="text-xl font-extrabold text-white tracking-tight">{metric.value}</span>
+            </div>
+          ))}
+        </div>
+
+        {/* Downstream Integration Row */}
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-rak-magenta/10 border border-rak-magenta/30 text-xs text-rak-slate-200 font-medium">
+          <div className="flex items-center space-x-2">
+            <Zap className="w-4 h-4 text-rak-magenta shrink-0" />
+            <span><strong>Deliverable Output:</strong> {currentUnit.output}</span>
+          </div>
+          <span className="text-rak-magenta font-mono font-semibold">{currentUnit.downstreamSync}</span>
+        </div>
       </div>
-    </section>
+    </div>
   );
 };
 
