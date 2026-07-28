@@ -3,8 +3,7 @@ import { BrandLogo } from './BrandLogo';
 import { 
   Menu, 
   X, 
-  Sun, 
-  Moon, 
+  Globe, 
   ArrowUpRight, 
   Sparkles, 
   ChevronDown,
@@ -19,13 +18,12 @@ import {
 export const Navbar = ({ 
   activeTab, 
   setActiveTab, 
-  darkMode, 
-  setDarkMode, 
   onOpenProjectPlanner 
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdown, setServicesDropdown] = useState(false);
+  const [showArNotice, setShowArNotice] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -91,7 +89,7 @@ export const Navbar = ({
             className="flex items-center space-x-3 focus:outline-none"
             aria-label="RAK4Creative Home"
           >
-            <BrandLogo className="h-10 sm:h-12 w-auto" variant={darkMode ? 'default' : 'dark'} />
+            <BrandLogo className="h-10 sm:h-12 w-auto" variant="default" />
           </button>
 
           {/* Desktop Navigation Links */}
@@ -155,14 +153,52 @@ export const Navbar = ({
 
           {/* Right Action Cluster */}
           <div className="hidden lg:flex items-center space-x-3">
-            {/* Dark/Light Toggle */}
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2.5 rounded-full bg-rak-slate-900 light:bg-rak-slate-100 border border-rak-slate-800 light:border-rak-slate-200 text-rak-slate-300 light:text-rak-slate-700 hover:text-rak-magenta transition-colors"
-              aria-label="Toggle theme mode"
-            >
-              {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-rak-slate-700" />}
-            </button>
+            {/* AR Language Switcher Button (Coming Soon) */}
+            <div className="relative">
+              <button
+                onClick={() => setShowArNotice(!showArNotice)}
+                className="flex items-center space-x-2 px-3.5 py-2 rounded-full bg-rak-slate-900 border border-rak-slate-800 hover:border-rak-magenta/50 text-rak-slate-200 hover:text-white transition-all duration-300 group cursor-pointer shadow-sm"
+                aria-label="Switch to Arabic Language"
+                title="اللغة العربية (قريباً)"
+              >
+                <Globe className="w-4 h-4 text-rak-magenta group-hover:rotate-45 transition-transform duration-300" />
+                <span className="text-xs font-bold tracking-wider uppercase">AR</span>
+                <span className="text-[9px] font-bold px-1.5 py-0.5 bg-rak-magenta/20 text-rak-magenta border border-rak-magenta/30 rounded-full">
+                  قريباً
+                </span>
+              </button>
+
+              {/* Coming Soon Popover */}
+              {showArNotice && (
+                <div className="absolute right-0 mt-3 w-72 p-4 rounded-2xl bg-rak-slate-950/95 backdrop-blur-xl border border-rak-magenta/40 shadow-2xl shadow-rak-magenta/20 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="flex items-start space-x-3">
+                    <div className="p-2.5 rounded-xl bg-rak-magenta/20 border border-rak-magenta/40 text-rak-magenta shrink-0">
+                      <Globe className="w-5 h-5" />
+                    </div>
+                    <div className="space-y-1.5 flex-1">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-extrabold text-white uppercase tracking-wider">Arabic Version</span>
+                        <span className="text-[9px] font-black uppercase px-2 py-0.5 bg-rak-magenta text-white rounded-full">
+                          Coming Soon
+                        </span>
+                      </div>
+                      <p className="text-xs font-medium text-rak-slate-200 leading-relaxed text-right font-sans pt-1" dir="rtl">
+                        النسخة العربية الكاملة قيد التطوير وستتوفر قريباً!
+                      </p>
+                      <p className="text-[11px] text-rak-slate-400">
+                        Full Arabic language translation & localization is currently under development.
+                      </p>
+                    </div>
+                  </div>
+                  <button 
+                    onClick={() => setShowArNotice(false)}
+                    className="mt-3 w-full py-1.5 text-[11px] font-bold text-rak-slate-300 hover:text-white bg-rak-slate-900 hover:bg-rak-slate-800 border border-rak-slate-800 rounded-xl transition-colors cursor-pointer"
+                  >
+                    Dismiss / إغلاق
+                  </button>
+                </div>
+              )}
+            </div>
 
             {/* Primary Action Button */}
             <button
@@ -177,15 +213,39 @@ export const Navbar = ({
             </button>
           </div>
 
-          {/* Mobile Menu & Theme Controls */}
+          {/* Mobile Menu & Language Controls */}
           <div className="flex lg:hidden items-center space-x-2">
-            <button
-              onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full bg-rak-slate-900 light:bg-rak-slate-100 border border-rak-slate-800 text-rak-slate-300"
-              aria-label="Toggle theme"
-            >
-              {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-rak-slate-700" />}
-            </button>
+            <div className="relative">
+              <button
+                onClick={() => setShowArNotice(!showArNotice)}
+                className="flex items-center space-x-1 px-2.5 py-1.5 rounded-full bg-rak-slate-900 border border-rak-slate-800 text-rak-slate-200"
+                aria-label="Toggle language menu"
+              >
+                <Globe className="w-4 h-4 text-rak-magenta" />
+                <span className="text-xs font-bold">AR</span>
+              </button>
+
+              {/* Mobile Coming Soon Popover */}
+              {showArNotice && (
+                <div className="absolute right-0 mt-3 w-64 p-3.5 rounded-2xl bg-rak-slate-950/98 backdrop-blur-xl border border-rak-magenta/40 shadow-2xl z-50 animate-in fade-in duration-200">
+                  <div className="flex items-center justify-between mb-2">
+                    <span className="text-xs font-extrabold text-white uppercase">Arabic / العربية</span>
+                    <span className="text-[9px] font-black uppercase px-2 py-0.5 bg-rak-magenta text-white rounded-full">
+                      Coming Soon
+                    </span>
+                  </div>
+                  <p className="text-xs text-rak-slate-200 text-right mb-2" dir="rtl">
+                    النسخة العربية قيد التطوير وستتوفر قريباً!
+                  </p>
+                  <button 
+                    onClick={() => setShowArNotice(false)}
+                    className="w-full py-1 text-[10px] font-bold text-rak-slate-300 bg-rak-slate-900 border border-rak-slate-800 rounded-lg"
+                  >
+                    OK / حسناً
+                  </button>
+                </div>
+              )}
+            </div>
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}

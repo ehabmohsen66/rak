@@ -58,8 +58,6 @@ export function App() {
       <Navbar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
-        darkMode={darkMode}
-        setDarkMode={setDarkMode}
         onOpenProjectPlanner={() => setPlannerOpen(true)}
       />
 
