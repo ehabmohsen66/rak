@@ -41,7 +41,8 @@ const getPillarIcon = (iconName) => {
   }
 };
 
-export const HomePage = ({ setActiveTab, onSelectProject, onOpenPlanner }) => {
+export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, onOpenPlanner = () => {} }) => {
+
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {

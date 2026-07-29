@@ -13,7 +13,12 @@ import {
 } from 'lucide-react';
 import { OFFICES } from '../data/contentData';
 
-export const Footer = ({ setActiveTab, onOpenProjectPlanner }) => {
+export const Footer = ({ 
+  setActiveTab = () => {}, 
+  onOpenProjectPlanner = () => {}, 
+  onOpenPlanner = onOpenProjectPlanner 
+}) => {
+
   const [email, setEmail] = useState('');
   const [subscribed, setSubscribed] = useState(false);
 

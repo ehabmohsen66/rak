@@ -18,8 +18,10 @@ import {
 export const Navbar = ({ 
   activeTab, 
   setActiveTab, 
-  onOpenProjectPlanner 
+  onOpenProjectPlanner,
+  onOpenPlanner = onOpenProjectPlanner
 }) => {
+
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdown, setServicesDropdown] = useState(false);
