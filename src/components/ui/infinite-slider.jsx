@@ -49,8 +49,13 @@ export function InfiniteSlider({
       });
     }
 
-    return controls?.stop;
+    return () => {
+      if (controls && typeof controls.stop === 'function') {
+        controls.stop();
+      }
+    };
   }, [
+
     key,
     translation,
     currentDuration,

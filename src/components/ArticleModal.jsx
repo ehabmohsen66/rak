@@ -53,7 +53,7 @@ export const ArticleModal = ({ article, onClose }) => {
             <p className="text-base text-rak-slate-200 font-medium italic border-l-2 border-rak-magenta pl-4 py-1">
               {article.excerpt}
             </p>
-            <div dangerouslySetInnerHTML={{ __html: article.content.replace(/\n/g, '<br/>') }} />
+            <div dangerouslySetInnerHTML={{ __html: typeof article.content === 'string' ? article.content.replace(/\n/g, '<br/>') : '' }} />
           </div>
 
           <div className="pt-6 border-t border-rak-slate-800 flex items-center justify-between">

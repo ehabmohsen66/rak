@@ -93,10 +93,11 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setActiveNode((prev) => (prev + 1) % agencyUnits.length);
+      setActiveNode((prev) => (prev + 1) % 6);
     }, 4500);
     return () => clearInterval(timer);
-  }, [agencyUnits.length]);
+  }, []);
+
 
   const activeData = agencyUnits[activeNode];
   const IconComponent = activeData.icon;

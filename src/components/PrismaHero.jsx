@@ -2,10 +2,11 @@ import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 
 /* ---------------- WordsPullUp ---------------- */
-export const WordsPullUp = ({ text, className = "", showAsterisk = false, style }) => {
+export const WordsPullUp = ({ text = "", className = "", showAsterisk = false, style }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-  const words = text.split(" ");
+  const words = typeof text === 'string' ? text.split(" ") : [];
+
 
   return (
     <div ref={ref} className={`inline-flex flex-wrap ${className}`} style={style}>
