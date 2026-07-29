@@ -12,7 +12,7 @@ for (const file of files) {
   const tempPath = path.join(dir, `hd_${file}`);
 
   const metadata = await sharp(filePath).metadata();
-  const targetWidth = Math.max((metadata.width || 300) * 4, 1200);
+  const targetWidth = Math.min(Math.max((metadata.width || 300) * 4, 1200), 2000);
 
   await sharp(filePath)
     .resize({
