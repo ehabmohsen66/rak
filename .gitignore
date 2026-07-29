@@ -1,1 +1,15 @@
+node_modules
+dist
 .vercel
+.DS_Store
+*.log
+check-logo1.js
+create-logo-preview.js
+enhance-all-logos.js
+inspect-all-logos.js
+unmirror-logos.js
+flip-*.js
+fix-*.js
+check-*.js
+extract-*.js
+public/logo-preview.html

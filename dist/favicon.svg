@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
-  <rect width="100" height="100" rx="20" fill="#191C18"/>
-  <text x="18" y="60" font-family="'Syne', sans-serif" font-weight="800" font-size="44" fill="#3A3E39" letter-spacing="-2">R</text>
-  <text x="42" y="60" font-family="'Syne', sans-serif" font-weight="800" font-size="44" fill="#EC008C" letter-spacing="-2">A</text>
-  <text x="68" y="60" font-family="'Syne', sans-serif" font-weight="800" font-size="44" fill="#3A3E39" letter-spacing="-2">K</text>
-  <text x="42" y="82" font-family="'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="20" fill="#EC008C">4</text>
-</svg>
