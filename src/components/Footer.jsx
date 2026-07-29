@@ -180,8 +180,9 @@ export const Footer = ({
         {/* Bottom Legal & Copyright Bar */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-rak-slate-500">
           <div>
-            © {new Date().getFullYear()} RAK 4 CREATIVE. All Rights Reserved. Designed with UI UX Pro Max Standards.
+            © {new Date().getFullYear()} RAK 4 CREATIVE. All Rights Reserved.
           </div>
+
           <div className="flex items-center space-x-6">
             <span className="hover:text-rak-slate-300 cursor-pointer transition-colors">Privacy Policy</span>
             <span className="hover:text-rak-slate-300 cursor-pointer transition-colors">Terms of Engagement</span>
