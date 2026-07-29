@@ -189,14 +189,14 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
             {BRAND_INFO.clients.map((client, i) => (
               <div 
                 key={i} 
-                className="px-6 py-4 bg-white rounded-2xl shadow-xl hover:scale-105 transition-all cursor-pointer shrink-0 flex items-center justify-center h-20 w-44 overflow-hidden border border-white/20"
+                className="px-6 py-4 bg-white rounded-2xl shadow-xl hover:scale-105 transition-all cursor-pointer shrink-0 flex items-center justify-center h-24 w-52 overflow-hidden border border-white/20"
               >
                 {client.image && (
                   <img 
                     src={client.image} 
                     alt={client.name} 
-                    className="max-h-14 max-w-[140px] object-contain transition-all filter drop-shadow-sm"
-                    style={{ imageRendering: '-webkit-optimize-contrast' }}
+                    className="max-h-16 max-w-[160px] object-contain transition-all filter drop-shadow-sm"
+                    style={{ imageRendering: 'high-quality' }}
                     onError={(e) => {
                       e.currentTarget.style.display = 'none';
                       const sibling = e.currentTarget.nextElementSibling;
@@ -212,6 +212,7 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                 </span>
               </div>
             ))}
+
 
           </InfiniteSlider>
         </div>
