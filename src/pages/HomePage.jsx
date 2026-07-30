@@ -304,20 +304,6 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
         </div>
       </section>
 
-      {/* ANIMATED WORLD CUP BANNER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <AnimatedBanner 
-          title="World Cup 2026"
-          subtitle="Live odds for the winner, golden boot, groups, and every match."
-          ctaLabel="Explore odds"
-          href="/work"
-          onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          posterSrc="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop"
-          videoSrc="https://assets.mixkit.co/videos/preview/mixkit-stadium-lights-and-fans-cheering-41551-large.mp4"
-          deadline={SPRINT_DEADLINE}
-        />
-      </section>
-
       {/* 4. RAK4 CREATIONS SHOWCASE */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
