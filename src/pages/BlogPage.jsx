@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import { Sparkles, Search, Clock, ArrowUpRight, BookOpen } from 'lucide-react';
 import { BLOG_POSTS } from '../data/contentData';
+import { BlogHeroSpline } from '../components/BlogHeroSpline';
 
 export const BlogPage = ({ onSelectArticle }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
+  const articlesRef = useRef(null);
 
   const categories = ['All', 'Design Architecture', 'Growth & CRO', 'Engineering'];
 
@@ -17,55 +19,44 @@ export const BlogPage = ({ onSelectArticle }) => {
 
   const featuredPost = BLOG_POSTS.find(p => p.featured) || BLOG_POSTS[0];
 
+  const handleScrollToArticles = () => {
+    articlesRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
   return (
-    <div className="pt-24 pb-16 space-y-16">
+    <div className="pb-16 space-y-16">
       
-      {/* BLOG HERO HEADER */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl border border-rak-slate-800 bg-rak-slate-950 p-8 sm:p-14 overflow-hidden shadow-2xl space-y-8">
-          <div className="space-y-6 text-left relative z-10 max-w-3xl">
-            <span className="inline-flex items-center space-x-2 px-4 py-1.5 bg-rak-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
-              <Sparkles className="w-3.5 h-3.5 text-rak-magenta" />
-              <span>Executive Editorial & Insights</span>
-            </span>
+      {/* 3D SPLINE HERO */}
+      <BlogHeroSpline onExploreClick={handleScrollToArticles} />
 
-            <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight uppercase leading-tight">
-              Thought Leadership in <span className="text-gradient-magenta">Design & Tech.</span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-rak-slate-300 leading-relaxed font-normal">
-              In-depth architectural analysis, CRO conversion playbooks, and front-end performance strategies written by our senior directors.
-            </p>
+      {/* SEARCH & CATEGORY FILTERS */}
+      <section ref={articlesRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
+        <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 p-6 bg-rak-slate-950 border border-rak-slate-800 rounded-3xl shadow-xl">
+          <div className="relative w-full md:w-96">
+            <Search className="w-4 h-4 text-rak-slate-500 absolute left-4 top-3.5" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search executive articles..."
+              className="w-full pl-11 pr-4 py-3 text-xs bg-rak-slate-900/90 border border-rak-slate-700/80 rounded-full text-white placeholder-rak-slate-500 focus:outline-none focus:border-rak-magenta backdrop-blur-md"
+            />
           </div>
 
-          {/* Search & Category Filter */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 pt-4 border-t border-rak-slate-800/80 relative z-10">
-            <div className="relative w-full sm:w-80">
-              <Search className="w-4 h-4 text-rak-slate-500 absolute left-4 top-3.5" />
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search executive articles..."
-                className="w-full pl-11 pr-4 py-3 text-xs bg-rak-slate-900/90 border border-rak-slate-700/80 rounded-full text-white placeholder-rak-slate-500 focus:outline-none focus:border-rak-magenta backdrop-blur-md"
-              />
-            </div>
-
-            <div className="flex flex-wrap gap-2">
-              {categories.map((cat) => (
-                <button
-                  key={cat}
-                  onClick={() => setSelectedCategory(cat)}
-                  className={`px-4 py-2 text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 cursor-pointer ${
-                    selectedCategory === cat
-                      ? 'bg-rak-magenta text-white shadow-magenta-glow scale-105'
-                      : 'bg-rak-slate-900/90 border border-rak-slate-800 text-rak-slate-300 hover:border-rak-magenta/40 hover:text-white'
-                  }`}
-                >
-                  {cat}
-                </button>
-              ))}
-            </div>
+          <div className="flex flex-wrap gap-2">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setSelectedCategory(cat)}
+                className={`px-4 py-2 text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 cursor-pointer ${
+                  selectedCategory === cat
+                    ? 'bg-rak-magenta text-white shadow-magenta-glow scale-105'
+                    : 'bg-rak-slate-900/90 border border-rak-slate-800 text-rak-slate-300 hover:border-rak-magenta/40 hover:text-white'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
           </div>
         </div>
       </section>
