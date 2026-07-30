@@ -62,22 +62,6 @@ function HeroSplineBackground() {
   );
 }
 
-function ScreenshotSection({ screenshotRef }) {
-  return (
-    <section className="relative z-10 container mx-auto px-4 md:px-6 lg:px-8 mt-11 md:mt-12">
-      <div ref={screenshotRef} className="bg-rak-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-rak-slate-700/50 w-full md:w-[85%] lg:w-[75%] mx-auto transition-transform duration-75">
-        <div>
-          <img
-            src="https://cdn.sanity.io/images/s6lu43cv/production-v4/13b6177b537aee0fc311a867ea938f16416e8670-3840x2160.jpg?w=3840&h=2160&q=10&auto=format&fm=jpg"
-            alt="App Screenshot"
-            className="w-full h-auto block rounded-xl mx-auto"
-          />
-        </div>
-      </div>
-    </section>
-  );
-}
-
 function HeroContent({ onExploreClick }) {
   return (
     <div className="text-left text-white pt-24 sm:pt-32 md:pt-36 px-4 md:px-8 max-w-4xl">
@@ -109,18 +93,13 @@ function HeroContent({ onExploreClick }) {
 }
 
 export function BlogHeroSpline({ onExploreClick }) {
-  const screenshotRef = useRef(null);
   const heroContentRef = useRef(null);
 
   useEffect(() => {
     const handleScroll = () => {
-      if (screenshotRef.current && heroContentRef.current) {
+      if (heroContentRef.current) {
         requestAnimationFrame(() => {
           const scrollPosition = window.pageYOffset;
-          if (screenshotRef.current) {
-            screenshotRef.current.style.transform = `translateY(-${scrollPosition * 0.3}px)`;
-          }
-
           const maxScroll = 500;
           const opacity = 1 - Math.min(scrollPosition / maxScroll, 1);
           if (heroContentRef.current) {
@@ -135,7 +114,7 @@ export function BlogHeroSpline({ onExploreClick }) {
 
   return (
     <div className="relative overflow-hidden">
-      <div className="relative min-h-[90vh] sm:min-h-screen">
+      <div className="relative min-h-[80vh] sm:min-h-[85vh]">
         <div className="absolute inset-0 z-0 pointer-events-auto">
           <HeroSplineBackground />
         </div>
@@ -151,10 +130,6 @@ export function BlogHeroSpline({ onExploreClick }) {
             <HeroContent onExploreClick={onExploreClick} />
           </div>
         </div>
-      </div>
-
-      <div className="bg-rak-slate-950 relative z-10 -mt-16 sm:-mt-24 pb-12">
-        <ScreenshotSection screenshotRef={screenshotRef} />
       </div>
     </div>
   );
