@@ -138,12 +138,13 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                   </span>
                 </button>
 
-                <button
-                  onClick={() => { setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                <a
+                  href="/work"
+                  onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                   className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-rak-slate-200 hover:text-white bg-rak-slate-900/80 hover:bg-rak-slate-800 border border-rak-slate-700/80 rounded-full backdrop-blur-md transition-all hover:scale-105"
                 >
                   <span>Explore RAK4 Creations</span>
-                </button>
+                </a>
               </motion.div>
 
               {/* Metrics Bar */}
@@ -231,13 +232,14 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
               One Stop For Every Stage of The Work.
             </h2>
           </div>
-          <button
-            onClick={() => { setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          <a
+            href="/services"
+            onClick={(e) => { e.preventDefault(); setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-rak-magenta hover:text-white transition-colors"
           >
             <span>View All 8 Pillars</span>
             <ArrowUpRight className="w-4 h-4" />
-          </button>
+          </a>
         </div>
 
         {/* Bento Grid Layout with Rich Icon Visuals & Watermarks */}
@@ -246,9 +248,10 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
             const isLarge = index === 0 || index === 2;
             const IconComp = getPillarIcon(s.icon);
             return (
-              <div 
+              <a 
                 key={s.id}
-                onClick={() => { setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                href={`/services#${s.id}`}
+                onClick={(e) => { e.preventDefault(); setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 className={`group relative p-8 sm:p-9 rounded-3xl bg-rak-slate-900/80 border border-rak-slate-800/80 hover:border-rak-magenta/60 hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between backdrop-blur-xl hover:shadow-magenta-glow ${
                   isLarge ? 'md:col-span-8' : 'md:col-span-4'
                 }`}
@@ -291,7 +294,7 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                     </span>
                   ))}
                 </div>
-              </div>
+              </a>
             );
           })}
         </div>
@@ -306,13 +309,14 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
               The RAK4 Creations.
             </h2>
           </div>
-          <button
-            onClick={() => { setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          <a
+            href="/work"
+            onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-rak-magenta hover:text-white transition-colors"
           >
             <span>Explore Work Archive</span>
             <ArrowUpRight className="w-4 h-4" />
-          </button>
+          </a>
         </div>
 
         {/* Featured Project Cards */}

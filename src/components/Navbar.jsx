@@ -61,7 +61,8 @@ export const Navbar = ({
     { name: 'Branding & OOH', id: 'branding' }
   ];
 
-  const handlePillarSelect = (pillarId) => {
+  const handlePillarSelect = (pillarId, e) => {
+    if (e && e.preventDefault) e.preventDefault();
     setActiveTab('services');
     setServicesDropdown(false);
     setTimeout(() => {
@@ -86,18 +87,24 @@ export const Navbar = ({
         <div className="flex items-center justify-between gap-4 xl:gap-8">
           
           {/* Brand Logo */}
-          <button 
-            onClick={() => { setActiveTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          <a 
+            href="/"
+            onClick={(e) => {
+              e.preventDefault();
+              setActiveTab('home');
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }}
             className="flex items-center space-x-3 focus:outline-none shrink-0"
             aria-label="RAK4Creative Home"
           >
             <BrandLogo className="h-9 sm:h-11 w-auto" variant="default" />
-          </button>
+          </a>
 
           {/* Desktop Navigation Links */}
           <nav className="hidden xl:flex items-center space-x-1 bg-rak-slate-900/60 light:bg-rak-slate-100/80 p-1.5 rounded-full border border-rak-slate-800/80 light:border-rak-slate-200 backdrop-blur-md shrink-0">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
+              const path = item.id === 'home' ? '/' : `/${item.id}`;
               return (
                 <div 
                   key={item.id} 
@@ -105,8 +112,10 @@ export const Navbar = ({
                   onMouseEnter={() => item.hasDropdown && setServicesDropdown(true)}
                   onMouseLeave={() => item.hasDropdown && setServicesDropdown(false)}
                 >
-                  <button
-                    onClick={() => {
+                  <a
+                    href={path}
+                    onClick={(e) => {
+                      e.preventDefault();
                       setActiveTab(item.id);
                       window.scrollTo({ top: 0, behavior: 'smooth' });
                     }}
@@ -123,7 +132,7 @@ export const Navbar = ({
                       </span>
                     )}
                     {item.hasDropdown && <ChevronDown className="w-3 h-3 opacity-70 group-hover:rotate-180 transition-transform" />}
-                  </button>
+                  </a>
 
                   {/* Pillars Mega Dropdown Preview */}
                   {item.hasDropdown && servicesDropdown && (
@@ -135,14 +144,15 @@ export const Navbar = ({
                         </div>
                         <div className="space-y-0.5 pt-1">
                           {pillarsList.map((p) => (
-                            <button 
+                            <a 
                               key={p.id}
-                              onClick={() => handlePillarSelect(p.id)}
+                              href={`/services#${p.id}`}
+                              onClick={(e) => handlePillarSelect(p.id, e)}
                               className="w-full text-left px-3 py-2 text-xs font-medium text-rak-slate-200 light:text-rak-slate-800 hover:bg-rak-magenta/15 hover:text-rak-magenta rounded-xl transition-all flex items-center justify-between group/sub cursor-pointer"
                             >
                               <span>{p.name}</span>
                               <ArrowUpRight className="w-3.5 h-3.5 text-rak-magenta opacity-0 group-hover/sub:opacity-100 transition-opacity" />
-                            </button>
+                            </a>
                           ))}
                         </div>
                       </div>
@@ -268,10 +278,13 @@ export const Navbar = ({
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
+              const path = item.id === 'home' ? '/' : `/${item.id}`;
               return (
-                <button
+                <a
                   key={item.id}
-                  onClick={() => {
+                  href={path}
+                  onClick={(e) => {
+                    e.preventDefault();
                     setActiveTab(item.id);
                     setMobileMenuOpen(false);
                     window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -291,7 +304,7 @@ export const Navbar = ({
                       {item.badge}
                     </span>
                   )}
-                </button>
+                </a>
               );
             })}
 

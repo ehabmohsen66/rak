@@ -63,12 +63,13 @@ export const Footer = ({
                 <ArrowUpRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </button>
               
-              <button
-                onClick={() => { setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              <a
+                href="/work"
+                onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                 className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-rak-slate-300 hover:text-white bg-rak-slate-800/80 hover:bg-rak-slate-800 border border-rak-slate-700/80 rounded-full transition-all"
               >
                 <span>Explore Client Portfolio</span>
-              </button>
+              </a>
             </div>
           </div>
         </div>
@@ -78,7 +79,13 @@ export const Footer = ({
           
           {/* Brand Identity Column */}
           <div className="lg:col-span-4 space-y-6">
-            <BrandLogo className="h-11 sm:h-12 w-auto" variant="default" />
+            <a 
+              href="/"
+              onClick={(e) => { e.preventDefault(); setActiveTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+              className="inline-block"
+            >
+              <BrandLogo className="h-11 sm:h-12 w-auto" variant="default" />
+            </a>
             <p className="text-xs text-rak-slate-400 leading-relaxed max-w-sm">
               RAK 4 CREATIVE is a premier global brand identity and digital product engineering agency. We turn enterprise vision into award-winning market dominance.
             </p>
@@ -102,12 +109,13 @@ export const Footer = ({
             <ul className="space-y-2.5 text-xs">
               {['home', 'about', 'services', 'work', 'case-studies', 'careers', 'blog', 'contact'].map((tab) => (
                 <li key={tab}>
-                  <button
-                    onClick={() => { setActiveTab(tab); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                  <a
+                    href={tab === 'home' ? '/' : `/${tab}`}
+                    onClick={(e) => { e.preventDefault(); setActiveTab(tab); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
                     className="hover:text-rak-magenta transition-colors capitalize text-rak-slate-400 hover:translate-x-1 inline-block duration-200"
                   >
                     {tab.replace('-', ' ')}
-                  </button>
+                  </a>
                 </li>
               ))}
             </ul>

@@ -15,9 +15,72 @@ import CareersPage from './pages/CareersPage';
 import BlogPage from './pages/BlogPage';
 import ContactPage from './pages/ContactPage';
 
+const TAB_TO_PATH = {
+  home: '/',
+  about: '/about',
+  services: '/services',
+  work: '/work',
+  'case-studies': '/case-studies',
+  careers: '/careers',
+  blog: '/blog',
+  contact: '/contact'
+};
+
+const PATH_TO_TAB = {
+  '/': 'home',
+  '/home': 'home',
+  '/about': 'about',
+  '/services': 'services',
+  '/work': 'work',
+  '/case-studies': 'case-studies',
+  '/careers': 'careers',
+  '/blog': 'blog',
+  '/contact': 'contact'
+};
+
+const getTabFromLocation = () => {
+  const pathname = window.location.pathname.replace(/\/$/, '') || '/';
+  const cleanPath = pathname.toLowerCase();
+  return PATH_TO_TAB[cleanPath] || 'home';
+};
+
 export function App() {
-  const [activeTab, setActiveTab] = useState('home');
+  const [activeTab, setActiveTabState] = useState(() => getTabFromLocation());
   const [darkMode, setDarkMode] = useState(true);
+
+  const setActiveTab = (tabId, replace = false) => {
+    const targetPath = TAB_TO_PATH[tabId] || '/';
+    const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+    
+    if (currentPath !== targetPath) {
+      if (replace) {
+        window.history.replaceState({ tab: tabId }, '', targetPath);
+      } else {
+        window.history.pushState({ tab: tabId }, '', targetPath);
+      }
+    }
+    
+    setActiveTabState(tabId);
+  };
+
+  useEffect(() => {
+    const handlePopState = () => {
+      const tab = getTabFromLocation();
+      setActiveTabState(tab);
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  // Sync initial URL if needed (e.g., normalize /home or invalid path)
+  useEffect(() => {
+    const initialTab = getTabFromLocation();
+    const targetPath = TAB_TO_PATH[initialTab] || '/';
+    if (window.location.pathname !== targetPath && window.location.pathname !== '/home') {
+      window.history.replaceState({ tab: initialTab }, '', targetPath);
+    }
+  }, []);
 
   // Modals state
   const [selectedProject, setSelectedProject] = useState(null);
