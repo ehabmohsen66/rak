@@ -21,6 +21,7 @@ export const BRAND_INFO = {
     { value: "99.4%", label: "Client Partner Retention", change: "Long-Term Collaboration" }
   ],
   clients: [
+    { name: "FIFA World Cup Partner", logo: "WORLD CUP", image: "/client-logos/logo_1.jpg" },
     { name: "Client Partner 1", logo: "CLIENT 1", image: "/client-logos/logo_2.jpg" },
     { name: "Client Partner 2", logo: "CLIENT 2", image: "/client-logos/logo_3.jpg" },
     { name: "Client Partner 3", logo: "CLIENT 3", image: "/client-logos/logo_4.jpg" },
