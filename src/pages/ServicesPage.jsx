@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, CheckCircle2, ArrowUpRight, Layers, Compass, BarChart3, Share2, Code, Search, Target, Video } from 'lucide-react';
-import { PILLARS, BRAND_INFO } from '../data/contentData';
+import { MinimalistHero } from '../components/MinimalistHero';
 
 export const ServicesPage = ({ onOpenPlanner }) => {
   const [activeCategory, setActiveCategory] = useState('All');
@@ -25,25 +25,29 @@ export const ServicesPage = ({ onOpenPlanner }) => {
   };
 
   return (
-    <div className="pt-24 pb-16 space-y-20 sm:space-y-28">
+    <div className="pt-16 pb-16 space-y-16 sm:space-y-24">
       
-      {/* HERO SECTION */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center max-w-4xl">
+      {/* MINIMALIST HERO FOR PILLARS SECTION */}
+      <MinimalistHero 
+        logoText="8 PILLARS OF CAPABILITY"
+        overlayText={{
+          part1: "8 CORE",
+          part2: "PILLARS"
+        }}
+        mainText="One stop for every stage of the work. From ideation and strategy to execution, monitoring, and enterprise evaluation."
+        readMoreLink="#digital-consultancy"
+        locationText="Global Capabilities • 8 Specialized Units"
+        onOpenPlanner={onOpenPlanner}
+      />
+
+      {/* Category Filters */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center max-w-4xl pt-4">
         <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest">
           <Sparkles className="w-3.5 h-3.5" />
-          <span>Our 8 Pillars of Capability</span>
+          <span>Explore Pillars By Domain</span>
         </span>
-        
-        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight">
-          One Stop For Every Stage of <span className="text-gradient-magenta">The Work.</span>
-        </h1>
-        
-        <p className="text-base sm:text-lg text-rak-slate-300 leading-relaxed font-normal">
-          {BRAND_INFO.whatWeDo} From ideation and strategy to execution, monitoring, and evaluation.
-        </p>
 
-        {/* Category Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
+        <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
           {categories.map((cat) => (
             <button
               key={cat}
