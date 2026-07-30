@@ -304,16 +304,18 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
         </div>
       </section>
 
-      {/* 3.5 ANIMATED ENTERPRISE SPRINT BANNER */}
+      {/* ANIMATED WORLD CUP BANNER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <AnimatedBanner 
-          title="Q3 Enterprise Acceleration Sprint"
-          subtitle="Partner with RAK 4 Creative to engineer your brand's high-conversion web platform & digital architecture. Limited intake remaining."
-          ctaLabel="Initiate Project Brief"
-          href="/contact"
-          onClick={() => onOpenPlanner()}
+          title="World Cup 2026"
+          subtitle="Live odds for the winner, golden boot, groups, and every match."
+          ctaLabel="Explore odds"
+          href="/work"
+          onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+          posterSrc="/client-logos/logo_1.jpg"
+          videoSrc="https://assets.mixkit.co/videos/preview/mixkit-stadium-lights-and-fans-cheering-41551-large.mp4"
           deadline={SPRINT_DEADLINE}
-          overlayColor="#090d16"
+          overlayColor="oklch(0.15 0 0)"
         />
       </section>
 
