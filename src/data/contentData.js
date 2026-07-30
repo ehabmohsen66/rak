@@ -307,6 +307,25 @@ export const RAK4_CREATIONS = [
     image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
     tags: ["Digital Strategy", "Web", "Search Marketing"],
     featured: true
+  },
+  {
+    id: "neura-pharma",
+    title: "Neura Bioscience Global",
+    client: "Neura Health Switzerland",
+    industry: "Biotech & Pharma",
+    category: "Branding & Web",
+    year: "2026",
+    summary: "360° global brand relaunch and interactive molecular visualization platform.",
+    challenge: "Translating complex clinical trial telemetry into a compelling brand story for global stakeholders.",
+    solution: "Engineered real-time 3D molecular shaders, multi-language portal routing, and omnichannel campaign assets.",
+    results: [
+      { metric: "+340%", label: "Stakeholder Engagement" },
+      { metric: "14", label: "Global Markets Launched" },
+      { metric: "99.8%", label: "Clinical Portal Uptime" }
+    ],
+    image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=1200&auto=format&fit=crop",
+    tags: ["3D WebGL", "Brand Identity", "Omnichannel"],
+    featured: true
   }
 ];
 
