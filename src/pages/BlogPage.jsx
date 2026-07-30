@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { Sparkles, Search, Clock, ArrowUpRight, BookOpen } from 'lucide-react';
+import { Sparkles, Search, Clock, ArrowUpRight, BookOpen, Bot } from 'lucide-react';
 import { BLOG_POSTS } from '../data/contentData';
+import { InteractiveRobotSpline } from '../components/InteractiveRobotSpline';
 
 export const BlogPage = ({ onSelectArticle }) => {
   const [searchQuery, setSearchQuery] = useState('');
@@ -20,46 +21,62 @@ export const BlogPage = ({ onSelectArticle }) => {
   return (
     <div className="pt-24 pb-16 space-y-16">
       
-      {/* HERO */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center max-w-4xl">
-        <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Executive Editorial & Insights</span>
-        </span>
-        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight">
-          Thought Leadership in <span className="text-gradient-magenta">Design & Technology.</span>
-        </h1>
-        <p className="text-base sm:text-lg text-rak-slate-300 leading-relaxed font-normal">
-          In-depth architectural analysis, CRO conversion playbooks, and front-end performance strategies written by our senior directors.
-        </p>
+      {/* 3D SPLINE HERO */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="relative rounded-3xl border border-rak-slate-800 bg-rak-slate-950 p-8 sm:p-12 overflow-hidden shadow-2xl">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+            
+            {/* Text & Filter Controls */}
+            <div className="lg:col-span-7 space-y-6 text-left relative z-10">
+              <span className="inline-flex items-center space-x-2 px-4 py-1.5 bg-rak-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
+                <Sparkles className="w-3.5 h-3.5 text-rak-magenta" />
+                <span>Executive Editorial & Insights</span>
+              </span>
 
-        {/* Search & Category Filter */}
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 max-w-2xl mx-auto pt-4">
-          <div className="relative w-full">
-            <Search className="w-4 h-4 text-rak-slate-500 absolute left-3.5 top-3.5" />
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search executive articles..."
-              className="w-full pl-10 pr-4 py-2.5 text-xs bg-rak-slate-900 border border-rak-slate-800 rounded-full text-white placeholder-rak-slate-500 focus:outline-none focus:border-rak-magenta"
-            />
-          </div>
+              <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight uppercase leading-tight">
+                Thought Leadership in <span className="text-gradient-magenta">Design & Tech.</span>
+              </h1>
 
-          <div className="flex flex-wrap gap-1.5 shrink-0">
-            {categories.map((cat) => (
-              <button
-                key={cat}
-                onClick={() => setSelectedCategory(cat)}
-                className={`px-3 py-1.5 text-[11px] font-bold uppercase tracking-wider rounded-full transition-all ${
-                  selectedCategory === cat
-                    ? 'bg-rak-magenta text-white shadow-magenta-sm'
-                    : 'bg-rak-slate-900 border border-rak-slate-800 text-rak-slate-300'
-                }`}
-              >
-                {cat}
-              </button>
-            ))}
+              <p className="text-base sm:text-lg text-rak-slate-300 leading-relaxed font-normal max-w-xl">
+                In-depth architectural analysis, CRO conversion playbooks, and front-end performance strategies written by our senior directors.
+              </p>
+
+              {/* Search & Category Filter */}
+              <div className="space-y-4 pt-2">
+                <div className="relative max-w-md">
+                  <Search className="w-4 h-4 text-rak-slate-500 absolute left-4 top-3.5" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search executive articles..."
+                    className="w-full pl-11 pr-4 py-3 text-xs bg-rak-slate-900/90 border border-rak-slate-700/80 rounded-full text-white placeholder-rak-slate-500 focus:outline-none focus:border-rak-magenta backdrop-blur-md"
+                  />
+                </div>
+
+                <div className="flex flex-wrap gap-2 pt-1">
+                  {categories.map((cat) => (
+                    <button
+                      key={cat}
+                      onClick={() => setSelectedCategory(cat)}
+                      className={`px-4 py-2 text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 cursor-pointer ${
+                        selectedCategory === cat
+                          ? 'bg-rak-magenta text-white shadow-magenta-glow scale-105'
+                          : 'bg-rak-slate-900/90 border border-rak-slate-800 text-rak-slate-300 hover:border-rak-magenta/40 hover:text-white'
+                      }`}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            {/* 3D Interactive Spline Canvas */}
+            <div className="lg:col-span-5 h-[340px] sm:h-[420px] rounded-2xl overflow-hidden bg-rak-slate-900/60 border border-rak-slate-800 relative z-10 shadow-2xl">
+              <InteractiveRobotSpline className="w-full h-full" />
+            </div>
+
           </div>
         </div>
       </section>
