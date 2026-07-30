@@ -74,7 +74,10 @@ export const BlogPage = ({ onSelectArticle }) => {
 
             {/* 3D Interactive Spline Canvas */}
             <div className="lg:col-span-5 h-[340px] sm:h-[420px] rounded-2xl overflow-hidden bg-rak-slate-900/60 border border-rak-slate-800 relative z-10 shadow-2xl">
-              <InteractiveRobotSpline className="w-full h-full" />
+              <InteractiveRobotSpline 
+                scene="https://prod.spline.design/6Wq1Q7YGyM-mab6X/scene.splinecode"
+                className="w-full h-full" 
+              />
             </div>
 
           </div>
