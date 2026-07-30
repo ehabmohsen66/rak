@@ -20,12 +20,15 @@ import {
   Target,
   Radio
 } from 'lucide-react';
-import { motion } from 'framer-motion';
 import { BRAND_INFO, SERVICES, PROJECTS, TESTIMONIALS, PILLARS } from '../data/contentData';
 import { AgencyOrchestrationMatrix } from '../components/AgencyOrchestrationMatrix';
 import { HeroAgencyOrchestrationCard } from '../components/HeroAgencyOrchestrationCard';
 import { SmallHeroOrchestration } from '../components/SmallHeroOrchestration';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
+import { AnimatedBanner } from '../components/AnimatedBanner';
+
+// Calculate deadline 7 days from current date
+const SPRINT_DEADLINE = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
 const getPillarIcon = (iconName) => {
   switch (iconName) {
@@ -298,6 +301,19 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
             );
           })}
         </div>
+      </section>
+
+      {/* 3.5 ANIMATED ENTERPRISE SPRINT BANNER */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <AnimatedBanner 
+          title="Q3 Enterprise Acceleration Sprint"
+          subtitle="Partner with RAK 4 Creative to engineer your brand's high-conversion web platform & digital architecture. Limited intake remaining."
+          ctaLabel="Initiate Project Brief"
+          href="/contact"
+          onClick={() => onOpenPlanner()}
+          deadline={SPRINT_DEADLINE}
+          overlayColor="#090d16"
+        />
       </section>
 
       {/* 4. RAK4 CREATIONS SHOWCASE */}
