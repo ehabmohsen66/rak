@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Sparkles, CheckCircle2, ArrowUpRight, Layers, Compass, BarChart3, Share2, Code, Search, Target, Video } from 'lucide-react';
-import { MinimalistHero } from '../components/MinimalistHero';
+import { GLSLHills } from '../components/GLSLHills';
 import { PILLARS, BRAND_INFO } from '../data/contentData';
 
 export const ServicesPage = ({ onOpenPlanner }) => {
@@ -28,41 +28,70 @@ export const ServicesPage = ({ onOpenPlanner }) => {
   return (
     <div className="pt-16 pb-16 space-y-16 sm:space-y-24">
       
-      {/* MINIMALIST HERO FOR PILLARS SECTION */}
-      <MinimalistHero 
-        logoText="8 PILLARS OF CAPABILITY"
-        overlayText={{
-          part1: "8 CORE",
-          part2: "PILLARS"
-        }}
-        mainText="One stop for every stage of the work. From ideation and strategy to execution, monitoring, and enterprise evaluation."
-        readMoreLink="#digital-consultancy"
-        locationText="Global Capabilities • 8 Specialized Units"
-        onOpenPlanner={onOpenPlanner}
-      />
-
-      {/* Category Filters */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center max-w-4xl pt-4">
-        <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Explore Pillars By Domain</span>
-        </span>
-
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setActiveCategory(cat)}
-              className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all ${
-                activeCategory === cat
-                  ? 'bg-rak-magenta text-white shadow-magenta-sm'
-                  : 'bg-rak-slate-900 border border-rak-slate-800 text-rak-slate-300 hover:border-rak-slate-700'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+      {/* 3D GLSL HILLS HERO SECTION FOR PILLARS */}
+      <section className="relative w-full min-h-[75vh] md:min-h-[85vh] bg-rak-slate-950 flex flex-col items-center justify-center overflow-hidden border-b border-rak-slate-800/80">
+        
+        {/* Realtime 3D GLSL Hills Canvas Background */}
+        <div className="absolute inset-0 z-0">
+          <GLSLHills width="100%" height="100%" speed={0.4} colorRgb={[0.9, 0.0, 0.49]} />
         </div>
+
+        {/* Gradient Fade Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/70 via-transparent to-rak-slate-950 z-1 pointer-events-none" />
+
+        {/* Main Content Area */}
+        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8 py-16">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-rak-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
+            <Sparkles className="w-4 h-4" />
+            <span>8 Pillars of Capability</span>
+          </div>
+
+          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-white uppercase tracking-tight leading-none" style={{ fontFamily: '"Arial Black", Impact, sans-serif' }}>
+            <span className="text-rak-magenta">8 CORE</span> PILLARS
+          </h1>
+
+          <p className="text-base sm:text-xl text-rak-slate-200 max-w-2xl mx-auto leading-relaxed font-normal">
+            One stop for every stage of the work. From ideation and strategy to execution, performance monitoring, and enterprise evaluation.
+          </p>
+
+          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+            <button
+              onClick={onOpenPlanner}
+              className="px-8 py-4 bg-rak-magenta hover:bg-rak-magenta-dark text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-magenta-glow transition-all flex items-center space-x-2 hover:scale-105 cursor-pointer"
+            >
+              <span>Initiate Project Brief</span>
+              <ArrowUpRight className="w-4 h-4" />
+            </button>
+
+            <a
+              href="#digital-consultancy"
+              className="px-8 py-4 bg-rak-slate-900/90 hover:bg-rak-slate-800 text-rak-slate-200 hover:text-white border border-rak-slate-700/80 text-xs font-bold uppercase tracking-wider rounded-full backdrop-blur-md transition-all hover:scale-105"
+            >
+              <span>Explore Capability Units</span>
+            </a>
+          </div>
+
+          {/* Domain Category Filter Pills */}
+          <div className="pt-8 border-t border-rak-slate-800/80">
+            <p className="text-[11px] font-bold uppercase tracking-widest text-rak-slate-400 mb-4">Filter Capabilities by Domain</p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              {categories.map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => setActiveCategory(cat)}
+                  className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer ${
+                    activeCategory === cat
+                      ? 'bg-rak-magenta text-white shadow-magenta-sm scale-105'
+                      : 'bg-rak-slate-900/90 border border-rak-slate-800 text-rak-slate-300 hover:border-rak-magenta/40 hover:text-white backdrop-blur-md'
+                  }`}
+                >
+                  {cat}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
       </section>
 
       {/* PILLARS LIST SHOWCASE */}
