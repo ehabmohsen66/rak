@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Sparkles, ArrowUpRight, Globe, Layers, MapPin } from 'lucide-react';
 import { RAK4_CREATIONS, BRAND_INFO } from '../data/contentData';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
+import { WebGLShader } from '../components/WebGLShader';
 
 export const WorkPage = ({ onSelectProject }) => {
   const [filter, setFilter] = useState('All');
@@ -15,36 +16,43 @@ export const WorkPage = ({ onSelectProject }) => {
   return (
     <div className="pt-24 pb-16 space-y-16">
       
-      {/* HERO */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center max-w-4xl">
-        <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>Portfolio Archive</span>
-        </span>
+      {/* 3D GLSL WEBGL HERO */}
+      <section className="relative min-h-[60vh] sm:min-h-[70vh] flex flex-col justify-center items-center overflow-hidden rounded-3xl border border-rak-slate-800 bg-rak-slate-950 p-8 sm:p-16 max-w-7xl mx-auto shadow-2xl">
+        <WebGLShader className="opacity-90" />
         
-        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight">
-          The <span className="text-gradient-magenta">RAK4 Creations.</span>
-        </h1>
-        
-        <p className="text-base sm:text-lg text-rak-slate-300 leading-relaxed font-normal">
-          From ground zero to new heights. Explore how we create big ideas and execute online and offline presence that makes a real impact.
-        </p>
+        {/* Ambient Dark Overlay */}
+        <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-rak-slate-950/60 to-transparent pointer-events-none z-10" />
 
-        {/* Filters */}
-        <div className="flex flex-wrap items-center justify-center gap-2 pt-4">
-          {categories.map((cat) => (
-            <button
-              key={cat}
-              onClick={() => setFilter(cat)}
-              className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all ${
-                filter === cat 
-                  ? 'bg-rak-magenta text-white shadow-magenta-sm' 
-                  : 'bg-rak-slate-900 border border-rak-slate-800 text-rak-slate-300 hover:border-rak-slate-700'
-              }`}
-            >
-              {cat}
-            </button>
-          ))}
+        <div className="relative z-20 space-y-6 text-center max-w-4xl mx-auto">
+          <span className="inline-flex items-center space-x-2 px-4 py-2 bg-rak-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
+            <Sparkles className="w-4 h-4 text-rak-magenta" />
+            <span>Interactive WebGL Portfolio Archive</span>
+          </span>
+          
+          <h1 className="text-4xl sm:text-7xl font-extrabold text-white tracking-tight uppercase" style={{ textShadow: '0 0 40px rgba(230, 0, 126, 0.4)' }}>
+            The <span className="text-gradient-magenta">RAK4 Creations.</span>
+          </h1>
+          
+          <p className="text-base sm:text-xl text-rak-slate-200 leading-relaxed font-normal max-w-2xl mx-auto drop-shadow-md">
+            From ground zero to new heights. Explore how we create big ideas and execute online and offline presence that makes a real impact.
+          </p>
+
+          {/* Category Filter Pills */}
+          <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setFilter(cat)}
+                className={`px-5 py-2.5 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-300 backdrop-blur-md cursor-pointer ${
+                  filter === cat 
+                    ? 'bg-rak-magenta text-white shadow-magenta-glow scale-105' 
+                    : 'bg-rak-slate-900/90 border border-rak-slate-700/80 text-rak-slate-300 hover:border-rak-magenta/40 hover:text-white'
+                }`}
+              >
+                {cat}
+              </button>
+            ))}
+          </div>
         </div>
       </section>
 
