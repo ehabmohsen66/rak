@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Sparkles, CheckCircle2, ArrowUpRight, Layers, Compass, BarChart3, Share2, Code, Search, Target, Video } from 'lucide-react';
 import { MinimalistHero } from '../components/MinimalistHero';
+import { PILLARS, BRAND_INFO } from '../data/contentData';
 
 export const ServicesPage = ({ onOpenPlanner }) => {
   const [activeCategory, setActiveCategory] = useState('All');
