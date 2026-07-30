@@ -1,24 +1,14 @@
 import React from 'react';
-import { Sparkles, ArrowUpRight, CheckCircle2, Award } from 'lucide-react';
+import { ArrowUpRight } from 'lucide-react';
 import { PROJECTS } from '../data/contentData';
+import { WovenLightHero } from '../components/WovenLightHero';
 
 export const CaseStudiesPage = ({ onSelectProject, onOpenPlanner }) => {
   return (
-    <div className="pt-24 pb-16 space-y-24">
+    <div className="pt-16 pb-16 space-y-20">
       
-      {/* HERO */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-6 text-center max-w-4xl">
-        <span className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest">
-          <Sparkles className="w-3.5 h-3.5" />
-          <span>In-Depth Strategic Case Studies</span>
-        </span>
-        <h1 className="text-4xl sm:text-6xl font-extrabold text-white tracking-tight">
-          How We Deliver <span className="text-gradient-magenta">Measurable Enterprise ROI.</span>
-        </h1>
-        <p className="text-base sm:text-lg text-rak-slate-300 leading-relaxed font-normal">
-          Explore complete operational deep dives: from initial corporate challenge to strategic execution and quantitative market results.
-        </p>
-      </section>
+      {/* WOVEN LIGHT 3D HERO FOR CASE STUDIES */}
+      <WovenLightHero onOpenPlanner={onOpenPlanner} />
 
       {/* CASE STUDIES LIST */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
