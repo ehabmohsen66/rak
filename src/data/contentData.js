@@ -508,25 +508,20 @@ Data-driven market intelligence ensures every campaign dollar is backed by empir
 
 export const OFFICES = [
   {
-    city: "Dubai",
-    country: "UAE",
-    address: "Downtown Innovation Tower, Level 24",
-    email: "dubai@rak4creative.com",
-    status: "Headquarters"
+    city: "Beirut",
+    country: "Lebanon",
+    address: "Badaro Executive Tower, Level 6, Beirut",
+    email: "lebanon@rak4creative.com",
+    phone: "+961 1 380 400",
+    status: "Middle East Headquarters"
   },
   {
-    city: "Riyadh",
-    country: "Saudi Arabia",
-    address: "King Fahd District, Floor 18",
-    email: "riyadh@rak4creative.com",
-    status: "Regional Office"
-  },
-  {
-    city: "London",
-    country: "UK",
-    address: "Soho Creative Hub, 42 Broadwick St",
-    email: "london@rak4creative.com",
-    status: "Europe Office"
+    city: "Toronto",
+    country: "Canada",
+    address: "Financial District, 100 King Street West, Suite 5600, Toronto, ON M5X 1C9",
+    email: "canada@rak4creative.com",
+    phone: "+1 (416) 800-4820",
+    status: "North America Headquarters"
   }
 ];
 
