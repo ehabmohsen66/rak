@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { MinimalistHero } from './MinimalistHero';
 
 // --- Custom SVG Components for Hand-Drawn Accents ---
 
@@ -54,82 +55,9 @@ const CircularBadge = () => (
 
 export const AboutHero = ({ onOpenPlanner }) => {
   return (
-    <div className="min-h-screen bg-rak-slate-950 flex flex-col font-sans selection:bg-rak-magenta selection:text-white relative overflow-hidden w-full">
-      
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0"></div>
-
-      {/* Hero Section */}
-      <main className="flex-1 relative z-10 pt-16 pb-24 md:pt-20 md:pb-36 px-4 flex flex-col items-center justify-center w-full max-w-[1440px] mx-auto">
-        
-        {/* Massive Typography & Elements Container */}
-        <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center z-10 mt-4 mb-16">
-          
-          {/* Text Stack */}
-          <div className="w-full flex flex-col items-center relative z-10 space-y-1 md:space-y-2">
-            
-            {/* #RAK4 */}
-            <div className="w-full flex justify-start pl-[8%] md:pl-[20%] relative z-30">
-              <h1 
-                className="text-[clamp(4.5rem,12vw,160px)] font-black leading-[0.85] tracking-tighter text-rak-magenta m-0 p-0 uppercase"
-                style={{ 
-                  fontFamily: '"Arial Black", Impact, sans-serif',
-                  textShadow: '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034, 10px 10px 0 #5A0034, 12px 12px 0 #5A0034'
-                }}
-              >
-                #RAK4
-              </h1>
-            </div>
-            
-            {/* CREATIVE */}
-            <div className="w-full flex justify-center relative z-20">
-              <h1 
-                className="text-[clamp(5rem,15vw,210px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
-                style={{ 
-                  fontFamily: '"Arial Black", Impact, sans-serif',
-                  textShadow: '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034, 10px 10px 0 #5A0034, 12px 12px 0 #5A0034'
-                }}
-              >
-                CREATIVE
-              </h1>
-            </div>
-            
-            {/* AGENCY */}
-            <div className="w-full flex justify-start pl-[12%] md:pl-[28%] relative z-10">
-              <h1 
-                className="text-[clamp(4.5rem,12vw,160px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
-                style={{ 
-                  fontFamily: '"Arial Black", Impact, sans-serif',
-                  textShadow: '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034, 10px 10px 0 #5A0034, 12px 12px 0 #5A0034'
-                }}
-              >
-                AGENCY
-              </h1>
-            </div>
-
-          </div>
-
-          {/* Absolute Overlays (Arrows, Badge) */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none">
-            
-            {/* Decorative Arrow Left */}
-            <div className="absolute bottom-[0%] left-[0%] md:left-[6%] w-20 h-20 md:w-28 md:h-28 z-20">
-              <ArrowMagentaLeft />
-            </div>
-
-            {/* Decorative Arrow Right */}
-            <div className="absolute top-[5%] right-[0%] md:right-[8%] w-20 h-20 md:w-28 md:h-28 z-20">
-              <ArrowMagentaRight />
-            </div>
-
-            {/* Circular Badge */}
-            <div className="absolute bottom-[-10%] right-[2%] md:right-[12%] z-40 pointer-events-auto">
-              <CircularBadge />
-            </div>
-
-          </div>
-        </div>
-      </main>
+    <div className="bg-rak-slate-950 flex flex-col font-sans selection:bg-rak-magenta selection:text-white relative overflow-hidden w-full">
+      {/* Installed Minimalist Hero Section */}
+      <MinimalistHero onOpenPlanner={onOpenPlanner} />
 
       {/* Bottom Features Section */}
       <section className="bg-rak-slate-900 border-t border-rak-slate-800 text-white rounded-t-[2.5rem] md:rounded-t-[3.5rem] px-6 py-12 md:px-10 md:py-16 relative z-20 shadow-2xl mt-auto w-full">
