@@ -12,7 +12,7 @@ const WovenCanvas = () => {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-    camera.position.z = 5;
+    camera.position.z = 5.8;
     
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
@@ -23,19 +23,19 @@ const WovenCanvas = () => {
     const clock = new THREE.Clock();
 
     // --- Woven Silk Particle Mesh ---
-    const particleCount = 45000;
+    const particleCount = 40000;
     const positions = new Float32Array(particleCount * 3);
     const originalPositions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
     const velocities = new Float32Array(particleCount * 3);
 
     const geometry = new THREE.BufferGeometry();
-    const torusKnot = new THREE.TorusKnotGeometry(1.5, 0.55, 220, 36);
+    const torusKnot = new THREE.TorusKnotGeometry(1.35, 0.45, 200, 32);
 
-    // Primary RAK Magenta and White palette HSL colors
+    // Primary RAK Magenta and Pinkish HSL palette colors
     const magentaColor = new THREE.Color('#E6007E');
-    const whiteColor = new THREE.Color('#FFFFFF');
-    const accentColor = new THREE.Color('#FF40A3');
+    const accentColor = new THREE.Color('#FF2A96');
+    const lightPinkColor = new THREE.Color('#FF85C0');
 
     for (let i = 0; i < particleCount; i++) {
       const vertexIndex = i % torusKnot.attributes.position.count;
@@ -50,15 +50,15 @@ const WovenCanvas = () => {
       originalPositions[i * 3 + 1] = y;
       originalPositions[i * 3 + 2] = z;
 
-      // Color gradient between Magenta, Bright Pink, and Pure White
+      // Rich Pinkish / Magenta color palette
       const rand = Math.random();
       const color = new THREE.Color();
-      if (rand < 0.6) {
+      if (rand < 0.55) {
         color.copy(magentaColor);
       } else if (rand < 0.85) {
         color.copy(accentColor);
       } else {
-        color.copy(whiteColor);
+        color.copy(lightPinkColor);
       }
 
       colors[i * 3] = color.r;
@@ -74,11 +74,11 @@ const WovenCanvas = () => {
     geometry.setAttribute('color', new THREE.BufferAttribute(colors, 3));
 
     const material = new THREE.PointsMaterial({
-      size: 0.022,
+      size: 0.02,
       vertexColors: true,
       blending: THREE.AdditiveBlending,
       transparent: true,
-      opacity: 0.85,
+      opacity: 0.75,
     });
 
     const points = new THREE.Points(geometry, material);
@@ -217,12 +217,12 @@ export const WovenLightHero = ({ onOpenPlanner }) => {
           <span>Enterprise Case Studies & ROI</span>
         </motion.div>
 
-        {/* Animated Headline */}
+        {/* Animated Headline with All Pinkish / Magenta Theme */}
         <h1 
-          className="text-5xl sm:text-7xl md:text-8xl font-black text-white tracking-tight uppercase leading-tight" 
+          className="text-5xl sm:text-7xl md:text-8xl font-black text-rak-magenta tracking-tight uppercase leading-tight" 
           style={{ 
             fontFamily: "'Playfair Display', serif", 
-            textShadow: '0 0 60px rgba(230, 0, 126, 0.4)' 
+            textShadow: '0 0 35px #E6007E, 0 0 70px rgba(230, 0, 126, 0.5)' 
           }}
         >
           {headline.split(" ").map((word, i) => (
@@ -234,7 +234,7 @@ export const WovenLightHero = ({ onOpenPlanner }) => {
                   initial={{ opacity: 0, y: 40 }} 
                   animate={textControls} 
                   style={{ display: 'inline-block' }}
-                  className={i === 0 ? "text-white" : "text-rak-magenta"}
+                  className="text-rak-magenta drop-shadow-lg"
                 >
                   {char}
                 </motion.span>
@@ -244,16 +244,20 @@ export const WovenLightHero = ({ onOpenPlanner }) => {
           ))}
         </h1>
 
-        {/* Description */}
-        <motion.p
+        {/* High-Contrast Description inside Dark Glass Container */}
+        <motion.div
           custom={headline.length}
           initial={{ opacity: 0, y: 30 }}
           animate={textControls}
-          className="mx-auto max-w-2xl text-base sm:text-lg text-rak-slate-200 leading-relaxed font-normal"
-          style={{ fontFamily: "'Inter', sans-serif" }}
+          className="mx-auto max-w-2xl p-4 sm:p-6 bg-rak-slate-950/85 border border-rak-slate-800/90 rounded-3xl backdrop-blur-xl shadow-2xl space-y-2 relative z-20"
         >
-          An interactive tapestry of light, digital engineering, and enterprise transformation. Explore complete operational case studies from blueprint to quantitative ROI.
-        </motion.p>
+          <p 
+            className="text-base sm:text-lg text-white font-medium leading-relaxed"
+            style={{ fontFamily: "'Inter', sans-serif" }}
+          >
+            An interactive tapestry of light, digital engineering, and enterprise transformation. Explore complete operational case studies from blueprint to quantitative ROI.
+          </p>
+        </motion.div>
 
         {/* CTA Actions */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={buttonControls} className="pt-4 flex flex-wrap items-center justify-center gap-4">
