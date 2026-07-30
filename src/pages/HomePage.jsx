@@ -312,8 +312,8 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
           ctaLabel="Explore odds"
           href="/work"
           onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-          posterSrc="/client-logos/logo_1.jpg"
-          videoSrc="https://cdn.pixabay.com/video/2021/04/12/70860-536965152_large.mp4"
+          posterSrc="https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop"
+          videoSrc="https://assets.mixkit.co/videos/preview/mixkit-stadium-lights-and-fans-cheering-41551-large.mp4"
           deadline={SPRINT_DEADLINE}
         />
       </section>

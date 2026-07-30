@@ -84,8 +84,7 @@ export function AnimatedBanner({
         alt={title}
         className="absolute inset-0 h-full w-full object-cover scale-105 group-hover:scale-110 transition-transform duration-1000 z-0"
         onError={(e) => {
-          // Fallback to logo_1.jpg if unsplash fails
-          e.currentTarget.src = "/client-logos/logo_1.jpg";
+          e.currentTarget.src = "https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1600&auto=format&fit=crop";
         }}
       />
 
