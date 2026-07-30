@@ -36,11 +36,11 @@ function Countdown({ target }) {
     >
       {segments.map((segment, index) => (
         <span className="flex items-center gap-1" key={index}>
-          <span className="rounded-md bg-white/10 px-1.5 py-1 backdrop-blur-sm">
+          <span className="rounded-md bg-white/10 px-1.5 py-1 backdrop-blur-md border border-white/10 font-bold shadow-lg">
             {pad(segment)}
           </span>
           {index < segments.length - 1 ? (
-            <span className="text-white/40">:</span>
+            <span className="text-white/40 font-bold">:</span>
           ) : null}
         </span>
       ))}
@@ -54,10 +54,9 @@ export function AnimatedBanner({
   ctaLabel = "Explore odds",
   href = "/work",
   onClick,
-  videoSrc = "https://cdn.pixabay.com/video/2021/04/12/70860-536965152_large.mp4",
+  videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-stadium-lights-and-fans-cheering-41551-large.mp4",
   posterSrc = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop",
   deadline,
-  overlayColor = "#0f172a",
   className,
 }) {
   const target =
@@ -73,28 +72,29 @@ export function AnimatedBanner({
   return (
     <a
       className={cn(
-        "group relative block aspect-[5/2] w-full overflow-hidden rounded-2xl [--banner-overlay:var(--overlay)]",
+        "group relative block aspect-[21/9] sm:aspect-[5/2] w-full overflow-hidden rounded-2xl border border-rak-slate-800 shadow-2xl bg-rak-slate-950 transition-all duration-300 hover:border-rak-magenta/60 hover:shadow-magenta-glow",
         className
       )}
       href={href}
       onClick={handleClick}
-      style={{ ["--overlay"]: overlayColor }}
     >
-      {/* Poster Image Layer (Guarantees visual display even if video is buffering/blocked) */}
-      {posterSrc && (
-        <img
-          src={posterSrc}
-          alt={title}
-          className="absolute inset-0 h-full w-full object-cover"
-        />
-      )}
+      {/* Base Stadium Image Layer */}
+      <img
+        src={posterSrc}
+        alt={title}
+        className="absolute inset-0 h-full w-full object-cover scale-105 group-hover:scale-110 transition-transform duration-1000 z-0"
+        onError={(e) => {
+          // Fallback to logo_1.jpg if unsplash fails
+          e.currentTarget.src = "/client-logos/logo_1.jpg";
+        }}
+      />
 
-      {/* Video Layer */}
+      {/* Video Loop Layer (if available & supported by browser) */}
       {videoSrc && (
         <video
           aria-hidden="true"
           autoPlay
-          className="absolute inset-0 h-full w-full object-cover"
+          className="absolute inset-0 h-full w-full object-cover z-0 opacity-90"
           loop
           muted
           playsInline
@@ -103,43 +103,46 @@ export function AnimatedBanner({
         />
       )}
 
-      {/* Gradient overlay: solid on the text side, transparent over the image */}
+      {/* Gradient overlay: solid dark on text side, perfectly transparent on image/video right side */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-r from-[var(--banner-overlay)] via-[var(--banner-overlay)]/70 to-transparent"
+        className="absolute inset-0 bg-gradient-to-r from-rak-slate-950 via-rak-slate-950/80 via-45% to-transparent z-10 pointer-events-none"
       />
 
-      {/* Interaction depth: strengthen the text side on hover/focus */}
+      {/* Interaction depth glow on hover */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-r from-[var(--banner-overlay)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-40 group-focus-visible:opacity-40"
+        className="absolute inset-0 bg-gradient-to-r from-rak-magenta/25 via-transparent to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-100 z-10 pointer-events-none"
       />
 
       {/* Content layer */}
-      <div className="relative z-10 flex h-full items-end justify-between gap-4 p-5 text-white">
-        <div className="min-w-0 max-w-xs">
-          <h3 className="text-balance text-lg font-semibold leading-tight">
+      <div className="relative z-20 flex h-full items-end justify-between gap-4 p-6 sm:p-8 text-white">
+        <div className="min-w-0 max-w-sm space-y-1.5">
+          <h3 className="text-balance text-xl sm:text-2xl font-extrabold leading-tight tracking-tight text-white drop-shadow-md">
             {title}
           </h3>
           {subtitle ? (
-            <p className="mt-1 text-pretty text-sm leading-snug text-white/80">
+            <p className="mt-1 text-pretty text-xs sm:text-sm leading-relaxed text-rak-slate-200 font-normal drop-shadow-sm">
               {subtitle}
             </p>
           ) : null}
-          <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-white transition-transform duration-200 group-hover:gap-1.5">
-            <span>{ctaLabel}</span>
-            <svg
-              aria-hidden="true"
-              className="size-4"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              viewBox="0 0 24 24"
-            >
-              <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
+          <div className="pt-2">
+            <span className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-wider text-white transition-transform duration-200 group-hover:translate-x-1">
+              <span>{ctaLabel}</span>
+              <svg
+                aria-hidden="true"
+                className="size-4 text-rak-magenta"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2.5"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </span>
+          </div>
         </div>
+
         {target !== undefined ? <Countdown target={target} /> : null}
       </div>
     </a>
