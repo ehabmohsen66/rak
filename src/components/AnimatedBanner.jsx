@@ -36,11 +36,11 @@ function Countdown({ target }) {
     >
       {segments.map((segment, index) => (
         <span className="flex items-center gap-1" key={index}>
-          <span className="rounded-md bg-white/10 px-2 py-1 backdrop-blur-md border border-white/10 text-white font-mono font-bold">
+          <span className="rounded-md bg-white/10 px-1.5 py-1 backdrop-blur-sm">
             {pad(segment)}
           </span>
           {index < segments.length - 1 ? (
-            <span className="text-white/40 font-bold">:</span>
+            <span className="text-white/40">:</span>
           ) : null}
         </span>
       ))}
@@ -54,10 +54,10 @@ export function AnimatedBanner({
   ctaLabel = "Explore odds",
   href = "/work",
   onClick,
-  videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-stadium-lights-and-fans-cheering-41551-large.mp4",
-  posterSrc = "/client-logos/logo_1.jpg",
+  videoSrc = "https://cdn.pixabay.com/video/2021/04/12/70860-536965152_large.mp4",
+  posterSrc = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop",
   deadline,
-  overlayColor = "oklch(0.15 0 0)",
+  overlayColor = "#0f172a",
   className,
 }) {
   const target =
@@ -73,55 +73,67 @@ export function AnimatedBanner({
   return (
     <a
       className={cn(
-        "group relative block aspect-[5/2] w-full overflow-hidden rounded-2xl border border-white/10 shadow-2xl transition-all duration-300 hover:border-rak-magenta/50 hover:shadow-magenta-glow [--banner-overlay:var(--overlay)]",
+        "group relative block aspect-[5/2] w-full overflow-hidden rounded-2xl [--banner-overlay:var(--overlay)]",
         className
       )}
       href={href}
       onClick={handleClick}
       style={{ ["--overlay"]: overlayColor }}
     >
-      <video
-        aria-hidden="true"
-        autoPlay
-        className="absolute inset-0 h-full w-full object-cover scale-105 group-hover:scale-110 transition-transform duration-700"
-        loop
-        muted
-        playsInline
-        poster={posterSrc}
-        src={videoSrc}
-      />
+      {/* Poster Image Layer (Guarantees visual display even if video is buffering/blocked) */}
+      {posterSrc && (
+        <img
+          src={posterSrc}
+          alt={title}
+          className="absolute inset-0 h-full w-full object-cover"
+        />
+      )}
 
-      {/* gradient overlay: solid on the text side, transparent over the image */}
+      {/* Video Layer */}
+      {videoSrc && (
+        <video
+          aria-hidden="true"
+          autoPlay
+          className="absolute inset-0 h-full w-full object-cover"
+          loop
+          muted
+          playsInline
+          poster={posterSrc}
+          src={videoSrc}
+        />
+      )}
+
+      {/* Gradient overlay: solid on the text side, transparent over the image */}
       <div
         aria-hidden="true"
-        className="absolute inset-0 bg-gradient-to-r from-[var(--banner-overlay)] via-[var(--banner-overlay)]/80 to-transparent"
+        className="absolute inset-0 bg-gradient-to-r from-[var(--banner-overlay)] via-[var(--banner-overlay)]/70 to-transparent"
       />
 
-      {/* interaction depth: strengthen the text side on hover/focus */}
+      {/* Interaction depth: strengthen the text side on hover/focus */}
       <div
         aria-hidden="true"
         className="absolute inset-0 bg-gradient-to-r from-[var(--banner-overlay)] to-transparent opacity-0 transition-opacity duration-300 group-hover:opacity-40 group-focus-visible:opacity-40"
       />
 
-      {/* content layer */}
-      <div className="relative z-10 flex h-full items-end justify-between gap-4 p-6 sm:p-8 text-white">
-        <div className="min-w-0 max-w-sm space-y-1">
-          <h3 className="text-balance text-xl sm:text-2xl font-bold leading-tight tracking-tight text-white">
+      {/* Content layer */}
+      <div className="relative z-10 flex h-full items-end justify-between gap-4 p-5 text-white">
+        <div className="min-w-0 max-w-xs">
+          <h3 className="text-balance text-lg font-semibold leading-tight">
             {title}
           </h3>
           {subtitle ? (
-            <p className="mt-1 text-pretty text-xs sm:text-sm leading-snug text-white/80 font-normal">
+            <p className="mt-1 text-pretty text-sm leading-snug text-white/80">
               {subtitle}
             </p>
           ) : null}
-          <span className="mt-3 inline-flex items-center gap-1.5 text-sm font-semibold text-white transition-transform duration-200 group-hover:gap-2 text-rak-magenta hover:text-white">
+          <span className="mt-3 inline-flex items-center gap-1 text-sm font-medium text-white transition-transform duration-200 group-hover:gap-1.5">
             <span>{ctaLabel}</span>
             <svg
               aria-hidden="true"
               className="size-4"
               fill="none"
               stroke="currentColor"
-              strokeWidth="2.5"
+              strokeWidth="2"
               viewBox="0 0 24 24"
             >
               <path d="M5 12h14M13 6l6 6-6 6" strokeLinecap="round" strokeLinejoin="round" />
