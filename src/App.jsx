@@ -115,12 +115,14 @@ export function App() {
   }, [activeTab]);
 
   return (
-    <div className="min-h-screen flex flex-col justify-between selection:bg-rak-magenta selection:text-white transition-colors duration-300">
+    <div className="min-h-screen flex flex-col justify-between selection:bg-rak-magenta selection:text-white transition-colors duration-300 bg-mesh-vibrant">
       
       {/* Sticky Navigation Bar */}
       <Navbar 
         activeTab={activeTab}
         setActiveTab={setActiveTab}
+        darkMode={darkMode}
+        setDarkMode={setDarkMode}
         onOpenProjectPlanner={() => setPlannerOpen(true)}
       />
 

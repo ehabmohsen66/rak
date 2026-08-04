@@ -12,12 +12,16 @@ import {
   Briefcase,
   BookOpen,
   Users,
-  MessageSquare
+  MessageSquare,
+  Sun,
+  Moon
 } from 'lucide-react';
 
 export const Navbar = ({ 
   activeTab, 
   setActiveTab, 
+  darkMode = true,
+  setDarkMode = () => {},
   onOpenProjectPlanner,
   onOpenPlanner = onOpenProjectPlanner
 }) => {
@@ -165,6 +169,26 @@ export const Navbar = ({
 
           {/* Right Action Cluster */}
           <div className="hidden xl:flex items-center space-x-3 shrink-0 ml-2">
+            {/* Theme Switcher Toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full bg-rak-slate-900/90 dark:bg-rak-slate-900/90 light:bg-slate-200 border border-rak-magenta/30 hover:border-rak-magenta text-rak-slate-200 hover:text-white transition-all duration-300 shadow-sm cursor-pointer"
+              aria-label="Toggle light/dark theme"
+              title={darkMode ? "Switch to Vibrant Light Mode" : "Switch to Cyber Dark Mode"}
+            >
+              {darkMode ? (
+                <>
+                  <Sun className="w-3.5 h-3.5 text-amber-400 animate-spin-slow" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-amber-300">Light</span>
+                </>
+              ) : (
+                <>
+                  <Moon className="w-3.5 h-3.5 text-rak-magenta" />
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-rak-magenta">Dark</span>
+                </>
+              )}
+            </button>
+
             {/* AR Language Switcher Button (Coming Soon) */}
             <div className="relative">
               <button
@@ -227,6 +251,14 @@ export const Navbar = ({
 
           {/* Mobile & Tablet Menu Controls */}
           <div className="flex xl:hidden items-center space-x-2 shrink-0">
+            {/* Mobile Theme Toggle */}
+            <button
+              onClick={() => setDarkMode(!darkMode)}
+              className="p-2 rounded-full bg-rak-slate-900 border border-rak-magenta/30 text-rak-slate-200"
+              aria-label="Toggle theme"
+            >
+              {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-rak-magenta" />}
+            </button>
             <div className="relative">
               <button
                 onClick={() => setShowArNotice(!showArNotice)}

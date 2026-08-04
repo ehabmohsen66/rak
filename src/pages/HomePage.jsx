@@ -27,9 +27,7 @@ import { HeroAgencyOrchestrationCard } from '../components/HeroAgencyOrchestrati
 import { SmallHeroOrchestration } from '../components/SmallHeroOrchestration';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
 import { AnimatedBanner } from '../components/AnimatedBanner';
-
-// Calculate deadline 7 days from current date
-const SPRINT_DEADLINE = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+import { SpotlightCard } from '../components/SpotlightCard';
 
 const getPillarIcon = (iconName) => {
   switch (iconName) {
@@ -71,15 +69,15 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
   const headlineWords = ["We", "Create", "Big", "Ideas", "From", "Ground", "Zero", "&", "Take", "Them", "to"];
 
   return (
-    <div className="space-y-24 sm:space-y-32 pb-16">
+    <div className="space-y-24 sm:space-y-32 pb-16 relative">
       
-      {/* 1. CINEMATIC SPLIT HERO SECTION */}
+      {/* 1. CINEMATIC SPLIT HERO SECTION WITH VIBRANT MESH LIGHTS */}
       <section className="relative min-h-[85vh] flex items-center pt-28 pb-16 overflow-hidden">
         
-        {/* Background Ambient FX */}
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[900px] h-[550px] bg-rak-magenta/15 rounded-full blur-[150px] pointer-events-none" />
-        <div className="absolute top-12 right-16 w-80 h-80 bg-rak-slate-700/20 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-72 h-72 bg-rak-magenta/10 rounded-full blur-3xl pointer-events-none" />
+        {/* Dynamic Multi-Color Ambient Mesh Orbs */}
+        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 w-[900px] h-[550px] bg-rak-magenta/25 rounded-full blur-[160px] pointer-events-none animate-pulse-slow" />
+        <div className="absolute top-12 right-10 w-[600px] h-[450px] bg-rak-cyan/20 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-[500px] h-[400px] bg-rak-violet/20 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -87,42 +85,42 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
             {/* Left Content Column */}
             <div className="lg:col-span-7 space-y-8 text-left">
               
-              {/* Badge */}
+              {/* Glowing Badge */}
               <motion.div 
                 initial={{ opacity: 0, y: -12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-rak-slate-900/90 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-rak-magenta/20 via-rak-cyan/20 to-rak-violet/20 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-extrabold uppercase tracking-widest backdrop-blur-xl shadow-magenta-sm"
               >
-                <Sparkles className="w-3.5 h-3.5 text-rak-magenta" />
-                <span>Your One-Stop Agency</span>
+                <Sparkles className="w-4 h-4 text-rak-magenta animate-spin-slow" />
+                <span className="text-gradient-vibrant font-black">Your One-Stop Creative & Digital Engine</span>
               </motion.div>
 
-              {/* Main Staggered Headline */}
+              {/* Main Staggered Kinetic Headline */}
               <motion.h1 
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white leading-[1.08] text-left"
+                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white dark:text-white light:text-slate-900 leading-[1.08] text-left"
               >
                 {headlineWords.map((word, i) => (
                   <motion.span key={i} variants={wordVariants} className="inline-block mr-[0.24em]">
                     {word}
                   </motion.span>
                 ))}
-                <motion.span variants={wordVariants} className="inline-block text-gradient-magenta">
+                <motion.span variants={wordVariants} className="inline-block text-gradient-vibrant font-black drop-shadow-sm">
                   New Heights.
                 </motion.span>
               </motion.h1>
 
-              {/* Concise Subtitle */}
+              {/* Subtitle */}
               <motion.p
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.65 }}
-                className="text-base sm:text-lg text-rak-slate-300 max-w-xl leading-relaxed font-normal text-left"
+                className="text-base sm:text-lg text-rak-slate-300 dark:text-rak-slate-300 light:text-slate-700 max-w-xl leading-relaxed font-normal text-left"
               >
-                Brand strategy, creative production, and digital performance marketing together under one roof.
+                Brand architecture, high-impact media production, enterprise software, and performance marketing seamlessly integrated under one global powerhouse.
               </motion.p>
 
               {/* Primary & Secondary Action CTAs */}
@@ -134,7 +132,7 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
               >
                 <button
                   onClick={onOpenPlanner}
-                  className="relative inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-white bg-rak-magenta rounded-full shadow-magenta-glow hover:bg-rak-magenta-dark hover:scale-105 transition-all duration-300 group overflow-hidden"
+                  className="btn-neon-magenta relative inline-flex items-center justify-center px-8 py-4 text-xs font-extrabold uppercase tracking-wider text-white rounded-full hover:scale-105 transition-all duration-300 group overflow-hidden cursor-pointer"
                 >
                   <span className="relative z-10 flex items-center space-x-2">
                     <span>Start a Project</span>
@@ -145,13 +143,13 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                 <a
                   href="/work"
                   onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-rak-slate-200 hover:text-white bg-rak-slate-900/80 hover:bg-rak-slate-800 border border-rak-slate-700/80 rounded-full backdrop-blur-md transition-all hover:scale-105"
+                  className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-rak-slate-100 dark:text-rak-slate-100 light:text-slate-800 bg-rak-slate-900/90 hover:bg-rak-slate-800 border border-rak-cyan/40 hover:border-rak-cyan rounded-full backdrop-blur-md transition-all hover:scale-105 shadow-cyan-glow"
                 >
                   <span>Explore RAK4 Creations</span>
                 </a>
               </motion.div>
 
-              {/* Metrics Bar */}
+              {/* Interactive Metrics Spotlight Cards */}
               <motion.div 
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -159,11 +157,16 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                 className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-rak-slate-800/80"
               >
                 {BRAND_INFO.stats.map((stat, i) => (
-                  <div key={i} className="space-y-1 p-3 rounded-2xl bg-rak-slate-900/40 border border-rak-slate-800/60 backdrop-blur-sm hover:border-rak-magenta/30 transition-all text-left">
-                    <div className="text-xl sm:text-2xl font-extrabold text-white tracking-tight">{stat.value}</div>
-                    <div className="text-[10px] font-semibold text-rak-slate-400 leading-tight">{stat.label}</div>
-                    <div className="text-[9px] text-rak-magenta font-mono">{stat.change}</div>
-                  </div>
+                  <SpotlightCard 
+                    key={i} 
+                    spotlightColor="rgba(6, 182, 212, 0.25)"
+                    borderColor="rgba(6, 182, 212, 0.4)"
+                    className="p-3.5 space-y-1 text-left bg-rak-slate-900/60 dark:bg-rak-slate-900/60 light:bg-white/90 border border-rak-slate-800/80"
+                  >
+                    <div className="text-xl sm:text-2xl font-extrabold text-gradient-vibrant tracking-tight">{stat.value}</div>
+                    <div className="text-[10px] font-semibold text-rak-slate-300 dark:text-rak-slate-300 light:text-slate-600 leading-tight">{stat.label}</div>
+                    <div className="text-[9px] text-rak-cyan font-mono font-bold">{stat.change}</div>
+                  </SpotlightCard>
                 ))}
               </motion.div>
 
@@ -183,10 +186,13 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
         </div>
       </section>
 
-      {/* 2. TRUST BAR / CLIENT BRANDS */}
+      {/* 2. TRUST BAR / CLIENT BRANDS WITH GLOW REFLECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-8 bg-rak-slate-900/60 border border-rak-slate-800 rounded-3xl backdrop-blur-md space-y-6 overflow-hidden">
-          <p className="text-center text-xs font-bold uppercase tracking-widest text-rak-slate-400">
+        <SpotlightCard 
+          spotlightColor="rgba(236, 0, 140, 0.15)"
+          className="p-8 bg-rak-slate-900/70 dark:bg-rak-slate-900/70 light:bg-white/80 border border-rak-magenta/20 rounded-3xl backdrop-blur-md space-y-6 overflow-hidden"
+        >
+          <p className="text-center text-xs font-black uppercase tracking-widest text-gradient-vibrant">
             Trusted by Ambitious Enterprises & Global Innovators
           </p>
 
@@ -194,7 +200,7 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
             {BRAND_INFO.clients.map((client, i) => (
               <div 
                 key={i} 
-                className="px-6 py-4 bg-white rounded-2xl shadow-xl hover:scale-105 transition-all cursor-pointer shrink-0 flex items-center justify-center h-20 w-44 overflow-hidden border border-white/20"
+                className="px-6 py-4 bg-white rounded-2xl shadow-xl hover:scale-105 transition-all cursor-pointer shrink-0 flex items-center justify-center h-20 w-44 overflow-hidden border border-white/40"
               >
                 {client.image && (
                   <img 
@@ -217,9 +223,8 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                 </span>
               </div>
             ))}
-
           </InfiniteSlider>
-        </div>
+        </SpotlightCard>
       </section>
 
       {/* 2.5 RAK 360° CREATIVE ENGINE WORKFLOW */}
@@ -227,78 +232,81 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
         <AgencyOrchestrationMatrix onOpenPlanner={onOpenPlanner} />
       </section>
 
-      {/* 3. PILLARS OF CAPABILITY */}
+      {/* 3. PILLARS OF CAPABILITY (BENTO GRID WITH SPOTLIGHT & VIBRANT GLOW) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
-            <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest">Our Pillars</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+            <span className="text-xs font-extrabold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
+              Our Capabilities
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight">
               One Stop For Every Stage of The Work.
             </h2>
           </div>
           <a
             href="/services"
             onClick={(e) => { e.preventDefault(); setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-rak-magenta hover:text-white transition-colors"
+            className="inline-flex items-center space-x-2 text-xs font-extrabold uppercase tracking-wider text-rak-magenta hover:text-white transition-colors"
           >
             <span>View All 8 Pillars</span>
             <ArrowUpRight className="w-4 h-4" />
           </a>
         </div>
 
-        {/* Bento Grid Layout with Rich Icon Visuals & Watermarks */}
+        {/* Bento Grid Layout with Spotlight Cards */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {PILLARS.slice(0, 6).map((s, index) => {
             const isLarge = index === 0 || index === 2;
             const IconComp = getPillarIcon(s.icon);
             return (
-              <a 
+              <SpotlightCard
                 key={s.id}
-                href={`/services#${s.id}`}
+                spotlightColor={index % 2 === 0 ? "rgba(236, 0, 140, 0.25)" : "rgba(6, 182, 212, 0.25)"}
+                borderColor={index % 2 === 0 ? "rgba(236, 0, 140, 0.5)" : "rgba(6, 182, 212, 0.5)"}
                 onClick={(e) => { e.preventDefault(); setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className={`group relative p-8 sm:p-9 rounded-3xl bg-rak-slate-900/80 border border-rak-slate-800/80 hover:border-rak-magenta/60 hover:-translate-y-1 transition-all duration-300 cursor-pointer overflow-hidden flex flex-col justify-between backdrop-blur-xl hover:shadow-magenta-glow ${
+                className={`group relative p-8 sm:p-9 rounded-3xl bg-rak-slate-900/80 dark:bg-rak-slate-900/80 light:bg-white/90 border border-rak-slate-800/80 cursor-pointer overflow-hidden flex flex-col justify-between backdrop-blur-xl ${
                   isLarge ? 'md:col-span-8' : 'md:col-span-4'
                 }`}
               >
                 {/* Background Translucent Vector Icon Watermark */}
-                <IconComp className="w-44 h-44 absolute -right-6 -bottom-6 text-white/[0.03] group-hover:text-rak-magenta/[0.08] transition-all duration-500 pointer-events-none transform group-hover:scale-110 group-hover:rotate-6" />
+                <IconComp className="w-48 h-48 absolute -right-6 -bottom-6 text-white/[0.04] dark:text-white/[0.04] light:text-slate-900/[0.05] group-hover:text-rak-magenta/[0.12] transition-all duration-500 pointer-events-none transform group-hover:scale-110 group-hover:rotate-6" />
 
                 <div className="space-y-5 relative z-10">
-                  {/* Top Bar: Icon Badge + Tag Pill + Arrow */}
+                  {/* Top Bar */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="p-3 rounded-2xl bg-rak-slate-800/90 border border-rak-magenta/30 text-rak-magenta group-hover:bg-rak-magenta group-hover:text-white group-hover:border-rak-magenta transition-all duration-300 shadow-magenta-sm">
+                      <div className="p-3.5 rounded-2xl bg-rak-slate-800/90 dark:bg-rak-slate-800/90 light:bg-slate-100 border border-rak-magenta/40 text-rak-magenta group-hover:bg-rak-magenta group-hover:text-white group-hover:border-rak-magenta transition-all duration-300 shadow-magenta-sm">
                         <IconComp className="w-6 h-6" />
                       </div>
-                      <span className="px-3 py-1 bg-rak-slate-800/90 border border-rak-slate-700/80 text-rak-magenta text-[10px] font-bold uppercase tracking-wider rounded-full backdrop-blur-md">
+                      <span className="px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 text-rak-magenta text-[10px] font-extrabold uppercase tracking-wider rounded-full backdrop-blur-md">
                         {s.tag}
                       </span>
                     </div>
 
-                    <ArrowUpRight className="w-5 h-5 text-rak-slate-500 group-hover:text-rak-magenta group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+                    <ArrowUpRight className="w-5 h-5 text-rak-slate-400 group-hover:text-rak-magenta group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
                   </div>
                   
                   {/* Card Title & Description */}
                   <div className="space-y-2 pt-1">
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white group-hover:text-rak-magenta transition-colors tracking-tight">
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white dark:text-white light:text-slate-900 group-hover:text-rak-magenta transition-colors tracking-tight">
                       {s.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-rak-slate-300 leading-relaxed max-w-xl font-normal">
+                    <p className="text-xs sm:text-sm text-rak-slate-300 dark:text-rak-slate-300 light:text-slate-600 leading-relaxed max-w-xl font-normal">
                       {s.description}
                     </p>
                   </div>
                 </div>
 
                 {/* Bottom Items Tags */}
-                <div className="pt-6 mt-6 border-t border-rak-slate-800/80 flex flex-wrap gap-2.5 relative z-10">
+                <div className="pt-6 mt-6 border-t border-rak-slate-800/80 light:border-slate-200 flex flex-wrap gap-2.5 relative z-10">
                   {s.items.slice(0, 3).map((b, i) => (
-                    <span key={i} className="text-[11px] text-rak-slate-200 font-semibold px-3 py-1.5 rounded-xl bg-rak-slate-950/60 border border-rak-slate-800/90 flex items-center space-x-1.5 group-hover:border-rak-magenta/20 transition-all">
+                    <span key={i} className="text-[11px] text-rak-slate-200 dark:text-rak-slate-200 light:text-slate-700 font-semibold px-3 py-1.5 rounded-xl bg-rak-slate-950/60 dark:bg-rak-slate-950/60 light:bg-slate-100 border border-rak-slate-800/90 light:border-slate-300 flex items-center space-x-1.5 group-hover:border-rak-magenta/30 transition-all">
                       <CheckCircle2 className="w-3.5 h-3.5 text-rak-magenta" />
                       <span>{b}</span>
                     </span>
                   ))}
                 </div>
-              </a>
+              </SpotlightCard>
             );
           })}
         </div>
@@ -308,17 +316,19 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
-            <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest">Portfolio</span>
-            <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
-              The RAK4 Creations.
+            <span className="text-xs font-bold text-rak-cyan uppercase tracking-widest px-3 py-1 bg-rak-cyan/10 border border-rak-cyan/30 rounded-full">
+              Portfolio
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight">
+              Selected Work Archive.
             </h2>
           </div>
           <a
             href="/work"
             onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-rak-magenta hover:text-white transition-colors"
+            className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-rak-cyan hover:text-white transition-colors"
           >
-            <span>Explore Work Archive</span>
+            <span>Explore Full Showcase</span>
             <ArrowUpRight className="w-4 h-4" />
           </a>
         </div>
@@ -326,78 +336,86 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
         {/* Featured Project Cards */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
           {PROJECTS.filter(p => p.featured).slice(0, 4).map((p) => (
-            <div 
+            <SpotlightCard 
               key={p.id}
+              spotlightColor="rgba(6, 182, 212, 0.3)"
+              borderColor="rgba(6, 182, 212, 0.5)"
               onClick={() => onSelectProject(p)}
-              className="group cursor-pointer space-y-4"
+              className="group cursor-pointer p-0"
             >
-              <div className="relative h-80 sm:h-96 rounded-3xl overflow-hidden bg-rak-slate-900 border border-rak-slate-800">
+              <div className="relative h-80 sm:h-96 rounded-2xl overflow-hidden bg-rak-slate-900 border border-rak-slate-800">
                 <img 
                   src={p.image} 
                   alt={p.title} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-transparent to-transparent opacity-80" />
+                <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-rak-slate-950/40 to-transparent opacity-90" />
                 
                 {/* Result Pill */}
-                <div className="absolute top-6 left-6 px-3 py-1.5 bg-rak-slate-950/80 backdrop-blur-md border border-rak-slate-800 rounded-full text-xs font-mono text-rak-magenta">
+                <div className="absolute top-6 left-6 px-3 py-1.5 bg-rak-slate-950/80 backdrop-blur-md border border-rak-cyan/40 rounded-full text-xs font-mono text-rak-cyan font-bold shadow-cyan-glow">
                   {p.results[0].metric} {p.results[0].label}
                 </div>
 
                 <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white">
                   <div>
-                    <span className="text-[11px] font-bold uppercase tracking-wider text-rak-magenta">{p.client}</span>
-                    <h3 className="text-xl font-bold">{p.title}</h3>
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-rak-magenta">{p.client}</span>
+                    <h3 className="text-xl sm:text-2xl font-bold">{p.title}</h3>
                   </div>
-                  <div className="p-3 rounded-full bg-rak-magenta/90 text-white shadow-magenta-sm group-hover:scale-110 transition-transform">
-                    <ArrowUpRight className="w-4 h-4" />
+                  <div className="p-3.5 rounded-full bg-rak-magenta text-white shadow-magenta-glow group-hover:scale-110 transition-transform">
+                    <ArrowUpRight className="w-5 h-5" />
                   </div>
                 </div>
               </div>
-            </div>
+            </SpotlightCard>
           ))}
         </div>
       </section>
 
-
-      {/* 5. TESTIMONIALS & SOCIAL PROOF */}
+      {/* 5. TESTIMONIALS & EXECUTIVE REVIEWS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="bg-rak-slate-900/90 border border-rak-slate-800 rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden backdrop-blur-xl">
+        <SpotlightCard 
+          spotlightColor="rgba(139, 92, 246, 0.2)"
+          borderColor="rgba(139, 92, 246, 0.4)"
+          className="bg-rak-slate-900/90 dark:bg-rak-slate-900/90 light:bg-white/90 border border-rak-violet/30 rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden backdrop-blur-xl"
+        >
           <div className="space-y-2 text-center max-w-2xl mx-auto">
-            <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest">Client Testimonials</span>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-white tracking-tight">What Executive Leaders Say About RAK.</h2>
-            <p className="text-xs text-rak-slate-400">Hover to pause & read leader reviews</p>
+            <span className="text-xs font-extrabold text-rak-violet uppercase tracking-widest px-3 py-1 bg-rak-violet/10 border border-rak-violet/30 rounded-full">
+              Executive Proof
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight">What Industry Leaders Say About RAK.</h2>
+            <p className="text-xs text-rak-slate-400">Hover over any card to pause & inspect</p>
           </div>
 
           <InfiniteSlider gap={24} duration={65} durationOnHover={180} className="py-4">
             {TESTIMONIALS.map((t) => (
-              <div 
+              <SpotlightCard 
                 key={t.id} 
-                className="w-80 sm:w-96 shrink-0 p-6 sm:p-7 bg-rak-slate-950/90 border border-rak-slate-800/90 hover:border-rak-magenta/40 rounded-2xl space-y-5 flex flex-col justify-between backdrop-blur-md shadow-xl transition-all duration-300 hover:scale-[1.02]"
+                spotlightColor="rgba(236, 0, 140, 0.25)"
+                className="w-80 sm:w-96 shrink-0 p-6 sm:p-7 bg-rak-slate-950/90 dark:bg-rak-slate-950/90 light:bg-white border border-rak-slate-800/90 light:border-slate-200 rounded-2xl space-y-5 flex flex-col justify-between backdrop-blur-md shadow-xl"
               >
                 <div className="space-y-3">
                   <div className="flex text-amber-400 space-x-1">
                     {[...Array(t.rating)].map((_, r) => (
-                      <Star key={r} className="w-4 h-4 fill-amber-400" />
+                      <Star key={r} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <p className="text-xs sm:text-sm text-rak-slate-200 leading-relaxed font-normal italic">
+                  <p className="text-xs sm:text-sm text-rak-slate-200 dark:text-rak-slate-200 light:text-slate-700 leading-relaxed font-normal italic">
                     "{t.quote}"
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-rak-slate-800/70 flex items-center space-x-3">
+                <div className="pt-4 border-t border-rak-slate-800/70 light:border-slate-200 flex items-center space-x-3">
                   <img src={t.avatar} alt={t.author} className="w-11 h-11 rounded-full object-cover border-2 border-rak-magenta shrink-0 shadow-magenta-sm" />
                   <div>
-                    <div className="text-xs font-bold text-white tracking-wide">{t.author}</div>
+                    <div className="text-xs font-bold text-white dark:text-white light:text-slate-900 tracking-wide">{t.author}</div>
                     <div className="text-[10px] text-rak-slate-400 font-medium">{t.role}</div>
                     <div className="text-[10px] text-rak-magenta font-semibold">{t.company}</div>
                   </div>
                 </div>
-              </div>
+              </SpotlightCard>
             ))}
           </InfiniteSlider>
-        </div>
+        </SpotlightCard>
       </section>
 
     </div>
