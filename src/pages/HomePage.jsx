@@ -32,6 +32,7 @@ import { InfiniteSlider } from '../components/ui/infinite-slider';
 import { AnimatedBanner } from '../components/AnimatedBanner';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
+import { GradientShimmer } from '../components/ui/GradientShimmer';
 
 const getPillarIcon = (iconName) => {
   switch (iconName) {
@@ -117,8 +118,10 @@ export const HomePage = ({
                     {word}
                   </motion.span>
                 ))}
-                <motion.span variants={wordVariants} className="inline-block text-gradient-vibrant font-black drop-shadow-sm">
-                  New Heights.
+                <motion.span variants={wordVariants} className="inline-block font-black drop-shadow-sm">
+                  <GradientShimmer gradient="sunrise" spread={4} duration={1.8} pauseBetween={1000}>
+                    New Heights.
+                  </GradientShimmer>
                 </motion.span>
               </motion.h1>
 

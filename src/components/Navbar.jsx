@@ -43,6 +43,18 @@ export const Navbar = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  // Lock body scroll when mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
+
   const navItems = [
     { id: 'home', label: 'Home', icon: Compass },
     { id: 'about', label: 'About', icon: Users },
@@ -69,6 +81,7 @@ export const Navbar = ({
     if (e && e.preventDefault) e.preventDefault();
     setActiveTab('services');
     setServicesDropdown(false);
+    setMobileMenuOpen(false);
     setTimeout(() => {
       const el = document.getElementById(pillarId);
       if (el) {
@@ -96,6 +109,7 @@ export const Navbar = ({
             onClick={(e) => {
               e.preventDefault();
               setActiveTab('home');
+              setMobileMenuOpen(false);
               window.scrollTo({ top: 0, behavior: 'smooth' });
             }}
             className="flex items-center space-x-3 focus:outline-none shrink-0"
@@ -303,14 +317,77 @@ export const Navbar = ({
         </div>
       </div>
 
+      {/* Mobile Drawer Backdrop Mask */}
+      {mobileMenuOpen && (
+        <div 
+          onClick={() => setMobileMenuOpen(false)}
+          className="xl:hidden fixed inset-0 top-[72px] bg-black/60 backdrop-blur-sm z-40 animate-in fade-in duration-200"
+          aria-hidden="true"
+        />
+      )}
+
       {/* Mobile & Tablet Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="xl:hidden fixed inset-x-0 top-[72px] bg-rak-slate-950/98 light:bg-white/98 backdrop-blur-2xl border-b border-rak-slate-800 p-6 shadow-2xl z-50 animate-in slide-in-from-top duration-300">
+        <div className="xl:hidden fixed inset-x-0 top-[72px] max-h-[calc(100vh-72px)] overflow-y-auto bg-rak-slate-950/98 light:bg-white/98 backdrop-blur-2xl border-b border-rak-slate-800 p-6 shadow-2xl z-50 animate-in slide-in-from-top duration-300">
           <div className="space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon;
               const isActive = activeTab === item.id;
               const path = item.id === 'home' ? '/' : `/${item.id}`;
+
+              if (item.hasDropdown) {
+                return (
+                  <div key={item.id} className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <a
+                        href={path}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          setActiveTab(item.id);
+                          setMobileMenuOpen(false);
+                          window.scrollTo({ top: 0, behavior: 'smooth' });
+                        }}
+                        className={`flex-1 flex items-center justify-between p-3.5 rounded-xl text-sm font-semibold transition-all ${
+                          isActive 
+                            ? 'bg-rak-magenta text-white' 
+                            : 'text-rak-slate-300 light:text-rak-slate-800 hover:bg-rak-slate-900 light:hover:bg-rak-slate-100'
+                        }`}
+                      >
+                        <div className="flex items-center space-x-3">
+                          <Icon className="w-4 h-4" />
+                          <span>{item.label}</span>
+                        </div>
+                      </a>
+                      <button
+                        onClick={() => setServicesDropdown(!servicesDropdown)}
+                        className="p-3 text-rak-slate-400 hover:text-white"
+                        aria-label="Toggle Pillars list"
+                      >
+                        <ChevronDown className={`w-4 h-4 transition-transform duration-200 ${servicesDropdown ? 'rotate-180 text-rak-magenta' : ''}`} />
+                      </button>
+                    </div>
+
+                    {/* Mobile Expandable Pillars Submenu */}
+                    {servicesDropdown && (
+                      <div className="pl-6 pr-2 py-2 space-y-1 border-l-2 border-rak-magenta/40 ml-4 bg-rak-slate-900/40 rounded-r-xl">
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-rak-magenta pb-1">8 Capability Units</div>
+                        {pillarsList.map((p) => (
+                          <a
+                            key={p.id}
+                            href={`/services#${p.id}`}
+                            onClick={(e) => handlePillarSelect(p.id, e)}
+                            className="block py-1.5 px-3 text-xs font-medium text-rak-slate-300 hover:text-white hover:bg-rak-magenta/15 rounded-lg transition-colors flex items-center justify-between"
+                          >
+                            <span>{p.name}</span>
+                            <ArrowUpRight className="w-3 h-3 text-rak-magenta" />
+                          </a>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                );
+              }
+
               return (
                 <a
                   key={item.id}
@@ -359,3 +436,4 @@ export const Navbar = ({
 };
 
 export default Navbar;
+

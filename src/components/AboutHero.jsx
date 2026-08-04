@@ -70,9 +70,9 @@ export const AboutHero = ({ onOpenPlanner }) => {
           <div className="w-full flex flex-col items-center relative z-10 space-y-1 md:space-y-2">
             
             {/* #RAK4 */}
-            <div className="w-full flex justify-start pl-[8%] md:pl-[20%] relative z-30">
+            <div className="w-full flex justify-start pl-[2%] sm:pl-[8%] md:pl-[20%] relative z-30">
               <h1 
-                className="text-[clamp(4.5rem,12vw,160px)] font-black leading-[0.85] tracking-tighter text-rak-magenta m-0 p-0 uppercase"
+                className="text-[clamp(2.5rem,11vw,160px)] font-black leading-[0.85] tracking-tighter text-rak-magenta m-0 p-0 uppercase"
                 style={{ 
                   fontFamily: '"Arial Black", Impact, sans-serif',
                   textShadow: '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034, 10px 10px 0 #5A0034, 12px 12px 0 #5A0034'
@@ -85,7 +85,7 @@ export const AboutHero = ({ onOpenPlanner }) => {
             {/* CREATIVE */}
             <div className="w-full flex justify-center relative z-20">
               <h1 
-                className="text-[clamp(5rem,15vw,210px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
+                className="text-[clamp(2.75rem,13vw,210px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
                 style={{ 
                   fontFamily: '"Arial Black", Impact, sans-serif',
                   textShadow: '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034, 10px 10px 0 #5A0034, 12px 12px 0 #5A0034'
@@ -96,9 +96,9 @@ export const AboutHero = ({ onOpenPlanner }) => {
             </div>
             
             {/* AGENCY */}
-            <div className="w-full flex justify-start pl-[12%] md:pl-[28%] relative z-10">
+            <div className="w-full flex justify-start pl-[6%] sm:pl-[12%] md:pl-[28%] relative z-30">
               <h1 
-                className="text-[clamp(4.5rem,12vw,160px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
+                className="text-[clamp(2.5rem,11vw,160px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
                 style={{ 
                   fontFamily: '"Arial Black", Impact, sans-serif',
                   textShadow: '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034, 10px 10px 0 #5A0034, 12px 12px 0 #5A0034'
@@ -114,17 +114,17 @@ export const AboutHero = ({ onOpenPlanner }) => {
           <div className="absolute inset-0 w-full h-full pointer-events-none">
             
             {/* Decorative Arrow Left */}
-            <div className="absolute bottom-[0%] left-[0%] md:left-[6%] w-20 h-20 md:w-28 md:h-28 z-20">
+            <div className="hidden sm:block absolute bottom-[0%] left-[0%] md:left-[6%] w-16 h-16 md:w-28 md:h-28 z-20">
               <ArrowMagentaLeft />
             </div>
 
             {/* Decorative Arrow Right */}
-            <div className="absolute top-[5%] right-[0%] md:right-[8%] w-20 h-20 md:w-28 md:h-28 z-20">
+            <div className="hidden sm:block absolute top-[5%] right-[0%] md:right-[8%] w-16 h-16 md:w-28 md:h-28 z-20">
               <ArrowMagentaRight />
             </div>
 
-            {/* Circular Badge */}
-            <div className="absolute bottom-[-10%] right-[2%] md:right-[12%] z-40 pointer-events-auto">
+            {/* Circular Badge - Positioned to bottom right without obscuring AGENCY */}
+            <div className="absolute -bottom-12 -right-4 sm:-bottom-16 sm:-right-8 md:-right-12 z-20 pointer-events-auto scale-75 sm:scale-90 md:scale-100 origin-bottom-right">
               <CircularBadge />
             </div>
 

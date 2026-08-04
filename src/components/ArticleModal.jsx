@@ -1,7 +1,14 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { X, Clock, Calendar, User, Share2, ArrowLeft } from 'lucide-react';
 
 export const ArticleModal = ({ article, onClose }) => {
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
+
   if (!article) return null;
 
   return (

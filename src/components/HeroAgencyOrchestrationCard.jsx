@@ -126,7 +126,7 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
       </div>
 
       {/* Navigation Pills: 6 Core Pillars */}
-      <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 my-6">
+      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-2 my-6">
         {agencyUnits.map((unit, idx) => {
           const NodeIcon = unit.icon;
           const isActive = idx === activeNode;
@@ -135,14 +135,14 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
             <button
               key={unit.id}
               onClick={() => setActiveNode(idx)}
-              className={`flex flex-col items-center justify-center p-3 rounded-2xl border transition-all duration-300 ${
+              className={`flex flex-col items-center justify-center p-2.5 sm:p-3 rounded-2xl border transition-all duration-300 ${
                 isActive
                   ? 'bg-rak-slate-900 border-rak-magenta shadow-magenta-sm scale-105'
                   : 'bg-rak-slate-900/40 border-rak-slate-800/60 hover:border-rak-slate-700 text-rak-slate-400 hover:text-white'
               }`}
             >
-              <NodeIcon className={`w-5 h-5 mb-1.5 ${isActive ? 'text-rak-magenta' : 'text-rak-slate-400'}`} />
-              <span className={`text-[11px] font-bold tracking-tight text-center leading-none ${isActive ? 'text-white' : 'text-rak-slate-400'}`}>
+              <NodeIcon className={`w-4 h-4 sm:w-5 sm:h-5 mb-1 sm:mb-1.5 ${isActive ? 'text-rak-magenta' : 'text-rak-slate-400'}`} />
+              <span className={`text-[10px] sm:text-[11px] font-bold tracking-tight text-center leading-tight truncate w-full ${isActive ? 'text-white' : 'text-rak-slate-400'}`}>
                 {unit.short}
               </span>
             </button>

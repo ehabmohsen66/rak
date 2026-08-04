@@ -149,7 +149,7 @@ function Fallback3DRobot({ className }) {
     const particles = new THREE.Points(particleGeo, particleMat);
     scene.add(particles);
 
-    // Mouse Tracking
+    // Mouse & Touch Tracking
     let targetMouseX = 0;
     let targetMouseY = 0;
 
@@ -161,7 +161,19 @@ function Fallback3DRobot({ className }) {
       targetMouseY = y * 2;
     };
 
+    const handleTouchMove = (e) => {
+      if (e.touches && e.touches[0]) {
+        const touch = e.touches[0];
+        const rect = container.getBoundingClientRect();
+        const x = (touch.clientX - rect.left) / rect.width - 0.5;
+        const y = (touch.clientY - rect.top) / rect.height - 0.5;
+        targetMouseX = x * 2;
+        targetMouseY = y * 2;
+      }
+    };
+
     window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('touchmove', handleTouchMove, { passive: true });
 
     let animationId;
     let clock = new THREE.Clock();
@@ -201,6 +213,7 @@ function Fallback3DRobot({ className }) {
     return () => {
       cancelAnimationFrame(animationId);
       window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('touchmove', handleTouchMove);
       window.removeEventListener('resize', handleResize);
       if (mountRef.current && renderer.domElement) {
         mountRef.current.removeChild(renderer.domElement);

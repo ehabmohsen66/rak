@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, Upload, CheckCircle2, Send, Briefcase } from 'lucide-react';
 
 export const JobApplicationModal = ({ job, onClose }) => {
@@ -12,6 +12,13 @@ export const JobApplicationModal = ({ job, onClose }) => {
     resumeName: ''
   });
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   if (!job) return null;
 

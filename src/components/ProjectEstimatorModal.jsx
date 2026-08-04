@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { X, CheckCircle2, ArrowRight, ArrowLeft, Sparkles, Send, DollarSign, Calendar, ShieldCheck } from 'lucide-react';
 import { SERVICES } from '../data/contentData';
 
@@ -15,6 +15,13 @@ export const ProjectEstimatorModal = ({ onClose }) => {
     brief: ''
   });
   const [submitted, setSubmitted] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, []);
 
   const toggleService = (id) => {
     if (selectedServices.includes(id)) {
