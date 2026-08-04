@@ -14,22 +14,22 @@ export const WorkPage = ({ onSelectProject }) => {
     : RAK4_CREATIONS.filter(p => p.category === filter);
 
   return (
-    <div className="pt-20 pb-16 space-y-16">
+    <div className="pt-16 pb-16 space-y-16 sm:space-y-24">
       
-      {/* 3D GLSL WEBGL HERO - FULL BLEED HERO SECTION */}
-      <section className="relative w-full min-h-[70vh] sm:min-h-[80vh] flex flex-col justify-center items-center overflow-hidden bg-rak-slate-950 px-4 sm:px-6 lg:px-8 py-16 sm:py-24 border-b border-rak-slate-800/80 -mt-20 pt-32">
+      {/* 3D GLSL WEBGL HERO - MATCHES SERVICES PAGE HEIGHT (75vh - 85vh) */}
+      <section className="relative w-full min-h-[75vh] md:min-h-[85vh] bg-rak-slate-950 flex flex-col items-center justify-center overflow-hidden border-b border-rak-slate-800/80 -mt-16 pt-24">
         <WebGLShader className="opacity-90" />
         
         {/* Ambient Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-rak-slate-950/50 to-rak-slate-950/30 pointer-events-none z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/70 via-transparent to-rak-slate-950 pointer-events-none z-10" />
 
-        <div className="relative z-20 space-y-6 text-center max-w-5xl mx-auto">
-          <span className="inline-flex items-center space-x-2 px-4 py-2 bg-rak-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
+        <div className="relative z-20 space-y-8 text-center max-w-5xl mx-auto px-4 sm:px-6 py-16">
+          <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-rak-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
             <Sparkles className="w-4 h-4 text-rak-magenta" />
             <span>Interactive WebGL Portfolio Archive</span>
-          </span>
+          </div>
           
-          <h1 className="text-4xl sm:text-7xl lg:text-8xl font-extrabold text-white tracking-tight uppercase" style={{ textShadow: '0 0 40px rgba(230, 0, 126, 0.4)' }}>
+          <h1 className="text-4xl sm:text-7xl lg:text-8xl font-extrabold text-white tracking-tight uppercase leading-none" style={{ textShadow: '0 0 40px rgba(230, 0, 126, 0.4)' }}>
             The <span className="text-gradient-magenta">RAK4 Creations.</span>
           </h1>
           
