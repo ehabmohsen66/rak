@@ -1,8 +1,9 @@
 import React from 'react';
-import { ShieldCheck, Target, Eye, Award, Sparkles, CheckCircle2, ArrowUpRight, Quote, HeartHandshake } from 'lucide-react';
+import { ShieldCheck, Target, Eye, Award, Sparkles, CheckCircle2, ArrowUpRight, Quote, HeartHandshake, Users } from 'lucide-react';
 import { BRAND_INFO, VALUES } from '../data/contentData';
 import { AboutHero } from '../components/AboutHero';
 import { TeamMarqueeSection } from '../components/TeamMarqueeSection';
+import { SpotlightCard } from '../components/SpotlightCard';
 
 export const AboutPage = ({ onOpenPlanner }) => {
   return (
@@ -22,6 +23,49 @@ export const AboutPage = ({ onOpenPlanner }) => {
             — The RAK4Creative Promise
           </div>
         </div>
+      </section>
+
+      {/* 2.5 OFFICIAL RAK TEAM PHOTO SHOWCASE */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <SpotlightCard
+          spotlightColor="rgba(236, 0, 140, 0.2)"
+          borderColor="rgba(236, 0, 140, 0.4)"
+          className="p-0 bg-rak-slate-900/80 border border-rak-slate-800 rounded-3xl overflow-hidden backdrop-blur-xl shadow-2xl"
+        >
+          <div className="p-8 sm:p-10 border-b border-rak-slate-800/80 flex flex-col md:flex-row md:items-end justify-between gap-4">
+            <div className="space-y-2">
+              <div className="inline-flex items-center space-x-2 px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest">
+                <Users className="w-3.5 h-3.5" />
+                <span>The RAK 4 Creative Collective</span>
+              </div>
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+                Our Team in Action.
+              </h2>
+            </div>
+            <p className="text-xs text-rak-slate-400 max-w-md font-medium">
+              A united squad of strategists, 3D artists, media producers, and full-stack developers driven by bold creativity.
+            </p>
+          </div>
+
+          <div className="relative w-full h-[380px] sm:h-[500px] lg:h-[620px] overflow-hidden bg-rak-slate-950 group">
+            <img
+              src="/rak-team.jpg"
+              alt="RAK 4 Creative Team"
+              className="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-1000 ease-out filter drop-shadow-2xl"
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-transparent to-transparent opacity-80" />
+            
+            <div className="absolute bottom-6 left-6 right-6 p-6 rounded-2xl bg-rak-slate-950/80 backdrop-blur-md border border-rak-magenta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <span className="text-[10px] font-mono text-rak-magenta uppercase tracking-widest font-extrabold">RAK4 CREATIVE HEADQUARTERS</span>
+                <h3 className="text-lg font-bold text-white">One-Stop Agency Powerhouse</h3>
+              </div>
+              <span className="text-xs font-semibold text-rak-slate-300 px-4 py-2 bg-rak-slate-900/90 border border-rak-slate-700/80 rounded-xl shrink-0">
+                Cairo • Dubai • Riyadh • Global
+              </span>
+            </div>
+          </div>
+        </SpotlightCard>
       </section>
 
       {/* 3. WHAT MAKES US DIFFERENT */}
