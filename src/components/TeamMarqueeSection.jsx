@@ -56,22 +56,22 @@ export const TeamMarqueeSection = () => {
             borderColor="rgba(236, 0, 140, 0.4)"
             className="p-3 sm:p-4 bg-rak-slate-950/90 border border-rak-slate-800 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl group"
           >
-            <div className="relative w-full overflow-hidden rounded-2xl bg-rak-slate-900">
+            <div className="relative w-full overflow-hidden rounded-2xl bg-rak-slate-950 flex flex-col items-center">
               <img
                 src="/rak-team.jpg"
                 alt="RAK 4 Creative Team"
-                className="w-full h-auto max-h-[620px] object-contain sm:object-cover object-center rounded-2xl group-hover:scale-[1.02] transition-transform duration-700 ease-out filter drop-shadow-2xl"
+                className="w-full h-auto object-contain rounded-2xl transition-transform duration-700 ease-out filter drop-shadow-2xl"
                 loading="eager"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950/80 via-transparent to-transparent pointer-events-none rounded-2xl" />
+              <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950/70 via-transparent to-transparent pointer-events-none rounded-2xl" />
               
               {/* Bottom Caption Overlay */}
-              <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 p-4 sm:p-5 rounded-xl bg-rak-slate-950/85 backdrop-blur-md border border-rak-magenta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-xl bg-rak-slate-950/80 backdrop-blur-md border border-rak-magenta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10">
                 <div>
                   <span className="text-[10px] font-mono text-rak-magenta uppercase tracking-widest font-extrabold">OFFICIAL TEAM PHOTOGRAPH</span>
-                  <h3 className="text-sm sm:text-base font-bold text-white">The RAK 4 Creative Powerhouse</h3>
+                  <h3 className="text-xs sm:text-sm font-bold text-white">The RAK 4 Creative Powerhouse</h3>
                 </div>
-                <span className="text-[11px] font-semibold text-rak-slate-300 px-3 py-1.5 bg-rak-slate-900/90 border border-rak-slate-700/80 rounded-lg shrink-0">
+                <span className="text-[10px] font-semibold text-rak-slate-300 px-2.5 py-1 bg-rak-slate-900/90 border border-rak-slate-700/80 rounded-lg shrink-0">
                   Strategy • Design • 3D • Tech • Media
                 </span>
               </div>
