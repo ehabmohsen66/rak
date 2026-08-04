@@ -230,10 +230,9 @@ export const HomePage = ({
           </a>
         </div>
 
-        {/* Bento Grid Layout with Spotlight Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
+        {/* 3x2 Grid Layout for 6 Pillars - 100% Full Space with Zero Gaps */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {PILLARS.slice(0, 6).map((s, index) => {
-            const isLarge = index === 0 || index === 2;
             const IconComp = getPillarIcon(s.icon);
             return (
               <SpotlightCard
@@ -241,19 +240,17 @@ export const HomePage = ({
                 spotlightColor={index % 2 === 0 ? "rgba(236, 0, 140, 0.25)" : "rgba(6, 182, 212, 0.25)"}
                 borderColor={index % 2 === 0 ? "rgba(236, 0, 140, 0.5)" : "rgba(6, 182, 212, 0.5)"}
                 onClick={(e) => { e.preventDefault(); setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className={`group relative p-8 sm:p-9 rounded-3xl bg-rak-slate-900/80 dark:bg-rak-slate-900/80 light:bg-white/90 border border-rak-slate-800/80 cursor-pointer overflow-hidden flex flex-col justify-between backdrop-blur-xl ${
-                  isLarge ? 'md:col-span-8' : 'md:col-span-4'
-                }`}
+                className="group relative p-7 sm:p-8 rounded-3xl bg-rak-slate-900/80 dark:bg-rak-slate-900/80 light:bg-white/90 border border-rak-slate-800/80 cursor-pointer overflow-hidden flex flex-col justify-between backdrop-blur-xl hover:shadow-magenta-glow transition-all duration-300"
               >
                 {/* Background Translucent Vector Icon Watermark */}
-                <IconComp className="w-48 h-48 absolute -right-6 -bottom-6 text-white/[0.04] dark:text-white/[0.04] light:text-slate-900/[0.05] group-hover:text-rak-magenta/[0.12] transition-all duration-500 pointer-events-none transform group-hover:scale-110 group-hover:rotate-6" />
+                <IconComp className="w-44 h-44 absolute -right-6 -bottom-6 text-white/[0.04] dark:text-white/[0.04] light:text-slate-900/[0.05] group-hover:text-rak-magenta/[0.12] transition-all duration-500 pointer-events-none transform group-hover:scale-110 group-hover:rotate-6" />
 
                 <div className="space-y-5 relative z-10">
                   {/* Top Bar */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="p-3.5 rounded-2xl bg-rak-slate-800/90 dark:bg-rak-slate-800/90 light:bg-slate-100 border border-rak-magenta/40 text-rak-magenta group-hover:bg-rak-magenta group-hover:text-white group-hover:border-rak-magenta transition-all duration-300 shadow-magenta-sm">
-                        <IconComp className="w-6 h-6" />
+                      <div className="p-3 rounded-2xl bg-rak-slate-800/90 dark:bg-rak-slate-800/90 light:bg-slate-100 border border-rak-magenta/40 text-rak-magenta group-hover:bg-rak-magenta group-hover:text-white group-hover:border-rak-magenta transition-all duration-300 shadow-magenta-sm">
+                        <IconComp className="w-5.5 h-5.5" />
                       </div>
                       <span className="px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 text-rak-magenta text-[10px] font-extrabold uppercase tracking-wider rounded-full backdrop-blur-md">
                         {s.tag}
@@ -265,20 +262,20 @@ export const HomePage = ({
                   
                   {/* Card Title & Description */}
                   <div className="space-y-2 pt-1">
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white dark:text-white light:text-slate-900 group-hover:text-rak-magenta transition-colors tracking-tight">
+                    <h3 className="text-2xl font-extrabold text-white dark:text-white light:text-slate-900 group-hover:text-rak-magenta transition-colors tracking-tight">
                       {s.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-rak-slate-300 dark:text-rak-slate-300 light:text-slate-600 leading-relaxed max-w-xl font-normal">
+                    <p className="text-xs sm:text-sm text-rak-slate-300 dark:text-rak-slate-300 light:text-slate-600 leading-relaxed font-normal">
                       {s.description}
                     </p>
                   </div>
                 </div>
 
                 {/* Bottom Items Tags */}
-                <div className="pt-6 mt-6 border-t border-rak-slate-800/80 light:border-slate-200 flex flex-wrap gap-2.5 relative z-10">
+                <div className="pt-5 mt-5 border-t border-rak-slate-800/80 light:border-slate-200 flex flex-wrap gap-2 relative z-10">
                   {s.items.slice(0, 3).map((b, i) => (
-                    <span key={i} className="text-[11px] text-rak-slate-200 dark:text-rak-slate-200 light:text-slate-700 font-semibold px-3 py-1.5 rounded-xl bg-rak-slate-950/60 dark:bg-rak-slate-950/60 light:bg-slate-100 border border-rak-slate-800/90 light:border-slate-300 flex items-center space-x-1.5 group-hover:border-rak-magenta/30 transition-all">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-rak-magenta" />
+                    <span key={i} className="text-[10px] sm:text-[11px] text-rak-slate-200 dark:text-rak-slate-200 light:text-slate-700 font-semibold px-2.5 py-1 rounded-xl bg-rak-slate-950/60 dark:bg-rak-slate-950/60 light:bg-slate-100 border border-rak-slate-800/90 light:border-slate-300 flex items-center space-x-1.5 group-hover:border-rak-magenta/30 transition-all">
+                      <CheckCircle2 className="w-3 h-3 text-rak-magenta shrink-0" />
                       <span>{b}</span>
                     </span>
                   ))}
