@@ -39,17 +39,17 @@ export const Footer = ({
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 relative z-10">
         
         {/* Upper Banner / Conversion Hook */}
-        <div className="bg-gradient-to-r from-rak-slate-900 via-rak-slate-900/90 to-rak-slate-900 border border-rak-slate-800 rounded-3xl p-8 lg:p-12 mb-16 shadow-2xl relative overflow-hidden">
+        <div className="bg-white border border-slate-200 rounded-3xl p-8 lg:p-12 mb-16 shadow-2xl relative overflow-hidden text-slate-900">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
             <div className="lg:col-span-8 space-y-3">
-              <span className="inline-flex items-center space-x-2 px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest">
+              <span className="inline-flex items-center space-x-2 px-3.5 py-1 bg-rak-magenta/10 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest">
                 <Award className="w-3.5 h-3.5" />
                 <span>Enterprise Acceleration</span>
               </span>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-white tracking-tight">
+              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
                 Ready to engineer your brand's next breakthrough?
               </h2>
-              <p className="text-rak-slate-400 text-sm sm:text-base max-w-2xl">
+              <p className="text-slate-600 text-sm sm:text-base max-w-2xl font-medium">
                 We partner with high-growth companies to design digital products, brand identities, and high-conversion web platforms.
               </p>
             </div>
@@ -57,7 +57,7 @@ export const Footer = ({
             <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col gap-3 justify-end">
               <button
                 onClick={onOpenProjectPlanner}
-                className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white bg-rak-magenta rounded-full shadow-magenta-sm hover:bg-rak-magenta-dark transition-all duration-300 group"
+                className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-white bg-rak-magenta rounded-full shadow-magenta-sm hover:bg-rak-magenta-dark transition-all duration-300 group cursor-pointer"
               >
                 <span>Initiate Project Brief</span>
                 <ArrowUpRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -66,7 +66,7 @@ export const Footer = ({
               <a
                 href="/work"
                 onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-rak-slate-300 hover:text-white bg-rak-slate-800/80 hover:bg-rak-slate-800 border border-rak-slate-700/80 rounded-full transition-all"
+                className="inline-flex items-center justify-center px-6 py-3.5 text-xs font-bold uppercase tracking-wider text-slate-800 hover:text-slate-900 bg-slate-100 hover:bg-slate-200 border border-slate-200 rounded-full transition-all"
               >
                 <span>Explore Client Portfolio</span>
               </a>

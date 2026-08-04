@@ -129,26 +129,26 @@ export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
   const CurrentIcon = currentUnit.icon;
 
   return (
-    <div className="relative w-full rounded-3xl bg-rak-slate-900/60 border border-rak-slate-800 p-8 sm:p-12 backdrop-blur-xl shadow-2xl space-y-10 overflow-hidden">
+    <div className="relative w-full rounded-3xl bg-white dark:bg-white light:bg-white border border-slate-200/90 p-8 sm:p-12 shadow-2xl space-y-10 overflow-hidden text-slate-900">
       {/* Background Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-rak-magenta/10 rounded-full blur-3xl pointer-events-none" />
 
       {/* Header Section */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-rak-slate-800/80 relative z-10">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-8 border-b border-slate-200 relative z-10">
         <div className="space-y-3">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-slate-900 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest shadow-magenta-sm">
+          <div className="inline-flex items-center space-x-2 px-3.5 py-1.5 bg-rak-magenta/10 border border-rak-magenta/30 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest shadow-magenta-sm">
             <Workflow className="w-3.5 h-3.5" />
             <span>THE RAK 360° WORKFLOW</span>
           </div>
-          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 tracking-tight">
             How We Take Your Big Ideas <br />
             From <span className="text-gradient-magenta">Ground Zero to New Heights.</span>
           </h2>
         </div>
 
         <div className="flex items-center space-x-3">
-          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 rounded-full text-xs font-mono font-semibold">
-            <Activity className="w-3.5 h-3.5 text-emerald-400 animate-pulse" />
+          <div className="inline-flex items-center space-x-2 px-4 py-2 bg-emerald-500/10 border border-emerald-500/30 text-emerald-600 rounded-full text-xs font-mono font-semibold">
+            <Activity className="w-3.5 h-3.5 text-emerald-500 animate-pulse" />
             <span>LIVE WORKFLOW ADVANCING</span>
           </div>
         </div>
@@ -164,19 +164,19 @@ export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
             <button
               key={unit.id}
               onClick={() => setActiveUnit(idx)}
-              className={`flex flex-col items-start p-4 rounded-2xl border transition-all duration-300 text-left ${
+              className={`flex flex-col items-start p-4 rounded-2xl border transition-all duration-300 text-left cursor-pointer ${
                 isActive
-                  ? 'bg-rak-slate-900 border-rak-magenta shadow-magenta-sm scale-105 z-10'
-                  : 'bg-rak-slate-900/40 border-rak-slate-800/60 hover:border-rak-slate-700 text-rak-slate-400 hover:text-white'
+                  ? 'bg-slate-900 text-white border-rak-magenta shadow-magenta-sm scale-105 z-10'
+                  : 'bg-slate-100 border-slate-200 hover:border-slate-300 text-slate-600 hover:text-slate-900'
               }`}
             >
               <div className="flex items-center justify-between w-full mb-3">
-                <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${isActive ? 'bg-rak-magenta text-white' : 'bg-rak-slate-800 text-rak-slate-400'}`}>
+                <span className={`text-[10px] font-mono font-bold px-2 py-0.5 rounded ${isActive ? 'bg-rak-magenta text-white' : 'bg-slate-200 text-slate-700'}`}>
                   {unit.code}
                 </span>
-                <UnitIcon className={`w-4 h-4 ${isActive ? 'text-rak-magenta' : 'text-rak-slate-400'}`} />
+                <UnitIcon className={`w-4 h-4 ${isActive ? 'text-rak-magenta' : 'text-slate-500'}`} />
               </div>
-              <span className={`text-xs font-bold tracking-tight line-clamp-1 ${isActive ? 'text-white' : 'text-rak-slate-300'}`}>
+              <span className={`text-xs font-bold tracking-tight line-clamp-1 ${isActive ? 'text-white' : 'text-slate-800'}`}>
                 {unit.name}
               </span>
             </button>
@@ -185,8 +185,8 @@ export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
       </div>
 
       {/* Selected Stage Detail Display */}
-      <div className="relative z-10 rounded-2xl bg-rak-slate-900/90 border border-rak-slate-800 p-6 sm:p-8 space-y-6">
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-rak-slate-800/80">
+      <div className="relative z-10 rounded-2xl bg-slate-50 border border-slate-200 p-6 sm:p-8 space-y-6">
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 pb-6 border-b border-slate-200">
           <div className="flex items-center space-x-4">
             <div className={`p-3.5 rounded-2xl bg-gradient-to-r ${currentUnit.color} text-white shadow-lg`}>
               <CurrentIcon className="w-7 h-7" />
@@ -195,7 +195,7 @@ export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
               <span className="text-xs font-mono font-bold text-rak-magenta uppercase tracking-wider">
                 {currentUnit.code} • {currentUnit.status}
               </span>
-              <h3 className="text-2xl font-extrabold text-white tracking-tight mt-0.5">
+              <h3 className="text-2xl font-extrabold text-slate-900 tracking-tight mt-0.5">
                 {currentUnit.name}
               </h3>
             </div>
@@ -203,34 +203,34 @@ export const AgencyOrchestrationMatrix = ({ onOpenPlanner }) => {
 
           <button
             onClick={onOpenPlanner}
-            className="inline-flex items-center space-x-2 px-6 py-3 bg-rak-magenta text-white font-bold text-xs uppercase tracking-wider rounded-full shadow-magenta-glow hover:bg-rak-magenta-dark transition-all hover:scale-105"
+            className="inline-flex items-center space-x-2 px-6 py-3 bg-rak-magenta text-white font-bold text-xs uppercase tracking-wider rounded-full shadow-magenta-glow hover:bg-rak-magenta-dark transition-all hover:scale-105 cursor-pointer"
           >
             <span>Start a Project in this Stage</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
 
-        <p className="text-base text-rak-slate-300 leading-relaxed max-w-3xl">
+        <p className="text-base text-slate-700 leading-relaxed max-w-3xl font-medium">
           {currentUnit.tagline}
         </p>
 
         {/* Metrics Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 pt-2">
           {currentUnit.metrics.map((metric, idx) => (
-            <div key={idx} className="p-4 rounded-xl bg-rak-slate-950/60 border border-rak-slate-800/80 space-y-1">
-              <span className="text-[11px] font-mono text-rak-slate-400 uppercase block">{metric.label}</span>
-              <span className="text-xl font-extrabold text-white tracking-tight">{metric.value}</span>
+            <div key={idx} className="p-4 rounded-xl bg-white border border-slate-200 space-y-1 shadow-sm">
+              <span className="text-[11px] font-mono text-slate-500 uppercase block">{metric.label}</span>
+              <span className="text-xl font-extrabold text-slate-900 tracking-tight">{metric.value}</span>
             </div>
           ))}
         </div>
 
         {/* Downstream Integration Row */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-rak-magenta/10 border border-rak-magenta/30 text-xs text-rak-slate-200 font-medium">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 p-4 rounded-xl bg-rak-magenta/10 border border-rak-magenta/30 text-xs text-slate-800 font-medium">
           <div className="flex items-center space-x-2">
             <Zap className="w-4 h-4 text-rak-magenta shrink-0" />
             <span><strong>Deliverable Output:</strong> {currentUnit.output}</span>
           </div>
-          <span className="text-rak-magenta font-mono font-semibold">{currentUnit.downstreamSync}</span>
+          <span className="text-rak-magenta font-mono font-bold">{currentUnit.downstreamSync}</span>
         </div>
       </div>
     </div>
