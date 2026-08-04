@@ -31,6 +31,7 @@ import { SmallHeroOrchestration } from '../components/SmallHeroOrchestration';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
 import { AnimatedBanner } from '../components/AnimatedBanner';
 import { SpotlightCard } from '../components/SpotlightCard';
+import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
 
 const getPillarIcon = (iconName) => {
   switch (iconName) {
@@ -194,45 +195,13 @@ export const HomePage = ({
         </div>
       </section>
 
-      {/* 2. TRUST BAR / CLIENT BRANDS WITH GLOW REFLECTION */}
+      {/* 2. TRUST BAR / CLIENT BRANDS WITH SEAMLESS GRADIENT MARQUEE SCROLLER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SpotlightCard 
-          spotlightColor="rgba(236, 0, 140, 0.15)"
-          className="p-8 bg-rak-slate-900/70 dark:bg-rak-slate-900/70 light:bg-white/80 border border-rak-magenta/20 rounded-3xl backdrop-blur-md space-y-6 overflow-hidden"
-        >
-          <p className="text-center text-xs font-black uppercase tracking-widest text-gradient-vibrant">
-            Trusted by Ambitious Enterprises & Global Innovators
-          </p>
-
-          <InfiniteSlider gap={28} duration={90} durationOnHover={180} className="py-4">
-            {BRAND_INFO.clients.map((client, i) => (
-              <div 
-                key={i} 
-                className="px-6 py-4 bg-white rounded-2xl shadow-xl hover:scale-105 transition-all cursor-pointer shrink-0 flex items-center justify-center h-20 w-44 overflow-hidden border border-white/40"
-              >
-                {client.image && (
-                  <img 
-                    src={client.image} 
-                    alt={client.name} 
-                    className="max-h-14 max-w-[140px] object-contain transition-all filter drop-shadow-sm"
-                    style={{ imageRendering: '-webkit-optimize-contrast' }}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      const sibling = e.currentTarget.nextElementSibling;
-                      if (sibling) sibling.style.display = 'inline-block';
-                    }}
-                  />
-                )}
-                <span 
-                  className="text-xs font-bold font-mono text-rak-slate-900 tracking-wider"
-                  style={{ display: client.image ? 'none' : 'inline-block' }}
-                >
-                  {client.logo}
-                </span>
-              </div>
-            ))}
-          </InfiniteSlider>
-        </SpotlightCard>
+        <MarqueeLogoScroller 
+          title="Trusted by Ambitious Enterprises & Global Innovators"
+          description="Partnering with industry leaders, high-growth brands, and global institutions to deliver end-to-end digital excellence."
+          speed="normal"
+        />
       </section>
 
       {/* 2.5 RAK 360° CREATIVE ENGINE WORKFLOW */}

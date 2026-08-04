@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Sparkles, ArrowUpRight, Globe, Layers, MapPin } from 'lucide-react';
 import { RAK4_CREATIONS, BRAND_INFO } from '../data/contentData';
-import { InfiniteSlider } from '../components/ui/infinite-slider';
 import { WebGLShader } from '../components/WebGLShader';
+import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
 
 export const WorkPage = ({ onSelectProject }) => {
   const [filter, setFilter] = useState('All');
@@ -58,45 +58,11 @@ export const WorkPage = ({ onSelectProject }) => {
 
       {/* CLIENT IMPACT MAP */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="p-8 bg-rak-slate-900/80 border border-rak-slate-800 rounded-3xl backdrop-blur-xl space-y-6 overflow-hidden">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest flex items-center space-x-2">
-              <Globe className="w-4 h-4" />
-              <span>Global Client Reach & Partner Map</span>
-            </span>
-            <span className="text-xs font-mono text-rak-slate-400">One-Stop Agency Execution</span>
-          </div>
-
-          <InfiniteSlider gap={28} duration={90} durationOnHover={180} className="py-4">
-            {BRAND_INFO.clients.map((client, i) => (
-              <div 
-                key={i} 
-                className="px-6 py-4 bg-white rounded-2xl shadow-xl hover:scale-105 transition-all cursor-pointer shrink-0 flex items-center justify-center h-20 w-44 overflow-hidden border border-white/20"
-              >
-                {client.image && (
-                  <img 
-                    src={client.image} 
-                    alt={client.name} 
-                    className="max-h-14 max-w-[140px] object-contain transition-all filter drop-shadow-sm"
-                    style={{ imageRendering: '-webkit-optimize-contrast' }}
-                    onError={(e) => {
-                      e.currentTarget.style.display = 'none';
-                      const sibling = e.currentTarget.nextElementSibling;
-                      if (sibling) sibling.style.display = 'inline-block';
-                    }}
-                  />
-                )}
-                <span 
-                  className="text-xs font-bold font-mono text-rak-slate-900 tracking-wider"
-                  style={{ display: client.image ? 'none' : 'inline-block' }}
-                >
-                  {client.logo}
-                </span>
-              </div>
-            ))}
-
-          </InfiniteSlider>
-        </div>
+        <MarqueeLogoScroller 
+          title="Global Client Reach & Partner Ecosystem"
+          description="Delivering end-to-end full-service agency execution across international markets."
+          speed="normal"
+        />
       </section>
 
       {/* GALLERY GRID */}
