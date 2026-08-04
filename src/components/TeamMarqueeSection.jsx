@@ -1,45 +1,12 @@
 import React from 'react';
 import { UserCheck, Sparkles, Quote, Star } from 'lucide-react';
-import { InfiniteSlider } from './ui/infinite-slider';
-
-const teamMembers = [
-  {
-    image: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?q=80&w=600&auto=format&fit=crop",
-    name: "Ehab Mohsen",
-    role: "Founder & Creative Director",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=600&auto=format&fit=crop",
-    name: "Alena Rosser",
-    role: "Head of Brand Strategy",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=600&auto=format&fit=crop",
-    name: "Fletch Skinner",
-    role: "Lead 3D & Motion Director",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=600&auto=format&fit=crop",
-    name: "Marc Spector",
-    role: "Director of Media Buying",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=600&auto=format&fit=crop",
-    name: "David Kim",
-    role: "Head of Web & WebGL Tech",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=600&auto=format&fit=crop",
-    name: "Natalia Skinner",
-    role: "Senior Growth & CRO Lead",
-  },
-];
+import { SpotlightCard } from './SpotlightCard';
 
 export const TeamMarqueeSection = () => {
   return (
-    <section className="relative w-full overflow-hidden bg-rak-slate-900/60 border border-rak-slate-800 rounded-3xl py-12 md:py-20 backdrop-blur-xl shadow-2xl">
+    <section className="relative w-full overflow-hidden bg-rak-slate-900/60 border border-rak-slate-800 rounded-3xl py-10 md:py-16 backdrop-blur-xl shadow-2xl">
       {/* Background Decorative SVG Curve */}
-      <div className="pointer-events-none absolute right-0 bottom-0 text-rak-slate-800/40">
+      <div className="pointer-events-none absolute right-0 bottom-0 text-rak-slate-800/30">
         <svg
           className="w-[460px] h-[154px]"
           fill="none"
@@ -63,7 +30,7 @@ export const TeamMarqueeSection = () => {
         </svg>
       </div>
 
-      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-12">
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 space-y-10">
         {/* Header Title */}
         <div className="mx-auto flex max-w-3xl flex-col items-center text-center space-y-4">
           <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-rak-magenta text-white shadow-magenta-glow">
@@ -82,35 +49,34 @@ export const TeamMarqueeSection = () => {
           </p>
         </div>
 
-        {/* Marquee Container with Left & Right Gradient Fade Masks */}
-        <div className="relative w-full">
-          <div className="pointer-events-none absolute top-0 left-0 z-20 h-full w-24 bg-gradient-to-r from-rak-slate-900 to-transparent" />
-          <div className="pointer-events-none absolute top-0 right-0 z-20 h-full w-24 bg-gradient-to-l from-rak-slate-900 to-transparent" />
-
-          <InfiniteSlider gap={24} duration={55} durationOnHover={180} className="py-2">
-            {teamMembers.map((member, i) => (
-              <div
-                className="group flex w-64 shrink-0 flex-col cursor-pointer"
-                key={i}
-              >
-                <div className="relative h-88 w-full overflow-hidden rounded-2xl bg-rak-slate-950 border border-rak-slate-800 group-hover:border-rak-magenta/60 transition-all duration-300">
-                  <img
-                    alt={member.name}
-                    className="h-full w-full object-cover grayscale transition-all duration-500 group-hover:grayscale-0 group-hover:scale-105"
-                    src={member.image}
-                  />
-                  <div className="absolute bottom-0 w-full p-3 bg-gradient-to-t from-rak-slate-950 via-rak-slate-950/90 to-transparent border-t border-rak-slate-800/80">
-                    <h3 className="font-bold text-sm text-white group-hover:text-rak-magenta transition-colors">
-                      {member.name}
-                    </h3>
-                    <p className="text-rak-slate-400 text-xs font-medium">
-                      {member.role}
-                    </p>
-                  </div>
+        {/* Featured Official Team Photo (Replaces sliding stock images) */}
+        <div className="relative w-full max-w-5xl mx-auto">
+          <SpotlightCard
+            spotlightColor="rgba(236, 0, 140, 0.25)"
+            borderColor="rgba(236, 0, 140, 0.4)"
+            className="p-3 sm:p-4 bg-rak-slate-950/90 border border-rak-slate-800 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl group"
+          >
+            <div className="relative w-full overflow-hidden rounded-2xl bg-rak-slate-900">
+              <img
+                src="/rak-team.jpg"
+                alt="RAK 4 Creative Team"
+                className="w-full h-auto max-h-[620px] object-contain sm:object-cover object-center rounded-2xl group-hover:scale-[1.02] transition-transform duration-700 ease-out filter drop-shadow-2xl"
+                loading="eager"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950/80 via-transparent to-transparent pointer-events-none rounded-2xl" />
+              
+              {/* Bottom Caption Overlay */}
+              <div className="absolute bottom-4 left-4 right-4 sm:bottom-6 sm:left-6 sm:right-6 p-4 sm:p-5 rounded-xl bg-rak-slate-950/85 backdrop-blur-md border border-rak-magenta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                <div>
+                  <span className="text-[10px] font-mono text-rak-magenta uppercase tracking-widest font-extrabold">OFFICIAL TEAM PHOTOGRAPH</span>
+                  <h3 className="text-sm sm:text-base font-bold text-white">The RAK 4 Creative Powerhouse</h3>
                 </div>
+                <span className="text-[11px] font-semibold text-rak-slate-300 px-3 py-1.5 bg-rak-slate-900/90 border border-rak-slate-700/80 rounded-lg shrink-0">
+                  Strategy • Design • 3D • Tech • Media
+                </span>
               </div>
-            ))}
-          </InfiniteSlider>
+            </div>
+          </SpotlightCard>
         </div>
 
         {/* Executive Team Quote Banner */}
@@ -118,23 +84,6 @@ export const TeamMarqueeSection = () => {
           <p className="font-medium text-sm sm:text-base text-rak-slate-200 leading-relaxed italic">
             “At RAK 4 Creative, we believe every brand has a breakthrough story. Our team works side-by-side with client leaders to turn bold ideas into high-converting digital realities.”
           </p>
-          <div className="flex flex-col items-center gap-2">
-            <div className="relative h-12 w-12 overflow-hidden rounded-full border-2 border-rak-magenta shadow-magenta-sm">
-              <img
-                alt="Natalia Kara"
-                className="h-full w-full object-cover"
-                src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?q=80&w=200&auto=format&fit=crop"
-              />
-            </div>
-            <div className="text-center">
-              <p className="font-bold text-xs text-white">
-                Natalia Kara
-              </p>
-              <p className="text-rak-magenta text-[11px] font-mono">
-                Executive Vice President · RAK 4 Creative
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>
