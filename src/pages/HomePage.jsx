@@ -18,10 +18,13 @@ import {
   Share2,
   Search,
   Target,
-  Radio
+  Radio,
+  Calendar,
+  Clock,
+  BookOpen
 } from 'lucide-react';
 import { motion } from 'framer-motion';
-import { BRAND_INFO, SERVICES, PROJECTS, TESTIMONIALS, PILLARS } from '../data/contentData';
+import { BRAND_INFO, SERVICES, PROJECTS, TESTIMONIALS, PILLARS, BLOG_POSTS } from '../data/contentData';
 import { AgencyOrchestrationMatrix } from '../components/AgencyOrchestrationMatrix';
 import { HeroAgencyOrchestrationCard } from '../components/HeroAgencyOrchestrationCard';
 import { SmallHeroOrchestration } from '../components/SmallHeroOrchestration';
@@ -43,7 +46,12 @@ const getPillarIcon = (iconName) => {
   }
 };
 
-export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, onOpenPlanner = () => {} }) => {
+export const HomePage = ({ 
+  setActiveTab = () => {}, 
+  onSelectProject = () => {}, 
+  onSelectArticle = () => {},
+  onOpenPlanner = () => {} 
+}) => {
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -416,6 +424,94 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
             ))}
           </InfiniteSlider>
         </SpotlightCard>
+      </section>
+
+      {/* 6. EXECUTIVE EDITORIAL & BLOG INSIGHTS (4 POSTS) */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+        <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+          <div className="space-y-3">
+            <span className="text-xs font-extrabold text-rak-magenta uppercase tracking-widest px-3.5 py-1.5 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
+              Executive Editorial
+            </span>
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight">
+              Latest Strategic Insights.
+            </h2>
+          </div>
+          <a
+            href="/blog"
+            onClick={(e) => { e.preventDefault(); setActiveTab('blog'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+            className="inline-flex items-center space-x-2 text-xs font-extrabold uppercase tracking-wider text-rak-magenta hover:text-white transition-colors"
+          >
+            <span>Explore All Insights</span>
+            <ArrowUpRight className="w-4 h-4" />
+          </a>
+        </div>
+
+        {/* 4 Featured Blog Post Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          {BLOG_POSTS.slice(0, 4).map((post) => (
+            <SpotlightCard
+              key={post.id}
+              spotlightColor="rgba(236, 0, 140, 0.2)"
+              borderColor="rgba(236, 0, 140, 0.4)"
+              onClick={() => onSelectArticle(post)}
+              className="group cursor-pointer p-0 bg-rak-slate-900/80 border border-rak-slate-800 rounded-3xl overflow-hidden flex flex-col justify-between backdrop-blur-xl hover:shadow-magenta-glow transition-all duration-300"
+            >
+              <div className="space-y-4">
+                {/* Article Cover Image */}
+                <div className="relative h-48 w-full overflow-hidden bg-rak-slate-950">
+                  <img
+                    src={post.image}
+                    alt={post.title}
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-transparent to-transparent opacity-80" />
+                  
+                  {/* Category Badge */}
+                  <div className="absolute top-3.5 left-3.5 px-3 py-1 bg-rak-slate-950/85 backdrop-blur-md border border-rak-magenta/30 rounded-full text-[10px] font-bold text-rak-magenta uppercase tracking-wider shadow-magenta-sm">
+                    {post.category}
+                  </div>
+                </div>
+
+                {/* Content Details */}
+                <div className="px-5 space-y-3">
+                  {/* Date & Read Time Metadata */}
+                  <div className="flex items-center space-x-4 text-[10px] font-mono text-rak-slate-400">
+                    <div className="flex items-center space-x-1">
+                      <Calendar className="w-3 h-3 text-rak-magenta" />
+                      <span>{post.date}</span>
+                    </div>
+                    <div className="flex items-center space-x-1">
+                      <Clock className="w-3 h-3 text-rak-magenta" />
+                      <span>{post.readTime}</span>
+                    </div>
+                  </div>
+
+                  {/* Title */}
+                  <h3 className="text-base font-extrabold text-white group-hover:text-rak-magenta transition-colors line-clamp-2 leading-snug tracking-tight">
+                    {post.title}
+                  </h3>
+
+                  {/* Excerpt */}
+                  <p className="text-xs text-rak-slate-300 line-clamp-2 leading-relaxed font-normal">
+                    {post.excerpt}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Footer: Read Article CTA */}
+              <div className="p-5 pt-3 border-t border-rak-slate-800/80 flex items-center justify-between mt-4">
+                <span className="text-[10px] font-bold text-rak-slate-400 font-mono truncate max-w-[140px]">
+                  {post.author}
+                </span>
+                <span className="inline-flex items-center space-x-1 text-[11px] font-bold text-rak-magenta group-hover:translate-x-0.5 transition-transform">
+                  <span>Read</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </span>
+              </div>
+            </SpotlightCard>
+          ))}
+        </div>
       </section>
 
     </div>

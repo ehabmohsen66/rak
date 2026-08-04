@@ -132,6 +132,7 @@ export function App() {
           <HomePage 
             setActiveTab={setActiveTab}
             onSelectProject={(project) => setSelectedProject(project)}
+            onSelectArticle={(article) => setSelectedArticle(article)}
             onOpenPlanner={() => setPlannerOpen(true)}
           />
         )}
