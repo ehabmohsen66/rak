@@ -1,3 +1,4 @@
+import React, { useState, useEffect } from 'react';
 import { 
   ArrowUpRight, 
   Sparkles, 
@@ -23,7 +24,7 @@ import {
   Clock,
   BookOpen
 } from 'lucide-react';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { BRAND_INFO, SERVICES, PROJECTS, TESTIMONIALS, PILLARS, BLOG_POSTS } from '../data/contentData';
 import { AgencyOrchestrationMatrix } from '../components/AgencyOrchestrationMatrix';
 import { HeroAgencyOrchestrationCard } from '../components/HeroAgencyOrchestrationCard';
@@ -48,12 +49,29 @@ const getPillarIcon = (iconName) => {
   }
 };
 
+const HERO_PHRASES = [
+  "New Heights.",
+  "Next Level.",
+  "Global Scale.",
+  "Peak Impact.",
+  "Market Lead."
+];
+
 export const HomePage = ({ 
   setActiveTab = () => {}, 
   onSelectProject = () => {}, 
   onSelectArticle = () => {},
   onOpenPlanner = () => {} 
 }) => {
+
+  const [phraseIndex, setPhraseIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPhraseIndex((prev) => (prev + 1) % HERO_PHRASES.length);
+    }, 3200);
+    return () => clearInterval(timer);
+  }, []);
 
   const containerVariants = {
     hidden: { opacity: 0 },
@@ -118,11 +136,23 @@ export const HomePage = ({
                     {word}
                   </motion.span>
                 ))}
-                <motion.span variants={wordVariants} className="inline-block font-black drop-shadow-sm">
-                  <GradientShimmer gradient="sunrise" spread={4} duration={1.8} pauseBetween={1000}>
-                    New Heights.
-                  </GradientShimmer>
-                </motion.span>
+                
+                <span className="inline-block text-left relative">
+                  <AnimatePresence mode="wait">
+                    <motion.span
+                      key={HERO_PHRASES[phraseIndex]}
+                      initial={{ opacity: 0, y: 16, filter: 'blur(6px)' }}
+                      animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                      exit={{ opacity: 0, y: -16, filter: 'blur(6px)' }}
+                      transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+                      className="inline-block font-black drop-shadow-sm"
+                    >
+                      <GradientShimmer gradient="sunrise" duration={2.5}>
+                        {HERO_PHRASES[phraseIndex]}
+                      </GradientShimmer>
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
               </motion.h1>
 
               {/* Subtitle */}

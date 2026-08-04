@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useMemo, useRef } from "react";
+import React, { useMemo } from "react";
 
 /* -------------------------------------------------------------------------- */
 /*  Built-in presets                                                           */
@@ -64,12 +64,6 @@ export const gradientPresets = {
   ],
 };
 
-export const easingPresets = {
-  smooth: "cubic-bezier(0.45, 0, 0.55, 1)",
-  gentle: "cubic-bezier(0.76, 0, 0.24, 1)",
-  snappy: "cubic-bezier(0.3, 0, 0.2, 1)",
-};
-
 function resolveStops(gradient) {
   if (!gradient) return gradientPresets.sunrise;
   if (typeof gradient === "string")
@@ -77,10 +71,11 @@ function resolveStops(gradient) {
   return gradient;
 }
 
-export function buildBandGradient(stops, angle = 105) {
+export function buildBandGradient(stops, angle = 110) {
   const sorted = [...stops].sort((a, b) => a.position - b.position);
   const colorList = sorted.map((s) => s.color);
   
+  // Continuous repeating seamless gradient loop
   const fullStops = [
     colorList[0],
     ...colorList,
@@ -96,82 +91,44 @@ export function buildBandGradient(stops, angle = 105) {
 export function GradientShimmer({
   children,
   gradient = "sunrise",
-  easing = "smooth",
-  duration = 1.8,
-  spread = 4,
-  angle = 105,
-  pauseBetween = 800,
+  duration = 2.5,
+  angle = 110,
   as: Component = "span",
   className = "",
   style = {},
   ...restProps
 }) {
-  const ref = useRef(null);
   const stops = useMemo(() => resolveStops(gradient), [gradient]);
   const backgroundImage = useMemo(
     () => buildBandGradient(stops, angle),
     [stops, angle]
   );
-  const easingValue = easingPresets[easing] ?? easingPresets.smooth;
-
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-
-    let anim = null;
-    let timer = null;
-    let cancelled = false;
-
-    const animateSweep = () => {
-      if (cancelled || !el) return;
-
-      const durationMs = duration * 1000;
-      
-      anim = el.animate(
-        [
-          { backgroundPosition: "250% center" },
-          { backgroundPosition: "-150% center" },
-        ],
-        {
-          duration: durationMs,
-          easing: easingValue,
-          fill: "forwards",
-        }
-      );
-
-      anim.onfinish = () => {
-        if (!cancelled) {
-          timer = setTimeout(animateSweep, Math.max(0, pauseBetween));
-        }
-      };
-    };
-
-    const initialTimer = setTimeout(animateSweep, 100);
-
-    return () => {
-      cancelled = true;
-      clearTimeout(initialTimer);
-      clearTimeout(timer);
-      if (anim) anim.cancel();
-    };
-  }, [gradient, duration, easingValue, pauseBetween]);
 
   const mergedStyle = {
     display: "inline-block",
     backgroundImage,
-    backgroundSize: "250% 100%",
-    backgroundRepeat: "no-repeat",
+    backgroundSize: "200% 100%",
+    backgroundRepeat: "repeat-x",
     WebkitBackgroundClip: "text",
     backgroundClip: "text",
     WebkitTextFillColor: "transparent",
     color: "transparent",
+    animation: `gs-shimmer ${duration}s linear infinite`,
     ...style,
   };
 
   return (
-    <Component ref={ref} className={className} style={mergedStyle} {...restProps}>
-      {children}
-    </Component>
+    <>
+      <style>{`
+        @keyframes gs-shimmer {
+          0% { background-position: 200% center; }
+          100% { background-position: -200% center; }
+        }
+      `}</style>
+      <Component className={className} style={mergedStyle} {...restProps}>
+        {children}
+      </Component>
+    </>
   );
 }
 
