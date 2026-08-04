@@ -239,7 +239,7 @@ export const Navbar = ({
             {/* Primary Action Button */}
             <button
               onClick={onOpenPlanner}
-              className="relative inline-flex items-center justify-center px-4.5 py-2 text-[11px] font-extrabold uppercase tracking-wider text-white btn-neon-magenta rounded-full shadow-md hover:scale-105 transition-all duration-300 group overflow-hidden shrink-0 cursor-pointer"
+              className="relative inline-flex items-center justify-center px-4.5 py-2 text-[11px] font-bold uppercase tracking-wider text-white bg-rak-magenta rounded-full shadow-magenta-sm hover:bg-rak-magenta-dark hover:shadow-magenta-glow transition-all duration-300 group overflow-hidden shrink-0"
             >
               <span className="relative z-10 flex items-center space-x-1.5">
                 <span>Start a Project</span>

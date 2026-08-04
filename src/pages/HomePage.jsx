@@ -71,13 +71,13 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
   return (
     <div className="space-y-24 sm:space-y-32 pb-16 relative">
       
-      {/* 1. CINEMATIC SPLIT HERO SECTION WITH COOL AMBIENT MESH LIGHTS */}
+      {/* 1. CINEMATIC SPLIT HERO SECTION WITH VIBRANT MESH LIGHTS */}
       <section className="relative min-h-[85vh] flex items-center pt-28 pb-16 overflow-hidden">
         
-        {/* Soft Non-Fatiguing Ambient Mesh Orbs (Cool Indigo & Cyan) */}
-        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 w-[900px] h-[550px] bg-indigo-600/10 rounded-full blur-[180px] pointer-events-none" />
-        <div className="absolute top-12 right-10 w-[600px] h-[450px] bg-sky-500/10 rounded-full blur-[150px] pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-[500px] h-[400px] bg-violet-600/10 rounded-full blur-[150px] pointer-events-none" />
+        {/* Dynamic Multi-Color Ambient Mesh Orbs */}
+        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 w-[900px] h-[550px] bg-rak-magenta/25 rounded-full blur-[160px] pointer-events-none animate-pulse-slow" />
+        <div className="absolute top-12 right-10 w-[600px] h-[450px] bg-rak-cyan/20 rounded-full blur-[140px] pointer-events-none" />
+        <div className="absolute bottom-10 left-10 w-[500px] h-[400px] bg-rak-violet/20 rounded-full blur-[140px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -85,49 +85,31 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
             {/* Left Content Column */}
             <div className="lg:col-span-7 space-y-8 text-left">
               
-              {/* Subtle Cool Badge */}
+              {/* Glowing Badge */}
               <motion.div 
                 initial={{ opacity: 0, y: -12 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5 }}
-                className="inline-flex items-center space-x-2 px-4 py-2 bg-slate-900/80 border border-cyan-500/30 text-cyan-400 rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-xl shadow-sm"
+                className="inline-flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-rak-magenta/20 via-rak-cyan/20 to-rak-violet/20 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-extrabold uppercase tracking-widest backdrop-blur-xl shadow-magenta-sm"
               >
-                <Sparkles className="w-4 h-4 text-cyan-400 animate-spin-slow" />
-                <span className="text-gradient-vibrant font-extrabold">Your One-Stop Creative & Digital Engine</span>
+                <Sparkles className="w-4 h-4 text-rak-magenta animate-spin-slow" />
+                <span className="text-gradient-vibrant font-black">Your One-Stop Creative & Digital Engine</span>
               </motion.div>
 
-              {/* Main Headline with Animated Highlight for "New Heights." */}
+              {/* Main Staggered Kinetic Headline */}
               <motion.h1 
                 variants={containerVariants}
                 initial="hidden"
                 animate="visible"
-                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white dark:text-white light:text-slate-900 leading-[1.1] text-left"
+                className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-white dark:text-white light:text-slate-900 leading-[1.08] text-left"
               >
                 {headlineWords.map((word, i) => (
                   <motion.span key={i} variants={wordVariants} className="inline-block mr-[0.24em]">
                     {word}
                   </motion.span>
                 ))}
-                
-                {/* Elegant Animated Highlight for "New Heights." */}
-                <motion.span 
-                  variants={wordVariants} 
-                  className="relative inline-flex items-center px-4 py-1 mx-1 rounded-2xl bg-gradient-to-r from-sky-500/15 via-indigo-500/15 to-purple-500/15 border border-sky-400/40 shadow-sm overflow-hidden group align-middle backdrop-blur-sm"
-                >
-                  {/* Subtle Light Sweep Line */}
-                  <motion.span
-                    animate={{ x: ['-100%', '200%'] }}
-                    transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-                    className="absolute inset-0 bg-gradient-to-r from-transparent via-sky-300/30 to-transparent skew-x-12 pointer-events-none"
-                  />
-
-                  {/* Sparkle Icon */}
-                  <Sparkles className="w-4.5 h-4.5 text-sky-400 mr-2 relative z-10 shrink-0" />
-
-                  {/* Metallic Silver-Cyan Text */}
-                  <span className="relative z-10 text-gradient-vibrant font-black tracking-tight drop-shadow-sm">
-                    New Heights.
-                  </span>
+                <motion.span variants={wordVariants} className="inline-block text-gradient-vibrant font-black drop-shadow-sm">
+                  New Heights.
                 </motion.span>
               </motion.h1>
 
@@ -136,12 +118,12 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.6, delay: 0.65 }}
-                className="text-base sm:text-lg text-slate-300 dark:text-slate-300 light:text-slate-700 max-w-xl leading-relaxed font-normal text-left"
+                className="text-base sm:text-lg text-rak-slate-300 dark:text-rak-slate-300 light:text-slate-700 max-w-xl leading-relaxed font-normal text-left"
               >
                 Brand architecture, high-impact media production, enterprise software, and performance marketing seamlessly integrated under one global powerhouse.
               </motion.p>
 
-              {/* Action Buttons */}
+              {/* Primary & Secondary Action CTAs */}
               <motion.div
                 initial={{ opacity: 0, y: 16 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -161,29 +143,29 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                 <a
                   href="/work"
                   onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                  className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-slate-200 dark:text-slate-200 light:text-slate-800 bg-slate-900/80 hover:bg-slate-800 border border-slate-700 rounded-full backdrop-blur-md transition-all hover:scale-105"
+                  className="inline-flex items-center justify-center px-8 py-4 text-xs font-bold uppercase tracking-wider text-rak-slate-100 dark:text-rak-slate-100 light:text-slate-800 bg-rak-slate-900/90 hover:bg-rak-slate-800 border border-rak-cyan/40 hover:border-rak-cyan rounded-full backdrop-blur-md transition-all hover:scale-105 shadow-cyan-glow"
                 >
                   <span>Explore RAK4 Creations</span>
                 </a>
               </motion.div>
 
-              {/* Metrics Bar */}
+              {/* Interactive Metrics Spotlight Cards */}
               <motion.div 
                 initial={{ opacity: 0, y: 24 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.7, delay: 0.95 }}
-                className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-slate-800/80"
+                className="grid grid-cols-2 sm:grid-cols-4 gap-4 pt-8 border-t border-rak-slate-800/80"
               >
                 {BRAND_INFO.stats.map((stat, i) => (
                   <SpotlightCard 
                     key={i} 
-                    spotlightColor="rgba(56, 189, 248, 0.15)"
-                    borderColor="rgba(56, 189, 248, 0.3)"
-                    className="p-3.5 space-y-1 text-left bg-slate-900/60 dark:bg-slate-900/60 light:bg-white/90 border border-slate-800"
+                    spotlightColor="rgba(6, 182, 212, 0.25)"
+                    borderColor="rgba(6, 182, 212, 0.4)"
+                    className="p-3.5 space-y-1 text-left bg-rak-slate-900/60 dark:bg-rak-slate-900/60 light:bg-white/90 border border-rak-slate-800/80"
                   >
                     <div className="text-xl sm:text-2xl font-extrabold text-gradient-vibrant tracking-tight">{stat.value}</div>
-                    <div className="text-[10px] font-semibold text-slate-300 dark:text-slate-300 light:text-slate-600 leading-tight">{stat.label}</div>
-                    <div className="text-[9px] text-sky-400 font-mono font-bold">{stat.change}</div>
+                    <div className="text-[10px] font-semibold text-rak-slate-300 dark:text-rak-slate-300 light:text-slate-600 leading-tight">{stat.label}</div>
+                    <div className="text-[9px] text-rak-cyan font-mono font-bold">{stat.change}</div>
                   </SpotlightCard>
                 ))}
               </motion.div>
@@ -204,13 +186,13 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
         </div>
       </section>
 
-      {/* 2. TRUST BAR / CLIENT BRANDS */}
+      {/* 2. TRUST BAR / CLIENT BRANDS WITH GLOW REFLECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SpotlightCard 
-          spotlightColor="rgba(56, 189, 248, 0.12)"
-          className="p-8 bg-slate-900/70 dark:bg-slate-900/70 light:bg-white/90 border border-slate-800 rounded-3xl backdrop-blur-md space-y-6 overflow-hidden"
+          spotlightColor="rgba(236, 0, 140, 0.15)"
+          className="p-8 bg-rak-slate-900/70 dark:bg-rak-slate-900/70 light:bg-white/80 border border-rak-magenta/20 rounded-3xl backdrop-blur-md space-y-6 overflow-hidden"
         >
-          <p className="text-center text-xs font-extrabold uppercase tracking-widest text-gradient-vibrant">
+          <p className="text-center text-xs font-black uppercase tracking-widest text-gradient-vibrant">
             Trusted by Ambitious Enterprises & Global Innovators
           </p>
 
@@ -234,7 +216,7 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                   />
                 )}
                 <span 
-                  className="text-xs font-bold font-mono text-slate-900 tracking-wider"
+                  className="text-xs font-bold font-mono text-rak-slate-900 tracking-wider"
                   style={{ display: client.image ? 'none' : 'inline-block' }}
                 >
                   {client.logo}
@@ -250,12 +232,12 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
         <AgencyOrchestrationMatrix onOpenPlanner={onOpenPlanner} />
       </section>
 
-      {/* 3. PILLARS OF CAPABILITY (BENTO GRID WITH SPOTLIGHT & SOFT GLOW) */}
+      {/* 3. PILLARS OF CAPABILITY (BENTO GRID WITH SPOTLIGHT & VIBRANT GLOW) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
-            <span className="text-xs font-extrabold text-sky-400 uppercase tracking-widest px-3 py-1 bg-sky-500/10 border border-sky-500/30 rounded-full">
-              Our Pillars
+            <span className="text-xs font-extrabold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
+              Our Capabilities
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight">
               One Stop For Every Stage of The Work.
@@ -264,14 +246,14 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
           <a
             href="/services"
             onClick={(e) => { e.preventDefault(); setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="inline-flex items-center space-x-2 text-xs font-extrabold uppercase tracking-wider text-sky-400 hover:text-white transition-colors"
+            className="inline-flex items-center space-x-2 text-xs font-extrabold uppercase tracking-wider text-rak-magenta hover:text-white transition-colors"
           >
             <span>View All 8 Pillars</span>
             <ArrowUpRight className="w-4 h-4" />
           </a>
         </div>
 
-        {/* Bento Grid Layout */}
+        {/* Bento Grid Layout with Spotlight Cards */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
           {PILLARS.slice(0, 6).map((s, index) => {
             const isLarge = index === 0 || index === 2;
@@ -279,47 +261,47 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
             return (
               <SpotlightCard
                 key={s.id}
-                spotlightColor="rgba(56, 189, 248, 0.15)"
-                borderColor="rgba(56, 189, 248, 0.35)"
+                spotlightColor={index % 2 === 0 ? "rgba(236, 0, 140, 0.25)" : "rgba(6, 182, 212, 0.25)"}
+                borderColor={index % 2 === 0 ? "rgba(236, 0, 140, 0.5)" : "rgba(6, 182, 212, 0.5)"}
                 onClick={(e) => { e.preventDefault(); setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                className={`group relative p-8 sm:p-9 rounded-3xl bg-slate-900/80 dark:bg-slate-900/80 light:bg-white/90 border border-slate-800 cursor-pointer overflow-hidden flex flex-col justify-between backdrop-blur-xl ${
+                className={`group relative p-8 sm:p-9 rounded-3xl bg-rak-slate-900/80 dark:bg-rak-slate-900/80 light:bg-white/90 border border-rak-slate-800/80 cursor-pointer overflow-hidden flex flex-col justify-between backdrop-blur-xl ${
                   isLarge ? 'md:col-span-8' : 'md:col-span-4'
                 }`}
               >
                 {/* Background Translucent Vector Icon Watermark */}
-                <IconComp className="w-48 h-48 absolute -right-6 -bottom-6 text-white/[0.04] dark:text-white/[0.04] light:text-slate-900/[0.05] group-hover:text-sky-400/[0.12] transition-all duration-500 pointer-events-none transform group-hover:scale-110 group-hover:rotate-6" />
+                <IconComp className="w-48 h-48 absolute -right-6 -bottom-6 text-white/[0.04] dark:text-white/[0.04] light:text-slate-900/[0.05] group-hover:text-rak-magenta/[0.12] transition-all duration-500 pointer-events-none transform group-hover:scale-110 group-hover:rotate-6" />
 
                 <div className="space-y-5 relative z-10">
                   {/* Top Bar */}
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-3">
-                      <div className="p-3.5 rounded-2xl bg-slate-800/90 dark:bg-slate-800/90 light:bg-slate-100 border border-sky-400/30 text-sky-400 group-hover:bg-sky-500 group-hover:text-white group-hover:border-sky-500 transition-all duration-300 shadow-sm">
+                      <div className="p-3.5 rounded-2xl bg-rak-slate-800/90 dark:bg-rak-slate-800/90 light:bg-slate-100 border border-rak-magenta/40 text-rak-magenta group-hover:bg-rak-magenta group-hover:text-white group-hover:border-rak-magenta transition-all duration-300 shadow-magenta-sm">
                         <IconComp className="w-6 h-6" />
                       </div>
-                      <span className="px-3 py-1 bg-sky-500/10 border border-sky-500/30 text-sky-400 text-[10px] font-extrabold uppercase tracking-wider rounded-full backdrop-blur-md">
+                      <span className="px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 text-rak-magenta text-[10px] font-extrabold uppercase tracking-wider rounded-full backdrop-blur-md">
                         {s.tag}
                       </span>
                     </div>
 
-                    <ArrowUpRight className="w-5 h-5 text-slate-400 group-hover:text-sky-400 group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
+                    <ArrowUpRight className="w-5 h-5 text-rak-slate-400 group-hover:text-rak-magenta group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" />
                   </div>
                   
                   {/* Card Title & Description */}
                   <div className="space-y-2 pt-1">
-                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white dark:text-white light:text-slate-900 group-hover:text-sky-400 transition-colors tracking-tight">
+                    <h3 className="text-2xl sm:text-3xl font-extrabold text-white dark:text-white light:text-slate-900 group-hover:text-rak-magenta transition-colors tracking-tight">
                       {s.title}
                     </h3>
-                    <p className="text-xs sm:text-sm text-slate-300 dark:text-slate-300 light:text-slate-600 leading-relaxed max-w-xl font-normal">
+                    <p className="text-xs sm:text-sm text-rak-slate-300 dark:text-rak-slate-300 light:text-slate-600 leading-relaxed max-w-xl font-normal">
                       {s.description}
                     </p>
                   </div>
                 </div>
 
                 {/* Bottom Items Tags */}
-                <div className="pt-6 mt-6 border-t border-slate-800 light:border-slate-200 flex flex-wrap gap-2.5 relative z-10">
+                <div className="pt-6 mt-6 border-t border-rak-slate-800/80 light:border-slate-200 flex flex-wrap gap-2.5 relative z-10">
                   {s.items.slice(0, 3).map((b, i) => (
-                    <span key={i} className="text-[11px] text-slate-200 dark:text-slate-200 light:text-slate-700 font-semibold px-3 py-1.5 rounded-xl bg-slate-950/60 dark:bg-slate-950/60 light:bg-slate-100 border border-slate-800 light:border-slate-300 flex items-center space-x-1.5 group-hover:border-sky-500/30 transition-all">
-                      <CheckCircle2 className="w-3.5 h-3.5 text-sky-400" />
+                    <span key={i} className="text-[11px] text-rak-slate-200 dark:text-rak-slate-200 light:text-slate-700 font-semibold px-3 py-1.5 rounded-xl bg-rak-slate-950/60 dark:bg-rak-slate-950/60 light:bg-slate-100 border border-rak-slate-800/90 light:border-slate-300 flex items-center space-x-1.5 group-hover:border-rak-magenta/30 transition-all">
+                      <CheckCircle2 className="w-3.5 h-3.5 text-rak-magenta" />
                       <span>{b}</span>
                     </span>
                   ))}
@@ -334,7 +316,7 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
-            <span className="text-xs font-bold text-indigo-400 uppercase tracking-widest px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 rounded-full">
+            <span className="text-xs font-bold text-rak-cyan uppercase tracking-widest px-3 py-1 bg-rak-cyan/10 border border-rak-cyan/30 rounded-full">
               Portfolio
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight">
@@ -344,7 +326,7 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
           <a
             href="/work"
             onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-            className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-indigo-400 hover:text-white transition-colors"
+            className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-wider text-rak-cyan hover:text-white transition-colors"
           >
             <span>Explore Full Showcase</span>
             <ArrowUpRight className="w-4 h-4" />
@@ -356,30 +338,30 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
           {PROJECTS.filter(p => p.featured).slice(0, 4).map((p) => (
             <SpotlightCard 
               key={p.id}
-              spotlightColor="rgba(99, 102, 241, 0.2)"
-              borderColor="rgba(99, 102, 241, 0.4)"
+              spotlightColor="rgba(6, 182, 212, 0.3)"
+              borderColor="rgba(6, 182, 212, 0.5)"
               onClick={() => onSelectProject(p)}
               className="group cursor-pointer p-0"
             >
-              <div className="relative h-80 sm:h-96 rounded-2xl overflow-hidden bg-slate-900 border border-slate-800">
+              <div className="relative h-80 sm:h-96 rounded-2xl overflow-hidden bg-rak-slate-900 border border-rak-slate-800">
                 <img 
                   src={p.image} 
                   alt={p.title} 
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-90" />
+                <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-rak-slate-950/40 to-transparent opacity-90" />
                 
                 {/* Result Pill */}
-                <div className="absolute top-6 left-6 px-3 py-1.5 bg-slate-950/80 backdrop-blur-md border border-sky-400/40 rounded-full text-xs font-mono text-sky-400 font-bold">
+                <div className="absolute top-6 left-6 px-3 py-1.5 bg-rak-slate-950/80 backdrop-blur-md border border-rak-cyan/40 rounded-full text-xs font-mono text-rak-cyan font-bold shadow-cyan-glow">
                   {p.results[0].metric} {p.results[0].label}
                 </div>
 
                 <div className="absolute bottom-6 left-6 right-6 flex items-center justify-between text-white">
                   <div>
-                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-sky-400">{p.client}</span>
+                    <span className="text-[11px] font-extrabold uppercase tracking-wider text-rak-magenta">{p.client}</span>
                     <h3 className="text-xl sm:text-2xl font-bold">{p.title}</h3>
                   </div>
-                  <div className="p-3.5 rounded-full bg-indigo-600 text-white shadow-md group-hover:scale-110 transition-transform">
+                  <div className="p-3.5 rounded-full bg-rak-magenta text-white shadow-magenta-glow group-hover:scale-110 transition-transform">
                     <ArrowUpRight className="w-5 h-5" />
                   </div>
                 </div>
@@ -389,27 +371,27 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
         </div>
       </section>
 
-      {/* 5. TESTIMONIALS */}
+      {/* 5. TESTIMONIALS & EXECUTIVE REVIEWS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SpotlightCard 
-          spotlightColor="rgba(99, 102, 241, 0.15)"
-          borderColor="rgba(99, 102, 241, 0.3)"
-          className="bg-slate-900/90 dark:bg-slate-900/90 light:bg-white/90 border border-slate-800 rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden backdrop-blur-xl"
+          spotlightColor="rgba(139, 92, 246, 0.2)"
+          borderColor="rgba(139, 92, 246, 0.4)"
+          className="bg-rak-slate-900/90 dark:bg-rak-slate-900/90 light:bg-white/90 border border-rak-violet/30 rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden backdrop-blur-xl"
         >
           <div className="space-y-2 text-center max-w-2xl mx-auto">
-            <span className="text-xs font-extrabold text-indigo-400 uppercase tracking-widest px-3 py-1 bg-indigo-500/10 border border-indigo-500/30 rounded-full">
+            <span className="text-xs font-extrabold text-rak-violet uppercase tracking-widest px-3 py-1 bg-rak-violet/10 border border-rak-violet/30 rounded-full">
               Executive Proof
             </span>
             <h2 className="text-2xl sm:text-4xl font-extrabold text-white dark:text-white light:text-slate-900 tracking-tight">What Industry Leaders Say About RAK.</h2>
-            <p className="text-xs text-slate-400">Hover over any card to pause & inspect</p>
+            <p className="text-xs text-rak-slate-400">Hover over any card to pause & inspect</p>
           </div>
 
           <InfiniteSlider gap={24} duration={65} durationOnHover={180} className="py-4">
             {TESTIMONIALS.map((t) => (
               <SpotlightCard 
                 key={t.id} 
-                spotlightColor="rgba(56, 189, 248, 0.15)"
-                className="w-80 sm:w-96 shrink-0 p-6 sm:p-7 bg-slate-950/90 dark:bg-slate-950/90 light:bg-white border border-slate-800/90 light:border-slate-200 rounded-2xl space-y-5 flex flex-col justify-between backdrop-blur-md shadow-xl"
+                spotlightColor="rgba(236, 0, 140, 0.25)"
+                className="w-80 sm:w-96 shrink-0 p-6 sm:p-7 bg-rak-slate-950/90 dark:bg-rak-slate-950/90 light:bg-white border border-rak-slate-800/90 light:border-slate-200 rounded-2xl space-y-5 flex flex-col justify-between backdrop-blur-md shadow-xl"
               >
                 <div className="space-y-3">
                   <div className="flex text-amber-400 space-x-1">
@@ -417,17 +399,17 @@ export const HomePage = ({ setActiveTab = () => {}, onSelectProject = () => {}, 
                       <Star key={r} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-200 dark:text-slate-200 light:text-slate-700 leading-relaxed font-normal italic">
+                  <p className="text-xs sm:text-sm text-rak-slate-200 dark:text-rak-slate-200 light:text-slate-700 leading-relaxed font-normal italic">
                     "{t.quote}"
                   </p>
                 </div>
 
-                <div className="pt-4 border-t border-slate-800/70 light:border-slate-200 flex items-center space-x-3">
-                  <img src={t.avatar} alt={t.author} className="w-11 h-11 rounded-full object-cover border-2 border-indigo-500 shrink-0 shadow-sm" />
+                <div className="pt-4 border-t border-rak-slate-800/70 light:border-slate-200 flex items-center space-x-3">
+                  <img src={t.avatar} alt={t.author} className="w-11 h-11 rounded-full object-cover border-2 border-rak-magenta shrink-0 shadow-magenta-sm" />
                   <div>
                     <div className="text-xs font-bold text-white dark:text-white light:text-slate-900 tracking-wide">{t.author}</div>
-                    <div className="text-[10px] text-slate-400 font-medium">{t.role}</div>
-                    <div className="text-[10px] text-sky-400 font-semibold">{t.company}</div>
+                    <div className="text-[10px] text-rak-slate-400 font-medium">{t.role}</div>
+                    <div className="text-[10px] text-rak-magenta font-semibold">{t.company}</div>
                   </div>
                 </div>
               </SpotlightCard>
