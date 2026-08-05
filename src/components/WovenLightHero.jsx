@@ -195,7 +195,7 @@ export const WovenLightHero = ({ onOpenPlanner }) => {
   const headline = "WOVEN BY LIGHT";
   
   return (
-    <div className="relative flex min-h-[85vh] md:min-h-[92vh] w-full flex-col items-center justify-center overflow-hidden bg-rak-slate-950 text-white selection:bg-rak-magenta selection:text-white border-b border-rak-slate-800/80">
+    <div className="relative flex min-h-screen w-full flex-col justify-between overflow-hidden bg-rak-slate-950 text-white selection:bg-rak-magenta selection:text-white border-b border-rak-slate-800/80 -mt-16 pt-28">
       
       {/* Background Ambient Radial Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-rak-magenta/15 rounded-full blur-[160px] pointer-events-none z-0"></div>
@@ -204,7 +204,7 @@ export const WovenLightHero = ({ onOpenPlanner }) => {
       <WovenCanvas />
 
       {/* Main Content Overlay */}
-      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-6 pt-12">
+      <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-6 my-auto py-16 md:py-24">
         
         {/* Badge */}
         <motion.div 
@@ -213,7 +213,7 @@ export const WovenLightHero = ({ onOpenPlanner }) => {
           transition={{ duration: 0.6 }}
           className="inline-flex items-center space-x-2 px-4 py-1.5 bg-rak-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm"
         >
-          <Sparkles className="w-4 h-4" />
+          <Sparkles className="w-4 h-4 animate-spin-slow" />
           <span>Enterprise Case Studies & ROI</span>
         </motion.div>
 
@@ -271,6 +271,52 @@ export const WovenLightHero = ({ onOpenPlanner }) => {
           </button>
         </motion.div>
 
+      </div>
+
+      {/* Bottom Features Showcase Bar - Matches About & Work Hero Structure */}
+      <div className="relative z-20 bg-rak-slate-900 border-t border-rak-slate-800 text-white rounded-t-[2.5rem] md:rounded-t-[3.5rem] px-6 py-10 md:px-10 md:py-14 shadow-2xl mt-auto w-full">
+        <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
+          
+          {/* Card 1 */}
+          <div className="bg-rak-slate-950/80 rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center relative border border-rak-slate-800 hover:border-rak-magenta/50 transition-all">
+            <h3 className="text-lg md:text-xl uppercase leading-tight mb-2 font-black text-white">
+              QUANTITATIVE<br/>ROI
+            </h3>
+            <p className="text-[10px] md:text-xs text-rak-slate-400 font-medium mb-4">
+              Proven business metrics, conversion growth, and market expansion benchmarks
+            </p>
+            <div className="mt-auto px-4 py-1.5 bg-rak-magenta/20 border border-rak-magenta/40 text-rak-magenta rounded-full text-[10px] font-bold uppercase tracking-wider">
+              100% Measured Data
+            </div>
+          </div>
+
+          {/* Card 2 */}
+          <div className="bg-rak-slate-950/80 rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center relative border border-rak-slate-800 hover:border-rak-magenta/50 transition-all">
+            <h3 className="text-lg md:text-xl uppercase leading-tight mb-2 font-black text-white">
+              BLUEPRINT TO<br/>DEPLOYMENT
+            </h3>
+            <p className="text-[10px] md:text-xs text-rak-slate-400 font-medium mb-4">
+              Full enterprise architecture, technical specs, and operational execution
+            </p>
+            <div className="mt-auto px-4 py-1.5 bg-rak-cyan/20 border border-rak-cyan/40 text-rak-cyan rounded-full text-[10px] font-bold uppercase tracking-wider">
+              360° Case Analysis
+            </div>
+          </div>
+
+          {/* Card 3 */}
+          <div className="bg-rak-slate-950/80 rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center relative border border-rak-slate-800 hover:border-rak-magenta/50 transition-all">
+            <h3 className="text-lg md:text-xl uppercase leading-tight mb-2 font-black text-white">
+              INDUSTRY<br/>TRANSFORMATION
+            </h3>
+            <p className="text-[10px] md:text-xs text-rak-slate-400 font-medium mb-4">
+              Scaling Fortune 500 & high-growth brands to category leadership
+            </p>
+            <div className="mt-auto px-4 py-1.5 bg-emerald-500/20 border border-emerald-500/40 text-emerald-400 rounded-full text-[10px] font-bold uppercase tracking-wider">
+              Enterprise Level
+            </div>
+          </div>
+
+        </div>
       </div>
     </div>
   );
