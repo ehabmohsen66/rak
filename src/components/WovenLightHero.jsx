@@ -2,6 +2,7 @@ import React, { useRef, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import * as THREE from 'three';
 import { Sparkles, ArrowUpRight } from 'lucide-react';
+import { useIsMobile } from '../lib/useMobileDetect';
 
 // --- Three.js Canvas Component ---
 const WovenCanvas = () => {
@@ -14,23 +15,29 @@ const WovenCanvas = () => {
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.z = 5.8;
     
-    const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+    const renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true });
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    renderer.domElement.style.pointerEvents = 'none';
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = '0';
+    renderer.domElement.style.left = '0';
+    renderer.domElement.style.width = '100%';
+    renderer.domElement.style.height = '100%';
     mountRef.current.appendChild(renderer.domElement);
 
     const mouse = new THREE.Vector2(0, 0);
     const clock = new THREE.Clock();
 
     // --- Woven Silk Particle Mesh ---
-    const particleCount = 40000;
+    const particleCount = 5000;
     const positions = new Float32Array(particleCount * 3);
     const originalPositions = new Float32Array(particleCount * 3);
     const colors = new Float32Array(particleCount * 3);
     const velocities = new Float32Array(particleCount * 3);
 
     const geometry = new THREE.BufferGeometry();
-    const torusKnot = new THREE.TorusKnotGeometry(1.35, 0.45, 200, 32);
+    const torusKnot = new THREE.TorusKnotGeometry(1.35, 0.45, 120, 24);
 
     // Primary RAK Magenta and Pinkish HSL palette colors
     const magentaColor = new THREE.Color('#E6007E');
@@ -95,38 +102,57 @@ const WovenCanvas = () => {
       animationFrameId = requestAnimationFrame(animate);
       const elapsedTime = clock.getElapsedTime();
       
-      const mouseWorld = new THREE.Vector3(mouse.x * 3.5, mouse.y * 3.5, 0);
+      const mx = mouse.x * 3.5;
+      const my = mouse.y * 3.5;
 
       for (let i = 0; i < particleCount; i++) {
         const ix = i * 3;
         const iy = i * 3 + 1;
         const iz = i * 3 + 2;
 
-        const currentPos = new THREE.Vector3(positions[ix], positions[iy], positions[iz]);
-        const originalPos = new THREE.Vector3(originalPositions[ix], originalPositions[iy], originalPositions[iz]);
-        const velocity = new THREE.Vector3(velocities[ix], velocities[iy], velocities[iz]);
+        const cx = positions[ix];
+        const cy = positions[iy];
+        const cz = positions[iz];
 
-        const dist = currentPos.distanceTo(mouseWorld);
-        if (dist < 1.6) {
+        const ox = originalPositions[ix];
+        const oy = originalPositions[iy];
+        const oz = originalPositions[iz];
+
+        let vx = velocities[ix];
+        let vy = velocities[iy];
+        let vz = velocities[iz];
+
+        const dx = cx - mx;
+        const dy = cy - my;
+        const dz = cz;
+        const distSq = dx * dx + dy * dy + dz * dz;
+
+        if (distSq < 2.56 && distSq > 0.0001) {
+          const dist = Math.sqrt(distSq);
           const force = (1.6 - dist) * 0.012;
-          const direction = new THREE.Vector3().subVectors(currentPos, mouseWorld).normalize();
-          velocity.add(direction.multiplyScalar(force));
+          const invDist = 1 / dist;
+          vx += (dx * invDist) * force;
+          vy += (dy * invDist) * force;
+          vz += (dz * invDist) * force;
         }
 
         // Return to original position
-        const returnForce = new THREE.Vector3().subVectors(originalPos, currentPos).multiplyScalar(0.0012);
-        velocity.add(returnForce);
+        vx += (ox - cx) * 0.0012;
+        vy += (oy - cy) * 0.0012;
+        vz += (oz - cz) * 0.0012;
         
         // Damping
-        velocity.multiplyScalar(0.94);
+        vx *= 0.94;
+        vy *= 0.94;
+        vz *= 0.94;
 
-        positions[ix] += velocity.x;
-        positions[iy] += velocity.y;
-        positions[iz] += velocity.z;
+        positions[ix] = cx + vx;
+        positions[iy] = cy + vy;
+        positions[iz] = cz + vz;
         
-        velocities[ix] = velocity.x;
-        velocities[iy] = velocity.y;
-        velocities[iz] = velocity.z;
+        velocities[ix] = vx;
+        velocities[iy] = vy;
+        velocities[iz] = vz;
       }
       geometry.attributes.position.needsUpdate = true;
 
@@ -159,15 +185,11 @@ const WovenCanvas = () => {
 
 // --- Main Hero Component ---
 export const WovenLightHero = ({ onOpenPlanner }) => {
+  const isMobile = useIsMobile();
   const textControls = useAnimation();
   const buttonControls = useAnimation();
 
   useEffect(() => {
-    // Inject Playfair Display font for headline elegance
-    const link = document.createElement('link');
-    link.href = 'https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=Inter:wght@400;600;800&display=swap';
-    link.rel = 'stylesheet';
-    document.head.appendChild(link);
 
     textControls.start(i => ({
       opacity: 1,
@@ -185,11 +207,6 @@ export const WovenLightHero = ({ onOpenPlanner }) => {
       transition: { delay: 1.6, duration: 0.8 }
     });
 
-    return () => {
-      if (document.head.contains(link)) {
-        document.head.removeChild(link);
-      }
-    };
   }, [textControls, buttonControls]);
 
   const headline = "WOVEN BY LIGHT";
@@ -200,8 +217,16 @@ export const WovenLightHero = ({ onOpenPlanner }) => {
       {/* Background Ambient Radial Glow */}
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] bg-rak-magenta/15 rounded-full blur-[160px] pointer-events-none z-0"></div>
 
-      {/* Interactive Woven Particle Canvas */}
-      <WovenCanvas />
+      {/* Interactive Woven Particle Canvas or Mobile Fallback */}
+      {isMobile ? (
+        <div className="absolute inset-0 z-0 pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-br from-rak-magenta/20 via-rak-slate-950 to-rak-cyan/10" />
+          <div className="absolute top-1/4 left-1/3 w-[300px] h-[300px] bg-rak-magenta/15 rounded-full blur-[100px] animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-[200px] h-[200px] bg-rak-cyan/10 rounded-full blur-[80px] animate-pulse" style={{ animationDelay: '1s' }} />
+        </div>
+      ) : (
+        <WovenCanvas />
+      )}
 
       {/* Main Content Overlay */}
       <div className="relative z-10 text-center px-4 max-w-5xl mx-auto space-y-6 my-auto py-16 md:py-24">

@@ -33,7 +33,7 @@ export const MarqueeLogoScroller = React.forwardRef(
     const animationDuration = durationMap[speed] || '40s';
 
     // Fallback to BRAND_INFO.clients formatted with images and gradients if no logos array passed
-    const logoItems = (logos.length > 0 ? logos : BRAND_INFO.clients).map((client, idx) => {
+    const logoItems = (logos.length > 0 ? logos : BRAND_INFO.clients).slice(0, 14).map((client, idx) => {
       const preset = GRADIENT_PRESETS[idx % GRADIENT_PRESETS.length];
       return {
         src: client.src || client.image,
@@ -118,6 +118,10 @@ export const MarqueeLogoScroller = React.forwardRef(
                     <img
                       src={logo.src}
                       alt={logo.alt}
+                      loading="lazy"
+                      decoding="async"
+                      width="130"
+                      height="56"
                       className="relative z-10 max-h-14 max-w-[130px] object-contain transition-transform duration-300 group-hover:scale-110 filter drop-shadow-sm"
                       style={{ imageRendering: '-webkit-optimize-contrast' }}
                       onError={(e) => {

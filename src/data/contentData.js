@@ -21,41 +21,40 @@ export const BRAND_INFO = {
     { value: "99.4%", label: "Client Partner Retention", change: "Long-Term Collaboration" }
   ],
   clients: [
-    { name: "FIFA World Cup Partner", logo: "WORLD CUP", image: "/client-logos/logo_1.jpg" },
-    { name: "Client Partner 1", logo: "CLIENT 1", image: "/client-logos/logo_2.jpg" },
-    { name: "Client Partner 2", logo: "CLIENT 2", image: "/client-logos/logo_3.jpg" },
-    { name: "Client Partner 3", logo: "CLIENT 3", image: "/client-logos/logo_4.jpg" },
-    { name: "Client Partner 4", logo: "CLIENT 4", image: "/client-logos/logo_5.jpg" },
-    { name: "Client Partner 5", logo: "CLIENT 5", image: "/client-logos/logo_6.jpg" },
-    { name: "Client Partner 6", logo: "CLIENT 6", image: "/client-logos/logo_7.jpg" },
-    { name: "Client Partner 7", logo: "CLIENT 7", image: "/client-logos/logo_8.jpg" },
-    { name: "Client Partner 8", logo: "CLIENT 8", image: "/client-logos/logo_9.jpg" },
-    { name: "Client Partner 9", logo: "CLIENT 9", image: "/client-logos/logo_10.jpg" },
-    { name: "Client Partner 10", logo: "CLIENT 10", image: "/client-logos/logo_11.jpg" },
-    { name: "Client Partner 11", logo: "CLIENT 11", image: "/client-logos/logo_12.jpg" },
-    { name: "Client Partner 12", logo: "CLIENT 12", image: "/client-logos/logo_13.jpg" },
-    { name: "Client Partner 13", logo: "CLIENT 13", image: "/client-logos/logo_14.jpg" },
-    { name: "Client Partner 14", logo: "CLIENT 14", image: "/client-logos/logo_15.jpg" },
-    { name: "Client Partner 15", logo: "CLIENT 15", image: "/client-logos/logo_16.jpg" },
-    { name: "Client Partner 16", logo: "CLIENT 16", image: "/client-logos/logo_17.jpg" },
-    { name: "Client Partner 17", logo: "CLIENT 17", image: "/client-logos/logo_18.jpg" },
-    { name: "Client Partner 18", logo: "CLIENT 18", image: "/client-logos/logo_19.jpg" },
-    { name: "Client Partner 19", logo: "CLIENT 19", image: "/client-logos/logo_20.jpg" },
-    { name: "Client Partner 20", logo: "CLIENT 20", image: "/client-logos/logo_21.jpg" },
-    { name: "Client Partner 21", logo: "CLIENT 21", image: "/client-logos/logo_22.jpg" },
-    { name: "Client Partner 22", logo: "CLIENT 22", image: "/client-logos/logo_23.jpg" },
-    { name: "Client Partner 23", logo: "CLIENT 23", image: "/client-logos/logo_24.jpg" },
-    { name: "Client Partner 24", logo: "CLIENT 24", image: "/client-logos/logo_25.jpg" },
-    { name: "Client Partner 25", logo: "CLIENT 25", image: "/client-logos/logo_26.jpg" },
-    { name: "Client Partner 26", logo: "CLIENT 26", image: "/client-logos/logo_27.jpg" },
-    { name: "Client Partner 27", logo: "CLIENT 27", image: "/client-logos/logo_28.jpg" },
-    { name: "Client Partner 28", logo: "CLIENT 28", image: "/client-logos/logo_29.jpg" },
-    { name: "Client Partner 29", logo: "CLIENT 29", image: "/client-logos/logo_30.jpg" },
-    { name: "Client Partner 30", logo: "CLIENT 30", image: "/client-logos/logo_31.jpg" },
-    { name: "Client Partner 31", logo: "CLIENT 31", image: "/client-logos/logo_32.jpg" },
-    { name: "Client Partner 32", logo: "CLIENT 32", image: "/client-logos/logo_33.jpg" },
-    { name: "Client Partner 33", logo: "CLIENT 33", image: "/client-logos/logo_34.jpg" },
-    { name: "Client Partner 34", logo: "CLIENT 34", image: "/client-logos/logo_35.jpg" }
+    { name: "Client Partner 1", logo: "CLIENT 1", image: "/client-logos/logo_2.webp" },
+    { name: "Client Partner 2", logo: "CLIENT 2", image: "/client-logos/logo_3.webp" },
+    { name: "Client Partner 3", logo: "CLIENT 3", image: "/client-logos/logo_4.webp" },
+    { name: "Client Partner 4", logo: "CLIENT 4", image: "/client-logos/logo_5.webp" },
+    { name: "Client Partner 5", logo: "CLIENT 5", image: "/client-logos/logo_6.webp" },
+    { name: "Client Partner 6", logo: "CLIENT 6", image: "/client-logos/logo_7.webp" },
+    { name: "Client Partner 7", logo: "CLIENT 7", image: "/client-logos/logo_8.webp" },
+    { name: "Client Partner 8", logo: "CLIENT 8", image: "/client-logos/logo_9.webp" },
+    { name: "Client Partner 9", logo: "CLIENT 9", image: "/client-logos/logo_10.webp" },
+    { name: "Client Partner 10", logo: "CLIENT 10", image: "/client-logos/logo_11.webp" },
+    { name: "Client Partner 11", logo: "CLIENT 11", image: "/client-logos/logo_12.webp" },
+    { name: "Client Partner 12", logo: "CLIENT 12", image: "/client-logos/logo_13.webp" },
+    { name: "Client Partner 13", logo: "CLIENT 13", image: "/client-logos/logo_14.webp" },
+    { name: "Client Partner 14", logo: "CLIENT 14", image: "/client-logos/logo_15.webp" },
+    { name: "Client Partner 15", logo: "CLIENT 15", image: "/client-logos/logo_16.webp" },
+    { name: "Client Partner 16", logo: "CLIENT 16", image: "/client-logos/logo_17.webp" },
+    { name: "Client Partner 17", logo: "CLIENT 17", image: "/client-logos/logo_18.webp" },
+    { name: "Client Partner 18", logo: "CLIENT 18", image: "/client-logos/logo_19.webp" },
+    { name: "Client Partner 19", logo: "CLIENT 19", image: "/client-logos/logo_20.webp" },
+    { name: "Client Partner 20", logo: "CLIENT 20", image: "/client-logos/logo_21.webp" },
+    { name: "Client Partner 21", logo: "CLIENT 21", image: "/client-logos/logo_22.webp" },
+    { name: "Client Partner 22", logo: "CLIENT 22", image: "/client-logos/logo_23.webp" },
+    { name: "Client Partner 23", logo: "CLIENT 23", image: "/client-logos/logo_24.webp" },
+    { name: "Client Partner 24", logo: "CLIENT 24", image: "/client-logos/logo_25.webp" },
+    { name: "Client Partner 25", logo: "CLIENT 25", image: "/client-logos/logo_26.webp" },
+    { name: "Client Partner 26", logo: "CLIENT 26", image: "/client-logos/logo_27.webp" },
+    { name: "Client Partner 27", logo: "CLIENT 27", image: "/client-logos/logo_28.webp" },
+    { name: "Client Partner 28", logo: "CLIENT 28", image: "/client-logos/logo_29.webp" },
+    { name: "Client Partner 29", logo: "CLIENT 29", image: "/client-logos/logo_30.webp" },
+    { name: "Client Partner 30", logo: "CLIENT 30", image: "/client-logos/logo_31.webp" },
+    { name: "Client Partner 31", logo: "CLIENT 31", image: "/client-logos/logo_32.webp" },
+    { name: "Client Partner 32", logo: "CLIENT 32", image: "/client-logos/logo_33.webp" },
+    { name: "Client Partner 33", logo: "CLIENT 33", image: "/client-logos/logo_34.webp" },
+    { name: "Client Partner 34", logo: "CLIENT 34", image: "/client-logos/logo_35.webp" }
   ]
 };
 
@@ -77,7 +76,7 @@ export const PILLARS = [
       "Marketing Frameworks",
       "Onboarding Digital Structure"
     ],
-    featuredImage: "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?q=80&w=1200&auto=format&fit=crop"
+    featuredImage: "https://images.unsplash.com/photo-1600132806370-bf17e65e942f?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
   {
     id: "data-analytics",
@@ -98,7 +97,7 @@ export const PILLARS = [
       "Trend Analysis",
       "Dashboard Services"
     ],
-    featuredImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop"
+    featuredImage: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
   {
     id: "social-media-marketing",
@@ -119,7 +118,7 @@ export const PILLARS = [
       "WhatsApp Marketing — reaching audiences directly and building customer relationships",
       "Meta Campaigns — audience development, tailored strategy, and community monitoring"
     ],
-    featuredImage: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=1200&auto=format&fit=crop"
+    featuredImage: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
   {
     id: "web-development",
@@ -138,7 +137,7 @@ export const PILLARS = [
       "Web Development",
       "E-commerce"
     ],
-    featuredImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=1200&auto=format&fit=crop"
+    featuredImage: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
   {
     id: "search-marketing",
@@ -157,7 +156,7 @@ export const PILLARS = [
       "Google My Business",
       "SEM Management"
     ],
-    featuredImage: "https://images.unsplash.com/photo-1572021335469-31706a17aaef?q=80&w=1200&auto=format&fit=crop"
+    featuredImage: "https://images.unsplash.com/photo-1572021335469-31706a17aaef?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
   {
     id: "paid-media",
@@ -177,7 +176,7 @@ export const PILLARS = [
       "Special Ad Execution",
       "PPC — multi-format ad campaigns designed to drive traffic and conversion"
     ],
-    featuredImage: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=1200&auto=format&fit=crop"
+    featuredImage: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
   {
     id: "content-creation",
@@ -200,7 +199,7 @@ export const PILLARS = [
       "Copywriting — email, social, website, and online ads",
       "Email Marketing — compelling emails to promote products and maintain loyalty"
     ],
-    featuredImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop"
+    featuredImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
   {
     id: "branding",
@@ -222,7 +221,7 @@ export const PILLARS = [
       "Out of Home — billboards, signage, and sponsorships",
       "Public Relations"
     ],
-    featuredImage: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?q=80&w=1200&auto=format&fit=crop"
+    featuredImage: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?q=80&w=600&fm=webp&auto=format&fit=crop"
   }
 ];
 
@@ -266,7 +265,7 @@ export const RAK4_CREATIONS = [
       { metric: "$1.2B", label: "New Capital Onboarded" },
       { metric: "0.4s", label: "Dashboard Load Speed" }
     ],
-    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=600&fm=webp&auto=format&fit=crop",
     tags: ["Brand Strategy", "Web Development", "Design System"],
     featured: true
   },
@@ -285,7 +284,7 @@ export const RAK4_CREATIONS = [
       { metric: "4.8m", label: "Avg Engagement Time" },
       { metric: "Awwwards", label: "Site of the Month" }
     ],
-    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=600&fm=webp&auto=format&fit=crop",
     tags: ["Paid Media", "Content Creation", "E-Commerce"],
     featured: true
   },
@@ -304,7 +303,7 @@ export const RAK4_CREATIONS = [
       { metric: "3.4x", label: "Enterprise Trial Conversions" },
       { metric: "FWA", label: "Site of the Day" }
     ],
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&fm=webp&auto=format&fit=crop",
     tags: ["Digital Strategy", "Web", "Search Marketing"],
     featured: true
   },
@@ -323,7 +322,7 @@ export const RAK4_CREATIONS = [
       { metric: "14", label: "Global Markets Launched" },
       { metric: "99.8%", label: "Clinical Portal Uptime" }
     ],
-    image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=600&fm=webp&auto=format&fit=crop",
     tags: ["3D WebGL", "Brand Identity", "Omnichannel"],
     featured: true
   }
@@ -341,7 +340,7 @@ export const BLOG_POSTS = [
     date: "July 2026",
     readTime: "5 min read",
     author: "RAK4Creative Strategy Team",
-    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=600&fm=webp&auto=format&fit=crop",
     excerpt: "Every agency has that one meeting where someone asks, should we be using AI for this? The answer is yes, obviously, but which AI is the real question.",
     content: `Every agency has that one meeting where someone asks, should we be using AI for this? The answer is yes, obviously, but which AI is the real question.
 
@@ -400,7 +399,7 @@ Got thoughts on this tier list? Fight us in the comments.`
     date: "July 2026",
     readTime: "7 min read",
     author: "RAK Product Design Practice",
-    image: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?q=80&w=600&fm=webp&auto=format&fit=crop",
     excerpt: "Design systems are built with good intentions, yet most stall within 12 months. We analyze token scaling, component ownership, and cross-platform governance.",
     content: `Design systems are often pitched as the ultimate silver bullet for product teams: build once, reuse everywhere, accelerate speed-to-market by 40%.
 
@@ -429,7 +428,7 @@ At RAK 4 Creative, we architect enterprise design systems that scale across glob
     date: "June 2026",
     readTime: "6 min read",
     author: "RAK Performance Engineering",
-    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=600&fm=webp&auto=format&fit=crop",
     excerpt: "Conversion rate optimization is no longer just A/B testing button colors. It is an end-to-end performance discipline uniting DOM optimization, edge caching, and behavioral psychology.",
     content: `Every 100 millisecond delay in page load time reduces enterprise conversion rates by 7%. In 2026, web performance is not an engineering vanity metric—it is the single highest leverage lever for revenue growth.
 
@@ -450,7 +449,7 @@ When performance engineering meets conversion architecture, pipeline velocity mu
     date: "June 2026",
     readTime: "8 min read",
     author: "RAK 3D & Creative Media Lab",
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&fm=webp&auto=format&fit=crop",
     excerpt: "Immersive WebGL canvas graphics can double dwell time and brand recall—if built with strict frame-budgeting. Here is our technical blueprint for high-performance 3D web experiences.",
     content: `Interactive 3D on the web has evolved from experimental novelty to an enterprise brand differentiator. From custom GLSL particle canvases to interactive 3D product customizers, 3D experiences capture audience attention in an increasingly distracted digital landscape.
 
@@ -472,7 +471,7 @@ When executed with precision, 3D WebGL transforms passive website visitors into 
     date: "May 2026",
     readTime: "6 min read",
     author: "RAK Global Brand Strategy",
-    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=600&fm=webp&auto=format&fit=crop",
     excerpt: "Modern consumers touch over 14 digital and physical channels before making a decision. Learn how unified agency execution prevents message dilution across touchpoints.",
     content: `A successful product launch requires absolute alignment across online and offline touchpoints. Disconnected agencies—where one handles digital ads, another manages OOH billboards, and a third builds the landing page—inevitably lead to fragmented brand identity.
 
@@ -493,7 +492,7 @@ Unified execution guarantees maximum ROI without single-point agency friction.`
     date: "May 2026",
     readTime: "5 min read",
     author: "RAK Data & Analytics Team",
-    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=1200&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600&fm=webp&auto=format&fit=crop",
     excerpt: "Traditional focus groups are slow and retrospective. Realtime analytics listening and behavioral cluster modeling allow brands to predict consumer shifts before competitors respond.",
     content: `Data without actionable strategy is noise. Leading enterprise brands leverage predictive analytics listening to understand sentiment, brand perception, and emerging consumer demand in real time.
 

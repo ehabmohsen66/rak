@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { cn } from "../lib/utils";
+import { useIsMobile } from "../lib/useMobileDetect";
 
 function getTimeParts(target) {
   const diff = Math.max(0, target - Date.now());
@@ -55,10 +56,11 @@ export function AnimatedBanner({
   href = "/work",
   onClick,
   videoSrc = "https://assets.mixkit.co/videos/preview/mixkit-stadium-lights-and-fans-cheering-41551-large.mp4",
-  posterSrc = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=1600&auto=format&fit=crop",
+  posterSrc = "https://images.unsplash.com/photo-1508098682722-e99c43a406b2?q=80&w=600&fm=webp&fit=crop",
   deadline,
   className,
 }) {
+  const isMobile = useIsMobile();
   const target =
     deadline === undefined ? undefined : new Date(deadline).getTime();
 
@@ -82,14 +84,16 @@ export function AnimatedBanner({
       <img
         src={posterSrc}
         alt={title}
+        loading="lazy"
+        decoding="async"
         className="absolute inset-0 h-full w-full object-cover scale-105 group-hover:scale-110 transition-transform duration-1000 z-0"
         onError={(e) => {
-          e.currentTarget.src = "https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=1600&auto=format&fit=crop";
+          e.currentTarget.src = "https://images.unsplash.com/photo-1522778119026-d647f0596c20?q=80&w=600&fm=webp&fit=crop";
         }}
       />
 
-      {/* Video Loop Layer (if available & supported by browser) */}
-      {videoSrc && (
+      {/* Video Loop Layer (Only on Desktop) */}
+      {!isMobile && videoSrc && (
         <video
           aria-hidden="true"
           autoPlay

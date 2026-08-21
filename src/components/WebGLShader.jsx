@@ -1,8 +1,10 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
+import { useIsMobile } from "../lib/useMobileDetect";
 
 export function WebGLShader({ className = "" }) {
   const canvasRef = useRef(null);
+  const isMobile = useIsMobile();
   const sceneRef = useRef({
     scene: null,
     camera: null,
@@ -11,6 +13,17 @@ export function WebGLShader({ className = "" }) {
     uniforms: null,
     animationId: null,
   });
+
+  if (isMobile) {
+    return (
+      <div className={`absolute inset-0 w-full h-full block pointer-events-none z-0 overflow-hidden bg-rak-slate-950 ${className}`}>
+        <div className="absolute inset-0 bg-gradient-to-br from-rak-slate-950 via-rak-slate-900 to-rak-slate-950" />
+        <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-rak-magenta/20 rounded-full blur-[80px] animate-pulse" />
+        <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-rak-cyan/20 rounded-full blur-[70px] animate-pulse" style={{ animationDelay: '1.5s' }} />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -53,7 +66,7 @@ export function WebGLShader({ className = "" }) {
     const initScene = () => {
       refs.scene = new THREE.Scene();
       refs.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      refs.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      refs.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
       refs.renderer.setClearColor(new THREE.Color(0x030712), 1);
 
       refs.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1);

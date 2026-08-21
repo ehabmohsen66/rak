@@ -94,7 +94,7 @@ export const Navbar = ({
 
   return (
     <header 
-      className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+      className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
         isScrolled 
           ? 'py-3 bg-rak-slate-950/85 dark:bg-rak-slate-950/90 light:bg-white/90 backdrop-blur-xl border-b border-rak-slate-800/60 light:border-rak-slate-200 shadow-xl' 
           : 'py-5 bg-transparent'
@@ -321,14 +321,14 @@ export const Navbar = ({
       {mobileMenuOpen && (
         <div 
           onClick={() => setMobileMenuOpen(false)}
-          className="xl:hidden fixed inset-0 top-[72px] bg-black/60 backdrop-blur-sm z-40 animate-in fade-in duration-200"
+          className="xl:hidden fixed inset-0 top-[72px] bg-black/60 backdrop-blur-sm z-[99] animate-in fade-in duration-200"
           aria-hidden="true"
         />
       )}
 
       {/* Mobile & Tablet Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="xl:hidden fixed inset-x-0 top-[72px] max-h-[calc(100vh-72px)] overflow-y-auto bg-rak-slate-950/98 light:bg-white/98 backdrop-blur-2xl border-b border-rak-slate-800 p-6 shadow-2xl z-50 animate-in slide-in-from-top duration-300">
+        <div className="xl:hidden fixed inset-x-0 top-[72px] max-h-[calc(100vh-72px)] overflow-y-auto bg-rak-slate-950/98 light:bg-white/98 backdrop-blur-2xl border-b border-rak-slate-800 p-6 shadow-2xl z-[100] animate-in slide-in-from-top duration-300">
           <div className="space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon;

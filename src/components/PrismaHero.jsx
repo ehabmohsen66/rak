@@ -64,16 +64,29 @@ export const WordsPullUpMultiStyle = ({ segments, className = "", style }) => {
 
 /* ---------------- Fullscreen PrismaHero ---------------- */
 export const PrismaHero = () => {
+  const videoRef = useRef(null);
+
+  React.useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.muted = true;
+      videoRef.current.defaultMuted = true;
+      videoRef.current.play().catch(() => {});
+    }
+  }, []);
+
   return (
     <section className="relative min-h-[90vh] sm:min-h-screen w-full overflow-hidden bg-rak-slate-950 flex flex-col justify-end pb-12 sm:pb-16 pt-28">
       
       {/* Background video */}
       <video
+        ref={videoRef}
         autoPlay
         loop
         muted
         playsInline
-        className="absolute inset-0 h-full w-full object-cover opacity-75"
+        controls={false}
+        preload="auto"
+        className="absolute inset-0 h-full w-full object-cover opacity-75 pointer-events-none"
         src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4"
       />
 

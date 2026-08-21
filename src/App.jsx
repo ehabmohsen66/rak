@@ -7,13 +7,13 @@ import JobApplicationModal from './components/JobApplicationModal';
 import ProjectEstimatorModal from './components/ProjectEstimatorModal';
 
 import HomePage from './pages/HomePage';
-import AboutPage from './pages/AboutPage';
-import ServicesPage from './pages/ServicesPage';
-import WorkPage from './pages/WorkPage';
-import CaseStudiesPage from './pages/CaseStudiesPage';
-import CareersPage from './pages/CareersPage';
-import BlogPage from './pages/BlogPage';
-import ContactPage from './pages/ContactPage';
+const AboutPage = React.lazy(() => import('./pages/AboutPage'));
+const ServicesPage = React.lazy(() => import('./pages/ServicesPage'));
+const WorkPage = React.lazy(() => import('./pages/WorkPage'));
+const CaseStudiesPage = React.lazy(() => import('./pages/CaseStudiesPage'));
+const CareersPage = React.lazy(() => import('./pages/CareersPage'));
+const BlogPage = React.lazy(() => import('./pages/BlogPage'));
+const ContactPage = React.lazy(() => import('./pages/ContactPage'));
 
 const TAB_TO_PATH = {
   home: '/',
@@ -128,6 +128,14 @@ export function App() {
 
       {/* Main View Container */}
       <main className="flex-grow">
+        <React.Suspense fallback={
+          <div className="min-h-[60vh] flex items-center justify-center">
+            <div className="flex flex-col items-center gap-4">
+              <div className="w-10 h-10 border-3 border-rak-magenta/20 border-t-rak-magenta rounded-full animate-spin" />
+              <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest">Loading</span>
+            </div>
+          </div>
+        }>
         {activeTab === 'home' && (
           <HomePage 
             setActiveTab={setActiveTab}
@@ -179,6 +187,7 @@ export function App() {
             onOpenPlanner={() => setPlannerOpen(true)}
           />
         )}
+        </React.Suspense>
       </main>
 
       {/* Footer */}

@@ -103,9 +103,9 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
   const IconComponent = activeData.icon;
 
   return (
-    <div className="relative w-full rounded-3xl bg-rak-slate-950 border border-rak-slate-800 p-6 sm:p-8 shadow-2xl overflow-hidden backdrop-blur-xl group">
+    <div className="relative w-full rounded-3xl bg-rak-slate-950 border border-rak-slate-800 p-6 sm:p-8 shadow-2xl overflow-hidden md:backdrop-blur-xl group">
       {/* Background Glow Effect */}
-      <div className="absolute top-0 right-0 w-80 h-80 bg-rak-magenta/10 rounded-full blur-3xl pointer-events-none group-hover:bg-rak-magenta/20 transition-all duration-700" />
+      <div className="hidden md:block absolute top-0 right-0 w-80 h-80 bg-rak-magenta/10 rounded-full blur-3xl pointer-events-none group-hover:bg-rak-magenta/20 transition-all duration-700" />
       
       {/* Top Header Status Bar */}
       <div className="flex flex-wrap items-center justify-between gap-4 pb-6 border-b border-rak-slate-800/80">

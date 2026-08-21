@@ -58,10 +58,11 @@ export const TeamMarqueeSection = () => {
           >
             <div className="relative w-full overflow-hidden rounded-2xl bg-rak-slate-950 flex flex-col items-center">
               <img
-                src="/rak-team.jpg"
+                src="/rak-team.webp"
                 alt="RAK 4 Creative Team"
                 className="w-full h-auto object-contain rounded-2xl transition-transform duration-700 ease-out filter drop-shadow-2xl"
-                loading="eager"
+                loading="lazy"
+                decoding="async"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950/70 via-transparent to-transparent pointer-events-none rounded-2xl" />
               

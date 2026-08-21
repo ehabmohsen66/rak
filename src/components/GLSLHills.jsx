@@ -1,5 +1,6 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { useIsMobile } from '../lib/useMobileDetect';
 
 const GLSLHills = ({ 
   width = '100%', 
@@ -11,6 +12,18 @@ const GLSLHills = ({
 }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-rak-slate-950">
+        <div className="absolute inset-0 bg-gradient-to-br from-rak-slate-950 via-rak-slate-900 to-rak-slate-950" />
+        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[340px] h-[340px] bg-rak-magenta/25 rounded-full blur-[80px] animate-pulse" />
+        <div className="absolute bottom-10 left-10 w-[240px] h-[240px] bg-rak-cyan/20 rounded-full blur-[70px]" />
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(236,0,140,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(236,0,140,0.15)_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
+      </div>
+    );
+  }
 
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current) return;
@@ -166,6 +179,7 @@ const GLSLHills = ({
     const container = containerRef.current;
 
     const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 10000);
     const clock = new THREE.Clock();

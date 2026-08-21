@@ -85,12 +85,11 @@ export const HomePage = ({
   };
 
   const wordVariants = {
-    hidden: { opacity: 0, y: 28, filter: 'blur(6px)' },
+    hidden: { opacity: 0, y: 16 },
     visible: {
       opacity: 1,
       y: 0,
-      filter: 'blur(0px)',
-      transition: { duration: 0.55, ease: [0.22, 1, 0.36, 1] },
+      transition: { duration: 0.35, ease: [0.22, 1, 0.36, 1] },
     },
   };
 
@@ -102,10 +101,13 @@ export const HomePage = ({
       {/* 1. CINEMATIC SPLIT HERO SECTION WITH VIBRANT MESH LIGHTS */}
       <section className="relative min-h-[85vh] flex items-center pt-28 pb-16 overflow-hidden">
         
-        {/* Dynamic Multi-Color Ambient Mesh Orbs */}
-        <div className="absolute top-1/4 left-1/3 -translate-x-1/2 w-[900px] h-[550px] bg-rak-magenta/25 rounded-full blur-[160px] pointer-events-none animate-pulse-slow" />
-        <div className="absolute top-12 right-10 w-[600px] h-[450px] bg-rak-cyan/20 rounded-full blur-[140px] pointer-events-none" />
-        <div className="absolute bottom-10 left-10 w-[500px] h-[400px] bg-rak-violet/20 rounded-full blur-[140px] pointer-events-none" />
+        {/* Dynamic Multi-Color Ambient Mesh Orbs (Desktop: Huge blurred, Mobile: Lightweight) */}
+        <div className="hidden md:block absolute top-1/4 left-1/3 -translate-x-1/2 w-[900px] h-[550px] bg-rak-magenta/25 rounded-full blur-[160px] pointer-events-none animate-pulse-slow" />
+        <div className="hidden md:block absolute top-12 right-10 w-[600px] h-[450px] bg-rak-cyan/20 rounded-full blur-[140px] pointer-events-none" />
+        <div className="hidden md:block absolute bottom-10 left-10 w-[500px] h-[400px] bg-rak-violet/20 rounded-full blur-[140px] pointer-events-none" />
+
+        {/* Mobile-optimized background ambient light */}
+        <div className="md:hidden absolute top-1/3 left-1/2 -translate-x-1/2 w-[280px] h-[280px] bg-rak-magenta/20 rounded-full blur-[60px] pointer-events-none" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
@@ -354,6 +356,8 @@ export const HomePage = ({
                 <img 
                   src={p.image} 
                   alt={p.title} 
+                  loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-rak-slate-950/40 to-transparent opacity-90" />
@@ -412,7 +416,7 @@ export const HomePage = ({
                 </div>
 
                 <div className="pt-4 border-t border-rak-slate-800/70 light:border-slate-200 flex items-center space-x-3">
-                  <img src={t.avatar} alt={t.author} className="w-11 h-11 rounded-full object-cover border-2 border-rak-magenta shrink-0 shadow-magenta-sm" />
+                  <img src={t.avatar} alt={t.author} loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover border-2 border-rak-magenta shrink-0 shadow-magenta-sm" />
                   <div>
                     <div className="text-xs font-bold text-white dark:text-white light:text-slate-900 tracking-wide">{t.author}</div>
                     <div className="text-[10px] text-rak-slate-400 font-medium">{t.role}</div>
@@ -462,6 +466,8 @@ export const HomePage = ({
                   <img
                     src={post.image}
                     alt={post.title}
+                    loading="lazy"
+                    decoding="async"
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-transparent to-transparent opacity-80" />

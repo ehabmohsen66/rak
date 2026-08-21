@@ -69,7 +69,7 @@ export const BlogPage = ({ onSelectArticle }) => {
             className="group cursor-pointer p-8 sm:p-12 bg-rak-slate-900/80 border border-rak-slate-800 rounded-3xl hover:border-rak-magenta/50 transition-all grid grid-cols-1 lg:grid-cols-12 gap-8 items-center"
           >
             <div className="lg:col-span-6 relative h-72 sm:h-96 rounded-2xl overflow-hidden bg-rak-slate-950">
-              <img src={featuredPost.image} alt={featuredPost.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
+              <img src={featuredPost.image} alt={featuredPost.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute top-4 left-4 px-3 py-1 bg-rak-magenta text-white text-[10px] font-bold uppercase tracking-widest rounded-full">
                 Featured Executive Brief
               </div>
@@ -114,7 +114,7 @@ export const BlogPage = ({ onSelectArticle }) => {
               className="group cursor-pointer p-6 bg-rak-slate-900/60 border border-rak-slate-800 rounded-3xl hover:border-rak-magenta/50 transition-all space-y-4"
             >
               <div className="relative h-48 rounded-2xl overflow-hidden bg-rak-slate-950">
-                <img src={post.image} alt={post.title} className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                <img src={post.image} alt={post.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
               </div>
 
               <div className="space-y-2">

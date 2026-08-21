@@ -1,5 +1,6 @@
 import React, { Suspense, lazy, useState, useEffect, useRef } from 'react';
 import * as THREE from 'three';
+import { useIsMobile } from '../lib/useMobileDetect';
 
 const Spline = lazy(() => import('@splinetool/react-spline'));
 
@@ -229,6 +230,25 @@ export function InteractiveRobotSpline({
   scene = "https://prod.spline.design/6Wq1Q7YGyM-mab6X/scene.splinecode", 
   className = "" 
 }) {
+  const isMobile = useIsMobile();
+
+  if (isMobile) {
+    return (
+      <div className={`w-full h-full flex items-center justify-center relative overflow-hidden ${className}`}>
+        <div className="absolute inset-0 bg-gradient-to-br from-rak-slate-900 via-rak-slate-950 to-rak-slate-900" />
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-32 h-32 bg-rak-magenta/20 rounded-full blur-[60px] animate-pulse" />
+        <div className="relative z-10 flex flex-col items-center space-y-3">
+          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-rak-magenta to-rak-magenta-dark flex items-center justify-center shadow-magenta-glow">
+            <svg className="w-8 h-8 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
+              <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 3.104v5.714a2.25 2.25 0 0 1-.659 1.591L5 14.5M9.75 3.104c-.251.023-.501.05-.75.082m.75-.082a24.301 24.301 0 0 1 4.5 0m0 0v5.714c0 .597.237 1.17.659 1.591L19.8 15.3M14.25 3.104c.251.023.501.05.75.082M19.8 15.3l-1.57.393A9.065 9.065 0 0 1 12 15a9.065 9.065 0 0 0-6.23.693L5 14.5m14.8.8 1.402 1.402c1.232 1.232.65 3.318-1.067 3.611A48.309 48.309 0 0 1 12 21c-2.773 0-5.491-.235-8.135-.687-1.718-.293-2.3-2.379-1.067-3.61L5 14.5" />
+            </svg>
+          </div>
+          <span className="text-[10px] font-bold text-rak-magenta uppercase tracking-widest">AI-Powered</span>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <SplineErrorBoundary fallback={<Fallback3DRobot className={className} />}>
       <Suspense

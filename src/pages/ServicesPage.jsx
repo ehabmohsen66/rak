@@ -102,7 +102,7 @@ export const ServicesPage = ({ onOpenPlanner }) => {
             <div 
               key={pillar.id}
               id={pillar.id}
-              className="p-8 sm:p-12 rounded-3xl bg-rak-slate-900/80 border border-rak-slate-800 space-y-8 hover:border-rak-magenta/40 transition-all group backdrop-blur-xl scroll-mt-28"
+              className="p-8 sm:p-12 rounded-3xl bg-rak-slate-900/80 border border-rak-slate-800 space-y-8 hover:border-rak-magenta/40 transition-all group md:backdrop-blur-xl scroll-mt-28"
             >
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
                 
@@ -112,6 +112,8 @@ export const ServicesPage = ({ onOpenPlanner }) => {
                     <img 
                       src={pillar.featuredImage} 
                       alt={pillar.title} 
+                      loading="lazy"
+                      decoding="async"
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 opacity-90"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-rak-slate-950 via-rak-slate-950/30 to-transparent" />
@@ -122,7 +124,7 @@ export const ServicesPage = ({ onOpenPlanner }) => {
                       </span>
                     </div>
 
-                    <div className="absolute bottom-6 left-6 right-6 flex items-center space-x-3 p-4 rounded-xl bg-rak-slate-950/90 border border-rak-slate-800 backdrop-blur-xl shadow-2xl">
+                    <div className="absolute bottom-6 left-6 right-6 flex items-center space-x-3 p-4 rounded-xl bg-rak-slate-950/90 border border-rak-slate-800 md:backdrop-blur-xl shadow-2xl">
                       <div className="p-2.5 rounded-xl bg-rak-magenta text-white shrink-0 shadow-magenta-sm">
                         <IconComp className="w-5 h-5" />
                       </div>

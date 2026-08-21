@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { MinimalistHero } from './MinimalistHero';
+import { useIsMobile } from '../lib/useMobileDetect';
 
 // --- Custom SVG Components for Hand-Drawn Accents ---
 
@@ -54,6 +55,9 @@ const CircularBadge = () => (
 );
 
 export const AboutHero = ({ onOpenPlanner }) => {
+  const isMobile = useIsMobile();
+  const shadowStyle = isMobile ? '2px 2px 0 #5A0034' : '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034';
+
   return (
     <div className="min-h-screen bg-rak-slate-950 flex flex-col font-sans selection:bg-rak-magenta selection:text-white relative overflow-hidden w-full">
       
@@ -61,21 +65,21 @@ export const AboutHero = ({ onOpenPlanner }) => {
       <div className="absolute inset-0 bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0"></div>
 
       {/* Hero Section */}
-      <main className="flex-1 relative z-10 pt-16 pb-24 md:pt-20 md:pb-36 px-4 flex flex-col items-center justify-center w-full max-w-[1440px] mx-auto">
+      <main className="relative z-10 pt-16 pb-4 sm:pb-8 md:pt-20 md:pb-12 px-4 flex flex-col items-center justify-center w-full max-w-[1440px] mx-auto">
         
         {/* Massive Typography & Elements Container */}
-        <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center z-10 mt-4 mb-16">
+        <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center z-10 mt-2 mb-4 sm:mb-8">
           
           {/* Text Stack */}
           <div className="w-full flex flex-col items-center relative z-10 space-y-1 md:space-y-2">
             
             {/* #RAK4 */}
-            <div className="w-full flex justify-start pl-[2%] sm:pl-[8%] md:pl-[20%] relative z-30">
+            <div className="w-full flex justify-center sm:justify-start sm:pl-[8%] md:pl-[20%] relative z-30">
               <h1 
-                className="text-[clamp(2.5rem,11vw,160px)] font-black leading-[0.85] tracking-tighter text-rak-magenta m-0 p-0 uppercase"
+                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-rak-magenta m-0 p-0 uppercase"
                 style={{ 
                   fontFamily: '"Arial Black", Impact, sans-serif',
-                  textShadow: '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034, 10px 10px 0 #5A0034, 12px 12px 0 #5A0034'
+                  textShadow: shadowStyle
                 }}
               >
                 #RAK4
@@ -85,10 +89,10 @@ export const AboutHero = ({ onOpenPlanner }) => {
             {/* CREATIVE */}
             <div className="w-full flex justify-center relative z-20">
               <h1 
-                className="text-[clamp(2.75rem,13vw,210px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
+                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
                 style={{ 
                   fontFamily: '"Arial Black", Impact, sans-serif',
-                  textShadow: '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034, 10px 10px 0 #5A0034, 12px 12px 0 #5A0034'
+                  textShadow: shadowStyle
                 }}
               >
                 CREATIVE
@@ -96,12 +100,12 @@ export const AboutHero = ({ onOpenPlanner }) => {
             </div>
             
             {/* AGENCY */}
-            <div className="w-full flex justify-start pl-[6%] sm:pl-[12%] md:pl-[28%] relative z-30">
+            <div className="w-full flex justify-center sm:justify-start sm:pl-[12%] md:pl-[28%] relative z-30">
               <h1 
-                className="text-[clamp(2.5rem,11vw,160px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
+                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
                 style={{ 
                   fontFamily: '"Arial Black", Impact, sans-serif',
-                  textShadow: '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034, 10px 10px 0 #5A0034, 12px 12px 0 #5A0034'
+                  textShadow: shadowStyle
                 }}
               >
                 AGENCY
@@ -123,8 +127,8 @@ export const AboutHero = ({ onOpenPlanner }) => {
               <ArrowMagentaRight />
             </div>
 
-            {/* Circular Badge - Positioned to bottom right without obscuring AGENCY */}
-            <div className="absolute -bottom-12 -right-4 sm:-bottom-16 sm:-right-8 md:-right-12 z-20 pointer-events-auto scale-75 sm:scale-90 md:scale-100 origin-bottom-right">
+            {/* Circular Badge - Positioned cleanly inside right edge */}
+            <div className="absolute -bottom-4 right-1 sm:-bottom-8 sm:right-0 md:-right-8 z-20 pointer-events-auto scale-75 sm:scale-90 md:scale-100 origin-bottom-right">
               <CircularBadge />
             </div>
 
@@ -133,21 +137,21 @@ export const AboutHero = ({ onOpenPlanner }) => {
       </main>
 
       {/* Bottom Features Section */}
-      <section className="bg-rak-slate-900 border-t border-rak-slate-800 text-white rounded-t-[2.5rem] md:rounded-t-[3.5rem] px-6 py-12 md:px-10 md:py-16 relative z-20 shadow-2xl mt-auto w-full">
+      <section className="bg-rak-slate-900 border-t border-rak-slate-800 text-white rounded-t-[2.5rem] md:rounded-t-[3.5rem] px-4 sm:px-6 py-10 md:px-10 md:py-16 relative z-20 shadow-2xl mt-auto w-full">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           
           {/* Card 1 */}
-          <div className="bg-rak-slate-950/80 rounded-[2rem] p-8 flex flex-col items-center text-center relative h-64 border border-rak-slate-800 hover:border-rak-magenta/50 transition-all">
+          <div className="bg-rak-slate-950/80 rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center relative min-h-[220px] border border-rak-slate-800 hover:border-rak-magenta/50 transition-all">
             <h3 className="text-xl md:text-2xl uppercase leading-tight mb-2 font-black text-white">
               BOLD<br/>CREATIVITY
             </h3>
-            <p className="text-[10px] md:text-xs text-rak-slate-400 font-medium mb-auto">
+            <p className="text-xs text-rak-slate-400 font-medium mb-4">
               We create big ideas from ground zero and take them to new heights
             </p>
             
-            <div className="relative w-full flex justify-center mt-4">
-              <div className="flex items-center bg-rak-slate-900 border border-rak-slate-700 rounded-2xl p-2 pr-12 text-white shadow-lg relative z-10">
-                <div className="w-8 h-8 bg-rak-magenta/20 rounded-full mr-3 border border-rak-magenta overflow-hidden flex-shrink-0 flex items-center justify-center text-[10px] font-bold text-rak-magenta">
+            <div className="w-full flex items-center justify-between bg-rak-slate-900 border border-rak-slate-700 rounded-2xl p-2.5 px-3 text-white shadow-lg mt-auto">
+              <div className="flex items-center space-x-2.5">
+                <div className="w-7 h-7 bg-rak-magenta/20 rounded-full border border-rak-magenta flex items-center justify-center text-[9px] font-bold text-rak-magenta shrink-0">
                   RAK
                 </div>
                 <div className="text-left">
@@ -155,7 +159,7 @@ export const AboutHero = ({ onOpenPlanner }) => {
                   <p className="text-[8px] text-rak-slate-400 leading-none mt-1">Full-Service Studio</p>
                 </div>
               </div>
-              <div className="absolute right-2 top-1/2 transform -translate-y-1/2 bg-rak-magenta text-white font-extrabold text-[10px] px-3 py-1.5 rounded-xl z-20 shadow-md">
+              <div className="bg-rak-magenta text-white font-extrabold text-[9px] px-2.5 py-1 rounded-xl shadow-md shrink-0">
                 100% CRAFT
               </div>
             </div>
@@ -166,22 +170,20 @@ export const AboutHero = ({ onOpenPlanner }) => {
           </div>
 
           {/* Card 2 */}
-          <div className="bg-rak-slate-950/80 rounded-[2rem] p-8 flex flex-col items-center text-center relative h-64 border border-rak-slate-800 hover:border-rak-magenta/50 transition-all">
+          <div className="bg-rak-slate-950/80 rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center relative min-h-[220px] border border-rak-slate-800 hover:border-rak-magenta/50 transition-all">
             <h3 className="text-xl md:text-2xl uppercase leading-tight mb-2 font-black text-white">
               TECH<br/>MAGIC
             </h3>
-            <p className="text-[10px] md:text-xs text-rak-slate-400 font-medium mb-auto">
+            <p className="text-xs text-rak-slate-400 font-medium mb-4">
               Web architecture, performance ad ops, and data intelligence
             </p>
             
-            <div className="relative w-full flex justify-center mt-4">
-              <div className="flex items-center bg-rak-slate-900 border border-rak-slate-700 rounded-full p-1.5 text-white shadow-lg">
-                <div className="bg-rak-magenta/20 border border-rak-magenta text-rak-magenta font-bold text-xs px-3 py-1.5 rounded-full mr-2">
-                  8 PILLARS
-                </div>
-                <div className="font-bold text-xs px-3 text-white">
-                  ONE STOP
-                </div>
+            <div className="w-full flex items-center justify-center bg-rak-slate-900 border border-rak-slate-700 rounded-2xl p-2.5 px-3 text-white shadow-lg mt-auto">
+              <div className="bg-rak-magenta/20 border border-rak-magenta text-rak-magenta font-bold text-[10px] px-3 py-1 rounded-xl mr-2">
+                8 PILLARS
+              </div>
+              <div className="font-bold text-[10px] text-white">
+                ONE STOP
               </div>
             </div>
 
@@ -191,17 +193,17 @@ export const AboutHero = ({ onOpenPlanner }) => {
           </div>
 
           {/* Card 3 */}
-          <div className="bg-rak-slate-950/80 rounded-[2rem] p-8 flex flex-col items-center text-center relative h-64 border border-rak-slate-800 hover:border-rak-magenta/50 transition-all">
+          <div className="bg-rak-slate-950/80 rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center relative min-h-[220px] border border-rak-slate-800 hover:border-rak-magenta/50 transition-all">
             <h3 className="text-xl md:text-2xl uppercase leading-tight mb-2 font-black text-white">
               REAL<br/>IMPACT
             </h3>
-            <p className="text-[10px] md:text-xs text-rak-slate-400 font-medium mb-auto">
+            <p className="text-xs text-rak-slate-400 font-medium mb-4">
               Online and offline presence that drives enterprise revenue
             </p>
             
-            <div className="flex flex-col items-center bg-rak-magenta text-white rounded-[2rem] px-6 py-3 shadow-magenta-glow mt-4 relative w-full max-w-[220px]">
-              <p className="text-[9px] font-bold uppercase tracking-wider mb-0.5">Global Presence</p>
-              <p className="text-lg font-black">360° STRATEGY</p>
+            <div className="w-full flex flex-col items-center bg-rak-magenta text-white rounded-2xl p-2.5 shadow-magenta-glow mt-auto">
+              <p className="text-[8px] font-bold uppercase tracking-wider">Global Presence</p>
+              <p className="text-sm font-black tracking-tight">360° STRATEGY</p>
             </div>
           </div>
 
