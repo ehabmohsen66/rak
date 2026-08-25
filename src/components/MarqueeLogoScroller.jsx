@@ -101,18 +101,8 @@ export const MarqueeLogoScroller = React.forwardRef(
               {[...logoItems, ...logoItems].map((logo, index) => (
                 <div
                   key={index}
-                  className="group relative h-24 w-44 shrink-0 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-white p-4 overflow-hidden border border-slate-200 dark:border-white/40 shadow-sm hover:shadow-md cursor-pointer transition-transform duration-300 hover:scale-105"
+                  className="group relative h-20 w-36 sm:w-44 shrink-0 flex items-center justify-center p-2 cursor-pointer transition-all duration-300 hover:scale-110"
                 >
-                  {/* Gradient background revealed on hover */}
-                  <div
-                    style={{
-                      '--from': logo.gradient.from,
-                      '--via': logo.gradient.via,
-                      '--to': logo.gradient.to,
-                    }}
-                    className="absolute inset-0 scale-150 opacity-0 transition-all duration-500 ease-out group-hover:opacity-100 group-hover:scale-100 bg-gradient-to-br from-[var(--from)] via-[var(--via)] to-[var(--to)] z-0 pointer-events-none"
-                  />
-
                   {/* Logo Image */}
                   {logo.src ? (
                     <img
@@ -122,7 +112,7 @@ export const MarqueeLogoScroller = React.forwardRef(
                       decoding="async"
                       width="130"
                       height="56"
-                      className="relative z-10 max-h-14 max-w-[130px] object-contain transition-transform duration-300 group-hover:scale-110 filter drop-shadow-sm"
+                      className="relative z-10 max-h-12 max-w-[130px] object-contain transition-all duration-300 group-hover:scale-110 dark:brightness-105 filter drop-shadow-none"
                       style={{ imageRendering: '-webkit-optimize-contrast' }}
                       onError={(e) => {
                         e.currentTarget.style.display = 'none';
@@ -134,7 +124,7 @@ export const MarqueeLogoScroller = React.forwardRef(
 
                   {/* Fallback Text if image missing */}
                   <span
-                    className="relative z-10 text-xs font-bold font-mono text-slate-900 tracking-wider group-hover:text-white transition-colors"
+                    className="relative z-10 text-xs font-bold font-mono text-slate-900 dark:text-white tracking-wider group-hover:text-rak-magenta transition-colors"
                     style={{ display: logo.src ? 'none' : 'inline-block' }}
                   >
                     {logo.logoText}
