@@ -57,7 +57,7 @@ export const MarqueeLogoScroller = React.forwardRef(
           ref={ref}
           aria-label={title}
           className={cn(
-            'w-full bg-rak-slate-900/80 dark:bg-rak-slate-900/80 light:bg-white/90 text-white dark:text-white light:text-slate-900 rounded-3xl border border-rak-slate-800/80 light:border-slate-200 overflow-hidden backdrop-blur-xl shadow-2xl',
+            'w-full bg-white dark:bg-rak-slate-900/80 text-slate-900 dark:text-white rounded-3xl border border-slate-200 dark:border-white/10 overflow-hidden backdrop-blur-xl shadow-sm dark:shadow-2xl transition-colors duration-300',
             className
           )}
           {...props}
@@ -65,16 +65,16 @@ export const MarqueeLogoScroller = React.forwardRef(
           {/* Header Section */}
           {showHeader && (
             <div className="p-6 md:p-8 lg:p-10 pb-4">
-              <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-4 lg:gap-8 pb-6 border-b border-rak-slate-800/80 light:border-slate-200 items-end">
+              <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-4 lg:gap-8 pb-6 border-b border-slate-100 dark:border-white/10 items-end">
                 <div className="space-y-2">
                   <span className="text-xs font-extrabold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full inline-block">
                     Client Ecosystem
                   </span>
-                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-balance text-white dark:text-white light:text-slate-900">
+                  <h2 className="text-2xl md:text-3xl lg:text-4xl font-extrabold tracking-tight text-balance text-slate-900 dark:text-white">
                     {title}
                   </h2>
                 </div>
-                <p className="text-rak-slate-300 dark:text-rak-slate-300 light:text-slate-600 text-xs sm:text-sm leading-relaxed text-balance">
+                <p className="text-slate-600 dark:text-rak-slate-300 text-xs sm:text-sm leading-relaxed text-balance">
                   {description}
                 </p>
               </div>
@@ -101,7 +101,7 @@ export const MarqueeLogoScroller = React.forwardRef(
               {[...logoItems, ...logoItems].map((logo, index) => (
                 <div
                   key={index}
-                  className="group relative h-24 w-44 shrink-0 flex items-center justify-center rounded-2xl bg-white p-4 overflow-hidden border border-white/40 shadow-md cursor-pointer transition-transform duration-300 hover:scale-105"
+                  className="group relative h-24 w-44 shrink-0 flex items-center justify-center rounded-2xl bg-slate-50 dark:bg-white p-4 overflow-hidden border border-slate-200 dark:border-white/40 shadow-sm hover:shadow-md cursor-pointer transition-transform duration-300 hover:scale-105"
                 >
                   {/* Gradient background revealed on hover */}
                   <div
@@ -134,7 +134,7 @@ export const MarqueeLogoScroller = React.forwardRef(
 
                   {/* Fallback Text if image missing */}
                   <span
-                    className="relative z-10 text-xs font-bold font-mono text-rak-slate-900 tracking-wider group-hover:text-white transition-colors"
+                    className="relative z-10 text-xs font-bold font-mono text-slate-900 tracking-wider group-hover:text-white transition-colors"
                     style={{ display: logo.src ? 'none' : 'inline-block' }}
                   >
                     {logo.logoText}

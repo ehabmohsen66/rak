@@ -46,7 +46,7 @@ const getTabFromLocation = () => {
 
 export function App() {
   const [activeTab, setActiveTabState] = useState(() => getTabFromLocation());
-  const [darkMode, setDarkMode] = useState(true);
+  const [darkMode, setDarkMode] = useState(false);
 
   const setActiveTab = (tabId, replace = false) => {
     const targetPath = TAB_TO_PATH[tabId] || '/';
