@@ -123,6 +123,106 @@ export function App() {
     }
   }, [darkMode]);
 
+  // Animated Dynamic Favicon with Smooth Morphing Geometric Shapes
+  useEffect(() => {
+    let animId;
+    let angle = 0;
+    const canvas = document.createElement('canvas');
+    canvas.width = 32;
+    canvas.height = 32;
+    const ctx = canvas.getContext('2d');
+
+    // Find or create favicon link tag
+    let link = document.querySelector("link[rel*='icon']");
+    if (!link) {
+      link = document.createElement('link');
+      link.rel = 'icon';
+      document.head.appendChild(link);
+    }
+
+    let lastUpdate = 0;
+    const render = (time) => {
+      // Throttle to ~20 FPS for crisp browser tab responsiveness without CPU load
+      if (time - lastUpdate > 50) {
+        lastUpdate = time;
+        angle = (angle + 0.08) % (Math.PI * 2);
+
+        if (ctx) {
+          ctx.clearRect(0, 0, 32, 32);
+
+          // 1. Dark Rounded Badge Background
+          ctx.beginPath();
+          ctx.roundRect(1, 1, 30, 30, 8);
+          ctx.fillStyle = '#0B0E14';
+          ctx.fill();
+          ctx.lineWidth = 1;
+          ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+          ctx.stroke();
+
+          // 2. Rotating Outer Dashed Orbital Ring
+          ctx.save();
+          ctx.translate(16, 16);
+          ctx.rotate(angle);
+
+          const grad = ctx.createLinearGradient(-12, -12, 12, 12);
+          grad.addColorStop(0, '#EC008C');
+          grad.addColorStop(0.5, '#00F0FF');
+          grad.addColorStop(1, '#8B5CF6');
+
+          ctx.beginPath();
+          ctx.arc(0, 0, 11, 0, Math.PI * 2);
+          ctx.strokeStyle = grad;
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([4, 3]);
+          ctx.stroke();
+
+          // Satellite dot
+          ctx.beginPath();
+          ctx.arc(11, 0, 1.8, 0, Math.PI * 2);
+          ctx.fillStyle = '#00F0FF';
+          ctx.fill();
+          ctx.restore();
+
+          // 3. Reverse Spinning Geometric Diamond/Prism
+          ctx.save();
+          ctx.translate(16, 16);
+          ctx.rotate(-angle * 1.5);
+          
+          ctx.beginPath();
+          ctx.roundRect(-5.5, -5.5, 11, 11, 2.5);
+          ctx.fillStyle = 'rgba(236, 0, 140, 0.35)';
+          ctx.fill();
+          ctx.strokeStyle = '#EC008C';
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([]);
+          ctx.stroke();
+          ctx.restore();
+
+          // 4. Pulsing Core Center Dot
+          ctx.save();
+          ctx.translate(16, 16);
+          const pulse = 1.8 + Math.sin(angle * 3) * 0.6;
+          ctx.beginPath();
+          ctx.arc(0, 0, pulse, 0, Math.PI * 2);
+          ctx.fillStyle = '#FFFFFF';
+          ctx.shadowColor = '#EC008C';
+          ctx.shadowBlur = 4;
+          ctx.fill();
+          ctx.restore();
+
+          link.href = canvas.toDataURL('image/png');
+        }
+      }
+      animId = requestAnimationFrame(render);
+    };
+
+    animId = requestAnimationFrame(render);
+
+    return () => {
+      if (animId) cancelAnimationFrame(animId);
+    };
+  }, []);
+
   // Update SEO Document Title based on current active tab
   useEffect(() => {
     const titles = {
