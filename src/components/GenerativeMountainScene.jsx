@@ -35,23 +35,21 @@ export function GenerativeMountainScene() {
     // GEOMETRY
     const geometry = new THREE.PlaneGeometry(16, 10, 140, 140);
 
-    // SHADER MATERIAL with Luminous Modern Palette (Rose, Magenta, Cyan Highlights)
+    // SHADER MATERIAL with RAK Brand Magenta Color
     const material = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
       wireframe: false,
       uniforms: {
         time: { value: 0 },
         pointLightPosition: { value: new THREE.Vector3(0, 2, 4) },
-        color1: { value: new THREE.Color("#EC008C") }, // Vibrant RAK Magenta
-        color2: { value: new THREE.Color("#FA4D9C") }, // Rose Magenta
-        color3: { value: new THREE.Color("#06B6D4") }, // Cyan Luminous Highlight
-        color4: { value: new THREE.Color("#8B5CF6") }, // Soft Violet
+        baseColor: { value: new THREE.Color("#0d1322") }, // Deep midnight slate
+        accentColor: { value: new THREE.Color("#EC008C") }, // RAK Signature Magenta
+        glowColor: { value: new THREE.Color("#8B5CF6") }, // RAK Violet highlight
       },
       vertexShader: `
         uniform float time;
         varying vec3 vNormal;
         varying vec3 vPosition;
-        varying float vHeight;
         
         // --- SIMPLEX / PERLIN NOISE FUNCTIONS ---
         vec3 mod289(vec3 x) { return x - floor(x * (1.0 / 289.0)) * 289.0; }
@@ -106,52 +104,43 @@ export function GenerativeMountainScene() {
             vNormal = normal;
             vPosition = position;
             
-            float noiseFreq = 0.5;
-            float noiseAmp = 0.85;
+            float noiseFreq = 0.55;
+            float noiseAmp = 0.75;
             
-            // Layer 1: Base smooth mountain wave
-            float displacement = snoise(vec3(position.x * noiseFreq, position.y * noiseFreq - time * 0.12, 0.0)) * noiseAmp;
+            // Layer 1: Base smooth mountain ridges
+            float displacement = snoise(vec3(position.x * noiseFreq, position.y * noiseFreq - time * 0.15, 0.0)) * noiseAmp;
             
-            // Layer 2: Detail wave
-            displacement += snoise(vec3(position.x * noiseFreq * 2.2, position.y * noiseFreq * 2.2 - time * 0.12, 0.0)) * (noiseAmp * 0.35);
+            // Layer 2: Subtle detail
+            displacement += snoise(vec3(position.x * noiseFreq * 2.0, position.y * noiseFreq * 2.0 - time * 0.15, 0.0)) * (noiseAmp * 0.4);
 
-            vHeight = displacement;
             vec3 newPosition = position + normal * displacement;
             gl_Position = projectionMatrix * modelViewMatrix * vec4(newPosition, 1.0);
         }
       `,
       fragmentShader: `
-        uniform vec3 color1;
-        uniform vec3 color2;
-        uniform vec3 color3;
-        uniform vec3 color4;
+        uniform vec3 baseColor;
+        uniform vec3 accentColor;
+        uniform vec3 glowColor;
         uniform vec3 pointLightPosition;
         varying vec3 vNormal;
         varying vec3 vPosition;
-        varying float vHeight;
         
         void main() {
             vec3 normal = normalize(vNormal);
             vec3 lightDir = normalize(pointLightPosition - vPosition);
             
-            // Diffuse dynamic light
+            // Diffuse lighting
             float diffuse = max(dot(normal, lightDir), 0.0);
             
-            // Fresnel rim lighting
+            // Fresnel rim lighting for neon ridge effect
             float fresnel = 1.0 - dot(normal, vec3(0.0, 0.0, 1.0));
-            fresnel = pow(clamp(fresnel, 0.0, 1.0), 2.2);
+            fresnel = pow(clamp(fresnel, 0.0, 1.0), 2.5);
             
-            // Height-based radiant chromatic gradient
-            float hNorm = clamp((vHeight + 0.6) / 1.2, 0.0, 1.0);
-            vec3 baseGradient = mix(color4, color1, hNorm);
-            vec3 topGradient = mix(baseGradient, color2, pow(hNorm, 2.0));
+            // Smooth gradient blending across heights and lighting
+            vec3 surfaceColor = mix(baseColor, accentColor, diffuse * 0.85);
+            vec3 finalColor = surfaceColor + glowColor * fresnel * 0.7 + accentColor * pow(diffuse, 4.0) * 0.4;
             
-            // Specular luminous crests
-            vec3 specularGlow = color3 * fresnel * 0.85 + color2 * pow(diffuse, 3.0) * 0.6;
-            
-            vec3 finalColor = topGradient * (0.65 + diffuse * 0.5) + specularGlow;
-            
-            gl_FragColor = vec4(finalColor, 0.75);
+            gl_FragColor = vec4(finalColor, 0.95);
         }
       `,
       transparent: true,
@@ -217,7 +206,7 @@ export function GenerativeMountainScene() {
   return (
     <div 
       ref={mountRef} 
-      className="pointer-events-none absolute inset-0 w-full h-full z-0 opacity-60 dark:opacity-75 overflow-hidden" 
+      className="pointer-events-none absolute inset-0 w-full h-full z-0 opacity-40 dark:opacity-60 overflow-hidden mix-blend-screen" 
     />
   );
 }
