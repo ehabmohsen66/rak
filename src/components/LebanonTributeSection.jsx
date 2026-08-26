@@ -60,12 +60,18 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
   });
   const [userClicks, setUserClicks] = useState(0);
   const [floatingHearts, setFloatingHearts] = useState([]);
+  const [animating, setAnimating] = useState(false);
+  const [animKey, setAnimKey] = useState(0);
 
   const handleLike = () => {
     const newCount = likesCount + 1;
     setLikesCount(newCount);
     setUserClicks((prev) => prev + 1);
     localStorage.setItem('rak_beirut_love_count', newCount.toString());
+
+    setAnimKey((prev) => prev + 1);
+    setAnimating(true);
+    setTimeout(() => setAnimating(false), 600);
 
     // Spawn bursting heart particles
     const newHearts = Array.from({ length: 5 }).map((_, i) => ({
@@ -84,6 +90,30 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
   return (
     <section className="relative overflow-hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      {/* Inline Keyframes for Heart Animation */}
+      <style>{`
+        @keyframes heart-filled-pop {
+          0% { transform: scale(0); opacity: 0; }
+          25% { transform: scale(1.35); opacity: 1; }
+          50% { transform: scale(1); filter: brightness(1.3); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+
+        @keyframes heart-celebrate-burst {
+          0% { transform: scale(0); opacity: 1; }
+          50% { opacity: 1; filter: brightness(1.5); }
+          100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        .animate-heart-pop {
+          animation: heart-filled-pop 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+        }
+
+        .animate-heart-celebrate {
+          animation: heart-celebrate-burst 0.6s ease-out forwards;
+        }
+      `}</style>
+
       {/* Ambient background glows */}
       <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-r from-rak-magenta/15 via-[#00A651]/10 to-[#EE161F]/15 blur-3xl opacity-70 rounded-full" />
 
@@ -151,26 +181,52 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                         initial={{ opacity: 1, y: 0, x: 0, scale: 0.5 }}
                         animate={{ opacity: 0, y: heart.y, x: heart.x, scale: heart.scale, rotate: heart.rotate }}
                         transition={{ duration: 0.9, ease: "easeOut" }}
-                        className="absolute pointer-events-none text-[#EE161F] z-30"
+                        className="absolute pointer-events-none z-30"
                       >
-                        <Heart className="w-5 h-5 fill-[#EE161F]" />
+                        <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#EE161F] drop-shadow">
+                          <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z" />
+                        </svg>
                       </motion.div>
                     ))}
 
                     <motion.button
                       whileTap={{ scale: 0.94 }}
                       onClick={handleLike}
-                      className="group relative flex items-center space-x-3 px-5 py-3 rounded-2xl bg-[#EE161F] hover:bg-[#D40E16] text-white shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer"
+                      className="group relative flex items-center space-x-3 px-5 py-3 rounded-2xl bg-[#EE161F] hover:bg-[#D40E16] text-white shadow-md hover:shadow-lg transition-all duration-200 cursor-pointer overflow-visible"
                       title="Click to love Beirut!"
                     >
-                      <motion.div
-                        key={likesCount}
-                        initial={{ scale: 1.35 }}
-                        animate={{ scale: 1 }}
-                        transition={{ duration: 0.25 }}
-                      >
-                        <Heart className="w-4.5 h-4.5 fill-white text-white" />
-                      </motion.div>
+                      {/* Animated Celebrate Heart Container */}
+                      <div className="relative w-6 h-6 flex items-center justify-center shrink-0">
+                        {/* Outline Heart */}
+                        <svg viewBox="0 0 24 24" className="w-5 h-5 fill-white/80 absolute drop-shadow-sm transition-transform group-hover:scale-110">
+                          <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Zm-3.585,18.4a2.973,2.973,0,0,1-3.83,0C4.947,16.006,2,11.87,2,8.967a4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,11,8.967a1,1,0,0,0,2,0,4.8,4.8,0,0,1,4.5-5.05A4.8,4.8,0,0,1,22,8.967C22,11.87,19.053,16.006,13.915,20.313Z" />
+                        </svg>
+
+                        {/* Filled Animated Heart */}
+                        <svg 
+                          key={`filled-${animKey}`}
+                          viewBox="0 0 24 24" 
+                          className={`w-5 h-5 fill-white absolute drop-shadow-sm ${animating ? 'animate-heart-pop' : ''}`}
+                        >
+                          <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z" />
+                        </svg>
+
+                        {/* Celebrate Sparkles Burst */}
+                        {animating && (
+                          <svg 
+                            key={`burst-${animKey}`}
+                            className="absolute w-12 h-12 pointer-events-none fill-amber-300 stroke-amber-300 stroke-[2px] animate-heart-celebrate" 
+                            viewBox="0 0 100 100"
+                          >
+                            <polygon points="10,10 20,20" />
+                            <polygon points="10,50 20,50" />
+                            <polygon points="20,80 30,70" />
+                            <polygon points="90,10 80,20" />
+                            <polygon points="90,50 80,50" />
+                            <polygon points="80,80 70,70" />
+                          </svg>
+                        )}
+                      </div>
                       
                       <div className="flex flex-col text-left">
                         <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider leading-none text-white/90">
