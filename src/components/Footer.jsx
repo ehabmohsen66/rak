@@ -2,6 +2,7 @@ import React from 'react';
 import { BrandLogo } from './BrandLogo';
 import { ArrowUpRight, Mail, MapPin } from 'lucide-react';
 import { OFFICES } from '../data/contentData';
+import { GenerativeMountainScene } from './GenerativeMountainScene';
 
 export const Footer = ({ 
   setActiveTab = () => {}, 
@@ -11,6 +12,12 @@ export const Footer = ({
 
   return (
     <footer className="bg-slate-900 dark:bg-rak-slate-950 border-t border-slate-800 text-slate-400 relative overflow-hidden transition-colors duration-300">
+      
+      {/* Dynamic Interactive Generative Mountain WebGL Scene */}
+      <GenerativeMountainScene />
+
+      {/* Ambient Gradient Overlays */}
+      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/60 via-transparent to-slate-950/90 dark:from-rak-slate-950/50 dark:to-rak-slate-950/95 z-[1]" />
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 relative z-10 space-y-16">
         
