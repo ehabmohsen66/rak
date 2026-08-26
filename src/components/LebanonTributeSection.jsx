@@ -192,16 +192,16 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
             </div>
 
-            {/* Right Col: Pure Floating Lebanon Video (Larger, No Grey Box, Clean Blend) */}
+            {/* Right Col: Pure Floating Lebanon Video (Seamless Transparent Blend) */}
             <div className="lg:col-span-5 flex items-center justify-center py-2">
-              <div className="relative w-full max-w-lg flex items-center justify-center">
+              <div className="relative w-full max-w-md flex items-center justify-center">
                 <video
                   src="/lebanon.mp4"
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full max-h-[380px] sm:max-h-[420px] object-contain rounded-2xl drop-shadow-lg"
+                  className="w-full max-h-[380px] sm:max-h-[420px] object-contain mix-blend-multiply dark:mix-blend-screen"
                 />
               </div>
             </div>
