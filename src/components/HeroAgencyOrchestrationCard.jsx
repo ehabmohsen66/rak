@@ -5,8 +5,12 @@ import {
   Code, 
   TrendingUp, 
   Video, 
-  Radio
+  Radio,
+  Share2,
+  PlayCircle
 } from 'lucide-react';
+import { DotLottiePlayer } from '@dotlottie/react-player';
+import '@dotlottie/react-player/dist/index.css';
 
 export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
   const [activeNode, setActiveNode] = useState(0);
@@ -83,7 +87,7 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
   useEffect(() => {
     const timer = setInterval(() => {
       setActiveNode((prev) => (prev + 1) % 6);
-    }, 4500);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
 
@@ -91,10 +95,10 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
   const IconComponent = activeData.icon;
 
   return (
-    <div className="relative w-full rounded-3xl bg-white dark:bg-rak-slate-950 border border-slate-200 dark:border-white/10 p-6 sm:p-8 shadow-xl overflow-hidden backdrop-blur-xl group">
+    <div className="relative w-full rounded-3xl bg-white dark:bg-rak-slate-950 border border-slate-200 dark:border-white/10 p-5 sm:p-7 shadow-xl overflow-hidden backdrop-blur-xl group">
       
       {/* Top Header */}
-      <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-white/10">
+      <div className="flex items-center justify-between pb-3.5 border-b border-slate-100 dark:border-white/10">
         <div className="flex items-center space-x-2.5">
           <span className="flex h-2.5 w-2.5 relative">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rak-magenta opacity-75"></span>
@@ -104,10 +108,14 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
             RAK 360° CREATIVE ENGINE
           </span>
         </div>
+        <div className="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10 text-[10px] font-mono text-rak-magenta font-semibold">
+          <Share2 className="w-3 h-3" />
+          <span>LIVE FLOW</span>
+        </div>
       </div>
 
-      {/* Navigation Pills (3x2 Grid - Crisp White & Light Grey) */}
-      <div className="grid grid-cols-3 gap-2.5 my-6">
+      {/* Navigation Pills (3x2 Grid) */}
+      <div className="grid grid-cols-3 gap-2 my-4">
         {agencyUnits.map((unit, idx) => {
           const NodeIcon = unit.icon;
           const isActive = idx === activeNode;
@@ -116,14 +124,14 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
             <button
               key={unit.id}
               onClick={() => setActiveNode(idx)}
-              className={`flex items-center justify-center space-x-2 px-3 py-2.5 rounded-xl border transition-all duration-300 cursor-pointer ${
+              className={`flex items-center justify-center space-x-1.5 px-2.5 py-2 rounded-xl border transition-all duration-300 cursor-pointer ${
                 isActive
                   ? 'bg-rak-magenta text-white border-rak-magenta shadow-md'
                   : 'bg-slate-100 dark:bg-rak-slate-900/60 border-slate-200 dark:border-white/10 hover:border-slate-300 text-slate-700 dark:text-rak-slate-300 hover:text-slate-900'
               }`}
             >
-              <NodeIcon className={`w-4 h-4 shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-rak-slate-400'}`} />
-              <span className="text-xs font-semibold tracking-wide whitespace-nowrap">
+              <NodeIcon className={`w-3.5 h-3.5 shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-rak-slate-400'}`} />
+              <span className="text-[11px] font-semibold tracking-wide whitespace-nowrap">
                 {unit.short}
               </span>
             </button>
@@ -131,27 +139,56 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
         })}
       </div>
 
-      {/* Active Stage Details Card */}
-      <div className="relative rounded-2xl bg-slate-50 dark:bg-rak-slate-900/90 border border-slate-200 dark:border-white/10 p-5 space-y-3">
-        <div className="flex items-center justify-between gap-3">
-          <div className="flex items-center space-x-3">
-            <div className={`p-2 rounded-xl bg-gradient-to-r ${activeData.color} text-white`}>
-              <IconComponent className="w-4 h-4" />
+      {/* Interactive Showcase Box with Embedded Lottie Animation */}
+      <div className="relative rounded-2xl bg-slate-50 dark:bg-rak-slate-900/90 border border-slate-200 dark:border-white/10 p-4 sm:p-5 overflow-hidden">
+        
+        <div className="grid grid-cols-1 sm:grid-cols-12 gap-4 items-center">
+          
+          {/* Left / Top: Active Stage Info */}
+          <div className="sm:col-span-7 space-y-2.5">
+            <div className="flex items-center space-x-2.5">
+              <div className={`p-2 rounded-xl bg-gradient-to-r ${activeData.color} text-white shadow-sm shrink-0`}>
+                <IconComponent className="w-4 h-4" />
+              </div>
+              <div>
+                <span className="text-[10px] font-mono text-slate-500 dark:text-rak-slate-400 uppercase tracking-widest block">
+                  {activeData.code}
+                </span>
+                <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
+                  {activeData.name}
+                </h3>
+              </div>
             </div>
-            <div>
-              <span className="text-[10px] font-mono text-slate-500 dark:text-rak-slate-400 uppercase tracking-widest block">
-                {activeData.code}
-              </span>
-              <h3 className="text-sm font-bold text-slate-900 dark:text-white tracking-tight">
-                {activeData.name}
-              </h3>
+
+            <p className="text-xs text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal">
+              {activeData.description}
+            </p>
+          </div>
+
+          {/* Right / Bottom: Creative Lottie Social Media Canvas Container */}
+          <div className="sm:col-span-5 flex items-center justify-center">
+            <div className="relative w-full h-32 sm:h-36 rounded-xl bg-white dark:bg-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 p-1 flex items-center justify-center shadow-inner overflow-hidden group/lottie">
+              
+              {/* Subtle pulsing background glow */}
+              <div className="absolute inset-0 bg-gradient-to-tr from-rak-magenta/10 via-transparent to-purple-500/10 pointer-events-none" />
+
+              {/* DotLottie Animation Component */}
+              <DotLottiePlayer
+                src="https://lottie.host/8f8d9ac0-8c40-4848-9177-06f72d4a7043/16IiCxPGHE.lottie"
+                autoplay
+                loop
+                className="w-full h-full object-contain relative z-10"
+              />
+
+              {/* Overlay pill indicator */}
+              <div className="absolute bottom-1.5 right-1.5 z-20 px-2 py-0.5 rounded-md bg-white/90 dark:bg-rak-slate-900/90 border border-slate-200 dark:border-white/10 text-[9px] font-mono font-bold text-rak-magenta shadow-sm">
+                Social Growth
+              </div>
             </div>
           </div>
+
         </div>
 
-        <p className="text-xs text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal">
-          {activeData.description}
-        </p>
       </div>
 
     </div>

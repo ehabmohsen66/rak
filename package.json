@@ -9,6 +9,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@dotlottie/react-player": "^1.6.19",
     "@react-three/drei": "^9.121.0",
     "@react-three/fiber": "^8.18.0",
     "@splinetool/react-spline": "^4.1.0",

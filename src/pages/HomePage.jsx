@@ -22,6 +22,7 @@ import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
 import { GradientShimmer } from '../components/ui/GradientShimmer';
+import { LebanonTributeSection } from '../components/LebanonTributeSection';
 
 const getPillarIcon = (iconName) => {
   switch (iconName) {
@@ -97,7 +98,7 @@ export const HomePage = ({
                       transition={{ duration: 0.35 }}
                       className="inline-block font-black"
                     >
-                      <GradientShimmer gradient="sunrise" duration={2.5}>
+                      <GradientShimmer gradient="sunrise" duration={5}>
                         {HERO_PHRASES[phraseIndex]}
                       </GradientShimmer>
                     </motion.span>
@@ -113,11 +114,16 @@ export const HomePage = ({
               {/* Single Primary Action Button */}
               <div className="pt-2">
                 <button
-                  onClick={onOpenPlanner}
+                  onClick={() => {
+                    const el = document.getElementById('capabilities');
+                    if (el) {
+                      el.scrollIntoView({ behavior: 'smooth' });
+                    }
+                  }}
                   className="relative inline-flex items-center justify-center px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-white bg-rak-magenta rounded-full shadow-md hover:bg-rak-magenta-dark hover:scale-105 transition-all duration-300 group overflow-hidden cursor-pointer"
                 >
                   <span className="relative z-10 flex items-center space-x-2">
-                    <span>Start a Project</span>
+                    <span>Learn More</span>
                     <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
                   </span>
                 </button>
@@ -144,7 +150,7 @@ export const HomePage = ({
       </section>
 
       {/* 3. PILLARS OF CAPABILITY (BRIGHT BENTO GRID) */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section id="capabilities" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-24">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
             <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
@@ -308,7 +314,10 @@ export const HomePage = ({
         </SpotlightCard>
       </section>
 
-      {/* 6. STRATEGIC INSIGHTS / EDITORIAL */}
+      {/* 6. FROM BEIRUT TO THE WORLD - LEBANON TRIBUTE SECTION */}
+      <LebanonTributeSection onOpenPlanner={onOpenPlanner} />
+
+      {/* 7. STRATEGIC INSIGHTS / EDITORIAL */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
