@@ -284,7 +284,7 @@ export const RAK4_CREATIONS = [
       { metric: "4.8m", label: "Avg Engagement Time" },
       { metric: "Awwwards", label: "Site of the Month" }
     ],
-    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&fm=webp&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?q=80&w=1000&fm=webp&auto=format&fit=crop",
     tags: ["Paid Media", "Content Creation", "E-Commerce"],
     featured: true
   },
