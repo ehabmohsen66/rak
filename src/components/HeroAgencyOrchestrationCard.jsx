@@ -179,11 +179,6 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
                 loop
                 className="w-full h-full object-contain relative z-10"
               />
-
-              {/* Overlay pill indicator */}
-              <div className="absolute bottom-1.5 right-1.5 z-20 px-2 py-0.5 rounded-md bg-white/90 dark:bg-rak-slate-900/90 border border-slate-200 dark:border-white/10 text-[9px] font-mono font-bold text-rak-magenta shadow-sm">
-                Social Growth
-              </div>
             </div>
           </div>
 
