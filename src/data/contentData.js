@@ -340,7 +340,7 @@ export const BLOG_POSTS = [
     date: "July 2026",
     readTime: "5 min read",
     author: "RAK4Creative Strategy Team",
-    image: "/Lebanon-2_0.jpg",
+    image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&fm=webp&auto=format&fit=crop",
     excerpt: "Every agency has that one meeting where someone asks, should we be using AI for this? The answer is yes, obviously, but which AI is the real question.",
     content: `Every agency has that one meeting where someone asks, should we be using AI for this? The answer is yes, obviously, but which AI is the real question.
 
@@ -399,7 +399,7 @@ Got thoughts on this tier list? Fight us in the comments.`
     date: "July 2026",
     readTime: "7 min read",
     author: "RAK Product Design Practice",
-    image: "/Lebanon-2_0.jpg",
+    image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1000&fm=webp&auto=format&fit=crop",
     excerpt: "Design systems are built with good intentions, yet most stall within 12 months. We analyze token scaling, component ownership, and cross-platform governance.",
     content: `Design systems are often pitched as the ultimate silver bullet for product teams: build once, reuse everywhere, accelerate speed-to-market by 40%.
 
@@ -428,7 +428,7 @@ At RAK 4 Creative, we architect enterprise design systems that scale across glob
     date: "June 2026",
     readTime: "6 min read",
     author: "RAK Performance Engineering",
-    image: "/Lebanon-2_0.jpg",
+    image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&fm=webp&auto=format&fit=crop",
     excerpt: "Conversion rate optimization is no longer just A/B testing button colors. It is an end-to-end performance discipline uniting DOM optimization, edge caching, and behavioral psychology.",
     content: `Every 100 millisecond delay in page load time reduces enterprise conversion rates by 7%. In 2026, web performance is not an engineering vanity metric—it is the single highest leverage lever for revenue growth.
 
@@ -449,7 +449,7 @@ When performance engineering meets conversion architecture, pipeline velocity mu
     date: "June 2026",
     readTime: "8 min read",
     author: "RAK 3D & Creative Media Lab",
-    image: "/Lebanon-2_0.jpg",
+    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&fm=webp&auto=format&fit=crop",
     excerpt: "Immersive WebGL canvas graphics can double dwell time and brand recall—if built with strict frame-budgeting. Here is our technical blueprint for high-performance 3D web experiences.",
     content: `Interactive 3D on the web has evolved from experimental novelty to an enterprise brand differentiator. From custom GLSL particle canvases to interactive 3D product customizers, 3D experiences capture audience attention in an increasingly distracted digital landscape.
 
@@ -471,7 +471,7 @@ When executed with precision, 3D WebGL transforms passive website visitors into 
     date: "May 2026",
     readTime: "6 min read",
     author: "RAK Global Brand Strategy",
-    image: "/Lebanon-2_0.jpg",
+    image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1000&fm=webp&auto=format&fit=crop",
     excerpt: "Modern consumers touch over 14 digital and physical channels before making a decision. Learn how unified agency execution prevents message dilution across touchpoints.",
     content: `A successful product launch requires absolute alignment across online and offline touchpoints. Disconnected agencies—where one handles digital ads, another manages OOH billboards, and a third builds the landing page—inevitably lead to fragmented brand identity.
 
@@ -492,7 +492,7 @@ Unified execution guarantees maximum ROI without single-point agency friction.`
     date: "May 2026",
     readTime: "5 min read",
     author: "RAK Data & Analytics Team",
-    image: "/Lebanon-2_0.jpg",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&fm=webp&auto=format&fit=crop",
     excerpt: "Traditional focus groups are slow and retrospective. Realtime analytics listening and behavioral cluster modeling allow brands to predict consumer shifts before competitors respond.",
     content: `Data without actionable strategy is noise. Leading enterprise brands leverage predictive analytics listening to understand sentiment, brand perception, and emerging consumer demand in real time.
 
