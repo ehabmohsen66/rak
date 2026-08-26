@@ -217,7 +217,7 @@ export const HomePage = ({
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
-            <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
+            <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3.5 py-1.5 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
               Featured Work
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
@@ -234,34 +234,55 @@ export const HomePage = ({
           </a>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {PROJECTS.filter(p => p.featured).slice(0, 4).map((p) => (
             <SpotlightCard 
               key={p.id}
               spotlightColor="rgba(236, 0, 140, 0.1)"
               borderColor="rgba(226, 232, 240, 0.8)"
               onClick={() => onSelectProject(p)}
-              className="group cursor-pointer p-0 rounded-3xl overflow-hidden border border-slate-200 dark:border-white/10 shadow-sm"
+              className="group cursor-pointer p-0 bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-white/10 rounded-3xl overflow-hidden flex flex-col justify-between shadow-sm hover:border-rak-magenta/40 transition-all duration-300"
             >
-              <div className="relative h-80 sm:h-96 w-full bg-slate-100 dark:bg-rak-slate-900">
-                <img 
-                  src={p.image} 
-                  alt={p.title} 
-                  loading="lazy"
-                  decoding="async"
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/40 to-transparent opacity-85" />
-                
-                <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between text-white">
-                  <div className="space-y-1">
-                    <span className="text-[11px] font-extrabold uppercase tracking-widest text-rak-magenta block">{p.client}</span>
-                    <h3 className="text-xl sm:text-2xl font-bold">{p.title}</h3>
-                  </div>
-                  <div className="p-3.5 rounded-full bg-rak-magenta text-white shadow-md group-hover:scale-110 transition-transform">
-                    <ArrowUpRight className="w-5 h-5" />
+              <div className="space-y-4">
+                <div className="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-rak-slate-950">
+                  <img 
+                    src={p.image} 
+                    alt={p.title} 
+                    loading="lazy"
+                    decoding="async"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent opacity-75" />
+                  <div className="absolute top-3.5 left-3.5 px-3 py-1 bg-white/90 dark:bg-rak-slate-950/85 border border-slate-200 dark:border-white/10 rounded-full text-[10px] font-bold text-rak-magenta uppercase tracking-wider shadow-sm">
+                    {p.client}
                   </div>
                 </div>
+
+                <div className="px-5 space-y-2">
+                  <div className="flex items-center space-x-2 text-[10px] font-mono text-slate-500 dark:text-rak-slate-400">
+                    <span className="text-rak-magenta font-semibold">{p.category}</span>
+                    <span>•</span>
+                    <span>{p.year}</span>
+                  </div>
+
+                  <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-rak-magenta transition-colors line-clamp-2 leading-snug tracking-tight">
+                    {p.title}
+                  </h3>
+
+                  <p className="text-xs text-slate-600 dark:text-rak-slate-300 line-clamp-2 leading-relaxed font-normal">
+                    {p.summary}
+                  </p>
+                </div>
+              </div>
+
+              <div className="p-5 pt-3 border-t border-slate-100 dark:border-white/10 flex items-center justify-between mt-4">
+                <span className="text-[10px] font-bold text-slate-500 dark:text-rak-slate-400 font-mono truncate max-w-[140px]">
+                  {p.industry}
+                </span>
+                <span className="inline-flex items-center space-x-1 text-[11px] font-bold text-rak-magenta group-hover:translate-x-0.5 transition-transform">
+                  <span>View Case</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </span>
               </div>
             </SpotlightCard>
           ))}
