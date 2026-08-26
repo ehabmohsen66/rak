@@ -265,7 +265,7 @@ export const RAK4_CREATIONS = [
       { metric: "$1.2B", label: "New Capital Onboarded" },
       { metric: "0.4s", label: "Dashboard Load Speed" }
     ],
-    image: "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?q=80&w=600&fm=webp&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&fm=webp&auto=format&fit=crop",
     tags: ["Brand Strategy", "Web Development", "Design System"],
     featured: true
   },
@@ -284,7 +284,7 @@ export const RAK4_CREATIONS = [
       { metric: "4.8m", label: "Avg Engagement Time" },
       { metric: "Awwwards", label: "Site of the Month" }
     ],
-    image: "https://images.unsplash.com/photo-1441986300917-64674bd600d8?q=80&w=600&fm=webp&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?q=80&w=800&fm=webp&auto=format&fit=crop",
     tags: ["Paid Media", "Content Creation", "E-Commerce"],
     featured: true
   },
@@ -303,7 +303,7 @@ export const RAK4_CREATIONS = [
       { metric: "3.4x", label: "Enterprise Trial Conversions" },
       { metric: "FWA", label: "Site of the Day" }
     ],
-    image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&fm=webp&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1550751827-4bd374c3f58b?q=80&w=800&fm=webp&auto=format&fit=crop",
     tags: ["Digital Strategy", "Web", "Search Marketing"],
     featured: true
   },
@@ -322,7 +322,7 @@ export const RAK4_CREATIONS = [
       { metric: "14", label: "Global Markets Launched" },
       { metric: "99.8%", label: "Clinical Portal Uptime" }
     ],
-    image: "https://images.unsplash.com/photo-1532187863486-abf9dbad1b69?q=80&w=600&fm=webp&auto=format&fit=crop",
+    image: "https://images.unsplash.com/photo-1532094349884-543bc11b234d?q=80&w=800&fm=webp&auto=format&fit=crop",
     tags: ["3D WebGL", "Brand Identity", "Omnichannel"],
     featured: true
   }
