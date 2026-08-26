@@ -54,7 +54,39 @@ const PILLARS_OF_BEIRUT = [
 ];
 
 export const LebanonTributeSection = ({ onOpenPlanner }) => {
-  const [activeHighlight, setActiveHighlight] = useState(0);
+  const [likesCount, setLikesCount] = useState(() => {
+    const saved = localStorage.getItem('rak_beirut_love_count');
+    return saved ? parseInt(saved, 10) : 1842;
+  });
+  const [hasLiked, setHasLiked] = useState(() => {
+    return localStorage.getItem('rak_beirut_has_liked') === 'true';
+  });
+  const [floatingHearts, setFloatingHearts] = useState([]);
+
+  const handleLike = () => {
+    const newCount = hasLiked ? likesCount - 1 : likesCount + 1;
+    const newHasLiked = !hasLiked;
+    
+    setLikesCount(newCount);
+    setHasLiked(newHasLiked);
+    localStorage.setItem('rak_beirut_love_count', newCount.toString());
+    localStorage.setItem('rak_beirut_has_liked', newHasLiked.toString());
+
+    if (!hasLiked) {
+      // Spawn bursting heart particles
+      const newHearts = Array.from({ length: 6 }).map((_, i) => ({
+        id: Date.now() + i,
+        x: (Math.random() - 0.5) * 60,
+        y: -40 - Math.random() * 50,
+        scale: 0.7 + Math.random() * 0.6,
+        rotate: (Math.random() - 0.5) * 45
+      }));
+      setFloatingHearts((prev) => [...prev, ...newHearts]);
+      setTimeout(() => {
+        setFloatingHearts([]);
+      }, 1200);
+    }
+  };
 
   return (
     <section className="relative overflow-hidden py-16 sm:py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -64,15 +96,8 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
       <div className="relative z-10 space-y-12">
         
         {/* Top Header Card */}
-        <div className="relative rounded-3xl p-8 sm:p-12 bg-gradient-to-b from-white/90 via-white/70 to-slate-50/90 dark:from-rak-slate-900/90 dark:via-rak-slate-900/70 dark:to-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-xl overflow-hidden">
+        <div className="relative rounded-3xl p-8 sm:p-12 bg-gradient-to-b from-white/95 via-white/80 to-slate-50/90 dark:from-rak-slate-900/90 dark:via-rak-slate-900/70 dark:to-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-xl overflow-hidden">
           
-          {/* Subtle Decorative Cedar Watermark in the background */}
-          <div className="pointer-events-none absolute -right-12 -bottom-16 opacity-5 dark:opacity-10 w-96 h-96 text-[#00A651]">
-            <svg viewBox="0 0 100 100" className="w-full h-full fill-current">
-              <path d="M50 8 C48 10, 46 16, 44 20 C40 20, 36 22, 33 25 C37 27, 41 27, 45 28 C41 30, 34 32, 28 36 C33 38, 39 39, 45 39 C38 43, 29 46, 22 52 C28 54, 37 54, 44 54 C36 59, 25 63, 16 71 C25 73, 36 73, 45 71 C45 76, 43 83, 41 90 L59 90 C57 83, 55 76, 55 71 C64 73, 75 73, 84 71 C75 63, 64 59, 56 54 C63 54, 72 54, 78 52 C71 46, 62 43, 55 39 C61 39, 67 38, 72 36 C66 32, 59 30, 55 28 C59 27, 63 27, 67 25 C64 22, 60 20, 56 20 C54 16, 52 10, 50 8 Z" />
-            </svg>
-          </div>
-
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             
             {/* Left Col: Main Typography & Narrative */}
@@ -110,8 +135,8 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                 Lebanon is more than a homeland; it is an enduring state of mind. A sacred cradle of alphabet pioneers, Mediterranean light, and invincible passion. At RAK4Creative, we carry this vibrant legacy into every digital ecosystem, campaign, and brand we build across the globe.
               </p>
 
-              {/* Arabic Calligraphy & Quote Accent */}
-              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex items-center justify-between gap-4">
+              {/* Interactive Love Beirut Counter & Quote Bar */}
+              <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                 <div className="space-y-1 text-left">
                   <div className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 font-serif italic">
                     "من بيروت إلى العالم.. نبضٌ لا ينطفئ وإبداعٌ يعانق الأفق"
@@ -120,23 +145,65 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                     From Beirut to the Horizon • Endless Passion, Unbound Vision
                   </div>
                 </div>
-                <div className="p-2.5 rounded-xl bg-rak-magenta/10 border border-rak-magenta/20 text-rak-magenta shrink-0">
-                  <Heart className="w-5 h-5 fill-rak-magenta text-rak-magenta animate-pulse" />
+
+                {/* Creative Interactive Heart Button & Real-time Counter */}
+                <div className="relative shrink-0 flex items-center sm:self-center">
+                  
+                  {/* Floating heart bursts */}
+                  {floatingHearts.map((heart) => (
+                    <motion.div
+                      key={heart.id}
+                      initial={{ opacity: 1, y: 0, x: 0, scale: 0.5 }}
+                      animate={{ opacity: 0, y: heart.y, x: heart.x, scale: heart.scale, rotate: heart.rotate }}
+                      transition={{ duration: 0.9, ease: "easeOut" }}
+                      className="absolute pointer-events-none text-rak-magenta z-30"
+                    >
+                      <Heart className="w-5 h-5 fill-rak-magenta" />
+                    </motion.div>
+                  ))}
+
+                  <button
+                    onClick={handleLike}
+                    className={`group relative flex items-center space-x-2.5 px-4 py-2.5 rounded-2xl border transition-all duration-300 cursor-pointer shadow-sm active:scale-95 ${
+                      hasLiked
+                        ? 'bg-rak-magenta text-white border-rak-magenta shadow-magenta-sm'
+                        : 'bg-white dark:bg-rak-slate-800 border-slate-200 dark:border-white/10 text-slate-700 dark:text-slate-200 hover:border-rak-magenta/50 hover:text-rak-magenta'
+                    }`}
+                    title="Press heart if you love Beirut"
+                  >
+                    <motion.div
+                      animate={hasLiked ? { scale: [1, 1.35, 1] } : {}}
+                      transition={{ duration: 0.3 }}
+                    >
+                      <Heart className={`w-4 h-4 transition-colors ${hasLiked ? 'fill-white text-white' : 'group-hover:fill-rak-magenta text-rak-magenta'}`} />
+                    </motion.div>
+                    
+                    <div className="flex flex-col text-left">
+                      <span className="text-[10px] font-mono font-bold uppercase tracking-wider leading-none">
+                        {hasLiked ? 'Loved Beirut' : 'Love Beirut?'}
+                      </span>
+                      <span className="text-xs font-black tracking-tight leading-tight mt-0.5">
+                        {likesCount.toLocaleString()} <span className="text-[9px] font-normal opacity-80">lovers</span>
+                      </span>
+                    </div>
+                  </button>
                 </div>
               </div>
 
             </div>
 
-            {/* Right Col: Pure Floating Lebanon Video (No Boxes, No Borders, No Backgrounds) */}
-            <div className="lg:col-span-5 flex items-center justify-center">
-              <video
-                src="/lebanon.mp4"
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full max-h-[300px] object-contain mix-blend-multiply dark:mix-blend-screen"
-              />
+            {/* Right Col: Pure Floating Lebanon Video (Larger, No Grey Box, Clean Blend) */}
+            <div className="lg:col-span-5 flex items-center justify-center py-2">
+              <div className="relative w-full max-w-lg flex items-center justify-center">
+                <video
+                  src="/lebanon.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full max-h-[380px] sm:max-h-[420px] object-contain rounded-2xl drop-shadow-lg"
+                />
+              </div>
             </div>
 
           </div>
