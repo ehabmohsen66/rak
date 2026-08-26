@@ -83,7 +83,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
   };
 
   return (
-    <section className="relative overflow-hidden py-14 sm:py-20 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <section className="relative overflow-hidden max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
       {/* Ambient background glows */}
       <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-r from-rak-magenta/15 via-[#00A651]/10 to-[#EE161F]/15 blur-3xl opacity-70 rounded-full" />
 
@@ -187,16 +187,16 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
             </div>
 
-            {/* Right Col: Pure Floating Lebanon Video (Shifted to the Right) */}
-            <div className="lg:col-span-5 flex items-center justify-center lg:justify-end lg:pr-4">
-              <div className="relative w-full max-w-sm flex items-center justify-center lg:justify-end">
+            {/* Right Col: Pure Floating Lebanon Video (Enlarged & Shifted to the Right) */}
+            <div className="lg:col-span-5 flex items-center justify-center lg:justify-end">
+              <div className="relative w-full max-w-md lg:max-w-lg flex items-center justify-center lg:justify-end">
                 <video
                   src="/lebanon.mp4"
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full max-h-[340px] sm:max-h-[360px] object-contain mix-blend-multiply dark:mix-blend-screen lg:translate-x-4"
+                  className="w-full max-h-[420px] sm:max-h-[480px] lg:max-h-[520px] object-contain mix-blend-multiply dark:mix-blend-screen scale-110 sm:scale-120 lg:scale-130 lg:translate-x-3 transition-transform duration-300"
                 />
               </div>
             </div>

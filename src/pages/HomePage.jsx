@@ -65,10 +65,10 @@ export const HomePage = ({
   const headlineWords = ["We", "Create", "Big", "Ideas", "From", "Ground", "Zero", "&", "Take", "Them", "to"];
 
   return (
-    <div className="space-y-24 sm:space-y-32 pb-16 relative bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
+    <div className="space-y-16 sm:space-y-20 lg:space-y-24 pb-20 relative bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
       {/* 1. CINEMATIC HERO SECTION (BRIGHT CLEAN CANVAS WITH FUCHSIA ACCENT) */}
-      <section className="relative min-h-[85vh] flex items-center pt-24 pb-12 sm:pt-32 sm:pb-16 overflow-hidden bg-white dark:bg-rak-slate-950 border-b border-slate-200 dark:border-white/10">
+      <section className="relative min-h-[85vh] flex items-center pt-24 pb-10 sm:pt-32 sm:pb-12 overflow-hidden bg-white dark:bg-rak-slate-950 border-b border-slate-200 dark:border-white/10">
         
         {/* Subtle Light Ambient Mesh Orbs */}
         <div className="hidden md:block absolute top-1/4 left-1/3 -translate-x-1/2 w-[700px] h-[450px] bg-rak-magenta/8 dark:bg-rak-magenta/15 rounded-full blur-[160px] pointer-events-none" />
@@ -150,7 +150,7 @@ export const HomePage = ({
       </section>
 
       {/* 3. PILLARS OF CAPABILITY (BRIGHT BENTO GRID) */}
-      <section id="capabilities" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 scroll-mt-24">
+      <section id="capabilities" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10 scroll-mt-24">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
             <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
@@ -214,7 +214,7 @@ export const HomePage = ({
       </section>
 
       {/* 4. SELECTED CREATIONS SHOWCASE */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
             <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
@@ -318,7 +318,7 @@ export const HomePage = ({
       <LebanonTributeSection onOpenPlanner={onOpenPlanner} />
 
       {/* 7. STRATEGIC INSIGHTS / EDITORIAL */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
             <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3.5 py-1.5 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">

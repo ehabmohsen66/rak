@@ -340,7 +340,7 @@ export const BLOG_POSTS = [
     date: "July 2026",
     readTime: "5 min read",
     author: "RAK4Creative Strategy Team",
-    image: "/blog-cover.png",
+    image: "/Lebanon-2_0.jpg",
     excerpt: "Every agency has that one meeting where someone asks, should we be using AI for this? The answer is yes, obviously, but which AI is the real question.",
     content: `Every agency has that one meeting where someone asks, should we be using AI for this? The answer is yes, obviously, but which AI is the real question.
 
@@ -399,7 +399,7 @@ Got thoughts on this tier list? Fight us in the comments.`
     date: "July 2026",
     readTime: "7 min read",
     author: "RAK Product Design Practice",
-    image: "/blog-cover.png",
+    image: "/Lebanon-2_0.jpg",
     excerpt: "Design systems are built with good intentions, yet most stall within 12 months. We analyze token scaling, component ownership, and cross-platform governance.",
     content: `Design systems are often pitched as the ultimate silver bullet for product teams: build once, reuse everywhere, accelerate speed-to-market by 40%.
 
@@ -428,7 +428,7 @@ At RAK 4 Creative, we architect enterprise design systems that scale across glob
     date: "June 2026",
     readTime: "6 min read",
     author: "RAK Performance Engineering",
-    image: "/blog-cover.png",
+    image: "/Lebanon-2_0.jpg",
     excerpt: "Conversion rate optimization is no longer just A/B testing button colors. It is an end-to-end performance discipline uniting DOM optimization, edge caching, and behavioral psychology.",
     content: `Every 100 millisecond delay in page load time reduces enterprise conversion rates by 7%. In 2026, web performance is not an engineering vanity metric—it is the single highest leverage lever for revenue growth.
 
@@ -449,7 +449,7 @@ When performance engineering meets conversion architecture, pipeline velocity mu
     date: "June 2026",
     readTime: "8 min read",
     author: "RAK 3D & Creative Media Lab",
-    image: "/blog-cover.png",
+    image: "/Lebanon-2_0.jpg",
     excerpt: "Immersive WebGL canvas graphics can double dwell time and brand recall—if built with strict frame-budgeting. Here is our technical blueprint for high-performance 3D web experiences.",
     content: `Interactive 3D on the web has evolved from experimental novelty to an enterprise brand differentiator. From custom GLSL particle canvases to interactive 3D product customizers, 3D experiences capture audience attention in an increasingly distracted digital landscape.
 
@@ -471,7 +471,7 @@ When executed with precision, 3D WebGL transforms passive website visitors into 
     date: "May 2026",
     readTime: "6 min read",
     author: "RAK Global Brand Strategy",
-    image: "/blog-cover.png",
+    image: "/Lebanon-2_0.jpg",
     excerpt: "Modern consumers touch over 14 digital and physical channels before making a decision. Learn how unified agency execution prevents message dilution across touchpoints.",
     content: `A successful product launch requires absolute alignment across online and offline touchpoints. Disconnected agencies—where one handles digital ads, another manages OOH billboards, and a third builds the landing page—inevitably lead to fragmented brand identity.
 
@@ -492,7 +492,7 @@ Unified execution guarantees maximum ROI without single-point agency friction.`
     date: "May 2026",
     readTime: "5 min read",
     author: "RAK Data & Analytics Team",
-    image: "/blog-cover.png",
+    image: "/Lebanon-2_0.jpg",
     excerpt: "Traditional focus groups are slow and retrospective. Realtime analytics listening and behavioral cluster modeling allow brands to predict consumer shifts before competitors respond.",
     content: `Data without actionable strategy is noise. Leading enterprise brands leverage predictive analytics listening to understand sentiment, brand perception, and emerging consumer demand in real time.
 
