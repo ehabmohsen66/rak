@@ -127,57 +127,49 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
             </div>
 
-            {/* Right Col: Interactive Visual Matrix */}
+            {/* Right Col: Lebanon Cinematic Video Player */}
             <div className="lg:col-span-5 flex flex-col gap-4">
               
-              {/* Main Visual Showcase Box */}
-              <div className="relative rounded-2xl bg-gradient-to-br from-slate-900 via-rak-slate-950 to-slate-900 border border-white/10 p-6 text-white shadow-2xl overflow-hidden group">
-                {/* Visual backdrop */}
-                <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-rak-magenta/20 via-transparent to-transparent" />
+              {/* Cinematic Video Showcase Box */}
+              <div className="relative rounded-2xl bg-slate-950 border border-white/10 shadow-2xl overflow-hidden group aspect-[4/3] sm:aspect-video lg:aspect-[4/3]">
                 
-                <div className="relative z-10 space-y-5">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-mono font-bold tracking-widest text-rak-magenta uppercase px-2.5 py-1 rounded-md bg-white/10 border border-white/10">
-                      DNA OF EXCELLENCE
-                    </span>
-                    <div className="flex items-center space-x-1">
-                      {[1, 2, 3].map((i) => (
-                        <div key={i} className="w-1.5 h-1.5 rounded-full bg-emerald-400/80" />
-                      ))}
-                    </div>
-                  </div>
+                {/* Background Ambient Glow */}
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10 pointer-events-none opacity-60" />
 
-                  {/* Highlight Stat grid */}
-                  <div className="grid grid-cols-2 gap-3 pt-2">
-                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-rak-magenta/50 transition-colors">
-                      <div className="text-2xl font-black text-white tracking-tight">5,000+</div>
-                      <div className="text-[10px] text-rak-slate-300 uppercase font-mono tracking-wider">Years of Heritage</div>
-                    </div>
-                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-emerald-400/50 transition-colors">
-                      <div className="text-2xl font-black text-emerald-400 tracking-tight">100%</div>
-                      <div className="text-[10px] text-rak-slate-300 uppercase font-mono tracking-wider">Global Ambition</div>
-                    </div>
-                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-amber-400/50 transition-colors">
-                      <div className="text-2xl font-black text-amber-300 tracking-tight">3+</div>
-                      <div className="text-[10px] text-rak-slate-300 uppercase font-mono tracking-wider">Languages Spoken</div>
-                    </div>
-                    <div className="p-3.5 rounded-xl bg-white/5 border border-white/10 hover:border-pink-400/50 transition-colors">
-                      <div className="text-2xl font-black text-pink-400 tracking-tight">∞</div>
-                      <div className="text-[10px] text-rak-slate-300 uppercase font-mono tracking-wider">Boundless Passion</div>
-                    </div>
-                  </div>
+                {/* HTML5 Video Element */}
+                <video
+                  src="/lebanon.mp4"
+                  autoPlay
+                  loop
+                  muted
+                  playsInline
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
 
-                  <div className="pt-2">
-                    <button
-                      onClick={onOpenPlanner}
-                      className="w-full flex items-center justify-center space-x-2 py-3 px-4 rounded-xl text-xs font-extrabold uppercase tracking-widest bg-white/10 hover:bg-rak-magenta border border-white/20 hover:border-transparent text-white transition-all duration-300 shadow-md group/btn"
-                    >
-                      <span>Create Global Impact With Us</span>
-                      <ArrowUpRight className="w-3.5 h-3.5 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                    </button>
-                  </div>
-
+                {/* Top Badge Overlay */}
+                <div className="absolute top-3.5 left-3.5 z-20 flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-white/15 text-[10px] font-mono font-bold text-white shadow-md">
+                  <span className="flex h-2 w-2 relative">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00A651] opacity-75"></span>
+                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00A651]"></span>
+                  </span>
+                  <span>BEIRUT • LIVE SPIRIT</span>
                 </div>
+
+                {/* Bottom Overlay Info & Action */}
+                <div className="absolute bottom-3.5 left-3.5 right-3.5 z-20 flex items-center justify-between gap-3 p-2.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-white/10">
+                  <div className="text-left pl-1">
+                    <div className="text-xs font-bold text-white tracking-wide">Lebanon • Ground Zero to Global</div>
+                    <div className="text-[10px] text-rak-slate-400 font-mono">Endless Resilience & Creativity</div>
+                  </div>
+                  <button
+                    onClick={onOpenPlanner}
+                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider bg-rak-magenta hover:bg-rak-magenta-dark text-white transition-all shadow-md group/btn shrink-0"
+                  >
+                    <span>Collaborate</span>
+                    <ArrowUpRight className="w-3 h-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
+                  </button>
+                </div>
+
               </div>
 
             </div>
