@@ -268,62 +268,50 @@ export const HomePage = ({
         </div>
       </section>
 
-      {/* 5. EXECUTIVE TESTIMONIALS (REFINED ELEGANT NEON ACCENT) */}
+      {/* 5. EXECUTIVE TESTIMONIALS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative group rounded-3xl p-[1px] sm:p-[1.5px] transition-all duration-500">
-          
-          {/* Soft Diffused Ambient Neon Aura */}
-          <div className="absolute -inset-0.5 rounded-3xl bg-gradient-to-br from-[#03a9f4] via-[#ff0058] to-[#8B5CF6] opacity-20 dark:opacity-35 blur-xl group-hover:opacity-35 dark:group-hover:opacity-50 transition-all duration-700 pointer-events-none" />
-
-          {/* Elegant Gradient Border Layer */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#03a9f4]/50 via-[#ff0058]/60 to-[#8B5CF6]/50 transition-all duration-500 pointer-events-none" />
-
-          {/* Inner Content Card */}
-          <div className="relative z-10 rounded-[22px] sm:rounded-[23px] bg-white/95 dark:bg-rak-slate-950/95 p-8 sm:p-12 space-y-8 overflow-hidden backdrop-blur-2xl shadow-lg border border-slate-200/60 dark:border-white/5">
-            
-            {/* Subtle Inner Ambient Glow */}
-            <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[250px] bg-gradient-to-r from-[#03a9f4]/5 via-[#ff0058]/5 to-[#8B5CF6]/5 blur-3xl rounded-full" />
-
-            <div className="space-y-2 text-center max-w-2xl mx-auto relative z-10">
-              <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
-                Client Feedback
-              </span>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-                What Partners Say About RAK.
-              </h2>
-            </div>
-
-            <InfiniteSlider gap={24} duration={65} durationOnHover={180} className="py-4 relative z-10">
-              {TESTIMONIALS.map((t) => (
-                <SpotlightCard 
-                  key={t.id} 
-                  spotlightColor="rgba(236, 0, 140, 0.15)"
-                  className="w-80 sm:w-96 shrink-0 p-6 bg-slate-50 dark:bg-rak-slate-900/90 border border-slate-200 dark:border-white/10 rounded-2xl space-y-5 flex flex-col justify-between backdrop-blur-md shadow-md"
-                >
-                  <div className="space-y-3">
-                    <div className="flex text-amber-400 space-x-1">
-                      {[...Array(t.rating)].map((_, r) => (
-                        <Star key={r} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                      ))}
-                    </div>
-                    <p className="text-xs sm:text-sm text-slate-700 dark:text-rak-slate-200 leading-relaxed font-normal italic">
-                      "{t.quote}"
-                    </p>
-                  </div>
-
-                  <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center space-x-3">
-                    <img src={t.avatar} alt={t.author} loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover border-2 border-rak-magenta shrink-0" />
-                    <div>
-                      <div className="text-xs font-bold text-slate-900 dark:text-white tracking-wide">{t.author}</div>
-                      <div className="text-[10px] text-slate-500 dark:text-rak-slate-400 font-medium">{t.role}</div>
-                      <div className="text-[10px] text-rak-magenta font-semibold">{t.company}</div>
-                    </div>
-                  </div>
-                </SpotlightCard>
-              ))}
-            </InfiniteSlider>
+        <SpotlightCard 
+          spotlightColor="rgba(236, 0, 140, 0.1)"
+          borderColor="rgba(226, 232, 240, 0.8)"
+          className="bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-white/10 rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden backdrop-blur-xl shadow-sm"
+        >
+          <div className="space-y-2 text-center max-w-2xl mx-auto">
+            <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
+              Client Feedback
+            </span>
+            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">What Partners Say About RAK.</h2>
           </div>
-        </div>
+
+          <InfiniteSlider gap={24} duration={65} durationOnHover={180} className="py-4">
+            {TESTIMONIALS.map((t) => (
+              <SpotlightCard 
+                key={t.id} 
+                spotlightColor="rgba(236, 0, 140, 0.15)"
+                className="w-80 sm:w-96 shrink-0 p-6 bg-slate-50 dark:bg-rak-slate-950/90 border border-slate-200 dark:border-white/10 rounded-2xl space-y-5 flex flex-col justify-between backdrop-blur-md shadow-md"
+              >
+                <div className="space-y-3">
+                  <div className="flex text-amber-400 space-x-1">
+                    {[...Array(t.rating)].map((_, r) => (
+                      <Star key={r} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                    ))}
+                  </div>
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-rak-slate-200 leading-relaxed font-normal italic">
+                    "{t.quote}"
+                  </p>
+                </div>
+
+                <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center space-x-3">
+                  <img src={t.avatar} alt={t.author} loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover border-2 border-rak-magenta shrink-0" />
+                  <div>
+                    <div className="text-xs font-bold text-slate-900 dark:text-white tracking-wide">{t.author}</div>
+                    <div className="text-[10px] text-slate-500 dark:text-rak-slate-400 font-medium">{t.role}</div>
+                    <div className="text-[10px] text-rak-magenta font-semibold">{t.company}</div>
+                  </div>
+                </div>
+              </SpotlightCard>
+            ))}
+          </InfiniteSlider>
+        </SpotlightCard>
       </section>
 
       {/* 6. FROM BEIRUT TO THE WORLD - LEBANON TRIBUTE SECTION */}
