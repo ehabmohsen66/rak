@@ -1,8 +1,14 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <!-- Crisp Rounded White Background Container -->
   <rect width="100" height="100" rx="22" fill="#FFFFFF"/>
-  <rect width="96" height="96" x="2" y="2" rx="20" fill="#FFFFFF" stroke="#F1F5F9" stroke-width="2"/>
-  <text x="17" y="60" font-family="'Syne', 'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="46" fill="#0F172A" letter-spacing="-2">R</text>
-  <text x="42" y="60" font-family="'Syne', 'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="46" fill="#EC008C" letter-spacing="-2">A</text>
-  <text x="69" y="60" font-family="'Syne', 'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="46" fill="#0F172A" letter-spacing="-2">K</text>
-  <text x="42" y="84" font-family="'Plus Jakarta Sans', system-ui, sans-serif" font-weight="900" font-size="22" fill="#EC008C">4</text>
+  
+  <!-- Centered RAK Group -->
+  <g text-anchor="middle" font-family="'Syne', 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="44" letter-spacing="-1">
+    <text x="25" y="55" fill="#0F172A">R</text>
+    <text x="50" y="55" fill="#EC008C">A</text>
+    <text x="75" y="55" fill="#0F172A">K</text>
+  </g>
+  
+  <!-- Centered Subscript '4' -->
+  <text x="50" y="78" text-anchor="middle" font-family="'Plus Jakarta Sans', system-ui, -apple-system, sans-serif" font-weight="900" font-size="20" fill="#EC008C">4</text>
 </svg>
