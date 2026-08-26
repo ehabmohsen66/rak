@@ -21,28 +21,6 @@ export const Footer = ({
       
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 relative z-10 space-y-16">
         
-        {/* Upper Clean Conversion Banner */}
-        <div className="bg-slate-800/80 dark:bg-rak-slate-900/90 border border-slate-700/60 dark:border-white/10 rounded-3xl p-8 lg:p-12 shadow-xl backdrop-blur-xl">
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
-            <div className="space-y-2 max-w-2xl">
-              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-white tracking-tight">
-                Ready to engineer your brand's next breakthrough?
-              </h2>
-              <p className="text-slate-300 text-xs sm:text-sm">
-                We partner with ambitious enterprises and high-growth brands to build market dominance.
-              </p>
-            </div>
-
-            <button
-              onClick={onOpenProjectPlanner}
-              className="inline-flex items-center justify-center px-7 py-3.5 text-xs font-extrabold uppercase tracking-widest text-white bg-rak-magenta rounded-full shadow-md hover:bg-rak-magenta-dark transition-all duration-300 group shrink-0 cursor-pointer"
-            >
-              <span>Start a Project</span>
-              <ArrowUpRight className="w-4 h-4 ml-2 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-            </button>
-          </div>
-        </div>
-
         {/* Simplified 3-Column Footer Content */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-slate-800">
           
