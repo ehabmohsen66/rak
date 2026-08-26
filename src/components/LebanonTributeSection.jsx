@@ -127,18 +127,16 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
             </div>
 
-            {/* Right Col: Lebanon Cinematic Video Player (Clean on White/Transparent Background) */}
+            {/* Right Col: Pure Floating Lebanon Video (No Boxes, No Borders, No Backgrounds) */}
             <div className="lg:col-span-5 flex items-center justify-center">
-              <div className="relative w-full max-w-sm rounded-3xl overflow-hidden shadow-lg border border-slate-200/80 dark:border-white/10 bg-white dark:bg-rak-slate-900/60 p-3 flex items-center justify-center">
-                <video
-                  src="/lebanon.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full max-h-[280px] sm:max-h-[320px] rounded-2xl object-contain bg-white dark:bg-transparent"
-                />
-              </div>
+              <video
+                src="/lebanon.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full max-h-[300px] object-contain mix-blend-multiply dark:mix-blend-screen"
+              />
             </div>
 
           </div>
