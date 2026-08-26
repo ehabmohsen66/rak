@@ -268,21 +268,21 @@ export const HomePage = ({
         </div>
       </section>
 
-      {/* 5. EXECUTIVE TESTIMONIALS (VIBRANT NEON GLOW CARD) */}
+      {/* 5. EXECUTIVE TESTIMONIALS (REFINED ELEGANT NEON ACCENT) */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative group rounded-3xl p-[2px] sm:p-[3px] transition-all duration-500">
+        <div className="relative group rounded-3xl p-[1px] sm:p-[1.5px] transition-all duration-500">
           
-          {/* Neon Outer Blur Glow (30px blur with cyan-to-magenta gradient) */}
-          <div className="absolute -inset-1 rounded-3xl bg-gradient-to-br from-[#03a9f4] via-[#ff0058] to-[#8B5CF6] opacity-50 dark:opacity-85 blur-[28px] group-hover:opacity-85 dark:group-hover:opacity-100 group-hover:blur-[36px] transition-all duration-700 pointer-events-none" />
+          {/* Soft Diffused Ambient Neon Aura */}
+          <div className="absolute -inset-0.5 rounded-3xl bg-gradient-to-br from-[#03a9f4] via-[#ff0058] to-[#8B5CF6] opacity-20 dark:opacity-35 blur-xl group-hover:opacity-35 dark:group-hover:opacity-50 transition-all duration-700 pointer-events-none" />
 
-          {/* Neon Gradient Border Layer */}
-          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#03a9f4] via-[#ff0058] to-[#8B5CF6] opacity-90 transition-all duration-500 pointer-events-none" />
+          {/* Elegant Gradient Border Layer */}
+          <div className="absolute inset-0 rounded-3xl bg-gradient-to-br from-[#03a9f4]/50 via-[#ff0058]/60 to-[#8B5CF6]/50 transition-all duration-500 pointer-events-none" />
 
-          {/* Inner Content Card (Inset with high-contrast background & backdrop blur) */}
-          <div className="relative z-10 rounded-[21px] sm:rounded-[22px] bg-white/95 dark:bg-rak-slate-950/95 p-8 sm:p-12 space-y-8 overflow-hidden backdrop-blur-2xl shadow-2xl">
+          {/* Inner Content Card */}
+          <div className="relative z-10 rounded-[22px] sm:rounded-[23px] bg-white/95 dark:bg-rak-slate-950/95 p-8 sm:p-12 space-y-8 overflow-hidden backdrop-blur-2xl shadow-lg border border-slate-200/60 dark:border-white/5">
             
             {/* Subtle Inner Ambient Glow */}
-            <div className="pointer-events-none absolute -top-20 left-1/2 -translate-x-1/2 w-[600px] h-[300px] bg-gradient-to-r from-[#03a9f4]/10 via-[#ff0058]/10 to-[#8B5CF6]/10 blur-3xl rounded-full" />
+            <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[500px] h-[250px] bg-gradient-to-r from-[#03a9f4]/5 via-[#ff0058]/5 to-[#8B5CF6]/5 blur-3xl rounded-full" />
 
             <div className="space-y-2 text-center max-w-2xl mx-auto relative z-10">
               <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
