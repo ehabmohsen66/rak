@@ -165,19 +165,15 @@ export const HeroAgencyOrchestrationCard = ({ onOpenPlanner }) => {
             </p>
           </div>
 
-          {/* Right / Bottom: Creative Lottie Social Media Canvas Container */}
+          {/* Right / Bottom: Floating Lottie Animation Only (No Box / Background) */}
           <div className="sm:col-span-5 flex items-center justify-center">
-            <div className="relative w-full h-32 sm:h-36 rounded-xl bg-white dark:bg-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 p-1 flex items-center justify-center shadow-inner overflow-hidden group/lottie">
-              
-              {/* Subtle pulsing background glow */}
-              <div className="absolute inset-0 bg-gradient-to-tr from-rak-magenta/10 via-transparent to-purple-500/10 pointer-events-none" />
-
+            <div className="relative w-full h-28 sm:h-32 flex items-center justify-center overflow-visible">
               {/* DotLottie Animation Component */}
               <DotLottiePlayer
                 src="https://lottie.host/8f8d9ac0-8c40-4848-9177-06f72d4a7043/16IiCxPGHE.lottie"
                 autoplay
                 loop
-                className="w-full h-full object-contain relative z-10"
+                className="w-full h-full object-contain bg-transparent"
               />
             </div>
           </div>
