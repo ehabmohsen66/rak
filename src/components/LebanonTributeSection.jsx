@@ -187,16 +187,16 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
             </div>
 
-            {/* Right Col: Pure Floating Lebanon Video (Centered & Balanced) */}
-            <div className="lg:col-span-5 flex items-center justify-center">
-              <div className="relative w-full max-w-sm flex items-center justify-center">
+            {/* Right Col: Pure Floating Lebanon Video (Shifted to the Right) */}
+            <div className="lg:col-span-5 flex items-center justify-center lg:justify-end lg:pr-4">
+              <div className="relative w-full max-w-sm flex items-center justify-center lg:justify-end">
                 <video
                   src="/lebanon.mp4"
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full max-h-[340px] sm:max-h-[360px] object-contain mix-blend-multiply dark:mix-blend-screen"
+                  className="w-full max-h-[340px] sm:max-h-[360px] object-contain mix-blend-multiply dark:mix-blend-screen lg:translate-x-4"
                 />
               </div>
             </div>
