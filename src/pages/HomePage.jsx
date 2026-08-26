@@ -58,7 +58,7 @@ export const HomePage = ({
   useEffect(() => {
     const timer = setInterval(() => {
       setPhraseIndex((prev) => (prev + 1) % HERO_PHRASES.length);
-    }, 3200);
+    }, 4800);
     return () => clearInterval(timer);
   }, []);
 
@@ -92,13 +92,13 @@ export const HomePage = ({
                   <AnimatePresence mode="wait">
                     <motion.span
                       key={HERO_PHRASES[phraseIndex]}
-                      initial={{ opacity: 0, y: 12 }}
+                      initial={{ opacity: 0, y: 14 }}
                       animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -12 }}
-                      transition={{ duration: 0.35 }}
+                      exit={{ opacity: 0, y: -14 }}
+                      transition={{ duration: 0.5, ease: "easeOut" }}
                       className="inline-block font-black"
                     >
-                      <GradientShimmer gradient="sunrise" duration={5}>
+                      <GradientShimmer gradient="sunrise" duration={6}>
                         {HERO_PHRASES[phraseIndex]}
                       </GradientShimmer>
                     </motion.span>
