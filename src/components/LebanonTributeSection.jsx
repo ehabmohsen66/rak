@@ -127,51 +127,18 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
             </div>
 
-            {/* Right Col: Lebanon Cinematic Video Player */}
-            <div className="lg:col-span-5 flex flex-col gap-4">
-              
-              {/* Cinematic Video Showcase Box */}
-              <div className="relative rounded-2xl bg-slate-950 border border-white/10 shadow-2xl overflow-hidden group aspect-[4/3] sm:aspect-video lg:aspect-[4/3]">
-                
-                {/* Background Ambient Glow */}
-                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-transparent z-10 pointer-events-none opacity-60" />
-
-                {/* HTML5 Video Element */}
+            {/* Right Col: Lebanon Cinematic Video Player (Clean on White/Transparent Background) */}
+            <div className="lg:col-span-5 flex items-center justify-center">
+              <div className="relative w-full max-w-md rounded-3xl overflow-hidden shadow-xl border border-slate-200/80 dark:border-white/10 bg-white dark:bg-rak-slate-900/60 p-2 sm:p-4">
                 <video
                   src="/lebanon.mp4"
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                  className="w-full h-auto rounded-2xl object-contain bg-white dark:bg-transparent"
                 />
-
-                {/* Top Badge Overlay */}
-                <div className="absolute top-3.5 left-3.5 z-20 flex items-center space-x-2 px-3 py-1 rounded-full bg-slate-950/80 backdrop-blur-md border border-white/15 text-[10px] font-mono font-bold text-white shadow-md">
-                  <span className="flex h-2 w-2 relative">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#00A651] opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-[#00A651]"></span>
-                  </span>
-                  <span>BEIRUT • LIVE SPIRIT</span>
-                </div>
-
-                {/* Bottom Overlay Info & Action */}
-                <div className="absolute bottom-3.5 left-3.5 right-3.5 z-20 flex items-center justify-between gap-3 p-2.5 rounded-xl bg-slate-950/80 backdrop-blur-md border border-white/10">
-                  <div className="text-left pl-1">
-                    <div className="text-xs font-bold text-white tracking-wide">Lebanon • Ground Zero to Global</div>
-                    <div className="text-[10px] text-rak-slate-400 font-mono">Endless Resilience & Creativity</div>
-                  </div>
-                  <button
-                    onClick={onOpenPlanner}
-                    className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-[10px] font-extrabold uppercase tracking-wider bg-rak-magenta hover:bg-rak-magenta-dark text-white transition-all shadow-md group/btn shrink-0"
-                  >
-                    <span>Collaborate</span>
-                    <ArrowUpRight className="w-3 h-3 group-hover/btn:translate-x-0.5 group-hover/btn:-translate-y-0.5 transition-transform" />
-                  </button>
-                </div>
-
               </div>
-
             </div>
 
           </div>
