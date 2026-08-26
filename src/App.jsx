@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
 import ProjectModal from './components/ProjectModal';
-import ArticleModal from './components/ArticleModal';
 import JobApplicationModal from './components/JobApplicationModal';
 import ProjectEstimatorModal from './components/ProjectEstimatorModal';
 
@@ -13,6 +12,7 @@ const WorkPage = React.lazy(() => import('./pages/WorkPage'));
 const CaseStudiesPage = React.lazy(() => import('./pages/CaseStudiesPage'));
 const CareersPage = React.lazy(() => import('./pages/CareersPage'));
 const BlogPage = React.lazy(() => import('./pages/BlogPage'));
+const BlogPostPage = React.lazy(() => import('./pages/BlogPostPage'));
 const ContactPage = React.lazy(() => import('./pages/ContactPage'));
 
 const TAB_TO_PATH = {
@@ -41,50 +41,74 @@ const PATH_TO_TAB = {
 const getTabFromLocation = () => {
   const pathname = window.location.pathname.replace(/\/$/, '') || '/';
   const cleanPath = pathname.toLowerCase();
+  
+  if (cleanPath.startsWith('/blog/') && cleanPath.length > 6) {
+    return 'blog-post';
+  }
+  
   return PATH_TO_TAB[cleanPath] || 'home';
+};
+
+const getBlogPostSlugFromLocation = () => {
+  const pathname = window.location.pathname.replace(/\/$/, '') || '';
+  const match = pathname.match(/^\/blog\/(.+)$/i);
+  return match ? match[1] : null;
 };
 
 export function App() {
   const [activeTab, setActiveTabState] = useState(() => getTabFromLocation());
+  const [blogSlug, setBlogSlug] = useState(() => getBlogPostSlugFromLocation());
   const [darkMode, setDarkMode] = useState(false);
 
-  const setActiveTab = (tabId, replace = false) => {
-    const targetPath = TAB_TO_PATH[tabId] || '/';
+  const setActiveTab = (tabId, pathOverride = null, replace = false) => {
+    let targetPath = pathOverride || TAB_TO_PATH[tabId] || '/';
     const currentPath = window.location.pathname.replace(/\/$/, '') || '/';
+    
+    if (tabId === 'blog-post' && pathOverride) {
+      const slugMatch = pathOverride.match(/^\/blog\/(.+)$/i);
+      setBlogSlug(slugMatch ? slugMatch[1] : null);
+    }
     
     if (currentPath !== targetPath) {
       if (replace) {
-        window.history.replaceState({ tab: tabId }, '', targetPath);
+        window.history.replaceState({ tab: tabId, path: targetPath }, '', targetPath);
       } else {
-        window.history.pushState({ tab: tabId }, '', targetPath);
+        window.history.pushState({ tab: tabId, path: targetPath }, '', targetPath);
       }
     }
     
     setActiveTabState(tabId);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   useEffect(() => {
     const handlePopState = () => {
       const tab = getTabFromLocation();
       setActiveTabState(tab);
+      if (tab === 'blog-post') {
+        setBlogSlug(getBlogPostSlugFromLocation());
+      }
     };
 
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  // Sync initial URL if needed (e.g., normalize /home or invalid path)
+  // Sync initial URL if needed
   useEffect(() => {
     const initialTab = getTabFromLocation();
-    const targetPath = TAB_TO_PATH[initialTab] || '/';
-    if (window.location.pathname !== targetPath && window.location.pathname !== '/home') {
-      window.history.replaceState({ tab: initialTab }, '', targetPath);
+    if (initialTab === 'blog-post') {
+      setBlogSlug(getBlogPostSlugFromLocation());
+    } else {
+      const targetPath = TAB_TO_PATH[initialTab] || '/';
+      if (window.location.pathname !== targetPath && window.location.pathname !== '/home') {
+        window.history.replaceState({ tab: initialTab }, '', targetPath);
+      }
     }
   }, []);
 
   // Modals state
   const [selectedProject, setSelectedProject] = useState(null);
-  const [selectedArticle, setSelectedArticle] = useState(null);
   const [appliedJob, setAppliedJob] = useState(null);
   const [plannerOpen, setPlannerOpen] = useState(false);
 
@@ -109,6 +133,7 @@ export function App() {
       'case-studies': 'Enterprise Case Studies & ROI | RAK 4 CREATIVE',
       careers: 'Careers & Open Roles | RAK 4 CREATIVE',
       blog: 'Executive Editorial & Insights | RAK 4 CREATIVE',
+      'blog-post': 'Editorial Insight | RAK 4 CREATIVE',
       contact: 'Contact & Executive Inquiry | RAK 4 CREATIVE'
     };
     document.title = titles[activeTab] || 'RAK 4 CREATIVE';
@@ -119,7 +144,7 @@ export function App() {
       
       {/* Sticky Navigation Bar */}
       <Navbar 
-        activeTab={activeTab}
+        activeTab={activeTab === 'blog-post' ? 'blog' : activeTab}
         setActiveTab={setActiveTab}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
@@ -140,7 +165,7 @@ export function App() {
           <HomePage 
             setActiveTab={setActiveTab}
             onSelectProject={(project) => setSelectedProject(project)}
-            onSelectArticle={(article) => setSelectedArticle(article)}
+            onSelectArticle={(article) => setActiveTab('blog-post', `/blog/${article.id}`)}
             onOpenPlanner={() => setPlannerOpen(true)}
           />
         )}
@@ -178,7 +203,15 @@ export function App() {
 
         {activeTab === 'blog' && (
           <BlogPage 
-            onSelectArticle={(article) => setSelectedArticle(article)}
+            onSelectArticle={(article) => setActiveTab('blog-post', `/blog/${article.id}`)}
+          />
+        )}
+
+        {activeTab === 'blog-post' && (
+          <BlogPostPage 
+            slug={blogSlug}
+            onNavigate={(tab, path) => setActiveTab(tab, path)}
+            onOpenPlanner={() => setPlannerOpen(true)}
           />
         )}
 
@@ -202,13 +235,6 @@ export function App() {
           project={selectedProject} 
           onClose={() => setSelectedProject(null)}
           onOpenPlanner={() => setPlannerOpen(true)}
-        />
-      )}
-
-      {selectedArticle && (
-        <ArticleModal 
-          article={selectedArticle} 
-          onClose={() => setSelectedArticle(null)}
         />
       )}
 
