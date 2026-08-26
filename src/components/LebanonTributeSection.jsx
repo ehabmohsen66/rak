@@ -205,50 +205,6 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
         </div>
 
-        {/* 3 Pillars of Lebanese Creative Genius */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {PILLARS_OF_BEIRUT.map((pillar, idx) => {
-            const Icon = pillar.icon;
-            return (
-              <SpotlightCard
-                key={idx}
-                spotlightColor="rgba(236, 0, 140, 0.12)"
-                borderColor="rgba(226, 232, 240, 0.8)"
-                className="group relative p-7 rounded-3xl bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-white/10 shadow-sm hover:shadow-md hover:border-rak-magenta/40 transition-all duration-300 flex flex-col justify-between"
-              >
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <div className="p-3 rounded-2xl bg-slate-100 dark:bg-white/[0.04] border border-slate-200 dark:border-white/10 text-rak-magenta group-hover:bg-rak-magenta group-hover:text-white transition-all duration-300">
-                      <Icon className="w-5 h-5" />
-                    </div>
-                    <span className="text-[10px] font-mono font-bold tracking-widest text-slate-500 dark:text-rak-slate-400 uppercase px-2.5 py-1 rounded-full bg-slate-100 dark:bg-white/5 border border-slate-200 dark:border-white/10">
-                      {pillar.badge}
-                    </span>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <span className="text-[11px] font-bold text-rak-magenta uppercase tracking-wider block">
-                      {pillar.tagline}
-                    </span>
-                    <h3 className="text-lg font-extrabold text-slate-900 dark:text-white tracking-tight leading-snug">
-                      {pillar.title}
-                    </h3>
-                  </div>
-
-                  <p className="text-xs text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal">
-                    {pillar.desc}
-                  </p>
-                </div>
-
-                <div className="pt-4 mt-6 border-t border-slate-100 dark:border-white/10 flex items-center justify-between text-[11px] font-mono text-slate-500 dark:text-rak-slate-400">
-                  <span>RAK • BEIRUT</span>
-                  <span className="text-[#00A651] font-bold">★ Heritage</span>
-                </div>
-              </SpotlightCard>
-            );
-          })}
-        </div>
-
       </div>
     </section>
   );
