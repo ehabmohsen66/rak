@@ -1,221 +1,318 @@
-import React from 'react';
-import { motion, useReducedMotion } from 'framer-motion';
-import { ArrowUpRight, Flame, Globe2, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { motion } from 'framer-motion';
+import { ArrowUpRight } from 'lucide-react';
 
-const CEDAR_PATH = 'M50 8 C48 10, 46 16, 44 20 C40 20, 36 22, 33 25 C37 27, 41 27, 45 28 C41 30, 34 32, 28 36 C33 38, 39 39, 45 39 C38 43, 29 46, 22 52 C28 54, 37 54, 44 54 C36 59, 25 63, 16 71 C25 73, 36 73, 45 71 C45 76, 43 83, 41 90 L59 90 C57 83, 55 76, 55 71 C64 73, 75 73, 84 71 C75 63, 64 59, 56 54 C63 54, 72 54, 78 52 C71 46, 62 43, 55 39 C61 39, 67 38, 72 36 C66 32, 59 30, 55 28 C59 27, 63 27, 67 25 C64 22, 60 20, 56 20 C54 16, 52 10, 50 8 Z';
-
-const PILLARS_OF_BEIRUT = [
-  {
-    icon: Flame,
-    number: '01',
-    title: 'Resilience',
-    desc: 'The courage to rebuild, rethink, and rise.'
-  },
-  {
-    icon: Globe2,
-    number: '02',
-    title: 'Crossroads',
-    desc: 'A Beirut perspective shaped for a global stage.'
-  },
-  {
-    icon: Sparkles,
-    number: '03',
-    title: 'Imagination',
-    desc: 'A culture that has always imagined what comes next.'
-  }
-];
-
-export const LebanonFlag = ({ className = 'w-10 h-7' }) => (
-  <div
-    className={`relative overflow-hidden border border-white/20 flex flex-col shrink-0 ${className}`}
-    aria-label="Lebanese flag"
-    role="img"
+export const LebanonFlag = ({ className = 'w-12 h-8' }) => (
+  <motion.div
+    whileHover={{ scale: 1.08, rotate: [0, -2, 2, 0] }}
+    className={`relative rounded-[3px] overflow-hidden shadow-md ring-1 ring-white/20 flex flex-col shrink-0 select-none ${className}`}
+    style={{ minWidth: '28px' }}
   >
     <div className="h-[28%] bg-[#EE161F] w-full" />
-    <div className="h-[44%] bg-white w-full flex items-center justify-center px-0.5">
-      <svg viewBox="0 0 100 100" className="h-full w-auto fill-[#007A3D]" aria-hidden="true">
-        <path d={CEDAR_PATH} />
+    <div className="h-[44%] bg-white w-full flex items-center justify-center relative px-0.5">
+      <svg
+        viewBox="0 0 100 100"
+        className="h-full w-auto text-[#00A651] fill-current"
+        style={{ maxHeight: '95%' }}
+      >
+        <path d="M50 8 C48 10, 46 16, 44 20 C40 20, 36 22, 33 25 C37 27, 41 27, 45 28 C41 30, 34 32, 28 36 C33 38, 39 39, 45 39 C38 43, 29 46, 22 52 C28 54, 37 54, 44 54 C36 59, 25 63, 16 71 C25 73, 36 73, 45 71 C45 76, 43 83, 41 90 L59 90 C57 83, 55 76, 55 71 C64 73, 75 73, 84 71 C75 63, 64 59, 56 54 C63 54, 72 54, 78 52 C71 46, 62 43, 55 39 C61 39, 67 38, 72 36 C66 32, 59 30, 55 28 C59 27, 63 27, 67 25 C64 22, 60 20, 56 20 C54 16, 52 10, 50 8 Z" />
       </svg>
     </div>
     <div className="h-[28%] bg-[#EE161F] w-full" />
-  </div>
+  </motion.div>
 );
 
-const BeirutVisual = () => {
-  const shouldReduceMotion = useReducedMotion();
+/* Destination arcs radiating from the Beirut origin node */
+const ROUTES = [
+  { d: 'M368 300 C 300 180, 180 150, 120 205', label: 'EU' },
+  { d: 'M368 300 C 440 200, 470 250, 468 322', label: 'ASIA' },
+  { d: 'M368 300 C 300 350, 190 400, 132 468', label: 'AMER' },
+  { d: 'M368 300 C 390 400, 380 480, 316 556', label: 'AFR' },
+];
 
-  return (
-    <div className="relative min-h-[410px] sm:min-h-[500px] lg:min-h-full overflow-hidden bg-[#0A0D0B] border-t lg:border-t-0 lg:border-l border-white/10">
-      <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_46%,rgba(0,122,61,0.24),transparent_42%),radial-gradient(circle_at_84%_18%,rgba(236,0,140,0.18),transparent_28%)]" />
-
-      <svg
-        viewBox="0 0 520 620"
-        className="absolute inset-0 h-full w-full"
-        aria-hidden="true"
-        preserveAspectRatio="xMidYMid slice"
-      >
-        <defs>
-          <pattern id="beirut-grid" width="42" height="42" patternUnits="userSpaceOnUse">
-            <path d="M42 0H0V42" fill="none" stroke="rgba(255,255,255,0.055)" strokeWidth="1" />
-          </pattern>
-          <linearGradient id="beirut-route" x1="0" y1="1" x2="1" y2="0">
-            <stop offset="0" stopColor="#EE161F" />
-            <stop offset="0.54" stopColor="#EC008C" />
-            <stop offset="1" stopColor="#FFFFFF" />
-          </linearGradient>
-        </defs>
-
-        <rect width="520" height="620" fill="url(#beirut-grid)" />
-        <circle cx="260" cy="310" r="188" fill="none" stroke="rgba(255,255,255,0.08)" />
-        <circle cx="260" cy="310" r="128" fill="none" stroke="rgba(255,255,255,0.08)" />
-        <path d="M0 494 C136 462 168 382 255 370 C373 354 402 214 520 175" fill="none" stroke="rgba(255,255,255,0.07)" strokeWidth="10" />
-        <motion.path
-          d="M0 494 C136 462 168 382 255 370 C373 354 402 214 520 175"
-          fill="none"
-          stroke="url(#beirut-route)"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          initial={shouldReduceMotion ? false : { pathLength: 0, opacity: 0.25 }}
-          whileInView={{ pathLength: 1, opacity: 0.9 }}
-          viewport={{ once: true, amount: 0.45 }}
-          transition={{ duration: 1.2, ease: 'easeOut' }}
-        />
-        <circle cx="87" cy="462" r="6" fill="#EE161F" />
-        <circle cx="87" cy="462" r="13" fill="none" stroke="rgba(238,22,31,0.42)" />
-        <circle cx="451" cy="211" r="5" fill="#FFFFFF" />
-        <circle cx="451" cy="211" r="12" fill="none" stroke="rgba(255,255,255,0.36)" />
-      </svg>
-
-      <div className="absolute left-6 top-6 sm:left-9 sm:top-9 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
-        <span>01 / Origin</span>
-        <span className="h-px w-10 bg-[#EE161F]" />
-      </div>
-
-      <div className="absolute right-6 top-6 sm:right-9 sm:top-9 text-right font-mono text-[10px] uppercase tracking-[0.2em] text-white/45">
-        <div>33.8938° N</div>
-        <div>35.5018° E</div>
-      </div>
-
-      <motion.div
-        className="absolute left-1/2 top-1/2 w-[250px] -translate-x-1/2 -translate-y-[48%] sm:w-[330px] lg:w-[360px]"
-        initial={shouldReduceMotion ? false : { opacity: 0, scale: 0.92 }}
-        whileInView={{ opacity: 1, scale: 1 }}
-        viewport={{ once: true, amount: 0.45 }}
-        transition={{ duration: 0.65, ease: 'easeOut' }}
-      >
-        <div className="absolute inset-0 scale-[1.08] blur-3xl bg-[#007A3D]/20" />
-        <svg viewBox="0 0 100 100" className="relative w-full drop-shadow-[0_30px_55px_rgba(0,0,0,0.55)]" aria-hidden="true">
-          <path d={CEDAR_PATH} fill="none" stroke="rgba(238,22,31,0.38)" strokeWidth="1.4" transform="translate(-2 -1)" />
-          <path d={CEDAR_PATH} fill="#007A3D" />
-          <path d={CEDAR_PATH} fill="none" stroke="rgba(255,255,255,0.42)" strokeWidth="0.65" />
-        </svg>
-      </motion.div>
-
-      <div className="absolute bottom-7 left-6 sm:bottom-9 sm:left-9">
-        <div className="font-heading text-[clamp(2.8rem,8vw,5rem)] font-black uppercase leading-none tracking-[-0.06em] text-white/95">
-          Beirut
-        </div>
-        <div className="mt-2 flex items-center gap-3 font-mono text-[10px] uppercase tracking-[0.22em] text-white/45">
-          <span>Mediterranean soul</span>
-          <span className="h-1 w-1 rounded-full bg-rak-magenta" />
-          <span>Global vision</span>
-        </div>
-      </div>
-
-      <div className="absolute bottom-[128px] left-[78px] hidden sm:block font-mono text-[9px] uppercase tracking-[0.18em] text-[#ff8085]">
-        From here
-      </div>
-      <div className="absolute right-7 top-[174px] hidden sm:block font-mono text-[9px] uppercase tracking-[0.18em] text-white/55">
-        To the world
-      </div>
-    </div>
-  );
-};
+const PILLARS = [
+  { k: '01', label: 'Resilience' },
+  { k: '02', label: 'Crossroads' },
+  { k: '03', label: 'Imagination' },
+];
 
 export const LebanonTributeSection = ({ onOpenPlanner }) => {
-  const shouldReduceMotion = useReducedMotion();
+  const [likesCount, setLikesCount] = useState(() => {
+    try {
+      const saved = localStorage.getItem('rak_beirut_love_count');
+      return saved ? parseInt(saved, 10) : 2480;
+    } catch {
+      return 2480;
+    }
+  });
+  const [floatingHearts, setFloatingHearts] = useState([]);
+  const [animating, setAnimating] = useState(false);
+  const [animKey, setAnimKey] = useState(0);
+
+  const handleLike = () => {
+    const newCount = likesCount + 1;
+    setLikesCount(newCount);
+    try {
+      localStorage.setItem('rak_beirut_love_count', newCount.toString());
+    } catch {
+      /* storage unavailable — counter still updates for this session */
+    }
+
+    setAnimKey((prev) => prev + 1);
+    setAnimating(true);
+    setTimeout(() => setAnimating(false), 600);
+
+    const newHearts = Array.from({ length: 5 }).map((_, i) => ({
+      id: Date.now() + i + Math.random(),
+      x: (Math.random() - 0.5) * 70,
+      y: -40 - Math.random() * 50,
+      scale: 0.8 + Math.random() * 0.5,
+      rotate: (Math.random() - 0.5) * 45,
+    }));
+
+    setFloatingHearts((prev) => [...prev, ...newHearts]);
+    setTimeout(() => setFloatingHearts((prev) => prev.slice(5)), 1200);
+  };
 
   return (
-    <section
-      aria-labelledby="lebanon-tribute-title"
-      className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8"
-    >
-      <div className="relative overflow-hidden rounded-[2rem] border border-black/20 bg-[#111512] text-white shadow-[0_35px_90px_-45px_rgba(5,15,9,0.85)]">
-        <div className="absolute inset-y-0 left-0 w-[65%] bg-[radial-gradient(circle_at_12%_18%,rgba(238,22,31,0.14),transparent_32%),radial-gradient(circle_at_76%_80%,rgba(236,0,140,0.12),transparent_34%)] pointer-events-none" />
+    <section className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <style>{`
+        @keyframes rak-heart-pop {
+          0%   { transform: scale(0); opacity: 0; }
+          25%  { transform: scale(1.35); opacity: 1; }
+          50%  { transform: scale(1); filter: brightness(1.3); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .rak-heart-pop { animation: rak-heart-pop 0.6s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
 
-        <div className="relative grid grid-cols-1 lg:grid-cols-[1.18fr_0.82fr] lg:min-h-[650px]">
-          <motion.div
-            className="flex flex-col justify-between p-6 sm:p-10 lg:p-12 xl:p-14"
-            initial={shouldReduceMotion ? false : { opacity: 0, y: 24 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, amount: 0.25 }}
-            transition={{ duration: 0.55, ease: 'easeOut' }}
-          >
-            <div>
-              <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-                <LebanonFlag className="w-9 h-6" />
-                <span className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.22em] text-white/58">
-                  Roots of inspiration
-                </span>
-                <span className="h-px w-8 bg-[#EE161F]" />
-                <span className="font-mono text-[10px] sm:text-[11px] font-bold uppercase tracking-[0.22em] text-[#72c894]">
-                  Beirut, Lebanon
-                </span>
+        @keyframes rak-route-flow { to { stroke-dashoffset: -320; } }
+        .rak-route { stroke-dasharray: 5 13; animation: rak-route-flow 7s linear infinite; }
+
+        @keyframes rak-ping-ring {
+          0%   { transform: scale(0.35); opacity: 0.85; }
+          100% { transform: scale(2.6); opacity: 0; }
+        }
+        .rak-ring { transform-origin: 368px 300px; animation: rak-ping-ring 3.4s ease-out infinite; }
+        .rak-ring-2 { animation-delay: 1.15s; }
+        .rak-ring-3 { animation-delay: 2.3s; }
+
+        @keyframes rak-drift { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        .rak-drift { animation: rak-drift 9s ease-in-out infinite; }
+
+        @media (prefers-reduced-motion: reduce) {
+          .rak-route, .rak-ring, .rak-drift, .rak-heart-pop { animation: none !important; }
+        }
+      `}</style>
+
+      <div className="relative overflow-hidden rounded-[28px] bg-[#07080B] ring-1 ring-white/10 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)]">
+
+        {/* Ambient field */}
+        <div className="pointer-events-none absolute inset-0">
+          <div className="absolute -top-40 -left-24 w-[560px] h-[420px] rounded-full bg-[#EC008C]/[0.16] blur-[110px]" />
+          <div className="absolute top-1/3 right-0 w-[520px] h-[520px] rounded-full bg-[#00A651]/[0.10] blur-[120px]" />
+          <div className="absolute bottom-0 left-1/3 w-[420px] h-[260px] rounded-full bg-[#EE161F]/[0.09] blur-[100px]" />
+        </div>
+
+        <div className="relative grid grid-cols-1 lg:grid-cols-12">
+
+          {/* ───────────── Editorial column ───────────── */}
+          <div className="lg:col-span-7 p-7 sm:p-10 lg:p-14 flex flex-col justify-center gap-7">
+
+            {/* Eyebrow */}
+            <div className="flex items-center gap-3 flex-wrap">
+              <LebanonFlag className="w-8 h-5" />
+              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.28em] text-white/55 uppercase">
+                Roots of Inspiration
+              </span>
+              <span className="hidden sm:block h-px w-10 bg-[#EE161F]" />
+              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.28em] text-[#00A651] uppercase">
+                Beirut, Lebanon
+              </span>
+            </div>
+
+            {/* Display headline — Eurostile Extended fills the measure by design */}
+            <h2 className="font-heading uppercase text-white text-[2rem] leading-[1.02] sm:text-[2.6rem] sm:leading-[1.02] lg:text-[3.4rem] lg:leading-[0.98] tracking-[-0.01em]">
+              The Land of Cedars.
+              <span className="block mt-2 bg-gradient-to-r from-[#EE161F] via-[#EC008C] to-[#F59E0B] bg-clip-text text-transparent">
+                Courage in Every Idea.
+              </span>
+            </h2>
+
+            <p className="text-[15px] sm:text-base leading-relaxed text-white/60 max-w-xl">
+              Born in a city where cultures, languages, and generations meet. RAK4Creative
+              carries Beirut&rsquo;s restless imagination into brands built to move the world.
+            </p>
+
+            {/* Arabic pulse line */}
+            <div className="border-l-2 border-[#EE161F] pl-5 py-1">
+              <p className="text-lg sm:text-xl text-white font-serif" dir="rtl">
+                &ldquo;من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ&rdquo;
+              </p>
+              <p className="mt-1.5 font-mono text-[10px] tracking-[0.24em] text-white/40 uppercase">
+                An endless pulse. A global vision.
+              </p>
+            </div>
+
+            {/* Actions */}
+            <div className="flex flex-wrap items-center gap-3">
+              <button
+                onClick={onOpenPlanner}
+                className="group inline-flex items-center gap-2.5 pl-6 pr-5 py-3.5 rounded-full bg-white text-[#07080B] font-mono text-[11px] font-bold tracking-[0.2em] uppercase transition-all duration-200 hover:bg-[#EC008C] hover:text-white"
+              >
+                Create with RAK
+                <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
+              </button>
+
+              {/* Love Beirut counter */}
+              <div className="relative">
+                {floatingHearts.map((heart) => (
+                  <motion.div
+                    key={heart.id}
+                    initial={{ opacity: 1, y: 0, x: 0, scale: 0.5 }}
+                    animate={{
+                      opacity: 0,
+                      y: heart.y,
+                      x: heart.x,
+                      scale: heart.scale,
+                      rotate: heart.rotate,
+                    }}
+                    transition={{ duration: 0.9, ease: 'easeOut' }}
+                    className="absolute left-1/2 top-1/2 pointer-events-none z-30"
+                  >
+                    <svg viewBox="0 0 24 24" className="w-5 h-5 fill-[#EE161F]">
+                      <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z" />
+                    </svg>
+                  </motion.div>
+                ))}
+
+                <motion.button
+                  whileTap={{ scale: 0.95 }}
+                  onClick={handleLike}
+                  title="Click to love Beirut"
+                  className="inline-flex items-center gap-3 pl-4 pr-5 py-3 rounded-full bg-white/[0.06] ring-1 ring-white/12 hover:ring-[#EE161F]/50 hover:bg-white/[0.09] transition-all duration-200"
+                >
+                  <svg
+                    key={animKey}
+                    viewBox="0 0 24 24"
+                    className={`w-[18px] h-[18px] fill-[#EE161F] ${animating ? 'rak-heart-pop' : ''}`}
+                  >
+                    <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z" />
+                  </svg>
+                  <span className="font-mono text-[11px] tracking-[0.16em] uppercase text-white/50">
+                    Love Beirut
+                  </span>
+                  <span className="font-mono text-[13px] font-bold text-white tabular-nums">
+                    {likesCount.toLocaleString()}
+                  </span>
+                </motion.button>
+              </div>
+            </div>
+
+            {/* Pillar rail */}
+            <div className="flex items-center gap-6 sm:gap-9 pt-6 border-t border-white/10">
+              {PILLARS.map((p) => (
+                <div key={p.k} className="flex items-baseline gap-2">
+                  <span className="font-mono text-[10px] text-[#EC008C]">{p.k}</span>
+                  <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.2em] text-white/45 uppercase">
+                    {p.label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* ───────────── Origin HUD panel ───────────── */}
+          <div className="lg:col-span-5 relative min-h-[380px] sm:min-h-[440px] lg:min-h-0 border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
+
+            <svg
+              viewBox="0 0 500 700"
+              preserveAspectRatio="xMidYMid slice"
+              className="absolute inset-0 w-full h-full"
+              aria-hidden="true"
+            >
+              <defs>
+                <pattern id="rakGrid" width="42" height="42" patternUnits="userSpaceOnUse">
+                  <path d="M42 0H0V42" fill="none" stroke="rgba(255,255,255,0.045)" strokeWidth="1" />
+                </pattern>
+                <linearGradient id="rakRoute" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0%" stopColor="#EC008C" />
+                  <stop offset="55%" stopColor="#EE161F" />
+                  <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.15" />
+                </linearGradient>
+                <radialGradient id="rakCore">
+                  <stop offset="0%" stopColor="#00A651" stopOpacity="0.22" />
+                  <stop offset="100%" stopColor="#00A651" stopOpacity="0" />
+                </radialGradient>
+              </defs>
+
+              <rect width="500" height="700" fill="url(#rakGrid)" />
+              <circle cx="300" cy="380" r="230" fill="url(#rakCore)" />
+
+              {/* Wireframe globe */}
+              <g className="rak-drift" stroke="rgba(255,255,255,0.13)" fill="none" strokeWidth="1">
+                <circle cx="300" cy="380" r="200" />
+                <ellipse cx="300" cy="380" rx="200" ry="56" />
+                <ellipse cx="300" cy="310" rx="187" ry="48" />
+                <ellipse cx="300" cy="450" rx="187" ry="48" />
+                <ellipse cx="300" cy="245" rx="155" ry="38" />
+                <ellipse cx="300" cy="515" rx="155" ry="38" />
+                <ellipse cx="300" cy="380" rx="133" ry="200" />
+                <ellipse cx="300" cy="380" rx="66" ry="200" />
+                <line x1="300" y1="180" x2="300" y2="580" />
+              </g>
+
+              {/* Radiating routes */}
+              <g fill="none" stroke="url(#rakRoute)" strokeWidth="1.6" strokeLinecap="round">
+                {ROUTES.map((r) => (
+                  <path key={r.label} d={r.d} className="rak-route" opacity="0.9" />
+                ))}
+              </g>
+
+              {/* Destination nodes */}
+              <g fill="rgba(255,255,255,0.5)">
+                <circle cx="120" cy="205" r="2.5" />
+                <circle cx="468" cy="322" r="2.5" />
+                <circle cx="132" cy="468" r="2.5" />
+                <circle cx="316" cy="556" r="2.5" />
+              </g>
+
+              {/* Beirut origin node */}
+              <g>
+                <circle className="rak-ring" cx="368" cy="300" r="18" fill="none" stroke="#EE161F" strokeWidth="1.4" />
+                <circle className="rak-ring rak-ring-2" cx="368" cy="300" r="18" fill="none" stroke="#EE161F" strokeWidth="1.4" />
+                <circle className="rak-ring rak-ring-3" cx="368" cy="300" r="18" fill="none" stroke="#EE161F" strokeWidth="1.4" />
+                <circle cx="368" cy="300" r="5" fill="#EE161F" />
+                <circle cx="368" cy="300" r="10" fill="none" stroke="#EE161F" strokeOpacity="0.4" strokeWidth="1" />
+              </g>
+            </svg>
+
+            {/* HUD overlay */}
+            <div className="absolute inset-0 p-6 sm:p-8 font-mono text-[10px] tracking-[0.22em] uppercase pointer-events-none">
+              <div className="flex items-start justify-between">
+                <div className="flex items-center gap-3 text-white/45">
+                  <span>01 / Origin</span>
+                  <span className="h-px w-8 bg-[#EE161F]" />
+                </div>
+                <div className="text-right text-white/35 leading-relaxed">
+                  <div>33.8938&deg; N</div>
+                  <div>35.5018&deg; E</div>
+                </div>
               </div>
 
-              <h2
-                id="lebanon-tribute-title"
-                className="mt-8 max-w-[760px] font-heading text-[clamp(2.75rem,5.2vw,5.4rem)] font-black uppercase leading-[0.92] tracking-[-0.055em]"
-              >
-                The land of cedars.
-                <span className="mt-1 block text-[#ff3340]">Courage in every idea.</span>
-              </h2>
+              <div className="absolute right-6 sm:right-8 top-1/2 -translate-y-1/2 text-white/35">
+                To the World
+              </div>
 
-              <p className="mt-7 max-w-2xl text-base sm:text-lg leading-relaxed text-white/68">
-                Born in a city where cultures, languages, and generations meet. RAK4Creative carries Beirut&rsquo;s restless imagination into brands built to move the world.
-              </p>
-
-              <blockquote className="mt-8 max-w-xl border-l-2 border-[#EE161F] pl-5 sm:pl-6">
-                <p lang="ar" dir="rtl" className="text-right font-serif text-xl sm:text-2xl font-semibold leading-relaxed text-white">
-                  من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ
-                </p>
-                <footer className="mt-2 font-mono text-[10px] uppercase tracking-[0.2em] text-white/42">
-                  An endless pulse. A global vision.
-                </footer>
-              </blockquote>
-
-              <button
-                type="button"
-                onClick={() => onOpenPlanner?.()}
-                className="group mt-9 inline-flex min-h-12 items-center gap-3 rounded-full bg-white px-6 py-3 text-xs font-extrabold uppercase tracking-[0.13em] text-[#111512] transition-colors duration-200 hover:bg-rak-magenta hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-4 focus-visible:ring-offset-[#111512] cursor-pointer"
-              >
-                <span>Create with RAK</span>
-                <ArrowUpRight className="h-4 w-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" aria-hidden="true" />
-              </button>
+              <div className="absolute left-6 sm:left-8 bottom-6 sm:bottom-8 flex items-center gap-2.5 text-white/35">
+                <span className="relative flex h-1.5 w-1.5">
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#00A651] opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#00A651]" />
+                </span>
+                <span>Signal Live</span>
+              </div>
             </div>
+          </div>
 
-            <div className="mt-12 border-y border-white/10 sm:grid sm:grid-cols-3 sm:divide-x sm:divide-white/10 lg:mt-10">
-              {PILLARS_OF_BEIRUT.map((pillar) => {
-                const PillarIcon = pillar.icon;
-
-                return (
-                  <article
-                    key={pillar.number}
-                    className="border-b border-white/10 py-5 last:border-b-0 sm:border-b-0 sm:px-5 sm:first:pl-0 sm:last:pr-0"
-                  >
-                    <div className="flex items-center justify-between">
-                      <span className="font-mono text-[10px] tracking-[0.2em] text-[#ff5d66]">{pillar.number}</span>
-                      <PillarIcon className="h-4 w-4 text-white/42" strokeWidth={1.6} aria-hidden="true" />
-                    </div>
-                    <h3 className="mt-4 text-sm font-extrabold uppercase tracking-[0.08em] text-white">{pillar.title}</h3>
-                    <p className="mt-2 text-xs leading-relaxed text-white/50">{pillar.desc}</p>
-                  </article>
-                );
-              })}
-            </div>
-          </motion.div>
-
-          <BeirutVisual />
         </div>
       </div>
     </section>
