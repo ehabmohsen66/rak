@@ -10,11 +10,7 @@ export const LebanonFlag = ({ className = 'w-12 h-8' }) => (
   >
     <div className="h-[28%] bg-[#EE161F] w-full" />
     <div className="h-[44%] bg-white w-full flex items-center justify-center relative px-0.5">
-      <svg
-        viewBox="0 0 100 100"
-        className="h-full w-auto text-[#00A651] fill-current"
-        style={{ maxHeight: '95%' }}
-      >
+      <svg viewBox="0 0 100 100" className="h-full w-auto text-[#00A651] fill-current" style={{ maxHeight: '95%' }}>
         <path d="M50 8 C48 10, 46 16, 44 20 C40 20, 36 22, 33 25 C37 27, 41 27, 45 28 C41 30, 34 32, 28 36 C33 38, 39 39, 45 39 C38 43, 29 46, 22 52 C28 54, 37 54, 44 54 C36 59, 25 63, 16 71 C25 73, 36 73, 45 71 C45 76, 43 83, 41 90 L59 90 C57 83, 55 76, 55 71 C64 73, 75 73, 84 71 C75 63, 64 59, 56 54 C63 54, 72 54, 78 52 C71 46, 62 43, 55 39 C61 39, 67 38, 72 36 C66 32, 59 30, 55 28 C59 27, 63 27, 67 25 C64 22, 60 20, 56 20 C54 16, 52 10, 50 8 Z" />
       </svg>
     </div>
@@ -22,13 +18,106 @@ export const LebanonFlag = ({ className = 'w-12 h-8' }) => (
   </motion.div>
 );
 
-/* Destination arcs radiating from the Beirut origin node */
-const ROUTES = [
-  { d: 'M368 300 C 300 180, 180 150, 120 205', label: 'EU' },
-  { d: 'M368 300 C 440 200, 470 250, 468 322', label: 'ASIA' },
-  { d: 'M368 300 C 300 350, 190 400, 132 468', label: 'AMER' },
-  { d: 'M368 300 C 390 400, 380 480, 316 556', label: 'AFR' },
+/* ──────────────────────────────────────────────────────────────
+   Real orthographic globe projection, centred on Beirut.
+   Every node below sits at its true latitude / longitude, and
+   every arc is a great-circle path between two real cities.
+   ────────────────────────────────────────────────────────────── */
+
+const BEIRUT = { lat: 33.8938, lon: 35.5018, name: 'Beirut' };
+
+const DESTINATIONS = [
+  { lat: 51.5074, lon: -0.1278, name: 'London' },
+  { lat: 55.7558, lon: 37.6173, name: 'Moscow' },
+  { lat: 25.2048, lon: 55.2708, name: 'Dubai' },
+  { lat: 19.0760, lon: 72.8777, name: 'Mumbai' },
+  { lat: 6.5244, lon: 3.3792, name: 'Lagos' },
 ];
+
+const R = 172;      // globe radius
+const CX = 250;     // projection centre, SVG units
+const CY = 348;
+const RAD = Math.PI / 180;
+
+/* lat/lon -> unit vector on the sphere */
+const toVec = (lat, lon) => {
+  const p = lat * RAD;
+  const l = lon * RAD;
+  return [Math.cos(p) * Math.cos(l), Math.cos(p) * Math.sin(l), Math.sin(p)];
+};
+
+/* Orthographic basis for a view centred on Beirut */
+const P0 = BEIRUT.lat * RAD;
+const L0 = BEIRUT.lon * RAD;
+const EAST = [-Math.sin(L0), Math.cos(L0), 0];
+const NORTH = [-Math.sin(P0) * Math.cos(L0), -Math.sin(P0) * Math.sin(L0), Math.cos(P0)];
+const OUT = [Math.cos(P0) * Math.cos(L0), Math.cos(P0) * Math.sin(L0), Math.sin(P0)];
+const dot = (a, b) => a[0] * b[0] + a[1] * b[1] + a[2] * b[2];
+
+/* Project a unit vector; `lift` raises the point above the surface for flight arcs */
+const project = (v, lift = 1) => ({
+  x: CX + dot(v, EAST) * R * lift,
+  y: CY - dot(v, NORTH) * R * lift,
+  visible: dot(v, OUT) >= -0.02,
+});
+
+const projectLatLon = (lat, lon, lift = 1) => project(toVec(lat, lon), lift);
+
+/* Graticule: meridians and parallels, split into visible runs */
+const buildGraticule = () => {
+  const paths = [];
+  const push = (pts) => {
+    if (pts.length > 1) paths.push('M' + pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join('L'));
+  };
+
+  for (let lon = -180; lon < 180; lon += 30) {
+    let run = [];
+    for (let lat = -90; lat <= 90; lat += 3) {
+      const p = projectLatLon(lat, lon);
+      if (p.visible) run.push(p);
+      else { push(run); run = []; }
+    }
+    push(run);
+  }
+  for (let lat = -60; lat <= 60; lat += 30) {
+    let run = [];
+    for (let lon = -180; lon <= 180; lon += 3) {
+      const p = projectLatLon(lat, lon);
+      if (p.visible) run.push(p);
+      else { push(run); run = []; }
+    }
+    push(run);
+  }
+  return paths;
+};
+
+/* Great-circle arc, lifted into a flight path that lands exactly on both nodes */
+const buildArc = (a, b, steps = 64, height = 0.16) => {
+  const va = toVec(a.lat, a.lon);
+  const vb = toVec(b.lat, b.lon);
+  const omega = Math.acos(Math.max(-1, Math.min(1, dot(va, vb))));
+  const sinO = Math.sin(omega);
+  const pts = [];
+
+  for (let i = 0; i <= steps; i++) {
+    const t = i / steps;
+    let v;
+    if (sinO < 1e-6) v = va;
+    else {
+      const s1 = Math.sin((1 - t) * omega) / sinO;
+      const s2 = Math.sin(t * omega) / sinO;
+      v = [va[0] * s1 + vb[0] * s2, va[1] * s1 + vb[1] * s2, va[2] * s1 + vb[2] * s2];
+    }
+    const lift = 1 + height * Math.sin(Math.PI * t);
+    pts.push(project(v, lift));
+  }
+  return 'M' + pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join('L');
+};
+
+const GRATICULE = buildGraticule();
+const ORIGIN = projectLatLon(BEIRUT.lat, BEIRUT.lon);
+const NODES = DESTINATIONS.map((c) => ({ ...c, ...projectLatLon(c.lat, c.lon) }));
+const ARCS = DESTINATIONS.map((c) => ({ name: c.name, d: buildArc(BEIRUT, c) }));
 
 const PILLARS = [
   { k: '01', label: 'Resilience' },
@@ -85,19 +174,19 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
         }
         .rak-heart-pop { animation: rak-heart-pop 0.6s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
 
-        @keyframes rak-route-flow { to { stroke-dashoffset: -320; } }
-        .rak-route { stroke-dasharray: 5 13; animation: rak-route-flow 7s linear infinite; }
+        @keyframes rak-route-flow { to { stroke-dashoffset: -400; } }
+        .rak-route { stroke-dasharray: 4 12; animation: rak-route-flow 9s linear infinite; }
 
         @keyframes rak-ping-ring {
-          0%   { transform: scale(0.35); opacity: 0.85; }
-          100% { transform: scale(2.6); opacity: 0; }
+          0%   { transform: scale(0.4); opacity: 0.8; }
+          100% { transform: scale(2.8); opacity: 0; }
         }
-        .rak-ring { transform-origin: 368px 300px; animation: rak-ping-ring 3.4s ease-out infinite; }
-        .rak-ring-2 { animation-delay: 1.15s; }
-        .rak-ring-3 { animation-delay: 2.3s; }
+        .rak-ring { animation: rak-ping-ring 3.6s ease-out infinite; }
+        .rak-ring-2 { animation-delay: 1.2s; }
+        .rak-ring-3 { animation-delay: 2.4s; }
 
-        @keyframes rak-drift { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .rak-drift { animation: rak-drift 9s ease-in-out infinite; }
+        @keyframes rak-drift { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-8px); } }
+        .rak-drift { animation: rak-drift 11s ease-in-out infinite; }
 
         @media (prefers-reduced-motion: reduce) {
           .rak-route, .rak-ring, .rak-drift, .rak-heart-pop { animation: none !important; }
@@ -106,11 +195,11 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
       <div className="relative overflow-hidden rounded-[28px] bg-[#07080B] ring-1 ring-white/10 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)]">
 
-        {/* Ambient field */}
+        {/* Ambient field — brand magenta / violet / cyan */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-40 -left-24 w-[560px] h-[420px] rounded-full bg-[#EC008C]/[0.16] blur-[110px]" />
-          <div className="absolute top-1/3 right-0 w-[520px] h-[520px] rounded-full bg-[#00A651]/[0.10] blur-[120px]" />
-          <div className="absolute bottom-0 left-1/3 w-[420px] h-[260px] rounded-full bg-[#EE161F]/[0.09] blur-[100px]" />
+          <div className="absolute -top-40 -left-24 w-[560px] h-[420px] rounded-full bg-[#EC008C]/[0.18] blur-[110px]" />
+          <div className="absolute top-1/3 right-0 w-[520px] h-[520px] rounded-full bg-[#06B6D4]/[0.10] blur-[120px]" />
+          <div className="absolute bottom-0 left-1/3 w-[440px] h-[280px] rounded-full bg-[#8B5CF6]/[0.12] blur-[100px]" />
         </div>
 
         <div className="relative grid grid-cols-1 lg:grid-cols-12">
@@ -118,22 +207,20 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
           {/* ───────────── Editorial column ───────────── */}
           <div className="lg:col-span-7 p-7 sm:p-10 lg:p-14 flex flex-col justify-center gap-7">
 
-            {/* Eyebrow */}
             <div className="flex items-center gap-3 flex-wrap">
               <LebanonFlag className="w-8 h-5" />
               <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.28em] text-white/55 uppercase">
                 Roots of Inspiration
               </span>
-              <span className="hidden sm:block h-px w-10 bg-[#EE161F]" />
-              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.28em] text-[#00A651] uppercase">
+              <span className="hidden sm:block h-px w-10 bg-[#EC008C]" />
+              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.28em] text-[#06B6D4] uppercase">
                 Beirut, Lebanon
               </span>
             </div>
 
-            {/* Display headline — Eurostile Extended fills the measure by design */}
             <h2 className="font-heading uppercase text-white text-[2rem] leading-[1.02] sm:text-[2.6rem] sm:leading-[1.02] lg:text-[3.4rem] lg:leading-[0.98] tracking-[-0.01em]">
               The Land of Cedars.
-              <span className="block mt-2 bg-gradient-to-r from-[#EE161F] via-[#EC008C] to-[#F59E0B] bg-clip-text text-transparent">
+              <span className="block mt-2 bg-gradient-to-r from-[#EC008C] via-[#8B5CF6] to-[#06B6D4] bg-clip-text text-transparent">
                 Courage in Every Idea.
               </span>
             </h2>
@@ -143,7 +230,6 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               carries Beirut&rsquo;s restless imagination into brands built to move the world.
             </p>
 
-            {/* Arabic pulse line */}
             <div className="border-l-2 border-[#EE161F] pl-5 py-1">
               <p className="text-lg sm:text-xl text-white font-serif" dir="rtl">
                 &ldquo;من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ&rdquo;
@@ -153,7 +239,6 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               </p>
             </div>
 
-            {/* Actions */}
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={onOpenPlanner}
@@ -163,19 +248,12 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                 <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </button>
 
-              {/* Love Beirut counter */}
               <div className="relative">
                 {floatingHearts.map((heart) => (
                   <motion.div
                     key={heart.id}
                     initial={{ opacity: 1, y: 0, x: 0, scale: 0.5 }}
-                    animate={{
-                      opacity: 0,
-                      y: heart.y,
-                      x: heart.x,
-                      scale: heart.scale,
-                      rotate: heart.rotate,
-                    }}
+                    animate={{ opacity: 0, y: heart.y, x: heart.x, scale: heart.scale, rotate: heart.rotate }}
                     transition={{ duration: 0.9, ease: 'easeOut' }}
                     className="absolute left-1/2 top-1/2 pointer-events-none z-30"
                   >
@@ -189,7 +267,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleLike}
                   title="Click to love Beirut"
-                  className="inline-flex items-center gap-3 pl-4 pr-5 py-3 rounded-full bg-white/[0.06] ring-1 ring-white/12 hover:ring-[#EE161F]/50 hover:bg-white/[0.09] transition-all duration-200"
+                  className="inline-flex items-center gap-3 pl-4 pr-5 py-3 rounded-full bg-white/[0.06] ring-1 ring-white/12 hover:ring-[#EC008C]/50 hover:bg-white/[0.09] transition-all duration-200"
                 >
                   <svg
                     key={animKey}
@@ -208,11 +286,10 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               </div>
             </div>
 
-            {/* Pillar rail */}
             <div className="flex items-center gap-6 sm:gap-9 pt-6 border-t border-white/10">
               {PILLARS.map((p) => (
                 <div key={p.k} className="flex items-baseline gap-2">
-                  <span className="font-mono text-[10px] text-[#EC008C]">{p.k}</span>
+                  <span className="font-mono text-[10px] text-[#06B6D4]">{p.k}</span>
                   <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.2em] text-white/45 uppercase">
                     {p.label}
                   </span>
@@ -221,68 +298,90 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             </div>
           </div>
 
-          {/* ───────────── Origin HUD panel ───────────── */}
-          <div className="lg:col-span-5 relative min-h-[380px] sm:min-h-[440px] lg:min-h-0 border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
+          {/* ───────────── Origin globe (true orthographic, centred on Beirut) ───────────── */}
+          <div className="lg:col-span-5 relative min-h-[400px] sm:min-h-[460px] lg:min-h-0 border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
 
             <svg
               viewBox="0 0 500 700"
               preserveAspectRatio="xMidYMid slice"
               className="absolute inset-0 w-full h-full"
-              aria-hidden="true"
+              role="img"
+              aria-label="Globe centred on Beirut with routes to London, Moscow, Dubai, Mumbai and Lagos"
             >
               <defs>
                 <pattern id="rakGrid" width="42" height="42" patternUnits="userSpaceOnUse">
-                  <path d="M42 0H0V42" fill="none" stroke="rgba(255,255,255,0.045)" strokeWidth="1" />
+                  <path d="M42 0H0V42" fill="none" stroke="rgba(255,255,255,0.04)" strokeWidth="1" />
                 </pattern>
                 <linearGradient id="rakRoute" x1="0" y1="0" x2="1" y2="1">
                   <stop offset="0%" stopColor="#EC008C" />
-                  <stop offset="55%" stopColor="#EE161F" />
-                  <stop offset="100%" stopColor="#F59E0B" stopOpacity="0.15" />
+                  <stop offset="60%" stopColor="#8B5CF6" />
+                  <stop offset="100%" stopColor="#06B6D4" />
                 </linearGradient>
                 <radialGradient id="rakCore">
-                  <stop offset="0%" stopColor="#00A651" stopOpacity="0.22" />
-                  <stop offset="100%" stopColor="#00A651" stopOpacity="0" />
+                  <stop offset="0%" stopColor="#EC008C" stopOpacity="0.20" />
+                  <stop offset="70%" stopColor="#8B5CF6" stopOpacity="0.06" />
+                  <stop offset="100%" stopColor="#06B6D4" stopOpacity="0" />
                 </radialGradient>
               </defs>
 
               <rect width="500" height="700" fill="url(#rakGrid)" />
-              <circle cx="300" cy="380" r="230" fill="url(#rakCore)" />
+              <circle cx={CX} cy={CY} r={R * 1.35} fill="url(#rakCore)" />
 
-              {/* Wireframe globe */}
-              <g className="rak-drift" stroke="rgba(255,255,255,0.13)" fill="none" strokeWidth="1">
-                <circle cx="300" cy="380" r="200" />
-                <ellipse cx="300" cy="380" rx="200" ry="56" />
-                <ellipse cx="300" cy="310" rx="187" ry="48" />
-                <ellipse cx="300" cy="450" rx="187" ry="48" />
-                <ellipse cx="300" cy="245" rx="155" ry="38" />
-                <ellipse cx="300" cy="515" rx="155" ry="38" />
-                <ellipse cx="300" cy="380" rx="133" ry="200" />
-                <ellipse cx="300" cy="380" rx="66" ry="200" />
-                <line x1="300" y1="180" x2="300" y2="580" />
-              </g>
+              <g className="rak-drift">
+                {/* Sphere limb */}
+                <circle cx={CX} cy={CY} r={R} fill="rgba(255,255,255,0.012)" stroke="rgba(255,255,255,0.16)" strokeWidth="1" />
 
-              {/* Radiating routes */}
-              <g fill="none" stroke="url(#rakRoute)" strokeWidth="1.6" strokeLinecap="round">
-                {ROUTES.map((r) => (
-                  <path key={r.label} d={r.d} className="rak-route" opacity="0.9" />
+                {/* Graticule */}
+                <g fill="none" stroke="rgba(255,255,255,0.10)" strokeWidth="0.8">
+                  {GRATICULE.map((d, i) => <path key={i} d={d} />)}
+                </g>
+
+                {/* Great-circle routes — each lands exactly on its city node */}
+                <g fill="none" stroke="url(#rakRoute)" strokeWidth="1.5" strokeLinecap="round">
+                  {ARCS.map((a) => <path key={a.name} d={a.d} className="rak-route" opacity="0.95" />)}
+                </g>
+
+                {/* Destination nodes */}
+                {NODES.map((n) => (
+                  <g key={n.name}>
+                    <circle cx={n.x} cy={n.y} r="3" fill="#06B6D4" />
+                    <circle cx={n.x} cy={n.y} r="7" fill="none" stroke="#06B6D4" strokeOpacity="0.35" strokeWidth="1" />
+                    <text
+                      x={n.x + (n.x >= CX ? 13 : -13)}
+                      y={n.y + 3.5}
+                      textAnchor={n.x >= CX ? 'start' : 'end'}
+                      fill="rgba(255,255,255,0.5)"
+                      fontFamily="monospace"
+                      fontSize="9.5"
+                      letterSpacing="1.6"
+                    >
+                      {n.name.toUpperCase()}
+                    </text>
+                  </g>
                 ))}
-              </g>
 
-              {/* Destination nodes */}
-              <g fill="rgba(255,255,255,0.5)">
-                <circle cx="120" cy="205" r="2.5" />
-                <circle cx="468" cy="322" r="2.5" />
-                <circle cx="132" cy="468" r="2.5" />
-                <circle cx="316" cy="556" r="2.5" />
-              </g>
-
-              {/* Beirut origin node */}
-              <g>
-                <circle className="rak-ring" cx="368" cy="300" r="18" fill="none" stroke="#EE161F" strokeWidth="1.4" />
-                <circle className="rak-ring rak-ring-2" cx="368" cy="300" r="18" fill="none" stroke="#EE161F" strokeWidth="1.4" />
-                <circle className="rak-ring rak-ring-3" cx="368" cy="300" r="18" fill="none" stroke="#EE161F" strokeWidth="1.4" />
-                <circle cx="368" cy="300" r="5" fill="#EE161F" />
-                <circle cx="368" cy="300" r="10" fill="none" stroke="#EE161F" strokeOpacity="0.4" strokeWidth="1" />
+                {/* Beirut — the true origin */}
+                <g>
+                  <g style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }}>
+                    <circle className="rak-ring" cx={ORIGIN.x} cy={ORIGIN.y} r="16" fill="none" stroke="#EE161F" strokeWidth="1.4" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
+                    <circle className="rak-ring rak-ring-2" cx={ORIGIN.x} cy={ORIGIN.y} r="16" fill="none" stroke="#EE161F" strokeWidth="1.4" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
+                    <circle className="rak-ring rak-ring-3" cx={ORIGIN.x} cy={ORIGIN.y} r="16" fill="none" stroke="#EE161F" strokeWidth="1.4" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
+                  </g>
+                  <circle cx={ORIGIN.x} cy={ORIGIN.y} r="5" fill="#EE161F" />
+                  <circle cx={ORIGIN.x} cy={ORIGIN.y} r="10" fill="none" stroke="#EE161F" strokeOpacity="0.45" strokeWidth="1" />
+                  <text
+                    x={ORIGIN.x}
+                    y={ORIGIN.y - 20}
+                    textAnchor="middle"
+                    fill="#FFFFFF"
+                    fontFamily="monospace"
+                    fontSize="11"
+                    fontWeight="bold"
+                    letterSpacing="2.2"
+                  >
+                    BEIRUT
+                  </text>
+                </g>
               </g>
             </svg>
 
@@ -291,7 +390,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               <div className="flex items-start justify-between">
                 <div className="flex items-center gap-3 text-white/45">
                   <span>01 / Origin</span>
-                  <span className="h-px w-8 bg-[#EE161F]" />
+                  <span className="h-px w-8 bg-[#EC008C]" />
                 </div>
                 <div className="text-right text-white/35 leading-relaxed">
                   <div>33.8938&deg; N</div>
@@ -299,14 +398,14 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                 </div>
               </div>
 
-              <div className="absolute right-6 sm:right-8 top-1/2 -translate-y-1/2 text-white/35">
-                To the World
+              <div className="absolute right-6 sm:right-8 bottom-6 sm:bottom-8 text-white/30">
+                Orthographic / Beirut-centred
               </div>
 
               <div className="absolute left-6 sm:left-8 bottom-6 sm:bottom-8 flex items-center gap-2.5 text-white/35">
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#00A651] opacity-75 animate-ping" />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#00A651]" />
+                  <span className="absolute inline-flex h-full w-full rounded-full bg-[#06B6D4] opacity-75 animate-ping" />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full bg-[#06B6D4]" />
                 </span>
                 <span>Signal Live</span>
               </div>
