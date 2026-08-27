@@ -120,9 +120,9 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
       <div className="relative z-10">
 
         {/* Top Header Card */}
-        <div className="relative max-w-5xl mx-auto rounded-3xl p-5 sm:p-6 lg:py-8 lg:px-10 bg-gradient-to-b from-white/95 via-white/80 to-slate-50/90 dark:from-rak-slate-900/90 dark:via-rak-slate-900/70 dark:to-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-xl overflow-hidden">
+        <div className="relative rounded-3xl p-5 sm:p-6 lg:py-8 lg:px-8 bg-gradient-to-b from-white/95 via-white/80 to-slate-50/90 dark:from-rak-slate-900/90 dark:via-rak-slate-900/70 dark:to-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-xl overflow-hidden">
 
-          <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-8">
+          <div className="flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-10">
 
             {/* Left Col: Streamlined Typography & Heart Counter */}
             <div className="flex-1 min-w-0 space-y-3 text-left">
@@ -146,10 +146,10 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                   <span>From The Heart of Beirut to The World</span>
                 </div>
                 
-                <h2 className="text-3xl sm:text-4xl lg:text-[3.25rem] font-black text-slate-900 dark:text-white tracking-tight leading-[1.05]">
-                  The Land of Cedars,{' '}
+                <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 dark:text-white tracking-tight leading-[1.12]">
+                  The Land of Cedars, <br className="hidden sm:inline" />
                   <span className="bg-gradient-to-r from-[#EE161F] via-rak-magenta to-amber-500 bg-clip-text text-transparent">
-                    Courage &amp; Creativity.
+                    Courage & Creativity.
                   </span>
                 </h2>
               </div>
@@ -251,7 +251,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                 loop
                 muted
                 playsInline
-                className="w-[170px] h-[170px] sm:w-[200px] sm:h-[200px] lg:w-[230px] lg:h-[230px] object-cover mix-blend-multiply dark:mix-blend-screen"
+                className="w-[190px] h-[190px] sm:w-[220px] sm:h-[220px] lg:w-[260px] lg:h-[260px] object-cover mix-blend-multiply dark:mix-blend-screen"
               />
             </div>
 
