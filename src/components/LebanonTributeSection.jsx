@@ -117,15 +117,15 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
       {/* Ambient background glows */}
       <div className="pointer-events-none absolute -top-24 left-1/2 -translate-x-1/2 w-[600px] h-[350px] bg-gradient-to-r from-rak-magenta/15 via-[#00A651]/10 to-[#EE161F]/15 blur-3xl opacity-70 rounded-full" />
 
-      <div className="relative z-10 space-y-10">
-        
-        {/* Top Header Card */}
-        <div className="relative rounded-3xl p-6 sm:p-8 lg:p-10 bg-gradient-to-b from-white/95 via-white/80 to-slate-50/90 dark:from-rak-slate-900/90 dark:via-rak-slate-900/70 dark:to-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-xl overflow-hidden">
+      <div className="relative z-10">
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
-            
+        {/* Top Header Card */}
+        <div className="relative rounded-3xl p-5 sm:p-6 lg:py-8 lg:px-8 bg-gradient-to-b from-white/95 via-white/80 to-slate-50/90 dark:from-rak-slate-900/90 dark:via-rak-slate-900/70 dark:to-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-xl overflow-hidden">
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-center">
+
             {/* Left Col: Streamlined Typography & Heart Counter */}
-            <div className="lg:col-span-7 space-y-4 text-left">
+            <div className="space-y-3 text-left">
               
               {/* Badge & Flag Pill */}
               <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white dark:bg-rak-slate-800/80 border border-slate-200 dark:border-white/10 shadow-sm">
@@ -155,13 +155,13 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               </div>
 
               {/* Concise Narrative */}
-              <p className="text-sm sm:text-base text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal max-w-2xl">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal">
                 A historic cradle of alphabet pioneers, Mediterranean light, and invincible passion. At RAK4Creative, we carry this vibrant creative pulse into every global brand we engineer.
               </p>
 
               {/* Interactive Love Beirut Counter Bar */}
-              <div className="pt-1">
-                <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <div className="p-3 sm:p-4 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div className="space-y-0.5 text-left">
                     <div className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 font-serif italic">
                       "من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ"
@@ -244,17 +244,15 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             </div>
 
             {/* Right Col: Pure Floating Lebanon Video */}
-            <div className="lg:col-span-5 flex items-center justify-center lg:justify-end">
-              <div className="relative w-full flex items-center justify-center lg:justify-end">
-                <video
-                  src="/lebanon.mp4"
-                  autoPlay
-                  loop
-                  muted
-                  playsInline
-                  className="w-full max-h-[300px] sm:max-h-[360px] lg:max-h-[400px] object-contain mix-blend-multiply dark:mix-blend-screen"
-                />
-              </div>
+            <div className="flex items-center justify-center">
+              <video
+                src="/lebanon.mp4"
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-auto object-contain mix-blend-multiply dark:mix-blend-screen"
+              />
             </div>
 
           </div>
