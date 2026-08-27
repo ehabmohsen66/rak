@@ -122,10 +122,10 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
         {/* Top Header Card */}
         <div className="relative rounded-3xl p-5 sm:p-6 lg:py-8 lg:px-8 bg-gradient-to-b from-white/95 via-white/80 to-slate-50/90 dark:from-rak-slate-900/90 dark:via-rak-slate-900/70 dark:to-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-xl overflow-hidden">
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 lg:gap-6 items-center">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-8 items-center">
 
             {/* Left Col: Streamlined Typography & Heart Counter */}
-            <div className="space-y-3 text-left">
+            <div className="lg:col-span-7 space-y-3 text-left">
               
               {/* Badge & Flag Pill */}
               <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white dark:bg-rak-slate-800/80 border border-slate-200 dark:border-white/10 shadow-sm">
@@ -244,14 +244,14 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             </div>
 
             {/* Right Col: Pure Floating Lebanon Video */}
-            <div className="flex items-center justify-center">
+            <div className="lg:col-span-5 flex items-center justify-center lg:justify-end">
               <video
                 src="/lebanon.mp4"
                 autoPlay
                 loop
                 muted
                 playsInline
-                className="w-full h-auto object-contain mix-blend-multiply dark:mix-blend-screen"
+                className="w-auto h-[200px] sm:h-[240px] lg:h-[280px] object-contain mix-blend-multiply dark:mix-blend-screen"
               />
             </div>
 
