@@ -120,12 +120,12 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
       <div className="relative z-10 space-y-10">
         
         {/* Top Header Card */}
-        <div className="relative rounded-3xl p-8 sm:p-12 bg-gradient-to-b from-white/95 via-white/80 to-slate-50/90 dark:from-rak-slate-900/90 dark:via-rak-slate-900/70 dark:to-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-xl overflow-hidden">
-          
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
+        <div className="relative rounded-3xl p-6 sm:p-8 lg:p-10 bg-gradient-to-b from-white/95 via-white/80 to-slate-50/90 dark:from-rak-slate-900/90 dark:via-rak-slate-900/70 dark:to-rak-slate-950/90 border border-slate-200/80 dark:border-white/10 shadow-xl backdrop-blur-xl overflow-hidden">
+
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 lg:gap-8 items-center">
             
             {/* Left Col: Streamlined Typography & Heart Counter */}
-            <div className="lg:col-span-7 space-y-5 text-left">
+            <div className="lg:col-span-7 space-y-4 text-left">
               
               {/* Badge & Flag Pill */}
               <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white dark:bg-rak-slate-800/80 border border-slate-200 dark:border-white/10 shadow-sm">
@@ -155,12 +155,12 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               </div>
 
               {/* Concise Narrative */}
-              <p className="text-sm sm:text-base text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal max-w-xl">
+              <p className="text-sm sm:text-base text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal max-w-2xl">
                 A historic cradle of alphabet pioneers, Mediterranean light, and invincible passion. At RAK4Creative, we carry this vibrant creative pulse into every global brand we engineer.
               </p>
 
               {/* Interactive Love Beirut Counter Bar */}
-              <div className="pt-2">
+              <div className="pt-1">
                 <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-white/[0.03] border border-slate-200/80 dark:border-white/10 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
                   <div className="space-y-0.5 text-left">
                     <div className="text-sm sm:text-base font-bold text-slate-800 dark:text-slate-100 font-serif italic">
@@ -245,14 +245,14 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
             {/* Right Col: Pure Floating Lebanon Video */}
             <div className="lg:col-span-5 flex items-center justify-center lg:justify-end">
-              <div className="relative w-full max-w-xs sm:max-w-sm lg:max-w-md flex items-center justify-center lg:justify-end">
+              <div className="relative w-full flex items-center justify-center lg:justify-end">
                 <video
                   src="/lebanon.mp4"
                   autoPlay
                   loop
                   muted
                   playsInline
-                  className="w-full max-h-[260px] sm:max-h-[300px] lg:max-h-[340px] object-contain mix-blend-multiply dark:mix-blend-screen"
+                  className="w-full max-h-[300px] sm:max-h-[360px] lg:max-h-[400px] object-contain mix-blend-multiply dark:mix-blend-screen"
                 />
               </div>
             </div>
