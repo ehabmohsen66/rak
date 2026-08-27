@@ -2,33 +2,46 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
 
-/* Brand pastels — softened from the site's magenta / violet / cyan */
-const PINK = '#F5A3CB';
-const LAVENDER = '#C3B4FA';
-const SKY = '#9BDCEF';
-const CORAL = '#F58A96'; // Lebanon marker
+/* ──────────────────────────────────────────────────────────────
+   Palette sampled directly from the RAK4Creative homepage hero.
+   Red is reserved for one element only: the heart.
+   ────────────────────────────────────────────────────────────── */
+const C = {
+  pageBg:   '#F9FAFC',
+  surface:  '#FFFFFF',
+  chip:     '#F2F5F9',
+  border:   '#E4E8EF',
+  navy:     '#101729',
+  body:     '#717A88',
+  muted:    '#A2A4A9',
+  magenta:  '#EC008C',
+  magentaD: '#C80074',
+  coral:    '#E04E64',
+  pink:     '#E1709F',
+  violet:   '#CB4CDC',
+  mint:     '#5FC3A2',
+  heart:    '#EE161F', // the only red
+};
 
 export const LebanonFlag = ({ className = 'w-12 h-8' }) => (
   <motion.div
     whileHover={{ scale: 1.08, rotate: [0, -2, 2, 0] }}
-    className={`relative rounded-[3px] overflow-hidden shadow-md ring-1 ring-white/20 flex flex-col shrink-0 select-none ${className}`}
+    className={`relative rounded-[3px] overflow-hidden shadow-sm ring-1 ring-slate-300/60 flex flex-col shrink-0 select-none ${className}`}
     style={{ minWidth: '28px' }}
   >
-    <div className="h-[28%] bg-[#EE161F] w-full" />
+    <div className="h-[28%] w-full" style={{ backgroundColor: C.heart }} />
     <div className="h-[44%] bg-white w-full flex items-center justify-center relative px-0.5">
-      <svg viewBox="0 0 100 100" className="h-full w-auto text-[#00A651] fill-current" style={{ maxHeight: '95%' }}>
+      <svg viewBox="0 0 100 100" className="h-full w-auto fill-current" style={{ maxHeight: '95%', color: '#00A651' }}>
         <path d="M50 8 C48 10, 46 16, 44 20 C40 20, 36 22, 33 25 C37 27, 41 27, 45 28 C41 30, 34 32, 28 36 C33 38, 39 39, 45 39 C38 43, 29 46, 22 52 C28 54, 37 54, 44 54 C36 59, 25 63, 16 71 C25 73, 36 73, 45 71 C45 76, 43 83, 41 90 L59 90 C57 83, 55 76, 55 71 C64 73, 75 73, 84 71 C75 63, 64 59, 56 54 C63 54, 72 54, 78 52 C71 46, 62 43, 55 39 C61 39, 67 38, 72 36 C66 32, 59 30, 55 28 C59 27, 63 27, 67 25 C64 22, 60 20, 56 20 C54 16, 52 10, 50 8 Z" />
       </svg>
     </div>
-    <div className="h-[28%] bg-[#EE161F] w-full" />
+    <div className="h-[28%] w-full" style={{ backgroundColor: C.heart }} />
   </motion.div>
 );
 
 /* ──────────────────────────────────────────────────────────────
-   True orthographic projection. The view centre sits in the
-   Mediterranean so Lebanon, Canada and the GCC all fall well
-   inside the sphere; every node is plotted from its real
-   latitude / longitude and every arc is a great circle.
+   True orthographic projection. Every node is plotted from its
+   real latitude / longitude; every arc is a great circle.
    ────────────────────────────────────────────────────────────── */
 
 const VIEW = { lat: 39, lon: 0 };
@@ -39,13 +52,11 @@ const RAD = Math.PI / 180;
 
 const BEIRUT = { lat: 33.8938, lon: 35.5018 };
 
-/* Labelled endpoints */
 const DESTINATIONS = [
   { name: 'Canada', lat: 43.6532, lon: -79.3832, label: [138, 251] },
   { name: 'GCC', lat: 24.0, lon: 50.5, label: [361, 385] },
 ];
 
-/* GCC member capitals — drawn as an unlabelled cluster for texture */
 const GCC_CAPITALS = [
   { lat: 24.7136, lon: 46.6753 }, // Riyadh
   { lat: 24.4539, lon: 54.3773 }, // Abu Dhabi
@@ -85,8 +96,7 @@ const buildGraticule = () => {
     let run = [];
     for (let lat = -90; lat <= 90; lat += 3) {
       const p = projectLatLon(lat, lon);
-      if (p.visible) run.push(p);
-      else { push(run); run = []; }
+      if (p.visible) run.push(p); else { push(run); run = []; }
     }
     push(run);
   }
@@ -94,15 +104,13 @@ const buildGraticule = () => {
     let run = [];
     for (let lon = -180; lon <= 180; lon += 3) {
       const p = projectLatLon(lat, lon);
-      if (p.visible) run.push(p);
-      else { push(run); run = []; }
+      if (p.visible) run.push(p); else { push(run); run = []; }
     }
     push(run);
   }
   return paths;
 };
 
-/* Great-circle flight arc — lift is zero at both ends, so it lands exactly on each node */
 const buildArc = (a, b, steps = 72) => {
   const va = toVec(a.lat, a.lon);
   const vb = toVec(b.lat, b.lon);
@@ -110,7 +118,6 @@ const buildArc = (a, b, steps = 72) => {
   const sinO = Math.sin(omega);
   const height = 0.04 + 0.22 * (omega / Math.PI);
   const pts = [];
-
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
     let v;
@@ -181,7 +188,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
         @keyframes rak-heart-pop {
           0%   { transform: scale(0); opacity: 0; }
           25%  { transform: scale(1.35); opacity: 1; }
-          50%  { transform: scale(1); filter: brightness(1.25); }
+          50%  { transform: scale(1); filter: brightness(1.15); }
           100% { transform: scale(1); opacity: 1; }
         }
         .rak-heart-pop { animation: rak-heart-pop 0.6s cubic-bezier(0.175,0.885,0.32,1.275) forwards; }
@@ -190,7 +197,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
         .rak-route { stroke-dasharray: 4 12; animation: rak-route-flow 9s linear infinite; }
 
         @keyframes rak-ping-ring {
-          0%   { transform: scale(0.4); opacity: 0.7; }
+          0%   { transform: scale(0.4); opacity: 0.55; }
           100% { transform: scale(2.8); opacity: 0; }
         }
         .rak-ring { animation: rak-ping-ring 3.6s ease-out infinite; }
@@ -205,13 +212,19 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
         }
       `}</style>
 
-      <div className="relative overflow-hidden rounded-[28px] bg-[#07080B] ring-1 ring-white/10 shadow-[0_30px_80px_-30px_rgba(0,0,0,0.7)]">
-
-        {/* Ambient pastel field */}
+      <div
+        className="relative overflow-hidden rounded-[28px]"
+        style={{
+          backgroundColor: C.surface,
+          border: `1px solid ${C.border}`,
+          boxShadow: '0 24px 60px -32px rgba(16,23,41,0.22)',
+        }}
+      >
+        {/* Soft brand wash */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-40 -left-24 w-[560px] h-[420px] rounded-full blur-[110px]" style={{ backgroundColor: PINK, opacity: 0.13 }} />
-          <div className="absolute top-1/3 right-0 w-[520px] h-[520px] rounded-full blur-[120px]" style={{ backgroundColor: SKY, opacity: 0.09 }} />
-          <div className="absolute bottom-0 left-1/3 w-[440px] h-[280px] rounded-full blur-[100px]" style={{ backgroundColor: LAVENDER, opacity: 0.11 }} />
+          <div className="absolute -top-32 -left-20 w-[520px] h-[380px] rounded-full blur-[110px]" style={{ backgroundColor: C.magenta, opacity: 0.07 }} />
+          <div className="absolute top-1/3 right-0 w-[480px] h-[480px] rounded-full blur-[120px]" style={{ backgroundColor: C.violet, opacity: 0.06 }} />
+          <div className="absolute bottom-0 left-1/3 w-[420px] h-[260px] rounded-full blur-[100px]" style={{ backgroundColor: C.mint, opacity: 0.05 }} />
         </div>
 
         <div className="relative grid grid-cols-1 lg:grid-cols-12">
@@ -219,47 +232,58 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
           {/* ───────────── Editorial column ───────────── */}
           <div className="lg:col-span-7 p-7 sm:p-10 lg:p-14 flex flex-col justify-center gap-7">
 
-            <div className="flex items-center gap-3 flex-wrap">
-              <LebanonFlag className="w-8 h-5" />
-              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.28em] text-white/55 uppercase">
+            {/* Eyebrow */}
+            <div
+              className="inline-flex items-center gap-3 self-start px-4 py-2 rounded-full"
+              style={{ backgroundColor: C.chip, border: `1px solid ${C.border}` }}
+            >
+              <LebanonFlag className="w-7 h-[18px]" />
+              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.24em] uppercase" style={{ color: C.body }}>
                 Roots of Inspiration
               </span>
-              <span className="hidden sm:block h-px w-10" style={{ backgroundColor: PINK }} />
-              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.28em] uppercase" style={{ color: SKY }}>
+              <span className="h-3 w-px" style={{ backgroundColor: C.border }} />
+              <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.24em] uppercase font-bold" style={{ color: C.magenta }}>
                 Beirut, Lebanon
               </span>
             </div>
 
-            <h2 className="font-heading uppercase text-white text-[2rem] leading-[1.02] sm:text-[2.6rem] sm:leading-[1.02] lg:text-[3.4rem] lg:leading-[0.98] tracking-[-0.01em]">
+            {/* Headline — navy, with the homepage gradient on line two */}
+            <h2
+              className="font-heading uppercase text-[2rem] leading-[1.02] sm:text-[2.6rem] sm:leading-[1.02] lg:text-[3.4rem] lg:leading-[0.98] tracking-[-0.01em]"
+              style={{ color: C.navy }}
+            >
               The Land of Cedars.
               <span
                 className="block mt-2 bg-clip-text text-transparent"
-                style={{ backgroundImage: `linear-gradient(90deg, ${PINK}, ${LAVENDER}, ${SKY})` }}
+                style={{ backgroundImage: `linear-gradient(90deg, ${C.magenta}, ${C.coral}, ${C.pink}, ${C.violet})` }}
               >
                 Courage in Every Idea.
               </span>
             </h2>
 
-            <p className="text-[15px] sm:text-base leading-relaxed text-white/60 max-w-xl">
+            <p className="text-[15px] sm:text-base leading-relaxed max-w-xl" style={{ color: C.body }}>
               Born in a city where cultures, languages, and generations meet. RAK4Creative
               carries Beirut&rsquo;s restless imagination into brands built to move the world.
             </p>
 
-            <div className="border-l-2 pl-5 py-1" style={{ borderColor: CORAL }}>
-              <p className="text-lg sm:text-xl text-white font-serif" dir="rtl">
+            {/* Arabic pulse line */}
+            <div className="pl-5 py-1 border-l-2" style={{ borderColor: C.magenta }}>
+              <p className="text-lg sm:text-xl font-serif" dir="rtl" style={{ color: C.navy }}>
                 &ldquo;من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ&rdquo;
               </p>
-              <p className="mt-1.5 font-mono text-[10px] tracking-[0.24em] text-white/40 uppercase">
+              <p className="mt-1.5 font-mono text-[10px] tracking-[0.22em] uppercase" style={{ color: C.muted }}>
                 An endless pulse. A global vision.
               </p>
             </div>
 
+            {/* Actions */}
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={onOpenPlanner}
-                className="group inline-flex items-center gap-2.5 pl-6 pr-5 py-3.5 rounded-full bg-white text-[#07080B] font-mono text-[11px] font-bold tracking-[0.2em] uppercase transition-colors duration-200"
-                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = PINK; }}
-                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = ''; }}
+                className="group inline-flex items-center gap-2.5 pl-6 pr-5 py-3.5 rounded-full text-white font-mono text-[11px] font-bold tracking-[0.2em] uppercase transition-colors duration-200"
+                style={{ backgroundColor: C.magenta }}
+                onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = C.magentaD; }}
+                onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = C.magenta; }}
               >
                 Create with RAK
                 <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
@@ -274,7 +298,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                     transition={{ duration: 0.9, ease: 'easeOut' }}
                     className="absolute left-1/2 top-1/2 pointer-events-none z-30"
                   >
-                    <svg viewBox="0 0 24 24" className="w-5 h-5" style={{ fill: CORAL }}>
+                    <svg viewBox="0 0 24 24" className="w-5 h-5" style={{ fill: C.heart }}>
                       <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z" />
                     </svg>
                   </motion.div>
@@ -284,31 +308,33 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleLike}
                   title="Click to love Beirut"
-                  className="inline-flex items-center gap-3 pl-4 pr-5 py-3 rounded-full bg-white/[0.06] ring-1 ring-white/12 hover:bg-white/[0.09] transition-all duration-200"
+                  className="inline-flex items-center gap-3 pl-4 pr-5 py-3 rounded-full transition-all duration-200"
+                  style={{ backgroundColor: C.chip, border: `1px solid ${C.border}` }}
                 >
                   <svg
                     key={animKey}
                     viewBox="0 0 24 24"
                     className={`w-[18px] h-[18px] ${animating ? 'rak-heart-pop' : ''}`}
-                    style={{ fill: CORAL }}
+                    style={{ fill: C.heart }}
                   >
                     <path d="M17.5,1.917a6.4,6.4,0,0,0-5.5,3.3,6.4,6.4,0,0,0-5.5-3.3A6.8,6.8,0,0,0,0,8.967c0,4.547,4.786,9.513,8.8,12.88a4.974,4.974,0,0,0,6.4,0C19.214,18.48,24,13.514,24,8.967A6.8,6.8,0,0,0,17.5,1.917Z" />
                   </svg>
-                  <span className="font-mono text-[11px] tracking-[0.16em] uppercase text-white/50">
+                  <span className="font-mono text-[11px] tracking-[0.16em] uppercase" style={{ color: C.body }}>
                     Love Beirut
                   </span>
-                  <span className="font-mono text-[13px] font-bold text-white tabular-nums">
+                  <span className="font-mono text-[13px] font-bold tabular-nums" style={{ color: C.navy }}>
                     {likesCount.toLocaleString()}
                   </span>
                 </motion.button>
               </div>
             </div>
 
-            <div className="flex items-center gap-6 sm:gap-9 pt-6 border-t border-white/10">
+            {/* Pillar rail */}
+            <div className="flex items-center gap-6 sm:gap-9 pt-6" style={{ borderTop: `1px solid ${C.border}` }}>
               {PILLARS.map((p) => (
                 <div key={p.k} className="flex items-baseline gap-2">
-                  <span className="font-mono text-[10px]" style={{ color: LAVENDER }}>{p.k}</span>
-                  <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.2em] text-white/45 uppercase">
+                  <span className="font-mono text-[10px] font-bold" style={{ color: C.magenta }}>{p.k}</span>
+                  <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.18em] uppercase" style={{ color: C.body }}>
                     {p.label}
                   </span>
                 </div>
@@ -317,8 +343,10 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
           </div>
 
           {/* ───────────── Globe: Lebanon → Canada + GCC ───────────── */}
-          <div className="lg:col-span-5 relative min-h-[400px] sm:min-h-[460px] lg:min-h-0 border-t lg:border-t-0 lg:border-l border-white/10 overflow-hidden">
-
+          <div
+            className="lg:col-span-5 relative min-h-[400px] sm:min-h-[460px] lg:min-h-0 overflow-hidden"
+            style={{ backgroundColor: C.pageBg, borderLeft: `1px solid ${C.border}` }}
+          >
             <svg
               viewBox="0 0 500 700"
               preserveAspectRatio="xMidYMid slice"
@@ -328,17 +356,17 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             >
               <defs>
                 <pattern id="rakGrid" width="42" height="42" patternUnits="userSpaceOnUse">
-                  <path d="M42 0H0V42" fill="none" stroke="rgba(255,255,255,0.035)" strokeWidth="1" />
+                  <path d="M42 0H0V42" fill="none" stroke="rgba(16,23,41,0.045)" strokeWidth="1" />
                 </pattern>
                 <linearGradient id="rakRoute" x1="0" y1="0" x2="1" y2="0">
-                  <stop offset="0%" stopColor={CORAL} />
-                  <stop offset="50%" stopColor={PINK} />
-                  <stop offset="100%" stopColor={SKY} />
+                  <stop offset="0%" stopColor={C.magenta} />
+                  <stop offset="50%" stopColor={C.coral} />
+                  <stop offset="100%" stopColor={C.violet} />
                 </linearGradient>
                 <radialGradient id="rakCore">
-                  <stop offset="0%" stopColor={PINK} stopOpacity="0.16" />
-                  <stop offset="70%" stopColor={LAVENDER} stopOpacity="0.05" />
-                  <stop offset="100%" stopColor={SKY} stopOpacity="0" />
+                  <stop offset="0%" stopColor={C.magenta} stopOpacity="0.10" />
+                  <stop offset="70%" stopColor={C.violet} stopOpacity="0.04" />
+                  <stop offset="100%" stopColor={C.mint} stopOpacity="0" />
                 </radialGradient>
               </defs>
 
@@ -346,32 +374,32 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               <circle cx={CX} cy={CY} r={R * 1.4} fill="url(#rakCore)" />
 
               <g className="rak-drift">
-                <circle cx={CX} cy={CY} r={R} fill="rgba(255,255,255,0.012)" stroke="rgba(255,255,255,0.15)" strokeWidth="1" />
+                <circle cx={CX} cy={CY} r={R} fill="rgba(255,255,255,0.75)" stroke="rgba(16,23,41,0.13)" strokeWidth="1" />
 
-                <g fill="none" stroke="rgba(255,255,255,0.09)" strokeWidth="0.8">
+                <g fill="none" stroke="rgba(16,23,41,0.085)" strokeWidth="0.8">
                   {GRATICULE.map((d, i) => <path key={i} d={d} />)}
                 </g>
 
                 {/* Routes */}
-                <g fill="none" stroke="url(#rakRoute)" strokeWidth="1.6" strokeLinecap="round">
-                  {ARCS.map((a) => <path key={a.name} d={a.d} className="rak-route" opacity="0.95" />)}
+                <g fill="none" stroke="url(#rakRoute)" strokeWidth="1.8" strokeLinecap="round">
+                  {ARCS.map((a) => <path key={a.name} d={a.d} className="rak-route" />)}
                 </g>
 
                 {/* GCC member capitals */}
-                <g fill={SKY} opacity="0.45">
+                <g fill={C.violet} opacity="0.55">
                   {CLUSTER.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="1.8" />)}
                 </g>
 
                 {/* Destination nodes */}
                 {NODES.map((n) => (
                   <g key={n.name}>
-                    <circle cx={n.x} cy={n.y} r="3.4" fill={SKY} />
-                    <circle cx={n.x} cy={n.y} r="8" fill="none" stroke={SKY} strokeOpacity="0.3" strokeWidth="1" />
+                    <circle cx={n.x} cy={n.y} r="3.4" fill={C.violet} />
+                    <circle cx={n.x} cy={n.y} r="8" fill="none" stroke={C.violet} strokeOpacity="0.3" strokeWidth="1" />
                     <text
                       x={n.label[0]}
                       y={n.label[1]}
                       textAnchor="middle"
-                      fill="rgba(255,255,255,0.62)"
+                      fill={C.body}
                       fontFamily="monospace"
                       fontSize="10.5"
                       letterSpacing="2"
@@ -383,16 +411,16 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
                 {/* Lebanon — verified origin */}
                 <g>
-                  <circle className="rak-ring" cx={ORIGIN.x} cy={ORIGIN.y} r="15" fill="none" stroke={CORAL} strokeWidth="1.3" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
-                  <circle className="rak-ring rak-ring-2" cx={ORIGIN.x} cy={ORIGIN.y} r="15" fill="none" stroke={CORAL} strokeWidth="1.3" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
-                  <circle className="rak-ring rak-ring-3" cx={ORIGIN.x} cy={ORIGIN.y} r="15" fill="none" stroke={CORAL} strokeWidth="1.3" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
-                  <circle cx={ORIGIN.x} cy={ORIGIN.y} r="5" fill={CORAL} />
-                  <circle cx={ORIGIN.x} cy={ORIGIN.y} r="10" fill="none" stroke={CORAL} strokeOpacity="0.45" strokeWidth="1" />
+                  <circle className="rak-ring" cx={ORIGIN.x} cy={ORIGIN.y} r="15" fill="none" stroke={C.magenta} strokeWidth="1.4" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
+                  <circle className="rak-ring rak-ring-2" cx={ORIGIN.x} cy={ORIGIN.y} r="15" fill="none" stroke={C.magenta} strokeWidth="1.4" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
+                  <circle className="rak-ring rak-ring-3" cx={ORIGIN.x} cy={ORIGIN.y} r="15" fill="none" stroke={C.magenta} strokeWidth="1.4" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
+                  <circle cx={ORIGIN.x} cy={ORIGIN.y} r="5.5" fill={C.magenta} />
+                  <circle cx={ORIGIN.x} cy={ORIGIN.y} r="10" fill="none" stroke={C.magenta} strokeOpacity="0.4" strokeWidth="1" />
 
-                  <text x={ORIGIN.x} y={ORIGIN.y - 30} textAnchor="middle" fill="rgba(255,255,255,0.5)" fontFamily="monospace" fontSize="9" letterSpacing="2.4">
+                  <text x={ORIGIN.x} y={ORIGIN.y - 30} textAnchor="middle" fill={C.muted} fontFamily="monospace" fontSize="9" letterSpacing="2.4">
                     LEBANON
                   </text>
-                  <text x={ORIGIN.x} y={ORIGIN.y - 16} textAnchor="middle" fill="#FFFFFF" fontFamily="monospace" fontSize="11.5" fontWeight="bold" letterSpacing="2.2">
+                  <text x={ORIGIN.x} y={ORIGIN.y - 16} textAnchor="middle" fill={C.navy} fontFamily="monospace" fontSize="11.5" fontWeight="bold" letterSpacing="2.2">
                     BEIRUT
                   </text>
                 </g>
@@ -400,26 +428,26 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             </svg>
 
             {/* HUD overlay */}
-            <div className="absolute inset-0 p-6 sm:p-8 font-mono text-[10px] tracking-[0.22em] uppercase pointer-events-none">
+            <div className="absolute inset-0 p-6 sm:p-8 font-mono text-[10px] tracking-[0.2em] uppercase pointer-events-none">
               <div className="flex items-start justify-between">
-                <div className="flex items-center gap-3 text-white/45">
+                <div className="flex items-center gap-3" style={{ color: C.body }}>
                   <span>01 / Origin</span>
-                  <span className="h-px w-8" style={{ backgroundColor: PINK }} />
+                  <span className="h-px w-8" style={{ backgroundColor: C.magenta }} />
                 </div>
-                <div className="text-right text-white/35 leading-relaxed">
+                <div className="text-right leading-relaxed" style={{ color: C.muted }}>
                   <div>33.8938&deg; N</div>
                   <div>35.5018&deg; E</div>
                 </div>
               </div>
 
-              <div className="absolute right-6 sm:right-8 bottom-6 sm:bottom-8 text-white/30">
+              <div className="absolute right-6 sm:right-8 bottom-6 sm:bottom-8" style={{ color: C.muted }}>
                 Canada &middot; GCC
               </div>
 
-              <div className="absolute left-6 sm:left-8 bottom-6 sm:bottom-8 flex items-center gap-2.5 text-white/35">
+              <div className="absolute left-6 sm:left-8 bottom-6 sm:bottom-8 flex items-center gap-2.5" style={{ color: C.body }}>
                 <span className="relative flex h-1.5 w-1.5">
-                  <span className="absolute inline-flex h-full w-full rounded-full animate-ping" style={{ backgroundColor: SKY, opacity: 0.75 }} />
-                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ backgroundColor: SKY }} />
+                  <span className="absolute inline-flex h-full w-full rounded-full animate-ping" style={{ backgroundColor: C.mint, opacity: 0.75 }} />
+                  <span className="relative inline-flex h-1.5 w-1.5 rounded-full" style={{ backgroundColor: C.mint }} />
                 </span>
                 <span>Signal Live</span>
               </div>
