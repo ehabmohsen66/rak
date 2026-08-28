@@ -52,18 +52,66 @@ const RAD = Math.PI / 180;
 
 const BEIRUT = { lat: 33.8938, lon: 35.5018 };
 
+/* Four regions RAK reaches. Each anchor is a real coordinate, and each
+   `cities` list is drawn as a small dot cluster so the region reads as
+   a territory rather than a single pin. Label positions are hand-placed
+   to stay clear of one another. */
 const DESTINATIONS = [
-  { name: 'Canada', lat: 43.6532, lon: -79.3832, label: [138, 251] },
-  { name: 'GCC', lat: 24.0, lon: 50.5, label: [361, 385] },
-];
-
-const GCC_CAPITALS = [
-  { lat: 24.7136, lon: 46.6753 }, // Riyadh
-  { lat: 24.4539, lon: 54.3773 }, // Abu Dhabi
-  { lat: 25.2854, lon: 51.5310 }, // Doha
-  { lat: 29.3759, lon: 47.9774 }, // Kuwait City
-  { lat: 26.2285, lon: 50.5860 }, // Manama
-  { lat: 23.5880, lon: 58.3829 }, // Muscat
+  {
+    name: 'Canada',
+    lat: 43.6532, lon: -79.3832,           // Toronto anchor
+    bow: 18,
+    label: [138, 249],
+    cities: [
+      { lat: 43.6532, lon: -79.3832 },     // Toronto
+      { lat: 45.5019, lon: -73.5674 },     // Montreal
+      { lat: 45.4215, lon: -75.6972 },     // Ottawa
+      { lat: 46.8139, lon: -71.2080 },     // Quebec City
+      { lat: 44.6488, lon: -63.5752 },     // Halifax
+    ],
+  },
+  {
+    name: 'Europe',
+    lat: 50, lon: 10,                      // central Europe
+    bow: -12,
+    label: [252, 292],
+    cities: [
+      { lat: 51.5074, lon: -0.1278 },      // London
+      { lat: 48.8566, lon: 2.3522 },       // Paris
+      { lat: 52.5200, lon: 13.4050 },      // Berlin
+      { lat: 40.4168, lon: -3.7038 },      // Madrid
+      { lat: 41.9028, lon: 12.4964 },      // Rome
+      { lat: 52.3676, lon: 4.9041 },       // Amsterdam
+    ],
+  },
+  {
+    name: 'Africa',
+    lat: 2, lon: 20,                       // continental centroid
+    bow: 10,
+    label: [272, 458],
+    cities: [
+      { lat: 30.0444, lon: 31.2357 },      // Cairo
+      { lat: 6.5244, lon: 3.3792 },        // Lagos
+      { lat: -1.2921, lon: 36.8219 },      // Nairobi
+      { lat: 33.5731, lon: -7.5898 },      // Casablanca
+      { lat: 5.6037, lon: -0.1870 },       // Accra
+      { lat: -26.2041, lon: 28.0473 },     // Johannesburg
+    ],
+  },
+  {
+    name: 'GCC',
+    lat: 24.0, lon: 50.5,                  // bloc centroid
+    bow: -10,
+    label: [368, 386],
+    cities: [
+      { lat: 24.7136, lon: 46.6753 },      // Riyadh
+      { lat: 24.4539, lon: 54.3773 },      // Abu Dhabi
+      { lat: 25.2854, lon: 51.5310 },      // Doha
+      { lat: 29.3759, lon: 47.9774 },      // Kuwait City
+      { lat: 26.2285, lon: 50.5860 },      // Manama
+      { lat: 23.5880, lon: 58.3829 },      // Muscat
+    ],
+  },
 ];
 
 const toVec = (lat, lon) => {
@@ -111,22 +159,45 @@ const buildGraticule = () => {
   return paths;
 };
 
-const buildArc = (a, b, steps = 72) => {
+const cross = (a, b) => [
+  a[1] * b[2] - a[2] * b[1],
+  a[2] * b[0] - a[0] * b[2],
+  a[0] * b[1] - a[1] * b[0],
+];
+const unit = (v) => {
+  const m = Math.hypot(v[0], v[1], v[2]) || 1;
+  return [v[0] / m, v[1] / m, v[2] / m];
+};
+
+/* Route arc between two real coordinates.
+   `bow` swings the path sideways off the exact great circle. Beirut→Toronto
+   runs literally through central Europe, so without a fan the routes would
+   overlap and read as one chained line. Endpoints stay exact either way. */
+const buildArc = (a, b, bow = 0, steps = 72) => {
   const va = toVec(a.lat, a.lon);
   const vb = toVec(b.lat, b.lon);
   const omega = Math.acos(Math.max(-1, Math.min(1, dot(va, vb))));
-  const sinO = Math.sin(omega);
   const height = 0.04 + 0.22 * (omega / Math.PI);
+
+  const n = unit(cross(va, vb));
+  const mid = unit([va[0] + vb[0], va[1] + vb[1], va[2] + vb[2]]);
+  const f = bow * RAD;
+  const m = unit([
+    mid[0] * Math.cos(f) + n[0] * Math.sin(f),
+    mid[1] * Math.cos(f) + n[1] * Math.sin(f),
+    mid[2] * Math.cos(f) + n[2] * Math.sin(f),
+  ]);
+  const w = [m[0] * 1.35, m[1] * 1.35, m[2] * 1.35];
+
   const pts = [];
   for (let i = 0; i <= steps; i++) {
     const t = i / steps;
-    let v;
-    if (sinO < 1e-6) v = va;
-    else {
-      const s1 = Math.sin((1 - t) * omega) / sinO;
-      const s2 = Math.sin(t * omega) / sinO;
-      v = [va[0] * s1 + vb[0] * s2, va[1] * s1 + vb[1] * s2, va[2] * s1 + vb[2] * s2];
-    }
+    const u = 1 - t;
+    const v = unit([
+      u * u * va[0] + 2 * t * u * w[0] + t * t * vb[0],
+      u * u * va[1] + 2 * t * u * w[1] + t * t * vb[1],
+      u * u * va[2] + 2 * t * u * w[2] + t * t * vb[2],
+    ]);
     pts.push(project(v, 1 + height * Math.sin(Math.PI * t)));
   }
   return 'M' + pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join('L');
@@ -134,9 +205,12 @@ const buildArc = (a, b, steps = 72) => {
 
 const GRATICULE = buildGraticule();
 const ORIGIN = projectLatLon(BEIRUT.lat, BEIRUT.lon);
-const NODES = DESTINATIONS.map((c) => ({ ...c, ...projectLatLon(c.lat, c.lon) }));
-const ARCS = DESTINATIONS.map((c) => ({ name: c.name, d: buildArc(BEIRUT, c) }));
-const CLUSTER = GCC_CAPITALS.map((c) => projectLatLon(c.lat, c.lon));
+const NODES = DESTINATIONS.map((c) => ({
+  ...c,
+  ...projectLatLon(c.lat, c.lon),
+  dots: c.cities.map((p) => projectLatLon(p.lat, p.lon)),
+}));
+const ARCS = DESTINATIONS.map((c, i) => ({ name: c.name, d: buildArc(BEIRUT, c, c.bow), delay: i * 2.2 }));
 
 const PILLARS = [
   { k: '01', label: 'Resilience' },
@@ -352,7 +426,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               preserveAspectRatio="xMidYMid slice"
               className="absolute inset-0 w-full h-full"
               role="img"
-              aria-label="Globe showing routes from Beirut, Lebanon to Canada and the GCC"
+              aria-label="Globe showing routes from Beirut, Lebanon to Canada, Europe, Africa and the GCC"
             >
               <defs>
                 <pattern id="rakGrid" width="42" height="42" patternUnits="userSpaceOnUse">
@@ -380,17 +454,31 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                   {GRATICULE.map((d, i) => <path key={i} d={d} />)}
                 </g>
 
-                {/* Routes */}
-                <g fill="none" stroke="url(#rakRoute)" strokeWidth="1.8" strokeLinecap="round">
-                  {ARCS.map((a) => <path key={a.name} d={a.d} className="rak-route" />)}
+                {/* Routes — a solid line keeps every arc physically joined to
+                    Beirut, with the dashed flow animating on top of it. */}
+                <g fill="none" stroke="url(#rakRoute)" strokeLinecap="round">
+                  {ARCS.map((a) => (
+                    <path key={`base-${a.name}`} d={a.d} strokeWidth="1.1" opacity="0.4" />
+                  ))}
+                  {ARCS.map((a) => (
+                    <path
+                      key={`flow-${a.name}`}
+                      d={a.d}
+                      strokeWidth="1.9"
+                      className="rak-route"
+                      style={{ animationDelay: `${a.delay}s` }}
+                    />
+                  ))}
                 </g>
 
-                {/* GCC member capitals */}
-                <g fill={C.violet} opacity="0.55">
-                  {CLUSTER.map((p, i) => <circle key={i} cx={p.x} cy={p.y} r="1.8" />)}
+                {/* Region city clusters */}
+                <g fill={C.violet} opacity="0.5">
+                  {NODES.map((n) => n.dots.map((p, i) => (
+                    <circle key={`${n.name}-${i}`} cx={p.x} cy={p.y} r="1.7" />
+                  )))}
                 </g>
 
-                {/* Destination nodes */}
+                {/* Region nodes */}
                 {NODES.map((n) => (
                   <g key={n.name}>
                     <circle cx={n.x} cy={n.y} r="3.4" fill={C.violet} />
@@ -441,7 +529,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               </div>
 
               <div className="absolute right-6 sm:right-8 bottom-6 sm:bottom-8" style={{ color: C.muted }}>
-                Canada &middot; GCC
+                04 Regions
               </div>
 
               <div className="absolute left-6 sm:left-8 bottom-6 sm:bottom-8 flex items-center gap-2.5" style={{ color: C.body }}>
