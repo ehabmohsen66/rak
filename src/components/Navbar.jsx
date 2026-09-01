@@ -153,7 +153,11 @@ export const Navbar = ({
                   >
                     <span>{item.label}</span>
                     {item.badge && (
-                      <span className="ml-1 px-1.5 py-0.5 text-[8px] font-bold bg-rak-magenta/20 text-rak-magenta border border-rak-magenta/40 rounded-full animate-pulse whitespace-nowrap">
+                      <span className={`ml-1.5 px-1.5 py-0.5 text-[8px] font-black rounded-full whitespace-nowrap transition-colors tracking-normal font-mono ${
+                        isActive 
+                          ? 'bg-white text-rak-magenta shadow-sm' 
+                          : 'bg-rak-magenta/15 text-rak-magenta border border-rak-magenta/30 animate-pulse'
+                      }`}>
                         {item.badge}
                       </span>
                     )}
@@ -346,6 +350,15 @@ export const Navbar = ({
                   <div className="flex items-center space-x-3">
                     <Icon className="w-4 h-4" />
                     <span>{item.label}</span>
+                    {item.badge && (
+                      <span className={`px-2 py-0.5 text-[9px] font-black rounded-full font-mono ${
+                        isActive 
+                          ? 'bg-white text-rak-magenta shadow-sm' 
+                          : 'bg-rak-magenta/15 text-rak-magenta border border-rak-magenta/30'
+                      }`}>
+                        {item.badge}
+                      </span>
+                    )}
                   </div>
                 </a>
               );
