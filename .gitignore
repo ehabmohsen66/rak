@@ -12,5 +12,6 @@ flip-*.js
 fix-*.js
 check-*.js
 extract-*.js
-
-
+ChatGPT_files/
+*.zip
+/videos/

@@ -17,7 +17,8 @@ import {
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { BRAND_INFO, PROJECTS, TESTIMONIALS, PILLARS, BLOG_POSTS } from '../data/contentData';
-import { HeroAgencyOrchestrationCard } from '../components/HeroAgencyOrchestrationCard';
+import { ClippedMediaGallery } from '../components/ClippedMediaGallery';
+import { TeamVideoShowcase } from '../components/TeamVideoShowcase';
 import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
@@ -131,9 +132,9 @@ export const HomePage = ({
 
             </div>
 
-            {/* Right Column: Hero Agency Card (Bright & Clean) */}
-            <div className="lg:col-span-5">
-              <HeroAgencyOrchestrationCard onOpenPlanner={onOpenPlanner} />
+            {/* Right Column: Clipped Media Gallery */}
+            <div className="lg:col-span-5 flex items-center justify-center">
+              <ClippedMediaGallery className="w-full shadow-2xl" />
             </div>
 
           </div>
@@ -289,7 +290,10 @@ export const HomePage = ({
         </div>
       </section>
 
-      {/* 5. EXECUTIVE TESTIMONIALS */}
+      {/* 5. TEAM CULTURE & VIDEO SHOWCASE ("WE'RE NOT JUST A BUSINESS...") */}
+      <TeamVideoShowcase />
+
+      {/* 6. EXECUTIVE TESTIMONIALS */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <SpotlightCard 
           spotlightColor="rgba(236, 0, 140, 0.1)"
@@ -335,10 +339,7 @@ export const HomePage = ({
         </SpotlightCard>
       </section>
 
-      {/* 6. FROM BEIRUT TO THE WORLD - LEBANON TRIBUTE SECTION */}
-      <LebanonTributeSection onOpenPlanner={onOpenPlanner} />
-
-      {/* 7. STRATEGIC INSIGHTS / EDITORIAL */}
+      {/* 6. STRATEGIC INSIGHTS / EDITORIAL */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
@@ -418,6 +419,9 @@ export const HomePage = ({
           ))}
         </div>
       </section>
+
+      {/* 7. FROM BEIRUT TO THE WORLD - LEBANON TRIBUTE (THE LAND OF CEDARS) */}
+      <LebanonTributeSection onOpenPlanner={onOpenPlanner} />
 
     </div>
   );
