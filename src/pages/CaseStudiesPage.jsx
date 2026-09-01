@@ -11,7 +11,7 @@ export const CaseStudiesPage = ({ onSelectProject, onOpenPlanner }) => {
       <WovenLightHero onOpenPlanner={onOpenPlanner} />
 
       {/* CASE STUDIES LIST */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16">
+      <section id="case-studies-list" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-16 scroll-mt-28">
         {PROJECTS.map((project, idx) => (
           <div 
             key={project.id}
