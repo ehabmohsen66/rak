@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useSpring, AnimatePresence } from 'framer-motion';
-import { ChevronRight, PlayCircle, Sparkles, ArrowDown } from 'lucide-react';
+import { ArrowUpRight, PlayCircle } from 'lucide-react';
 import { GradientShimmer } from './ui/GradientShimmer';
 
 const HERO_PHRASES = [
@@ -14,30 +14,24 @@ const chapters = [
   {
     id: '01',
     name: 'The Origin',
-    tag: '',
-    subtitle: 'Where Vision Begins',
     videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/1.mp4',
-    description: 'Brand architecture, high-impact media production, enterprise software, and performance marketing seamlessly integrated under one global powerhouse.',
+    description: 'Brand architecture, cinematic media production, enterprise software, and performance marketing under one global powerhouse.',
     actionText: 'Learn More',
     actionType: 'scroll-capabilities'
   },
   {
     id: '02',
     name: 'Velocity',
-    tag: 'VELOCITY • MOTION & TECH',
-    subtitle: 'Moving at Lightspeed',
     videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/2.mp4?updatedAt=1766414784088',
-    description: 'From custom digital platforms to 4K cinematic commercials and viral social campaigns — we accelerate bold brands into orbit.',
+    description: 'Bespoke digital platforms, commercial 3D motion, and high-conversion ad engines accelerating bold brands into orbit.',
     actionText: 'Our Capabilities',
     actionType: 'scroll-capabilities'
   },
   {
     id: '03',
     name: 'Immersion',
-    tag: 'IMMERSION • GLOBAL REACH',
-    subtitle: 'Beneath the Surface',
     videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/3.mp4?updatedAt=1766415070663',
-    description: 'Carrying restless creativity and uncompromising execution into iconic brands engineered to move audiences across the globe.',
+    description: 'Relentless creativity and precision engineering building unforgettable brand experiences from Beirut to the world.',
     actionText: 'Start a Project',
     actionType: 'open-planner'
   }
@@ -61,18 +55,18 @@ const textReveal = {
 };
 
 const fadeIn = {
-  hidden: { opacity: 0, y: 20 },
+  hidden: { opacity: 0, y: 15 },
   visible: { 
     opacity: 1, 
     y: 0, 
-    transition: { duration: 0.8, delay: 0.3, ease: "easeOut" } 
+    transition: { duration: 0.6, delay: 0.25, ease: "easeOut" } 
   }
 };
 
 // --- Sub-Components ---
 
 const FilmGrain = () => (
-  <div className="pointer-events-none absolute inset-0 z-20 opacity-[0.06] mix-blend-overlay">
+  <div className="pointer-events-none absolute inset-0 z-20 opacity-[0.05] mix-blend-overlay">
     <div
       className="absolute inset-0 h-full w-full"
       style={{
@@ -105,9 +99,9 @@ const VideoBackground = ({ currentChapterIndex }) => {
             loop
             playsInline
           />
-          {/* Multi-layer cinematic overlays */}
-          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/90 via-slate-950/65 to-slate-950/40" />
-          <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-transparent to-slate-950/50" />
+          {/* Subtle clean cinematic vignette & gradient overlays */}
+          <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/50 to-slate-950/20" />
+          <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-slate-950/30" />
         </motion.div>
       ))}
       <FilmGrain />
@@ -120,22 +114,23 @@ const DynamicNav = ({ activeIndex, progress, onScrollNext }) => {
 
   return (
     <motion.div
-      className="flex items-center gap-3 sm:gap-4 rounded-full bg-slate-950/85 backdrop-blur-xl border border-white/15 p-2 pl-5 sm:pl-6 pr-2 shadow-2xl"
-      initial={{ y: 50, opacity: 0 }}
+      className="flex items-center gap-3 rounded-full bg-slate-950/80 backdrop-blur-xl border border-white/15 p-1.5 pl-5 pr-1.5 shadow-2xl"
+      initial={{ y: 30, opacity: 0 }}
       animate={{ y: 0, opacity: 1 }}
       transition={{ delay: 0.3 }}
     >
-      <div className="flex flex-col text-left">
+      <div className="flex items-center space-x-2 text-left">
         <span className="text-[10px] uppercase font-mono tracking-widest text-rak-magenta font-bold">
-          Chapter {chapters[activeIndex].id} / 03
+          {chapters[activeIndex].id}
         </span>
+        <span className="text-white/20 text-xs">/</span>
         <AnimatePresence mode="wait">
           <motion.span
             key={activeIndex}
-            initial={{ opacity: 0, y: 8 }}
+            initial={{ opacity: 0, y: 5 }}
             animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="text-xs sm:text-sm font-bold text-white min-w-[90px] sm:min-w-[120px] truncate"
+            exit={{ opacity: 0, y: -5 }}
+            className="text-xs font-bold text-white min-w-[80px] sm:min-w-[95px] truncate"
           >
             {chapters[activeIndex].name}
           </motion.span>
@@ -144,22 +139,22 @@ const DynamicNav = ({ activeIndex, progress, onScrollNext }) => {
 
       <div 
         onClick={onScrollNext}
-        title="Scroll down sequence"
-        className="relative h-11 w-11 flex items-center justify-center cursor-pointer group"
+        title="Next sequence"
+        className="relative h-9 w-9 flex items-center justify-center cursor-pointer group"
       >
         <svg className="h-full w-full -rotate-90 transform">
-          <circle cx="22" cy="22" r="16" className="stroke-white/15" strokeWidth="2" fill="none" />
+          <circle cx="18" cy="18" r="14" className="stroke-white/15" strokeWidth="2" fill="none" />
           <motion.circle
-            cx="22" cy="22" r="16"
+            cx="18" cy="18" r="14"
             className="stroke-rak-magenta"
-            strokeWidth="2.5"
+            strokeWidth="2"
             fill="none"
-            strokeDasharray="100.5"
+            strokeDasharray="88"
             style={{ pathLength: smoothProgress }}
           />
         </svg>
         <div className="absolute inset-0 flex items-center justify-center text-white transition-transform duration-300 group-hover:scale-110">
-          <PlayCircle size={18} fill="white" className="text-slate-950 fill-white" />
+          <PlayCircle size={15} fill="white" className="text-slate-950 fill-white" />
         </div>
       </div>
     </motion.div>
@@ -209,7 +204,6 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     if (containerRef.current) {
       const rect = containerRef.current.getBoundingClientRect();
       const stepHeight = rect.height / chapters.length;
-      const nextIndex = (activeIndex + 1) % chapters.length;
       window.scrollBy({ top: stepHeight, behavior: 'smooth' });
     }
   };
@@ -224,23 +218,16 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
       <div className="sticky top-0 h-screen w-full overflow-hidden flex flex-col justify-between">
         <VideoBackground currentChapterIndex={activeIndex} />
 
-        {/* Ambient Top Glow Orbs */}
-        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 w-[550px] h-[350px] bg-rak-magenta/15 rounded-full blur-[160px] pointer-events-none z-10" />
-        <div className="absolute top-1/3 right-1/4 w-[450px] h-[350px] bg-rak-cyan/10 rounded-full blur-[140px] pointer-events-none z-10" />
+        {/* Ambient Subtle Glow */}
+        <div className="absolute top-1/4 left-1/4 -translate-x-1/2 w-[500px] h-[300px] bg-rak-magenta/10 rounded-full blur-[160px] pointer-events-none z-10" />
 
         {/* Floating Chapter Navigation Pill */}
-        <div className="absolute bottom-8 sm:bottom-10 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-40 pointer-events-auto">
           <DynamicNav 
             activeIndex={activeIndex} 
             progress={scrollYProgress} 
             onScrollNext={handleScrollNext}
           />
-        </div>
-
-        {/* Scroll Prompt Hint */}
-        <div className="absolute bottom-8 right-6 sm:right-12 hidden lg:flex items-center space-x-2 z-30 text-[10px] font-mono uppercase tracking-[0.25em] text-white/50 pointer-events-none">
-          <span>Scroll Sequence</span>
-          <ArrowDown className="w-3.5 h-3.5 animate-bounce text-rak-magenta" />
         </div>
       </div>
 
@@ -256,24 +243,14 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
               initial="hidden"
               whileInView="visible"
               viewport={{ once: false, margin: "-15%" }} 
-              className="max-w-4xl pointer-events-auto space-y-6 sm:space-y-8 text-left"
+              className="max-w-3xl pointer-events-auto space-y-5 sm:space-y-6 text-left"
             >
-              {/* Header Badge Line */}
-              {chapter.tag && (
-                <motion.div variants={fadeIn} className="flex items-center gap-3.5">
-                  <div className="h-0.5 w-10 sm:w-14 bg-rak-magenta shadow-sm" />
-                  <span className="text-[11px] sm:text-xs font-extrabold uppercase font-mono tracking-[0.28em] text-rak-magenta bg-rak-magenta/10 border border-rak-magenta/30 px-3 py-1 rounded-full backdrop-blur-md">
-                    {chapter.tag}
-                  </span>
-                </motion.div>
-              )}
-
               {/* Masked Title Reveal */}
               <div className="overflow-hidden py-1">
                 {index === 0 ? (
                   <motion.h1 
                     variants={textReveal}
-                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.1] font-heading"
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.12] font-heading drop-shadow-md"
                   >
                     We Create Big Ideas From Ground Zero & Take Them to{' '}
                     <span className="inline-block relative">
@@ -296,9 +273,9 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
                 ) : index === 1 ? (
                   <motion.h2 
                     variants={textReveal}
-                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.1] font-heading"
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.12] font-heading drop-shadow-md"
                   >
-                    Crafting High-Speed Platforms &{' '}
+                    High-Speed Tech &{' '}
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-rak-cyan via-blue-400 to-indigo-400 font-black">
                       3D Cinema.
                     </span>
@@ -306,7 +283,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
                 ) : (
                   <motion.h2 
                     variants={textReveal}
-                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.1] font-heading"
+                    className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.12] font-heading drop-shadow-md"
                   >
                     Born in Beirut.{' '}
                     <span className="bg-clip-text text-transparent bg-gradient-to-r from-rak-magenta via-pink-400 to-amber-300 font-black">
@@ -316,34 +293,24 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
                 )}
               </div>
 
-              {/* Description Glass Box */}
-              <motion.div 
+              {/* Clean Subtitle Paragraph (no bulky box) */}
+              <motion.p 
                 variants={fadeIn}
-                className="max-w-xl p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/15 bg-slate-950/60 backdrop-blur-xl shadow-2xl space-y-2"
+                className="text-sm sm:text-base lg:text-lg text-slate-300 max-w-xl leading-relaxed font-normal drop-shadow"
               >
-                <p className="text-sm sm:text-base lg:text-lg text-slate-200 leading-relaxed font-normal">
-                  {chapter.description}
-                </p>
-              </motion.div>
+                {chapter.description}
+              </motion.p>
 
-              {/* Interactive Action Button */}
+              {/* Refined Action Pill Button */}
               <motion.div variants={fadeIn} className="pt-2">
                 <button
                   onClick={() => handleActionClick(chapter)}
-                  className="group inline-flex items-center gap-4 text-white font-bold cursor-pointer"
+                  className="relative inline-flex items-center justify-center px-7 py-3.5 text-xs font-extrabold uppercase tracking-widest text-white bg-rak-magenta rounded-full shadow-lg hover:bg-rak-magenta-dark hover:scale-105 transition-all duration-300 group overflow-hidden cursor-pointer"
                 >
-                  <div className="relative h-12 w-12 sm:h-14 sm:w-14 rounded-full border border-white/30 bg-white/10 backdrop-blur-md flex items-center justify-center overflow-hidden transition-all duration-300 group-hover:scale-105 group-hover:border-rak-magenta shadow-lg">
-                    <div className="absolute inset-0 bg-rak-magenta translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                    <ChevronRight size={22} className="relative z-10 text-white transition-transform duration-300 group-hover:translate-x-0.5" />
-                  </div>
-                  <div className="flex flex-col text-left">
-                    <span className="tracking-[0.22em] uppercase text-xs font-extrabold font-mono text-white group-hover:text-rak-magenta transition-colors">
-                      {chapter.actionText}
-                    </span>
-                    <span className="text-[11px] text-slate-400 font-normal">
-                      {index === 2 ? 'Start a conversation' : 'Explore what we do'}
-                    </span>
-                  </div>
+                  <span className="relative z-10 flex items-center space-x-2">
+                    <span>{chapter.actionText}</span>
+                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
+                  </span>
                 </button>
               </motion.div>
             </motion.div>
