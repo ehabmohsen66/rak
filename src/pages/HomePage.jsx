@@ -15,9 +15,8 @@ import {
   Calendar,
   Clock
 } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { BRAND_INFO, PROJECTS, TESTIMONIALS, PILLARS, BLOG_POSTS } from '../data/contentData';
-import { ClippedMediaGallery } from '../components/ClippedMediaGallery';
+import { CinematicHeroScroll } from '../components/CinematicHeroScroll';
 import { TeamVideoShowcase } from '../components/TeamVideoShowcase';
 import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
 import { SpotlightCard } from '../components/SpotlightCard';
@@ -39,107 +38,17 @@ const getPillarIcon = (iconName) => {
   }
 };
 
-const HERO_PHRASES = [
-  "New Heights.",
-  "Next Level.",
-  "Global Scale.",
-  "Peak Impact.",
-  "Market Lead."
-];
-
 export const HomePage = ({ 
   setActiveTab = () => {}, 
   onSelectProject = () => {}, 
   onSelectArticle = () => {},
   onOpenPlanner = () => {} 
 }) => {
-
-  const [phraseIndex, setPhraseIndex] = useState(0);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setPhraseIndex((prev) => (prev + 1) % HERO_PHRASES.length);
-    }, 4800);
-    return () => clearInterval(timer);
-  }, []);
-
-  const headlineWords = ["We", "Create", "Big", "Ideas", "From", "Ground", "Zero", "&", "Take", "Them", "to"];
-
   return (
     <div className="space-y-16 sm:space-y-20 lg:space-y-24 pb-20 relative bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
-      {/* 1. CINEMATIC HERO SECTION (BRIGHT CLEAN CANVAS WITH FUCHSIA ACCENT) */}
-      <section className="relative min-h-[85vh] flex items-center pt-24 pb-10 sm:pt-32 sm:pb-12 overflow-hidden bg-white dark:bg-rak-slate-950 border-b border-slate-200 dark:border-white/10">
-        
-        {/* Subtle Light Ambient Mesh Orbs */}
-        <div className="hidden md:block absolute top-1/4 left-1/3 -translate-x-1/2 w-[700px] h-[450px] bg-rak-magenta/8 dark:bg-rak-magenta/15 rounded-full blur-[160px] pointer-events-none" />
-        <div className="hidden md:block absolute top-12 right-10 w-[550px] h-[400px] bg-rak-violet/8 dark:bg-rak-violet/15 rounded-full blur-[140px] pointer-events-none" />
-
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 w-full">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-12 items-center">
-            
-            {/* Left Content Column */}
-            <div className="lg:col-span-7 space-y-6 text-left">
-              
-              {/* Main Crisp Headline */}
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.1] text-left font-heading">
-                {headlineWords.map((word, i) => (
-                  <span key={i} className="inline-block mr-[0.24em]">
-                    {word}
-                  </span>
-                ))}
-                
-                <span className="inline-block text-left relative">
-                  <AnimatePresence mode="wait">
-                    <motion.span
-                      key={HERO_PHRASES[phraseIndex]}
-                      initial={{ opacity: 0, y: 14 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      exit={{ opacity: 0, y: -14 }}
-                      transition={{ duration: 0.5, ease: "easeOut" }}
-                      className="inline-block font-black"
-                    >
-                      <GradientShimmer gradient="sunrise" duration={6}>
-                        {HERO_PHRASES[phraseIndex]}
-                      </GradientShimmer>
-                    </motion.span>
-                  </AnimatePresence>
-                </span>
-              </h1>
-
-              {/* Subtitle */}
-              <p className="text-base sm:text-lg text-slate-600 dark:text-rak-slate-300 max-w-xl leading-relaxed font-normal text-left">
-                Brand architecture, high-impact media production, enterprise software, and performance marketing seamlessly integrated under one global powerhouse.
-              </p>
-
-              {/* Single Primary Action Button */}
-              <div className="pt-2">
-                <button
-                  onClick={() => {
-                    const el = document.getElementById('capabilities');
-                    if (el) {
-                      el.scrollIntoView({ behavior: 'smooth' });
-                    }
-                  }}
-                  className="relative inline-flex items-center justify-center px-8 py-4 text-xs font-extrabold uppercase tracking-widest text-white bg-rak-magenta rounded-full shadow-md hover:bg-rak-magenta-dark hover:scale-105 transition-all duration-300 group overflow-hidden cursor-pointer"
-                >
-                  <span className="relative z-10 flex items-center space-x-2">
-                    <span>Learn More</span>
-                    <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
-                  </span>
-                </button>
-              </div>
-
-            </div>
-
-            {/* Right Column: Clipped Media Gallery */}
-            <div className="lg:col-span-5 flex items-center justify-center">
-              <ClippedMediaGallery className="w-full shadow-2xl" />
-            </div>
-
-          </div>
-        </div>
-      </section>
+      {/* 1. ARTISTIC CINEMATIC SCROLL HERO SECTION */}
+      <CinematicHeroScroll onOpenPlanner={onOpenPlanner} setActiveTab={setActiveTab} />
 
       {/* 2. CLIENT BRANDS MARQUEE SCROLLER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
