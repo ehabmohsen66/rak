@@ -14,7 +14,7 @@ const chapters = [
   {
     id: '01',
     name: 'The Origin',
-    tag: 'ORIGIN • GROUND ZERO',
+    tag: '',
     subtitle: 'Where Vision Begins',
     videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/1.mp4',
     description: 'Brand architecture, high-impact media production, enterprise software, and performance marketing seamlessly integrated under one global powerhouse.',
@@ -259,12 +259,14 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
               className="max-w-4xl pointer-events-auto space-y-6 sm:space-y-8 text-left"
             >
               {/* Header Badge Line */}
-              <motion.div variants={fadeIn} className="flex items-center gap-3.5">
-                <div className="h-0.5 w-10 sm:w-14 bg-rak-magenta shadow-sm" />
-                <span className="text-[11px] sm:text-xs font-extrabold uppercase font-mono tracking-[0.28em] text-rak-magenta bg-rak-magenta/10 border border-rak-magenta/30 px-3 py-1 rounded-full backdrop-blur-md">
-                  {chapter.tag}
-                </span>
-              </motion.div>
+              {chapter.tag && (
+                <motion.div variants={fadeIn} className="flex items-center gap-3.5">
+                  <div className="h-0.5 w-10 sm:w-14 bg-rak-magenta shadow-sm" />
+                  <span className="text-[11px] sm:text-xs font-extrabold uppercase font-mono tracking-[0.28em] text-rak-magenta bg-rak-magenta/10 border border-rak-magenta/30 px-3 py-1 rounded-full backdrop-blur-md">
+                    {chapter.tag}
+                  </span>
+                </motion.div>
+              )}
 
               {/* Masked Title Reveal */}
               <div className="overflow-hidden py-1">
