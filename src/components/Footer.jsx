@@ -1,6 +1,6 @@
 import React from 'react';
 import { BrandLogo } from './BrandLogo';
-import { ArrowUpRight, Mail, MapPin } from 'lucide-react';
+import { ArrowUpRight, ArrowUp, Mail, MapPin } from 'lucide-react';
 import { OFFICES } from '../data/contentData';
 import { GenerativeMountainScene } from './GenerativeMountainScene';
 
@@ -91,6 +91,13 @@ export const Footer = ({
           <div className="flex items-center space-x-6">
             <span className="hover:text-slate-300 cursor-pointer transition-colors">Privacy Policy</span>
             <span className="hover:text-slate-300 cursor-pointer transition-colors">Terms of Engagement</span>
+            <button
+              onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+              className="inline-flex items-center space-x-1.5 text-slate-400 hover:text-rak-magenta font-mono uppercase tracking-wider text-[11px] font-bold transition-colors cursor-pointer group"
+            >
+              <span>Back to Top</span>
+              <ArrowUp className="w-3.5 h-3.5 group-hover:-translate-y-0.5 transition-transform" />
+            </button>
           </div>
         </div>
 

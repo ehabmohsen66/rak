@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Navbar from './components/Navbar';
 import Footer from './components/Footer';
+import ScrollToTop from './components/ScrollToTop';
 import ProjectModal from './components/ProjectModal';
 import JobApplicationModal from './components/JobApplicationModal';
 import ProjectEstimatorModal from './components/ProjectEstimatorModal';
@@ -328,6 +329,9 @@ export function App() {
         setActiveTab={setActiveTab}
         onOpenProjectPlanner={() => setPlannerOpen(true)}
       />
+
+      {/* Floating Scroll To Top Button */}
+      <ScrollToTop />
 
       {/* Modals & Readers */}
       {selectedProject && (
