@@ -52,28 +52,13 @@ const RAD = Math.PI / 180;
 
 const BEIRUT = { lat: 33.8938, lon: 35.5018 };
 
-/* Four regions RAK reaches. Each anchor is a real coordinate, and each
-   `cities` list is drawn as a small dot cluster so the region reads as
-   a territory rather than a single pin. Label positions are hand-placed
-   to stay clear of one another. */
+/* Three regions RAK reaches from Beirut (Europe, Africa, GCC).
+   Each anchor is a real coordinate, and each `cities` list is drawn
+   as a small dot cluster. Label positions are hand-placed. */
 const DESTINATIONS = [
-  {
-    name: 'Canada',
-    lat: 43.6532, lon: -79.3832,           // Toronto anchor
-    bow: 18,
-    label: [138, 249],
-    cities: [
-      { lat: 43.6532, lon: -79.3832 },     // Toronto
-      { lat: 45.5019, lon: -73.5674 },     // Montreal
-      { lat: 45.4215, lon: -75.6972 },     // Ottawa
-      { lat: 46.8139, lon: -71.2080 },     // Quebec City
-      { lat: 44.6488, lon: -63.5752 },     // Halifax
-    ],
-  },
   {
     name: 'Europe',
     lat: 50, lon: 10,                      // central Europe
-    bow: -12,
     label: [252, 292],
     cities: [
       { lat: 51.5074, lon: -0.1278 },      // London
@@ -87,7 +72,6 @@ const DESTINATIONS = [
   {
     name: 'Africa',
     lat: 2, lon: 20,                       // continental centroid
-    bow: 10,
     label: [272, 458],
     cities: [
       { lat: 30.0444, lon: 31.2357 },      // Cairo
@@ -101,7 +85,6 @@ const DESTINATIONS = [
   {
     name: 'GCC',
     lat: 24.0, lon: 50.5,                  // bloc centroid
-    bow: -10,
     label: [368, 386],
     cities: [
       { lat: 24.7136, lon: 46.6753 },      // Riyadh
@@ -164,43 +147,11 @@ const cross = (a, b) => [
   a[2] * b[0] - a[0] * b[2],
   a[0] * b[1] - a[1] * b[0],
 ];
-const unit = (v) => {
-  const m = Math.hypot(v[0], v[1], v[2]) || 1;
-  return [v[0] / m, v[1] / m, v[2] / m];
-};
-
-/* Route arc between two real coordinates.
-   `bow` swings the path sideways off the exact great circle. Beirut→Toronto
-   runs literally through central Europe, so without a fan the routes would
-   overlap and read as one chained line. Endpoints stay exact either way. */
-const buildArc = (a, b, bow = 0, steps = 72) => {
-  const va = toVec(a.lat, a.lon);
-  const vb = toVec(b.lat, b.lon);
-  const omega = Math.acos(Math.max(-1, Math.min(1, dot(va, vb))));
-  const height = 0.04 + 0.22 * (omega / Math.PI);
-
-  const n = unit(cross(va, vb));
-  const mid = unit([va[0] + vb[0], va[1] + vb[1], va[2] + vb[2]]);
-  const f = bow * RAD;
-  const m = unit([
-    mid[0] * Math.cos(f) + n[0] * Math.sin(f),
-    mid[1] * Math.cos(f) + n[1] * Math.sin(f),
-    mid[2] * Math.cos(f) + n[2] * Math.sin(f),
-  ]);
-  const w = [m[0] * 1.35, m[1] * 1.35, m[2] * 1.35];
-
-  const pts = [];
-  for (let i = 0; i <= steps; i++) {
-    const t = i / steps;
-    const u = 1 - t;
-    const v = unit([
-      u * u * va[0] + 2 * t * u * w[0] + t * t * vb[0],
-      u * u * va[1] + 2 * t * u * w[1] + t * t * vb[1],
-      u * u * va[2] + 2 * t * u * w[2] + t * t * vb[2],
-    ]);
-    pts.push(project(v, 1 + height * Math.sin(Math.PI * t)));
-  }
-  return 'M' + pts.map((p) => `${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join('L');
+/* Straight route line between two projected coordinates */
+const buildStraightLine = (a, b) => {
+  const p1 = projectLatLon(a.lat, a.lon);
+  const p2 = projectLatLon(b.lat, b.lon);
+  return `M${p1.x.toFixed(1)} ${p1.y.toFixed(1)} L${p2.x.toFixed(1)} ${p2.y.toFixed(1)}`;
 };
 
 const GRATICULE = buildGraticule();
@@ -210,7 +161,7 @@ const NODES = DESTINATIONS.map((c) => ({
   ...projectLatLon(c.lat, c.lon),
   dots: c.cities.map((p) => projectLatLon(p.lat, p.lon)),
 }));
-const ARCS = DESTINATIONS.map((c, i) => ({ name: c.name, d: buildArc(BEIRUT, c, c.bow), delay: i * 2.2 }));
+const ARCS = DESTINATIONS.map((c, i) => ({ name: c.name, d: buildStraightLine(BEIRUT, c), delay: i * 2.2 }));
 
 const PILLARS = [
   { k: '01', label: 'Resilience' },
@@ -416,7 +367,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             </div>
           </div>
 
-          {/* ───────────── Globe: Lebanon → Canada + GCC ───────────── */}
+          {/* ───────────── Globe: Lebanon → Europe, Africa + GCC ───────────── */}
           <div
             className="lg:col-span-5 relative min-h-[400px] sm:min-h-[460px] lg:min-h-0 overflow-hidden"
             style={{ backgroundColor: C.pageBg, borderLeft: `1px solid ${C.border}` }}
@@ -426,7 +377,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               preserveAspectRatio="xMidYMid slice"
               className="absolute inset-0 w-full h-full"
               role="img"
-              aria-label="Globe showing routes from Beirut, Lebanon to Canada, Europe, Africa and the GCC"
+              aria-label="Globe showing routes from Beirut, Lebanon to Europe, Africa and the GCC"
             >
               <defs>
                 <pattern id="rakGrid" width="42" height="42" patternUnits="userSpaceOnUse">
@@ -529,7 +480,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               </div>
 
               <div className="absolute right-6 sm:right-8 bottom-6 sm:bottom-8" style={{ color: C.muted }}>
-                04 Regions
+                03 Regions
               </div>
 
               <div className="absolute left-6 sm:left-8 bottom-6 sm:bottom-8 flex items-center gap-2.5" style={{ color: C.body }}>
