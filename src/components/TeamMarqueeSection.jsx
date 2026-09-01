@@ -50,24 +50,24 @@ export const TeamMarqueeSection = () => {
         </div>
 
         {/* Featured Official Team Photo */}
-        <div className="relative w-full max-w-5xl mx-auto">
+        <div className="relative w-full max-w-4xl mx-auto">
           <SpotlightCard
             spotlightColor="rgba(236, 0, 140, 0.2)"
             borderColor="rgba(236, 0, 140, 0.3)"
-            className="p-3 sm:p-4 bg-slate-50 dark:bg-rak-slate-950/90 border border-slate-200 dark:border-rak-slate-800 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl group"
+            className="p-2.5 sm:p-4 bg-slate-50 dark:bg-rak-slate-950/90 border border-slate-200 dark:border-rak-slate-800 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl group"
           >
-            <div className="relative w-full overflow-hidden rounded-2xl bg-slate-900 flex flex-col items-center">
+            <div className="relative w-full max-h-[80vh] overflow-hidden rounded-2xl bg-slate-950 flex flex-col items-center justify-center">
               <img
                 src="/rak-team.webp"
                 alt="RAK 4 Creative Team"
-                className="w-full h-auto object-contain rounded-2xl transition-transform duration-700 ease-out filter drop-shadow-2xl"
+                className="w-full h-auto max-h-[78vh] object-contain rounded-2xl transition-transform duration-700 ease-out filter drop-shadow-2xl"
                 loading="lazy"
                 decoding="async"
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/70 via-transparent to-transparent pointer-events-none rounded-2xl" />
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent pointer-events-none rounded-2xl" />
               
               {/* Bottom Caption Overlay */}
-              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-xl bg-slate-900/90 dark:bg-rak-slate-950/80 backdrop-blur-md border border-rak-magenta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10 shadow-xl">
+              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-xl bg-slate-900/90 dark:bg-rak-slate-950/85 backdrop-blur-md border border-rak-magenta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10 shadow-xl">
                 <div>
                   <span className="text-[10px] font-mono text-rak-magenta uppercase tracking-widest font-extrabold">OFFICIAL TEAM PHOTOGRAPH</span>
                   <h3 className="text-xs sm:text-sm font-bold text-white font-heading">The RAK 4 Creative Powerhouse</h3>

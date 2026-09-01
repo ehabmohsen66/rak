@@ -89,7 +89,7 @@ export const AboutHero = ({ onOpenPlanner }) => {
             {/* CREATIVE */}
             <div className="w-full flex justify-center relative z-20">
               <h1 
-                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
+                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-slate-900 dark:text-white m-0 p-0 uppercase"
                 style={{ 
                   fontFamily: '"Arial Black", Impact, sans-serif',
                   textShadow: shadowStyle
@@ -102,7 +102,7 @@ export const AboutHero = ({ onOpenPlanner }) => {
             {/* AGENCY */}
             <div className="w-full flex justify-center sm:justify-start sm:pl-[12%] md:pl-[28%] relative z-30">
               <h1 
-                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-white m-0 p-0 uppercase"
+                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-slate-900 dark:text-white m-0 p-0 uppercase"
                 style={{ 
                   fontFamily: '"Arial Black", Impact, sans-serif',
                   textShadow: shadowStyle
