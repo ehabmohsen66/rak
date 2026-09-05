@@ -1,0 +1,8 @@
+---
+deployment:
+  tasks:
+    # 1. Target cPanel document root (Replace USERNAME with your actual cPanel username if $USER is not set)
+    - export DEPLOYPATH=/home/$USER/public_html/
+    # 2. Deploy all built production files into public_html
+    - /bin/cp -R dist/* $DEPLOYPATH
+    - /bin/cp dist/.htaccess $DEPLOYPATH

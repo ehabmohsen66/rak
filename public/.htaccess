@@ -1,0 +1,108 @@
+# ==============================================================================
+# RAK 4 CREATIVE - cPanel Apache Configuration (.htaccess)
+# ==============================================================================
+
+# Disable directory browsing & multi-views
+Options -Indexes -MultiViews
+
+# Default charset
+AddDefaultCharset UTF-8
+
+# ------------------------------------------------------------------------------
+# 1. SPA ROUTING & HTTPS REDIRECTION (mod_rewrite)
+# ------------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # Enforce HTTPS (Uncomment if your cPanel domain has SSL active)
+  # RewriteCond %{HTTPS} !=on
+  # RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
+  # RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+
+  # Serve real files or directories if they exist
+  RewriteCond %{REQUEST_FILENAME} -f [OR]
+  RewriteCond %{REQUEST_FILENAME} -d
+  RewriteRule ^ - [L]
+
+  # All other requests route to index.html for client-side React SPA routing
+  RewriteRule ^ index.html [L]
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 2. MIME TYPES (mod_mime)
+# ------------------------------------------------------------------------------
+<IfModule mod_mime.c>
+  AddType application/javascript          js mjs
+  AddType text/css                        css
+  AddType image/svg+xml                   svg svgz
+  AddType image/webp                      webp
+  AddType video/mp4                       mp4
+  AddType font/woff2                      woff2
+  AddType font/woff                       woff
+  AddType font/ttf                        ttf
+  AddType application/json                json
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 3. GZIP / BROTLI COMPRESSION (mod_deflate)
+# ------------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType text/css
+  AddOutputFilterByType application/javascript
+  AddOutputFilterByType application/x-javascript
+  AddOutputFilterByType application/json
+  AddOutputFilterByType application/xml
+  AddOutputFilterByType image/svg+xml
+  AddOutputFilterByType font/woff2
+  AddOutputFilterByType font/woff
+  AddOutputFilterByType font/ttf
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 4. BROWSER CACHING (mod_expires & mod_headers)
+# ------------------------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+
+  # HTML documents - Never cache long to ensure new app builds update instantly
+  ExpiresByType text/html "access plus 0 seconds"
+
+  # CSS & JS with Vite cache busting hashes
+  ExpiresByType text/css "access plus 1 year"
+  ExpiresByType application/javascript "access plus 1 year"
+  ExpiresByType application/x-javascript "access plus 1 year"
+
+  # Media & Images
+  ExpiresByType image/jpg "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType video/mp4 "access plus 1 year"
+
+  # Fonts
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+</IfModule>
+
+# ------------------------------------------------------------------------------
+# 5. SECURITY HEADERS
+# ------------------------------------------------------------------------------
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  Header set X-XSS-Protection "1; mode=block"
+  Header set X-Frame-Options "SAMEORIGIN"
+  Header set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+# Block access to hidden dotfiles (like .git, .env)
+<FilesMatch "^\.">
+  Order allow,deny
+  Deny from all
+</FilesMatch>
