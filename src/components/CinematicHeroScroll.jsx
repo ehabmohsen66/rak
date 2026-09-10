@@ -14,7 +14,8 @@ const chapters = [
   {
     id: '01',
     name: 'The Origin',
-    videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/1.mp4',
+    videoUrl: '/videos/Commercial Video.mp4',
+    poster: '/Lebanon-2_0.jpg',
     description: 'Brand architecture, cinematic media production, enterprise software, and performance marketing under one global powerhouse.',
     actionText: 'Learn More',
     actionType: 'scroll-capabilities'
@@ -22,7 +23,8 @@ const chapters = [
   {
     id: '02',
     name: 'Velocity',
-    videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/2.mp4?updatedAt=1766414784088',
+    videoUrl: '/videos/Option 2.mp4',
+    poster: '/blog-cover.png',
     description: 'Bespoke digital platforms, commercial 3D motion, and high-conversion ad engines accelerating bold brands into orbit.',
     actionText: 'Our Capabilities',
     actionType: 'scroll-capabilities'
@@ -30,7 +32,8 @@ const chapters = [
   {
     id: '03',
     name: 'Immersion',
-    videoUrl: 'https://ik.imagekit.io/kqmrslzuq/Videos/3.mp4?updatedAt=1766415070663',
+    videoUrl: '/videos/Hotel building.mp4',
+    poster: '/Lebanon-2_0.jpg',
     description: 'Relentless creativity and precision engineering building unforgettable brand experiences from Beirut to the world.',
     actionText: 'Start a Project',
     actionType: 'open-planner'
@@ -93,11 +96,13 @@ const VideoBackground = ({ currentChapterIndex }) => {
         >
           <video
             src={chapter.videoUrl}
+            poster={chapter.poster}
             className="h-full w-full object-cover scale-105"
             autoPlay
             muted
             loop
             playsInline
+            preload="auto"
           />
           {/* Subtle clean cinematic vignette & gradient overlays */}
           <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/50 to-slate-950/20" />
