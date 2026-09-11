@@ -14,7 +14,7 @@ const chapters = [
   {
     id: '01',
     name: 'The Origin',
-    videoUrl: '/videos/Commercial Video.mp4',
+    videoUrl: '/videos/hero-1.mp4',
     poster: '/Lebanon-2_0.jpg',
     description: 'Brand architecture, cinematic media production, enterprise software, and performance marketing under one global powerhouse.',
     actionText: 'Learn More',
@@ -23,7 +23,7 @@ const chapters = [
   {
     id: '02',
     name: 'Velocity',
-    videoUrl: '/videos/Option 2.mp4',
+    videoUrl: '/videos/hero-2.mp4',
     poster: '/blog-cover.png',
     description: 'Bespoke digital platforms, commercial 3D motion, and high-conversion ad engines accelerating bold brands into orbit.',
     actionText: 'Our Capabilities',
@@ -32,7 +32,7 @@ const chapters = [
   {
     id: '03',
     name: 'Immersion',
-    videoUrl: '/videos/Hotel building.mp4',
+    videoUrl: '/videos/hero-3.mp4',
     poster: '/Lebanon-2_0.jpg',
     description: 'Relentless creativity and precision engineering building unforgettable brand experiences from Beirut to the world.',
     actionText: 'Start a Project',
