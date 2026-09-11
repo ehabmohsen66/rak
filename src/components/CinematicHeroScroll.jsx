@@ -15,7 +15,6 @@ const chapters = [
     id: '01',
     name: 'The Origin',
     videoUrl: '/videos/hero-1.mp4',
-    poster: '/Lebanon-2_0.jpg',
     description: 'Brand architecture, cinematic media production, enterprise software, and performance marketing under one global powerhouse.',
     actionText: 'Learn More',
     actionType: 'scroll-capabilities'
@@ -24,7 +23,6 @@ const chapters = [
     id: '02',
     name: 'Velocity',
     videoUrl: '/videos/hero-2.mp4',
-    poster: '/blog-cover.png',
     description: 'Bespoke digital platforms, commercial 3D motion, and high-conversion ad engines accelerating bold brands into orbit.',
     actionText: 'Our Capabilities',
     actionType: 'scroll-capabilities'
@@ -33,7 +31,6 @@ const chapters = [
     id: '03',
     name: 'Immersion',
     videoUrl: '/videos/hero-3.mp4',
-    poster: '/Lebanon-2_0.jpg',
     description: 'Relentless creativity and precision engineering building unforgettable brand experiences from Beirut to the world.',
     actionText: 'Start a Project',
     actionType: 'open-planner'
@@ -96,7 +93,6 @@ const VideoBackground = ({ currentChapterIndex }) => {
         >
           <video
             src={chapter.videoUrl}
-            poster={chapter.poster}
             className="h-full w-full object-cover scale-105"
             autoPlay
             muted
