@@ -61,6 +61,19 @@ export const AboutHero = ({ onOpenPlanner }) => {
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white flex flex-col font-sans selection:bg-rak-magenta selection:text-white relative overflow-hidden w-full transition-colors duration-300">
       
+      {/* Background Video Banner */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+        <video
+          src="/videos/about-banner.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="h-full w-full object-cover opacity-25 dark:opacity-40 scale-105"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/85 via-slate-50/65 to-slate-50 dark:from-rak-slate-950/85 dark:via-rak-slate-950/65 dark:to-rak-slate-950" />
+      </div>
+
       {/* Background Grid */}
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.05)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0"></div>
 

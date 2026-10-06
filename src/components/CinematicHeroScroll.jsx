@@ -14,7 +14,7 @@ const chapters = [
   {
     id: '01',
     name: 'The Origin',
-    videoUrl: '/videos/hero-1.mp4',
+    videoUrl: '/videos/homepage-banner.mp4',
     description: 'Brand architecture, cinematic media production, enterprise software, and performance marketing under one global powerhouse.',
     actionText: 'Learn More',
     actionType: 'scroll-capabilities'

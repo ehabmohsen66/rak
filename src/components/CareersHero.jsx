@@ -5,15 +5,18 @@ export function CareersHero({ onScrollToRoles }) {
   return (
     <section className="relative min-h-[85vh] sm:min-h-screen w-full overflow-hidden bg-rak-slate-950 flex flex-col justify-end pb-16 sm:pb-24 pt-28">
       
-      {/* Background image */}
-      <div
-        className="absolute inset-0 bg-center bg-cover opacity-75"
-        style={{
-          backgroundImage:
-            "url(https://images.unsplash.com/photo-1541746972996-4e0b0f43e02a)",
-        }}
-      >
+      {/* Background Video Banner */}
+      <div className="absolute inset-0 overflow-hidden bg-slate-950">
+        <video
+          src="/videos/careers-banner.mp4"
+          autoPlay
+          muted
+          loop
+          playsInline
+          className="h-full w-full object-cover opacity-80 scale-105"
+        />
         <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/70 via-rak-slate-950/40 to-rak-slate-950" />
+        <div className="absolute inset-0 bg-gradient-to-r from-rak-slate-950/80 via-transparent to-rak-slate-950/40" />
       </div>
 
       {/* Hero Main Content */}
