@@ -63,14 +63,16 @@ const VideoBackground = () => {
   return (
     <div className="absolute inset-0 h-full w-full overflow-hidden bg-slate-950">
       <video
-        src={chapter.videoUrl}
-        className="h-full w-full object-cover scale-105"
         autoPlay
         muted
         loop
         playsInline
         preload="auto"
-      />
+        className="h-full w-full object-cover scale-105"
+      >
+        <source src="/videos/homepage-banner.mp4" type="video/mp4" />
+        <source src="/videos/RAK4-WebsiteHomepage banner-021026.mp4" type="video/mp4" />
+      </video>
       {/* Subtle clean cinematic vignette & gradient overlays */}
       <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/50 to-slate-950/20" />
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-slate-950/30" />

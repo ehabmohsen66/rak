@@ -8,13 +8,16 @@ export function CareersHero({ onScrollToRoles }) {
       {/* Background Video Banner */}
       <div className="absolute inset-0 overflow-hidden bg-slate-950">
         <video
-          src="/videos/careers-banner.mp4"
           autoPlay
           muted
           loop
           playsInline
+          preload="auto"
           className="h-full w-full object-cover opacity-80 scale-105"
-        />
+        >
+          <source src="/videos/careers-banner.mp4" type="video/mp4" />
+          <source src="/videos/RAK4-WebsiteCareer Page banner-021026.mp4" type="video/mp4" />
+        </video>
         <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/70 via-rak-slate-950/40 to-rak-slate-950" />
         <div className="absolute inset-0 bg-gradient-to-r from-rak-slate-950/80 via-transparent to-rak-slate-950/40" />
       </div>

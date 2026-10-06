@@ -64,18 +64,21 @@ export const AboutHero = ({ onOpenPlanner }) => {
       {/* Background Video Banner */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
         <video
-          src="/videos/about-banner.mp4"
           autoPlay
           muted
           loop
           playsInline
-          className="h-full w-full object-cover opacity-25 dark:opacity-40 scale-105"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/85 via-slate-50/65 to-slate-50 dark:from-rak-slate-950/85 dark:via-rak-slate-950/65 dark:to-rak-slate-950" />
+          preload="auto"
+          className="h-full w-full object-cover opacity-60 dark:opacity-75 scale-105"
+        >
+          <source src="/videos/about-banner.mp4" type="video/mp4" />
+          <source src="/videos/RAK4-WebsiteAbout Page banner-021026.mp4" type="video/mp4" />
+        </video>
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/75 via-slate-50/45 to-slate-50/90 dark:from-rak-slate-950/75 dark:via-rak-slate-950/45 dark:to-rak-slate-950/90" />
       </div>
 
       {/* Background Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.05)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.05)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff0a_1px,transparent_1px),linear-gradient(to_bottom,#ffffff0a_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0"></div>
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0"></div>
 
       {/* Hero Section */}
       <main className="relative z-10 pt-16 pb-4 sm:pb-8 md:pt-20 md:pb-12 px-4 flex flex-col items-center justify-center w-full max-w-[1440px] mx-auto">
