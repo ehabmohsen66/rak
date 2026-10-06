@@ -1,159 +1,29 @@
 import React from 'react';
-import { motion } from 'framer-motion';
-import { MinimalistHero } from './MinimalistHero';
-import { useIsMobile } from '../lib/useMobileDetect';
 
-// --- Custom SVG Components for Hand-Drawn Accents ---
-
-const ArrowMagentaLeft = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full text-rak-magenta stroke-current overflow-visible" fill="none" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M10,90 C 10,40 40,20 60,50 C 70,65 80,75 95,70" />
-    <path d="M80,55 L95,70 L85,85" />
-  </svg>
-);
-
-const ArrowMagentaRight = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full text-rak-magenta stroke-current overflow-visible" fill="none" strokeWidth="6" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M90,10 C 80,60 60,80 40,60 C 20,40 40,20 60,30 C 80,40 70,70 50,80" />
-    <path d="M65,75 L50,80 L55,65" />
-  </svg>
-);
-
-const ArrowWhite1 = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full text-white stroke-current overflow-visible" fill="none" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20,80 Q 40,20 80,40" />
-    <path d="M60,20 L80,40 L50,60" />
-  </svg>
-);
-
-const ArrowWhite2 = () => (
-  <svg viewBox="0 0 100 100" className="w-full h-full text-white stroke-current overflow-visible" fill="none" strokeWidth="5" strokeLinecap="round" strokeLinejoin="round">
-    <path d="M20,80 Q 40,20 80,40" />
-    <path d="M60,20 L80,40 L50,60" />
-  </svg>
-);
-
-const CircularBadge = () => (
-  <div className="relative w-28 h-28 md:w-36 md:h-36 bg-rak-magenta rounded-full flex items-center justify-center shadow-magenta-glow rotate-12 hover:scale-105 transition-transform cursor-pointer border-[3px] border-white/10">
-    <div className="absolute inset-1 animate-[spin_12s_linear_infinite]">
-      <svg viewBox="0 0 100 100" className="w-full h-full">
-        <path id="circlePathAbout" d="M 50, 50 m -36, 0 a 36,36 0 1,1 72,0 a 36,36 0 1,1 -72,0" fill="none" />
-        <text className="text-[10px] font-extrabold tracking-[0.18em] uppercase" fill="white">
-          <textPath href="#circlePathAbout" startOffset="0%">
-            RAK4CREATIVE • BOLD CREATIVITY • TECH MAGIC • 
-          </textPath>
-        </text>
-      </svg>
-    </div>
-    <div className="absolute inset-0 flex items-center justify-center">
-      <svg viewBox="0 0 100 100" className="w-10 h-10 text-white stroke-current overflow-visible" fill="none" strokeWidth="8" strokeLinecap="round" strokeLinejoin="round">
-        <path d="M20,80 Q 40,50 30,30 T 80,20" />
-        <path d="M60,10 L80,20 L70,40" />
-      </svg>
-    </div>
-  </div>
-);
 
 export const AboutHero = ({ onOpenPlanner }) => {
-  const isMobile = useIsMobile();
-  const shadowStyle = isMobile ? '2px 2px 0 #5A0034' : '2px 2px 0 #5A0034, 4px 4px 0 #5A0034, 6px 6px 0 #5A0034, 8px 8px 0 #5A0034';
-
   return (
-    <div className="min-h-screen bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white flex flex-col font-sans selection:bg-rak-magenta selection:text-white relative overflow-hidden w-full transition-colors duration-300">
+    <div className="w-full bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white flex flex-col font-sans relative overflow-hidden transition-colors duration-300">
       
-      {/* Background Video Banner */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+      {/* 1. Full Video Banner Showcase */}
+      <section className="relative w-full aspect-[16/9] sm:aspect-[21/9] min-h-[50vh] sm:min-h-[65vh] max-h-[85vh] overflow-hidden bg-slate-950 flex items-center justify-center shadow-2xl">
         <video
           autoPlay
           muted
           loop
           playsInline
           preload="auto"
-          className="h-full w-full object-cover opacity-60 dark:opacity-75 scale-105"
+          className="w-full h-full object-cover"
         >
           <source src="/videos/about-banner.mp4" type="video/mp4" />
           <source src="/videos/RAK4-WebsiteAbout Page banner-021026.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-50/75 via-slate-50/45 to-slate-50/90 dark:from-rak-slate-950/75 dark:via-rak-slate-950/45 dark:to-rak-slate-950/90" />
-      </div>
+        {/* Subtle cinematic gradient framing */}
+        <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/40 pointer-events-none" />
+      </section>
 
-      {/* Background Grid */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.03)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,#ffffff05_1px,transparent_1px),linear-gradient(to_bottom,#ffffff05_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0"></div>
-
-      {/* Hero Section */}
-      <main className="relative z-10 pt-16 pb-4 sm:pb-8 md:pt-20 md:pb-12 px-4 flex flex-col items-center justify-center w-full max-w-[1440px] mx-auto">
-        
-        {/* Massive Typography & Elements Container */}
-        <div className="relative w-full max-w-5xl mx-auto flex flex-col items-center justify-center text-center z-10 mt-2 mb-4 sm:mb-8">
-          
-          {/* Text Stack */}
-          <div className="w-full flex flex-col items-center relative z-10 space-y-1 md:space-y-2">
-            
-            {/* #RAK4 */}
-            <div className="w-full flex justify-center sm:justify-start sm:pl-[8%] md:pl-[20%] relative z-30">
-              <h1 
-                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-rak-magenta m-0 p-0 uppercase"
-                style={{ 
-                  fontFamily: '"Arial Black", Impact, sans-serif',
-                  textShadow: shadowStyle
-                }}
-              >
-                #RAK4
-              </h1>
-            </div>
-            
-            {/* CREATIVE */}
-            <div className="w-full flex justify-center relative z-20">
-              <h1 
-                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-slate-900 dark:text-white m-0 p-0 uppercase"
-                style={{ 
-                  fontFamily: '"Arial Black", Impact, sans-serif',
-                  textShadow: shadowStyle
-                }}
-              >
-                CREATIVE
-              </h1>
-            </div>
-            
-            {/* AGENCY */}
-            <div className="w-full flex justify-center sm:justify-start sm:pl-[12%] md:pl-[28%] relative z-30">
-              <h1 
-                className="text-[clamp(2.75rem,11.5vw,180px)] font-black leading-[0.85] tracking-tighter text-slate-900 dark:text-white m-0 p-0 uppercase"
-                style={{ 
-                  fontFamily: '"Arial Black", Impact, sans-serif',
-                  textShadow: shadowStyle
-                }}
-              >
-                AGENCY
-              </h1>
-            </div>
-
-          </div>
-
-          {/* Absolute Overlays (Arrows, Badge) */}
-          <div className="absolute inset-0 w-full h-full pointer-events-none">
-            
-            {/* Decorative Arrow Left */}
-            <div className="hidden sm:block absolute bottom-[0%] left-[0%] md:left-[6%] w-16 h-16 md:w-28 md:h-28 z-20">
-              <ArrowMagentaLeft />
-            </div>
-
-            {/* Decorative Arrow Right */}
-            <div className="hidden sm:block absolute top-[5%] right-[0%] md:right-[8%] w-16 h-16 md:w-28 md:h-28 z-20">
-              <ArrowMagentaRight />
-            </div>
-
-            {/* Circular Badge - Positioned cleanly inside right edge */}
-            <div className="absolute -bottom-4 right-1 sm:-bottom-8 sm:right-0 md:-right-8 z-20 pointer-events-auto scale-75 sm:scale-90 md:scale-100 origin-bottom-right">
-              <CircularBadge />
-            </div>
-
-          </div>
-        </div>
-      </main>
-
-      {/* Bottom Features Section */}
-      <section className="bg-white dark:bg-rak-slate-900 border-t border-slate-200 dark:border-rak-slate-800 text-slate-900 dark:text-white rounded-t-[2.5rem] md:rounded-t-[3.5rem] px-4 sm:px-6 py-10 md:px-10 md:py-16 relative z-20 shadow-2xl mt-auto w-full">
+      {/* 2. Bottom Features Section */}
+      <section className="bg-white dark:bg-rak-slate-900 border-t border-slate-200 dark:border-rak-slate-800 text-slate-900 dark:text-white rounded-t-[2.5rem] md:rounded-t-[3.5rem] px-4 sm:px-6 py-10 md:px-10 md:py-16 relative z-20 shadow-2xl w-full -mt-8 sm:-mt-12">
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8">
           
           {/* Card 1 */}
@@ -179,10 +49,6 @@ export const AboutHero = ({ onOpenPlanner }) => {
                 100% CRAFT
               </div>
             </div>
-
-            <div className="hidden md:block absolute -right-12 bottom-8 w-16 h-16 z-30 opacity-40">
-              <ArrowWhite1 />
-            </div>
           </div>
 
           {/* Card 2 */}
@@ -201,10 +67,6 @@ export const AboutHero = ({ onOpenPlanner }) => {
               <div className="font-bold text-[10px] text-slate-900 dark:text-white">
                 ONE STOP
               </div>
-            </div>
-
-            <div className="hidden md:block absolute -right-12 bottom-8 w-16 h-16 z-30 opacity-40">
-              <ArrowWhite2 />
             </div>
           </div>
 
