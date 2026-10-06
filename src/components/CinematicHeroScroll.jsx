@@ -167,14 +167,6 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
         </motion.div>
       </div>
 
-      {/* Chapter Indicator Tag (without next button) */}
-      <div className="absolute bottom-8 left-6 sm:left-12 md:left-20 lg:left-28 z-30 pointer-events-none">
-        <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-slate-950/60 backdrop-blur-md border border-white/10 text-slate-300 text-[11px] font-mono">
-          <span className="text-rak-magenta font-bold">{chapter.id}</span>
-          <span className="text-white/30">/</span>
-          <span className="text-white font-medium">{chapter.name}</span>
-        </div>
-      </div>
     </section>
   );
 };
