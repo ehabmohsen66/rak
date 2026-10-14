@@ -1,10 +1,8 @@
 import React, { useEffect, useRef } from "react";
 import * as THREE from "three";
-import { useIsMobile } from "../lib/useMobileDetect";
 
 export function WebGLShader({ className = "" }) {
   const canvasRef = useRef(null);
-  const isMobile = useIsMobile();
   const sceneRef = useRef({
     scene: null,
     camera: null,
@@ -13,17 +11,6 @@ export function WebGLShader({ className = "" }) {
     uniforms: null,
     animationId: null,
   });
-
-  if (isMobile) {
-    return (
-      <div className={`absolute inset-0 w-full h-full block pointer-events-none z-0 overflow-hidden bg-rak-slate-950 ${className}`}>
-        <div className="absolute inset-0 bg-gradient-to-br from-rak-slate-950 via-rak-slate-900 to-rak-slate-950" />
-        <div className="absolute top-1/4 left-1/4 w-[300px] h-[300px] bg-rak-magenta/20 rounded-full blur-[80px] animate-pulse" />
-        <div className="absolute bottom-1/3 right-1/4 w-[250px] h-[250px] bg-rak-cyan/20 rounded-full blur-[70px] animate-pulse" style={{ animationDelay: '1.5s' }} />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_50%,#000_70%,transparent_100%)]" />
-      </div>
-    );
-  }
 
   useEffect(() => {
     if (!canvasRef.current) return;
@@ -38,36 +25,61 @@ export function WebGLShader({ className = "" }) {
       }
     `;
 
+    // Brand-aligned Fuchsia (#EC008C), Rose (#C80074), and Crisp White silk light waves
     const fragmentShader = `
       precision highp float;
       uniform vec2 resolution;
       uniform float time;
-      uniform float xScale;
-      uniform float yScale;
-      uniform float distortion;
 
       void main() {
-        vec2 p = (gl_FragCoord.xy * 2.0 - resolution) / min(resolution.x, resolution.y);
-        
-        float d = length(p) * distortion;
-        
-        float rx = p.x * (1.0 + d);
-        float gx = p.x;
-        float bx = p.x * (1.0 - d);
+        vec2 uv = gl_FragCoord.xy / resolution.xy;
+        vec2 p = (gl_FragCoord.xy * 2.0 - resolution.xy) / min(resolution.x, resolution.y);
 
-        float r = 0.05 / abs(p.y + sin((rx + time) * xScale) * yScale);
-        float g = 0.05 / abs(p.y + sin((gx + time) * xScale) * yScale);
-        float b = 0.05 / abs(p.y + sin((bx + time) * xScale) * yScale);
-        
-        gl_FragColor = vec4(r, g, b, 1.0);
+        // Base deep obsidian charcoal (#07080B)
+        vec3 baseBg = vec3(0.027, 0.031, 0.043);
+        vec3 rakMagenta = vec3(0.925, 0.0, 0.549);   // #EC008C
+        vec3 rakRose    = vec3(0.784, 0.0, 0.455);   // #C80074
+        vec3 rakLight   = vec3(1.0, 0.55, 0.82);     // Soft luminous pink-white
+        vec3 pureWhite  = vec3(1.0, 1.0, 1.0);
+
+        // Multi-layered flowing silk ribbons across the full canvas
+        float w1 = sin(p.x * 1.35 + time * 0.85 + cos(p.x * 0.7 - time * 0.4) * 0.45) * 0.38;
+        float w2 = sin(p.x * 1.85 - time * 0.65 + sin(p.x * 0.9 + time * 0.5) * 0.35) * 0.44 - 0.12;
+        float w3 = cos(p.x * 1.10 + time * 0.55) * 0.32 + 0.15;
+
+        float d1 = abs(p.y - w1);
+        float d2 = abs(p.y - w2);
+        float d3 = abs(p.y - w3);
+
+        // Soft glowing silk bands + crisp core filament
+        float ribbon1 = 0.028 / (d1 + 0.065);
+        float core1   = 0.004 / (d1 * d1 + 0.008);
+
+        float ribbon2 = 0.024 / (d2 + 0.075);
+        float ribbon3 = 0.018 / (d3 + 0.095);
+
+        // Ambient radial brand aura
+        float radialGlow = exp(-length(p * vec2(0.65, 1.15)) * 1.45) * 0.32;
+
+        vec3 col = baseBg;
+        col += rakMagenta * (ribbon1 * 0.65 + radialGlow);
+        col += rakRose * (ribbon2 * 0.55 + ribbon3 * 0.45);
+        col += mix(rakLight, pureWhite, 0.6) * (core1 * 0.22);
+
+        // Smooth tone mapping so highlights stay rich fuchsia & white without harsh clipping
+        col = col / (1.0 + col * 0.35);
+
+        gl_FragColor = vec4(col, 1.0);
       }
     `;
 
+    let resizeObserver;
+
     const initScene = () => {
       refs.scene = new THREE.Scene();
-      refs.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true });
-      refs.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
-      refs.renderer.setClearColor(new THREE.Color(0x030712), 1);
+      refs.renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: "high-performance" });
+      refs.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      refs.renderer.setClearColor(new THREE.Color(0x07080b), 1);
 
       refs.camera = new THREE.OrthographicCamera(-1, 1, 1, -1, 0, -1);
 
@@ -77,9 +89,6 @@ export function WebGLShader({ className = "" }) {
       refs.uniforms = {
         resolution: { value: [parentWidth, parentHeight] },
         time: { value: 0.0 },
-        xScale: { value: 1.0 },
-        yScale: { value: 0.5 },
-        distortion: { value: 0.05 },
       };
 
       const position = [
@@ -109,7 +118,7 @@ export function WebGLShader({ className = "" }) {
     };
 
     const animate = () => {
-      if (refs.uniforms) refs.uniforms.time.value += 0.01;
+      if (refs.uniforms) refs.uniforms.time.value += 0.012;
       if (refs.renderer && refs.scene && refs.camera) {
         refs.renderer.render(refs.scene, refs.camera);
       }
@@ -127,10 +136,15 @@ export function WebGLShader({ className = "" }) {
     initScene();
     animate();
     window.addEventListener("resize", handleResize);
+    if (typeof ResizeObserver !== "undefined" && canvas.parentElement) {
+      resizeObserver = new ResizeObserver(() => handleResize());
+      resizeObserver.observe(canvas.parentElement);
+    }
 
     return () => {
       if (refs.animationId) cancelAnimationFrame(refs.animationId);
       window.removeEventListener("resize", handleResize);
+      if (resizeObserver) resizeObserver.disconnect();
       if (refs.mesh) {
         refs.scene?.remove(refs.mesh);
         refs.mesh.geometry.dispose();

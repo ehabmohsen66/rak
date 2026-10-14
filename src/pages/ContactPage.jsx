@@ -34,8 +34,11 @@ export const ContactPage = ({ onOpenPlanner }) => {
   return (
     <div className="pb-16 space-y-16 sm:space-y-24 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
-      {/* FULLSCREEN CINEMATIC VIDEO & WORDS PULL UP HERO */}
-      <PrismaHero />
+      {/* ON-BRAND RAK4CREATIVE EXECUTIVE CONTACT HERO */}
+      <PrismaHero
+        onScrollToForm={() => formRef.current?.scrollIntoView({ behavior: 'smooth' })}
+        onOpenPlanner={onOpenPlanner}
+      />
 
       {/* CONTACT FORM & DIRECT INFO */}
       <section ref={formRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-6">

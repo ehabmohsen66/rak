@@ -274,7 +274,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
 
             {/* Headline — navy, with the homepage gradient on line two */}
             <h2
-              className="font-heading uppercase text-[2rem] leading-[1.02] sm:text-[2.6rem] sm:leading-[1.02] lg:text-[3.4rem] lg:leading-[0.98] tracking-[-0.01em]"
+              className="font-heading font-bold uppercase text-2xl leading-[1.1] sm:text-4xl lg:text-5xl"
               style={{ color: C.navy }}
             >
               The Land of Cedars.
@@ -291,9 +291,13 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               carries Beirut&rsquo;s restless imagination into brands built to move the world.
             </p>
 
-            {/* Arabic pulse line */}
+            {/* Arabic pulse line — Janna Font */}
             <div className="pl-5 py-1 border-l-2" style={{ borderColor: C.magenta }}>
-              <p className="text-lg sm:text-xl font-serif" dir="rtl" style={{ color: C.navy }}>
+              <p
+                className="text-lg sm:text-2xl font-janna font-bold leading-relaxed"
+                dir="rtl"
+                style={{ color: C.navy, fontFamily: "'Janna LT', 'Janna', sans-serif" }}
+              >
                 &ldquo;من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ&rdquo;
               </p>
               <p className="mt-1.5 font-mono text-[10px] tracking-[0.22em] uppercase" style={{ color: C.muted }}>
@@ -305,7 +309,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             <div className="flex flex-wrap items-center gap-3">
               <button
                 onClick={onOpenPlanner}
-                className="group inline-flex items-center gap-2.5 pl-6 pr-5 py-3.5 rounded-full text-white font-mono text-[11px] font-bold tracking-[0.2em] uppercase transition-colors duration-200"
+                className="group inline-flex items-center gap-2.5 pl-6 pr-5 py-3.5 rounded-full text-white font-mono text-[11px] font-bold tracking-[0.2em] uppercase transition-colors duration-200 cursor-pointer"
                 style={{ backgroundColor: C.magenta }}
                 onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = C.magentaD; }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = C.magenta; }}
@@ -333,7 +337,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                   whileTap={{ scale: 0.95 }}
                   onClick={handleLike}
                   title="Click to love Beirut"
-                  className="inline-flex items-center gap-3 pl-4 pr-5 py-3 rounded-full transition-all duration-200"
+                  className="inline-flex items-center gap-3 pl-4 pr-5 py-3 rounded-full transition-all duration-200 cursor-pointer"
                   style={{ backgroundColor: C.chip, border: `1px solid ${C.border}` }}
                 >
                   <svg
@@ -355,7 +359,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             </div>
 
             {/* Pillar rail */}
-            <div className="flex items-center gap-6 sm:gap-9 pt-6" style={{ borderTop: `1px solid ${C.border}` }}>
+            <div className="flex flex-wrap items-center gap-4 sm:gap-9 pt-6" style={{ borderTop: `1px solid ${C.border}` }}>
               {PILLARS.map((p) => (
                 <div key={p.k} className="flex items-baseline gap-2">
                   <span className="font-mono text-[10px] font-bold" style={{ color: C.magenta }}>{p.k}</span>

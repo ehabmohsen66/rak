@@ -1,12 +1,13 @@
 import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
+import { Sparkles, Globe2, ArrowDownRight, Clock, ShieldCheck, MapPin } from "lucide-react";
+import { BrandLogo } from "./BrandLogo";
 
 /* ---------------- WordsPullUp ---------------- */
 export const WordsPullUp = ({ text = "", className = "", showAsterisk = false, style }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
-  const words = typeof text === 'string' ? text.split(" ") : [];
-
+  const words = typeof text === "string" ? text.split(" ") : [];
 
   return (
     <div ref={ref} className={`inline-flex flex-wrap ${className}`} style={style}>
@@ -15,15 +16,15 @@ export const WordsPullUp = ({ text = "", className = "", showAsterisk = false, s
         return (
           <motion.span
             key={i}
-            initial={{ y: 30, opacity: 0 }}
+            initial={{ y: 24, opacity: 0 }}
             animate={isInView ? { y: 0, opacity: 1 } : {}}
-            transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+            transition={{ duration: 0.65, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
             className="inline-block relative"
-            style={{ marginRight: isLast ? 0 : "0.2em" }}
+            style={{ marginRight: isLast ? 0 : "0.28em" }}
           >
             {word}
             {showAsterisk && isLast && (
-              <span className="absolute top-[0.55em] -right-[0.3em] text-[0.3em] text-rak-magenta font-bold">*</span>
+              <span className="inline-block ml-1 text-[0.45em] align-top text-rak-magenta font-bold">*</span>
             )}
           </motion.span>
         );
@@ -33,7 +34,7 @@ export const WordsPullUp = ({ text = "", className = "", showAsterisk = false, s
 };
 
 /* ---------------- WordsPullUpMultiStyle ---------------- */
-export const WordsPullUpMultiStyle = ({ segments, className = "", style }) => {
+export const WordsPullUpMultiStyle = ({ segments = [], className = "", style }) => {
   const ref = useRef(null);
   const isInView = useInView(ref, { once: true });
 
@@ -49,11 +50,11 @@ export const WordsPullUpMultiStyle = ({ segments, className = "", style }) => {
       {words.map((w, i) => (
         <motion.span
           key={i}
-          initial={{ y: 30, opacity: 0 }}
+          initial={{ y: 24, opacity: 0 }}
           animate={isInView ? { y: 0, opacity: 1 } : {}}
-          transition={{ duration: 0.7, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
+          transition={{ duration: 0.65, delay: i * 0.08, ease: [0.16, 1, 0.3, 1] }}
           className={`inline-block ${w.className ?? ""}`}
-          style={{ marginRight: "0.25em" }}
+          style={{ marginRight: "0.28em" }}
         >
           {w.word}
         </motion.span>
@@ -62,66 +63,196 @@ export const WordsPullUpMultiStyle = ({ segments, className = "", style }) => {
   );
 };
 
-/* ---------------- Fullscreen PrismaHero ---------------- */
-export const PrismaHero = () => {
-  const videoRef = useRef(null);
-
-  React.useEffect(() => {
-    if (videoRef.current) {
-      videoRef.current.muted = true;
-      videoRef.current.defaultMuted = true;
-      videoRef.current.play().catch(() => {});
-    }
-  }, []);
-
+/* ---------------- On-Brand RAK4Creative Contact Hero ---------------- */
+export const PrismaHero = ({ onScrollToForm, onOpenPlanner }) => {
   return (
-    <section className="relative min-h-[90vh] sm:min-h-screen w-full overflow-hidden bg-rak-slate-950 flex flex-col justify-end pb-12 sm:pb-16 pt-28">
-      
-      {/* Background video */}
-      <video
-        ref={videoRef}
-        autoPlay
-        loop
-        muted
-        playsInline
-        controls={false}
-        preload="auto"
-        className="absolute inset-0 h-full w-full object-cover opacity-75 pointer-events-none"
-        src="https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260405_170732_8a9ccda6-5cff-4628-b164-059c500a2b41.mp4"
-      />
+    <section className="relative min-h-[78vh] sm:min-h-[84vh] w-full overflow-hidden bg-rak-slate-950 flex items-center pt-28 sm:pt-32 pb-16 sm:pb-24 border-b border-white/10">
+      {/* Brand Architectural Background Layer */}
+      <div className="pointer-events-none absolute inset-0 overflow-hidden">
+        {/* Subtle brand architectural backdrop image with deep obsidian wash */}
+        <img
+          src="/rak-team.webp"
+          alt=""
+          aria-hidden="true"
+          className="absolute inset-0 h-full w-full object-cover opacity-15 mix-blend-luminosity"
+        />
+        <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/90 via-rak-slate-950/85 to-rak-slate-950" />
 
-      {/* Ambient noise & dark gradients */}
-      <div className="noise-overlay pointer-events-none absolute inset-0 opacity-40 mix-blend-overlay" />
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-rak-slate-950/70 via-rak-slate-950/30 to-rak-slate-950" />
+        {/* RAK Fuchsia & Deep Slate Ambient Glow Orbs */}
+        <div
+          className="absolute -top-32 left-1/4 w-[34rem] h-[34rem] rounded-full blur-[140px] opacity-30"
+          style={{ background: "radial-gradient(circle, #EC008C 0%, transparent 70%)" }}
+        />
+        <div
+          className="absolute bottom-0 right-10 w-[28rem] h-[28rem] rounded-full blur-[130px] opacity-20"
+          style={{ background: "radial-gradient(circle, #C80074 0%, transparent 70%)" }}
+        />
 
-      {/* Hero Content Layer */}
+        {/* Subtle Brand Horizon Lines */}
+        <div className="absolute inset-x-0 top-1/3 h-px bg-gradient-to-r from-transparent via-white/[0.06] to-transparent" />
+        <div className="absolute inset-x-0 bottom-16 h-px bg-gradient-to-r from-transparent via-rak-magenta/30 to-transparent" />
+      </div>
+
+      {/* Main Content Container - Zero Overlap Responsive Grid */}
       <div className="relative z-10 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-12 items-end gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-12 items-center">
           
-          {/* Huge Brand Typography */}
-          <div className="col-span-12 lg:col-span-8">
-            <h1
-              className="font-extrabold leading-[0.88] tracking-[-0.06em] text-[15vw] sm:text-[14vw] md:text-[12vw] lg:text-[10vw] text-white selection:bg-rak-magenta select-none"
+          {/* Left Column: Brand Headline & Supporting Identity Statement */}
+          <div className="lg:col-span-7 space-y-6 sm:space-y-8 text-left">
+            {/* Brand Pill */}
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6 }}
+              className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-rak-magenta/40 backdrop-blur-md"
             >
-              <WordsPullUp text="RAK4Creative" showAsterisk />
-            </h1>
-          </div>
+              <span className="w-2 h-2 rounded-full bg-rak-magenta animate-pulse" />
+              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white font-gilroy">
+                Global Executive Concierge • Beirut &amp; Toronto
+              </span>
+            </motion.div>
 
-          {/* Supporting Statement */}
-          <div className="col-span-12 lg:col-span-4 pb-2 sm:pb-4">
+            {/* Primary Brand Headline */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.1 }}
+              className="space-y-2"
+            >
+              <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold uppercase text-white font-heading leading-[1.1] tracking-[0.04em]">
+                Let&apos;s Architect{" "}
+                <span className="block text-rak-magenta mt-1">
+                  Your Next
+                </span>
+                <span className="block text-white mt-1">
+                  Breakthrough.
+                </span>
+              </h1>
+            </motion.div>
+
+            {/* Supporting Brand Identity Paragraph */}
             <motion.p
-              initial={{ y: 30, opacity: 0 }}
-              animate={{ y: 0, opacity: 1 }}
-              transition={{ duration: 0.8, delay: 0.4, ease: [0.16, 1, 0.3, 1] }}
-              className="text-sm sm:text-base text-rak-slate-200 font-medium leading-relaxed max-w-md"
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.2 }}
+              className="text-sm sm:text-base md:text-lg text-rak-slate-200 font-gilroy font-medium leading-relaxed max-w-2xl"
             >
               RAK4Creative is a worldwide full-service agency bound by passion and hunger to unlock potential through our unique perspectives, bold creativity, and tech magic.
             </motion.p>
+
+            {/* Executive Trust Metrics Bar */}
+            <motion.div
+              initial={{ opacity: 0, y: 24 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.7, delay: 0.3 }}
+              className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl"
+            >
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
+                <div className="flex items-center space-x-2 text-rak-magenta mb-1">
+                  <Clock className="w-4 h-4 shrink-0" />
+                  <span className="text-sm sm:text-base font-bold font-impact tracking-[0.06em] text-white">&lt; 12 HOURS</span>
+                </div>
+                <p className="text-[11px] text-rak-slate-300 font-gilroy">Executive Response SLA</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
+                <div className="flex items-center space-x-2 text-rak-magenta mb-1">
+                  <Globe2 className="w-4 h-4 shrink-0" />
+                  <span className="text-sm sm:text-base font-bold font-impact tracking-[0.06em] text-white">2 GLOBAL HUBS</span>
+                </div>
+                <p className="text-[11px] text-rak-slate-300 font-gilroy">Beirut HQ &amp; Toronto Studio</p>
+              </div>
+
+              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
+                <div className="flex items-center space-x-2 text-rak-magenta mb-1">
+                  <ShieldCheck className="w-4 h-4 shrink-0" />
+                  <span className="text-sm sm:text-base font-bold font-impact tracking-[0.06em] text-white">8 PILLARS</span>
+                </div>
+                <p className="text-[11px] text-rak-slate-300 font-gilroy">Full-Service 360° Execution</p>
+              </div>
+            </motion.div>
           </div>
+
+          {/* Right Column: RAK4Creative Brand Identity Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 28 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.25 }}
+            className="lg:col-span-5"
+          >
+            <div className="relative p-6 sm:p-8 rounded-3xl bg-rak-slate-900/90 border border-white/15 shadow-2xl backdrop-blur-2xl space-y-6 overflow-hidden">
+              {/* Top Fuchsia Accent Line */}
+              <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-rak-magenta via-white/80 to-rak-magenta" />
+
+              <div className="flex items-center justify-between gap-4 pb-5 border-b border-white/10">
+                <BrandLogo
+                  variant="white"
+                  className="h-11 sm:h-12 w-auto object-contain"
+                />
+                <span className="px-3 py-1 rounded-full bg-rak-magenta/15 border border-rak-magenta/40 text-rak-magenta text-[10px] font-bold uppercase tracking-[0.16em] font-gilroy shrink-0">
+                  Direct Access
+                </span>
+              </div>
+
+              <div className="space-y-3">
+                <div className="text-xs font-bold uppercase tracking-[0.16em] text-rak-magenta font-gilroy">
+                  Worldwide Creative &amp; Digital Partner
+                </div>
+                <h2 className="text-lg sm:text-xl font-bold text-white font-heading leading-snug">
+                  Ready to scale your brand across MENA, North America &amp; Europe?
+                </h2>
+                <p className="text-xs sm:text-sm text-rak-slate-300 font-gilroy leading-relaxed">
+                  Connect directly with our managing partners and creative directors for bespoke brand systems, 3D motion, high-converting web architecture, and 360° campaigns.
+                </p>
+              </div>
+
+              {/* Active Hubs Preview */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-1">
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-xs font-bold text-white font-heading">
+                    <MapPin className="w-3.5 h-3.5 text-rak-magenta shrink-0" />
+                    <span>BEIRUT HQ</span>
+                  </div>
+                  <p className="text-[11px] text-rak-slate-300 font-gilroy">Downtown District, Lebanon</p>
+                </div>
+
+                <div className="p-3.5 rounded-2xl bg-white/[0.03] border border-white/10 space-y-1">
+                  <div className="flex items-center space-x-1.5 text-xs font-bold text-white font-heading">
+                    <MapPin className="w-3.5 h-3.5 text-rak-magenta shrink-0" />
+                    <span>TORONTO HUB</span>
+                  </div>
+                  <p className="text-[11px] text-rak-slate-300 font-gilroy">King Street West, Canada</p>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-col sm:flex-row gap-3">
+                {onScrollToForm && (
+                  <button
+                    type="button"
+                    onClick={onScrollToForm}
+                    className="flex-1 py-3.5 px-5 bg-rak-magenta hover:bg-rak-magenta-dark text-white text-xs font-bold uppercase tracking-[0.14em] rounded-xl shadow-magenta-glow flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                  >
+                    <span>Start Executive Brief</span>
+                    <ArrowDownRight className="w-4 h-4" />
+                  </button>
+                )}
+                {onOpenPlanner && (
+                  <button
+                    type="button"
+                    onClick={onOpenPlanner}
+                    className="py-3.5 px-5 bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/15 text-xs font-bold uppercase tracking-[0.14em] rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer"
+                  >
+                    <Sparkles className="w-4 h-4 text-rak-magenta" />
+                    <span>Scope Planner</span>
+                  </button>
+                )}
+              </div>
+            </div>
+          </motion.div>
 
         </div>
       </div>
-
     </section>
   );
 };

@@ -47,18 +47,6 @@ const fadeIn = {
 
 // --- Sub-Components ---
 
-const FilmGrain = () => (
-  <div className="pointer-events-none absolute inset-0 z-20 opacity-[0.05] mix-blend-overlay">
-    <div
-      className="absolute inset-0 h-full w-full"
-      style={{
-        backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='1'/%3E%3C/svg%3E")`,
-        backgroundRepeat: 'repeat',
-      }}
-    />
-  </div>
-);
-
 const VideoBackground = () => {
   return (
     <div className="absolute inset-0 h-full w-full overflow-hidden bg-slate-950">
@@ -68,15 +56,19 @@ const VideoBackground = () => {
         loop
         playsInline
         preload="auto"
-        className="h-full w-full object-cover scale-105"
+        className="h-full w-full object-cover"
+        style={{
+          transform: 'translateZ(0)',
+          backfaceVisibility: 'hidden',
+          WebkitBackfaceVisibility: 'hidden',
+        }}
       >
         <source src="/videos/homepage-banner.mp4" type="video/mp4" />
         <source src="/videos/RAK4-WebsiteHomepage banner-021026.mp4" type="video/mp4" />
       </video>
-      {/* Subtle clean cinematic vignette & gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/85 via-slate-950/50 to-slate-950/20" />
-      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/90 via-transparent to-slate-950/30" />
-      <FilmGrain />
+      {/* Crisp subtle vignette for text legibility without washing out video sharpness */}
+      <div className="absolute inset-0 bg-gradient-to-r from-slate-950/70 via-slate-950/30 to-transparent" />
+      <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/25" />
     </div>
   );
 };
@@ -103,15 +95,12 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
   };
 
   return (
-    <section className="relative w-full h-[90vh] sm:h-screen min-h-[620px] overflow-hidden flex items-center justify-start">
-      {/* 1. Full-Screen Video Background */}
+    <section className="relative w-full min-h-[85vh] sm:min-h-screen py-28 sm:py-32 overflow-hidden flex items-center justify-start">
+      {/* 1. Full-Screen Native HD Video Background */}
       <VideoBackground />
 
-      {/* Ambient Subtle Glow */}
-      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 w-[500px] h-[300px] bg-rak-magenta/10 rounded-full blur-[160px] pointer-events-none z-10" />
-
       {/* 2. Chapter Content Overlay */}
-      <div className="relative z-30 w-full px-6 sm:px-12 md:px-20 lg:px-28">
+      <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
         <motion.div
           variants={textContainer}
           initial="hidden"
@@ -119,10 +108,10 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
           className="max-w-3xl space-y-5 sm:space-y-6 text-left"
         >
           {/* Masked Title Reveal */}
-          <div className="overflow-hidden py-1">
+          <div className="py-1">
             <motion.h1 
               variants={textReveal}
-              className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-extrabold text-white tracking-tight leading-[1.12] font-heading drop-shadow-md"
+              className="text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.18] font-heading drop-shadow-md"
             >
               We Create Big Ideas From Ground Zero & Take Them to{' '}
               <span className="inline-block relative">
@@ -133,7 +122,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -14 }}
                     transition={{ duration: 0.5, ease: "easeOut" }}
-                    className="inline-block font-black"
+                    className="inline-block font-bold"
                   >
                     <GradientShimmer gradient="sunrise" duration={5}>
                       {HERO_PHRASES[phraseIndex]}
@@ -147,7 +136,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
           {/* Clean Subtitle Paragraph */}
           <motion.p 
             variants={fadeIn}
-            className="text-sm sm:text-base lg:text-lg text-slate-300 max-w-xl leading-relaxed font-normal drop-shadow"
+            className="text-sm sm:text-base lg:text-lg text-slate-200 max-w-xl leading-relaxed font-normal drop-shadow"
           >
             {chapter.description}
           </motion.p>
@@ -156,7 +145,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
           <motion.div variants={fadeIn} className="pt-2">
             <button
               onClick={handleActionClick}
-              className="relative inline-flex items-center justify-center px-7 py-3.5 text-xs font-extrabold uppercase tracking-widest text-white bg-rak-magenta rounded-full shadow-lg hover:bg-rak-magenta-dark hover:scale-105 transition-all duration-300 group overflow-hidden cursor-pointer"
+              className="relative inline-flex items-center justify-center px-7 py-3.5 text-xs font-bold uppercase tracking-widest text-white bg-rak-magenta rounded-full shadow-lg hover:bg-rak-magenta-dark hover:scale-105 transition-all duration-300 group overflow-hidden cursor-pointer"
             >
               <span className="relative z-10 flex items-center space-x-2">
                 <span>{chapter.actionText}</span>

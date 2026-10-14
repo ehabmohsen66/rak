@@ -1,6 +1,5 @@
 import { useEffect, useRef } from 'react';
 import * as THREE from 'three';
-import { useIsMobile } from '../lib/useMobileDetect';
 
 const GLSLHills = ({ 
   width = '100%', 
@@ -8,27 +7,20 @@ const GLSLHills = ({
   cameraZ = 125, 
   planeSize = 256, 
   speed = 0.5,
-  colorRgb = [0.9, 0.0, 0.49] // Default RAK Magenta tint: rgb(230, 0, 126)
+  colorRgb = [0.93, 0.0, 0.55] // RAK Magenta (#EC008C)
 }) => {
   const canvasRef = useRef(null);
   const containerRef = useRef(null);
-  const isMobile = useIsMobile();
-
-  if (isMobile) {
-    return (
-      <div ref={containerRef} className="relative w-full h-full overflow-hidden bg-rak-slate-950">
-        <div className="absolute inset-0 bg-gradient-to-br from-rak-slate-950 via-rak-slate-900 to-rak-slate-950" />
-        <div className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[340px] h-[340px] bg-rak-magenta/25 rounded-full blur-[80px] animate-pulse" />
-        <div className="absolute bottom-10 left-10 w-[240px] h-[240px] bg-rak-cyan/20 rounded-full blur-[70px]" />
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(236,0,140,0.15)_1px,transparent_1px),linear-gradient(to_bottom,rgba(236,0,140,0.15)_1px,transparent_1px)] bg-[size:3rem_3rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] pointer-events-none" />
-      </div>
-    );
-  }
 
   useEffect(() => {
     if (!canvasRef.current || !containerRef.current) return;
 
-    // Plane class
+    const isSmallScreen = window.innerWidth < 768;
+    const segX = isSmallScreen ? 140 : 220;
+    const segY = isSmallScreen ? 100 : 140;
+    const planeWidth = 760;
+    const planeDepth = 340;
+
     class Plane {
       constructor() {
         this.uniforms = {
@@ -41,7 +33,7 @@ const GLSLHills = ({
 
       createMesh() {
         return new THREE.Mesh(
-          new THREE.PlaneGeometry(planeSize, planeSize, planeSize, planeSize),
+          new THREE.PlaneGeometry(planeWidth, planeDepth, segX, segY),
           new THREE.RawShaderMaterial({
             uniforms: this.uniforms,
             vertexShader: `
@@ -123,7 +115,7 @@ const GLSLHills = ({
                 float n100 = dot(g100, vec3(Pf1.x, Pf0.yz));
                 float n010 = dot(g010, vec3(Pf0.x, Pf1.y, Pf0.z));
                 float n110 = dot(g110, vec3(Pf1.xy, Pf0.z));
-                float n001 = dot(g001, vec3(Pf0.xy, Pf1.z));
+                float n001 = dot(g001, Pf0.xy, Pf1.z);
                 float n101 = dot(g101, vec3(Pf1.x, Pf0.y, Pf1.z));
                 float n011 = dot(g011, vec3(Pf0.x, Pf1.yz));
                 float n111 = dot(g111, Pf1);
@@ -137,16 +129,13 @@ const GLSLHills = ({
 
               void main(void) {
                 vec3 updatePosition = (rotateMatrixX(radians(90.0)) * vec4(position, 1.0)).xyz;
-                float sin1 = sin(radians(updatePosition.x / 128.0 * 90.0));
-                vec3 noisePosition = updatePosition + vec3(0.0, 0.0, time * -30.0);
-                float noise1 = cnoise(noisePosition * 0.08);
-                float noise2 = cnoise(noisePosition * 0.06);
-                float noise3 = cnoise(noisePosition * 0.4);
-                vec3 lastPosition = updatePosition + vec3(0.0,
-                  noise1 * sin1 * 8.0
-                  + noise2 * sin1 * 8.0
-                  + noise3 * (abs(sin1) * 2.0 + 0.5)
-                  + pow(sin1, 2.0) * 40.0, 0.0);
+                float waveEnv = 0.65 + 0.35 * cos(updatePosition.x * 0.018);
+                vec3 noisePosition = updatePosition + vec3(0.0, 0.0, time * -28.0);
+                float noise1 = cnoise(noisePosition * 0.045);
+                float noise2 = cnoise(noisePosition * 0.09);
+                float noise3 = cnoise(noisePosition * 0.28);
+                float elevation = (noise1 * 14.0 + noise2 * 9.0 + noise3 * 2.5) * waveEnv + waveEnv * 22.0;
+                vec3 lastPosition = updatePosition + vec3(0.0, elevation, 0.0);
 
                 vPosition = lastPosition;
                 gl_Position = projectionMatrix * modelViewMatrix * vec4(lastPosition, 1.0);
@@ -159,7 +148,9 @@ const GLSLHills = ({
               uniform vec3 uColor;
 
               void main(void) {
-                float opacity = (96.0 - length(vPosition)) / 256.0 * 0.75;
+                float depthFade = smoothstep(-165.0, 40.0, vPosition.z) * (1.0 - smoothstep(75.0, 130.0, vPosition.z));
+                float heightBoost = clamp((vPosition.y + 10.0) / 45.0, 0.25, 1.0);
+                float opacity = depthFade * heightBoost * 0.78;
                 gl_FragColor = vec4(uColor, max(0.0, opacity));
               }
             `,
@@ -178,17 +169,17 @@ const GLSLHills = ({
     const canvas = canvasRef.current;
     const container = containerRef.current;
 
-    const renderer = new THREE.WebGLRenderer({ canvas, antialias: false, alpha: true });
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 1.5));
+    const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, alpha: true, powerPreference: 'high-performance' });
+    renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 10000);
+    const camera = new THREE.PerspectiveCamera(45, (container.clientWidth || window.innerWidth) / (container.clientHeight || 600), 1, 10000);
     const clock = new THREE.Clock();
     const plane = new Plane();
 
     const resize = () => {
       if (!container || !renderer || !camera) return;
-      const w = container.clientWidth;
-      const h = container.clientHeight;
+      const w = container.clientWidth || window.innerWidth;
+      const h = container.clientHeight || 600;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h, false);
@@ -204,12 +195,17 @@ const GLSLHills = ({
       animationFrameId = requestAnimationFrame(renderLoop);
     };
 
+    let resizeObserver;
     const init = () => {
       renderer.setClearColor(0x000000, 0);
-      camera.position.set(0, 16, cameraZ);
-      camera.lookAt(new THREE.Vector3(0, 28, 0));
+      camera.position.set(0, 22, cameraZ);
+      camera.lookAt(new THREE.Vector3(0, 22, 0));
       scene.add(plane.mesh);
       window.addEventListener('resize', resize);
+      if (typeof ResizeObserver !== 'undefined') {
+        resizeObserver = new ResizeObserver(() => resize());
+        resizeObserver.observe(container);
+      }
       resize();
       renderLoop();
     };
@@ -218,13 +214,14 @@ const GLSLHills = ({
 
     return () => {
       window.removeEventListener('resize', resize);
+      if (resizeObserver) resizeObserver.disconnect();
       if (animationFrameId) cancelAnimationFrame(animationFrameId);
       renderer.dispose();
     };
   }, [cameraZ, planeSize, speed, colorRgb]);
 
   return (
-    <div ref={containerRef} style={{ position: 'relative', width, height, overflow: 'hidden' }}> 
+    <div ref={containerRef} style={{ position: 'relative', width, height, overflow: 'hidden' }} className="w-full h-full"> 
       <canvas
         ref={canvasRef}
         style={{

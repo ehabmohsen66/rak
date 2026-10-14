@@ -13,13 +13,13 @@ export function CareersHero({ onScrollToRoles }) {
           loop
           playsInline
           preload="auto"
-          className="h-full w-full object-cover opacity-80 scale-105"
+          className="h-full w-full object-cover opacity-90"
         >
           <source src="/videos/careers-banner.mp4" type="video/mp4" />
           <source src="/videos/RAK4-WebsiteCareer Page banner-021026.mp4" type="video/mp4" />
         </video>
-        <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/70 via-rak-slate-950/40 to-rak-slate-950" />
-        <div className="absolute inset-0 bg-gradient-to-r from-rak-slate-950/80 via-transparent to-rak-slate-950/40" />
+        <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/60 via-rak-slate-950/30 to-rak-slate-950" />
+        <div className="absolute inset-0 bg-gradient-to-r from-rak-slate-950/75 via-transparent to-rak-slate-950/35" />
       </div>
 
       {/* Hero Main Content */}
@@ -27,7 +27,7 @@ export function CareersHero({ onScrollToRoles }) {
         <div className="flex flex-col gap-8 sm:flex-row sm:items-end justify-between">
           
           <div className="w-full space-y-5 sm:w-7/12">
-            <h1 className="font-extrabold text-4xl sm:text-5xl md:text-6xl lg:text-7xl text-white leading-[1.05] tracking-tight">
+            <h1 className="font-bold text-3xl sm:text-5xl md:text-6xl text-white leading-[1.12] font-heading">
               We <span className="text-rak-magenta">think</span>, you{" "}
               <span className="text-rak-magenta">grow</span>
               <br />
@@ -36,7 +36,7 @@ export function CareersHero({ onScrollToRoles }) {
           </div>
 
           <div className="w-full sm:w-5/12 space-y-6">
-            <p className="text-base sm:text-lg text-rak-slate-200 italic leading-relaxed">
+            <p className="text-base sm:text-lg text-rak-slate-200 leading-relaxed font-normal">
               “We take your big ideas and turn them into clear, winning
               strategies. From setting up your company to scaling it worldwide,
               we're here every step of the way.”

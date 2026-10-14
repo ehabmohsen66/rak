@@ -1,8 +1,7 @@
 import React from 'react';
 import { BrandLogo } from './BrandLogo';
-import { ArrowUpRight, ArrowUp, Mail, MapPin } from 'lucide-react';
+import { ArrowUp, Mail, MapPin } from 'lucide-react';
 import { OFFICES } from '../data/contentData';
-import { GenerativeMountainScene } from './GenerativeMountainScene';
 
 export const Footer = ({ 
   setActiveTab = () => {}, 
@@ -11,18 +10,16 @@ export const Footer = ({
 }) => {
 
   return (
-    <footer className="bg-slate-900 dark:bg-rak-slate-950 border-t border-slate-800 text-slate-400 relative overflow-hidden transition-colors duration-300">
+    <footer className="bg-rak-slate-950 border-t border-white/10 text-slate-400 relative overflow-hidden transition-colors duration-300">
       
-      {/* Dynamic Interactive Generative Mountain WebGL Scene */}
-      <GenerativeMountainScene />
-
-      {/* Ambient Gradient Overlays */}
-      <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-slate-900/60 via-transparent to-slate-950/90 dark:from-rak-slate-950/50 dark:to-rak-slate-950/95 z-[1]" />
+      {/* Clean Subtle Brand Ambient Glow (No Mountains) */}
+      <div className="pointer-events-none absolute -top-32 left-1/4 w-[480px] h-[220px] bg-rak-magenta/10 rounded-full blur-[130px]" />
+      <div className="pointer-events-none absolute bottom-0 right-1/4 w-[380px] h-[180px] bg-rak-magenta/5 rounded-full blur-[110px]" />
       
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 relative z-10 space-y-16">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-12 relative z-10 space-y-14">
         
         {/* Simplified 3-Column Footer Content */}
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-slate-800">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
           
           {/* Column 1: Brand Info */}
           <div className="md:col-span-6 lg:col-span-5 space-y-4">
@@ -31,12 +28,12 @@ export const Footer = ({
               onClick={(e) => { e.preventDefault(); setActiveTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="inline-block"
             >
-              <BrandLogo className="h-10 w-auto" variant="default" />
+              <BrandLogo className="h-10 sm:h-11 w-auto" variant="white" />
             </a>
-            <p className="text-xs text-slate-400 leading-relaxed max-w-sm">
+            <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm">
               RAK 4 CREATIVE is a premier global brand identity and digital product engineering agency.
             </p>
-            <div className="flex items-center space-x-2 text-xs font-mono text-rak-magenta pt-1">
+            <div className="flex items-center space-x-2 text-xs font-bold text-rak-magenta pt-1">
               <Mail className="w-4 h-4" />
               <span>hello@rak4creative.com</span>
             </div>

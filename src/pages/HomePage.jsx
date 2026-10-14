@@ -229,7 +229,7 @@ export const HomePage = ({
                       <Star key={r} className="w-4 h-4 fill-amber-400 text-amber-400" />
                     ))}
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-700 dark:text-rak-slate-200 leading-relaxed font-normal italic">
+                  <p className="text-xs sm:text-sm text-slate-700 dark:text-rak-slate-200 leading-relaxed font-normal">
                     "{t.quote}"
                   </p>
                 </div>

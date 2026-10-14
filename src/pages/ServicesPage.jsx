@@ -26,38 +26,38 @@ export const ServicesPage = ({ onOpenPlanner }) => {
   };
 
   return (
-    <div className="pt-16 pb-16 space-y-16 sm:space-y-24 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
+    <div className="pb-16 space-y-16 sm:space-y-24 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
       {/* 3D GLSL HILLS HERO SECTION FOR PILLARS */}
-      <section className="relative w-full min-h-[75vh] md:min-h-[85vh] bg-slate-950 flex flex-col items-center justify-center overflow-hidden border-b border-slate-200 dark:border-rak-slate-800/80">
+      <section className="relative w-full min-h-[80vh] md:min-h-[88vh] pt-28 pb-16 bg-slate-950 flex flex-col items-center justify-center overflow-hidden border-b border-slate-200 dark:border-rak-slate-800/80">
         
-        {/* Realtime 3D GLSL Hills Canvas Background */}
-        <div className="absolute inset-0 z-0">
-          <GLSLHills width="100%" height="100%" speed={0.4} colorRgb={[0.9, 0.0, 0.49]} />
+        {/* Realtime 3D GLSL Hills Canvas Background — Full Edge-to-Edge Width */}
+        <div className="absolute inset-0 w-full h-full z-0">
+          <GLSLHills width="100%" height="100%" speed={0.4} colorRgb={[0.93, 0.0, 0.55]} />
         </div>
 
         {/* Gradient Fade Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950 z-1 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-transparent to-slate-950 z-[1] pointer-events-none" />
 
         {/* Main Content Area */}
-        <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-8 py-16">
+        <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-6 sm:space-y-8 py-8">
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
             <Sparkles className="w-4 h-4" />
             <span>8 Pillars of Capability</span>
           </div>
 
-          <h1 className="text-5xl sm:text-7xl lg:text-8xl font-black text-white uppercase tracking-tight leading-none font-heading">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white uppercase leading-tight font-heading px-2">
             <span className="text-rak-magenta">8 CORE</span> PILLARS
           </h1>
 
-          <p className="text-base sm:text-xl text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal">
+          <p className="text-sm sm:text-lg md:text-xl text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal px-2">
             One stop for every stage of the work. From ideation and strategy to execution, performance monitoring, and enterprise evaluation.
           </p>
 
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2">
             <button
               onClick={onOpenPlanner}
-              className="px-8 py-4 bg-rak-magenta hover:bg-rak-magenta-dark text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-magenta-glow transition-all flex items-center space-x-2 hover:scale-105 cursor-pointer"
+              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-rak-magenta hover:bg-rak-magenta-dark text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-magenta-glow transition-all flex items-center space-x-2 hover:scale-105 cursor-pointer"
             >
               <span>Initiate Project Brief</span>
               <ArrowUpRight className="w-4 h-4" />
@@ -65,21 +65,21 @@ export const ServicesPage = ({ onOpenPlanner }) => {
 
             <a
               href="#digital-consultancy"
-              className="px-8 py-4 bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 text-xs font-bold uppercase tracking-wider rounded-full backdrop-blur-md transition-all hover:scale-105 cursor-pointer"
+              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 text-xs font-bold uppercase tracking-wider rounded-full backdrop-blur-md transition-all hover:scale-105 cursor-pointer"
             >
               <span>Explore Capability Units</span>
             </a>
           </div>
 
           {/* Domain Category Filter Pills */}
-          <div className="pt-8 border-t border-white/10">
+          <div className="pt-6 sm:pt-8 border-t border-white/10">
             <p className="text-[11px] font-bold uppercase tracking-widest text-slate-400 mb-4 font-mono">Filter Capabilities by Domain</p>
             <div className="flex flex-wrap items-center justify-center gap-2">
               {categories.map((cat) => (
                 <button
                   key={cat}
                   onClick={() => setActiveCategory(cat)}
-                  className={`px-4 py-2 text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer ${
+                  className={`px-3.5 sm:px-4 py-1.5 sm:py-2 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-full transition-all cursor-pointer ${
                     activeCategory === cat
                       ? 'bg-rak-magenta text-white shadow-magenta-sm scale-105'
                       : 'bg-slate-900/90 border border-slate-800 text-slate-300 hover:border-rak-magenta/40 hover:text-white backdrop-blur-md'

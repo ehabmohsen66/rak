@@ -15,7 +15,7 @@ export const AboutPage = ({ onOpenPlanner }) => {
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="relative rounded-3xl p-8 sm:p-12 bg-gradient-to-r from-rak-magenta/10 via-white to-slate-50 dark:from-rak-magenta/20 dark:via-rak-slate-900 dark:to-rak-slate-900 border border-rak-magenta/30 dark:border-rak-magenta/40 text-center space-y-4 shadow-xl overflow-hidden backdrop-blur-xl">
           <Quote className="w-12 h-12 text-rak-magenta/40 mx-auto" />
-          <blockquote className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight max-w-3xl mx-auto leading-tight italic font-heading">
+          <blockquote className="text-xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white max-w-3xl mx-auto leading-snug not-italic font-heading">
             “Your vision + our expertise = something amazing. Let's create something unforgettable together.”
           </blockquote>
           <div className="text-xs font-mono text-rak-magenta uppercase tracking-widest font-bold pt-2">

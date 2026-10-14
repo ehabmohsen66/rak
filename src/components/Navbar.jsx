@@ -96,16 +96,14 @@ export const Navbar = ({
     <header 
       className={`fixed top-0 left-0 right-0 z-[100] transition-all duration-300 ${
         isScrolled 
-          ? darkMode 
-            ? 'py-3 bg-rak-slate-950/90 backdrop-blur-xl border-b border-rak-slate-800/60 shadow-xl'
-            : 'py-3 bg-white/90 backdrop-blur-xl border-b border-slate-200 shadow-sm'
-          : 'py-5 bg-transparent'
+          ? 'py-3 bg-rak-slate-950/95 backdrop-blur-xl border-b border-white/10 shadow-2xl'
+          : 'py-4 sm:py-5 bg-gradient-to-b from-slate-950/85 via-slate-950/40 to-transparent'
       }`}
     >
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4 xl:gap-8">
           
-          {/* Brand Logo */}
+          {/* Brand Logo — White & Fuchsia to pop up */}
           <a 
             href="/"
             onClick={(e) => {
@@ -117,15 +115,11 @@ export const Navbar = ({
             className="flex items-center space-x-3 focus:outline-none shrink-0"
             aria-label="RAK4Creative Home"
           >
-            <BrandLogo className="h-9 sm:h-11 w-auto" variant="default" />
+            <BrandLogo className="h-9 sm:h-11 w-auto" variant="white" />
           </a>
 
           {/* Desktop Navigation Links Container */}
-          <nav className={`hidden xl:flex items-center space-x-1 p-1.5 rounded-full border backdrop-blur-md shrink-0 transition-colors ${
-            darkMode 
-              ? 'bg-rak-slate-900/60 border-rak-slate-800/80' 
-              : 'bg-slate-100/90 border-slate-200/80'
-          }`}>
+          <nav className="hidden xl:flex items-center space-x-1 p-1.5 rounded-full border backdrop-blur-md shrink-0 transition-colors bg-rak-slate-900/75 border-white/15">
             {navItems.map((item) => {
               const isActive = activeTab === item.id;
               const path = item.id === 'home' ? '/' : `/${item.id}`;
@@ -146,9 +140,7 @@ export const Navbar = ({
                     className={`relative px-3.5 py-1.5 text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-200 flex items-center space-x-1 ${
                       isActive 
                         ? 'bg-rak-magenta text-white shadow-sm' 
-                        : darkMode
-                          ? 'text-rak-slate-300 hover:text-white hover:bg-rak-slate-800/50'
-                          : 'text-slate-700 hover:text-slate-950 hover:bg-slate-200/70'
+                        : 'text-slate-200 hover:text-white hover:bg-white/10'
                     }`}
                   >
                     <span>{item.label}</span>
@@ -156,7 +148,7 @@ export const Navbar = ({
                       <span className={`ml-1.5 px-1.5 py-0.5 text-[8px] font-black rounded-full whitespace-nowrap transition-colors tracking-normal font-mono ${
                         isActive 
                           ? 'bg-white text-rak-magenta shadow-sm' 
-                          : 'bg-rak-magenta/15 text-rak-magenta border border-rak-magenta/30 animate-pulse'
+                          : 'bg-rak-magenta/20 text-rak-magenta border border-rak-magenta/40 animate-pulse'
                       }`}>
                         {item.badge}
                       </span>
@@ -167,12 +159,8 @@ export const Navbar = ({
                   {/* Pillars Mega Dropdown Preview */}
                   {item.hasDropdown && servicesDropdown && (
                     <div className="absolute top-full left-0 pt-2 w-80 z-50 animate-in fade-in slide-in-from-top-2 duration-200">
-                      <div className={`backdrop-blur-xl border rounded-2xl p-3 shadow-2xl ${
-                        darkMode 
-                          ? 'bg-rak-slate-900/95 border-rak-slate-800' 
-                          : 'bg-white/95 border-slate-200'
-                      }`}>
-                        <div className="text-[10px] font-bold uppercase tracking-widest text-rak-magenta px-3 py-1.5 mb-1 flex items-center justify-between border-b border-slate-200 dark:border-rak-slate-800/60 pb-2">
+                      <div className="backdrop-blur-xl border rounded-2xl p-3 shadow-2xl bg-rak-slate-900/95 border-white/15">
+                        <div className="text-[10px] font-bold uppercase tracking-widest text-rak-magenta px-3 py-1.5 mb-1 flex items-center justify-between border-b border-white/10 pb-2">
                           <span>Pillars of Capability</span>
                           <span className="text-[9px] text-slate-400 font-normal">8 Core Units</span>
                         </div>
@@ -182,11 +170,7 @@ export const Navbar = ({
                               key={p.id}
                               href={`/services#${p.id}`}
                               onClick={(e) => handlePillarSelect(p.id, e)}
-                              className={`w-full text-left px-3 py-2 text-xs font-medium rounded-xl transition-all flex items-center justify-between group/sub cursor-pointer ${
-                                darkMode 
-                                  ? 'text-rak-slate-200 hover:bg-rak-magenta/15 hover:text-rak-magenta' 
-                                  : 'text-slate-800 hover:bg-rak-magenta/10 hover:text-rak-magenta'
-                              }`}
+                              className="w-full text-left px-3 py-2 text-xs font-medium rounded-xl transition-all flex items-center justify-between group/sub cursor-pointer text-slate-200 hover:bg-rak-magenta/15 hover:text-rak-magenta"
                             >
                               <span>{p.name}</span>
                               <ArrowUpRight className="w-3.5 h-3.5 text-rak-magenta opacity-0 group-hover/sub:opacity-100 transition-opacity" />
@@ -206,11 +190,7 @@ export const Navbar = ({
             {/* Theme Switcher Toggle */}
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition-all duration-300 shadow-sm cursor-pointer ${
-                darkMode 
-                  ? 'bg-rak-slate-900 border-rak-slate-800 text-rak-slate-200 hover:text-white' 
-                  : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-950'
-              }`}
+              className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition-all duration-300 shadow-sm cursor-pointer bg-rak-slate-900/80 border-white/15 text-slate-200 hover:text-white"
               aria-label="Toggle light/dark theme"
               title={darkMode ? "Switch to Vibrant Light Mode" : "Switch to Dark Mode"}
             >
@@ -222,7 +202,7 @@ export const Navbar = ({
               ) : (
                 <>
                   <Moon className="w-3.5 h-3.5 text-rak-magenta" />
-                  <span className="text-[11px] font-bold uppercase tracking-wider text-rak-magenta">Dark</span>
+                  <span className="text-[11px] font-bold uppercase tracking-wider text-white">Dark</span>
                 </>
               )}
             </button>
@@ -231,11 +211,7 @@ export const Navbar = ({
             <div className="relative">
               <button
                 onClick={() => setShowArNotice(!showArNotice)}
-                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition-all duration-300 group cursor-pointer shadow-sm ${
-                  darkMode 
-                    ? 'bg-rak-slate-900 border-rak-slate-800 text-rak-slate-200 hover:text-white' 
-                    : 'bg-slate-100 border-slate-200 text-slate-700 hover:text-slate-950'
-                }`}
+                className="flex items-center space-x-1.5 px-3 py-1.5 rounded-full border transition-all duration-300 group cursor-pointer shadow-sm bg-rak-slate-900/80 border-white/15 text-slate-200 hover:text-white"
                 aria-label="Switch to Arabic Language"
                 title="اللغة العربية (قريباً)"
               >
@@ -245,33 +221,29 @@ export const Navbar = ({
 
               {/* Coming Soon Popover */}
               {showArNotice && (
-                <div className={`absolute right-0 mt-3 w-72 p-4 rounded-2xl backdrop-blur-xl border shadow-2xl z-50 animate-in fade-in duration-200 ${
-                  darkMode 
-                    ? 'bg-rak-slate-950/95 border-rak-magenta/40' 
-                    : 'bg-white/98 border-slate-200'
-                }`}>
+                <div className="absolute right-0 mt-3 w-72 p-4 rounded-2xl backdrop-blur-xl border shadow-2xl z-50 animate-in fade-in duration-200 bg-rak-slate-950/95 border-rak-magenta/40">
                   <div className="flex items-start space-x-3">
                     <div className="p-2.5 rounded-xl bg-rak-magenta/20 border border-rak-magenta/40 text-rak-magenta shrink-0">
                       <Globe className="w-5 h-5" />
                     </div>
                     <div className="space-y-1.5 flex-1">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider">Arabic Version</span>
+                        <span className="text-xs font-extrabold text-white uppercase tracking-wider">Arabic Version</span>
                         <span className="text-[9px] font-black uppercase px-2 py-0.5 bg-rak-magenta text-white rounded-full">
                           Coming Soon
                         </span>
                       </div>
-                      <p className="text-xs font-medium text-slate-700 dark:text-rak-slate-200 leading-relaxed text-right font-sans pt-1" dir="rtl">
+                      <p className="text-xs font-bold text-slate-200 leading-relaxed text-right font-janna pt-1" dir="rtl">
                         النسخة العربية الكاملة قيد التطوير وستتوفر قريباً!
                       </p>
-                      <p className="text-[11px] text-slate-500 dark:text-rak-slate-400">
+                      <p className="text-[11px] text-slate-400">
                         Full Arabic language translation & localization is currently under development.
                       </p>
                     </div>
                   </div>
                   <button 
                     onClick={() => setShowArNotice(false)}
-                    className="mt-3 w-full py-1.5 text-[11px] font-bold text-slate-600 dark:text-rak-slate-300 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-rak-slate-900 border border-slate-200 dark:border-rak-slate-800 rounded-xl transition-colors cursor-pointer"
+                    className="mt-3 w-full py-1.5 text-[11px] font-bold text-slate-300 hover:text-white bg-rak-slate-900 border border-rak-slate-800 rounded-xl transition-colors cursor-pointer font-janna"
                   >
                     Dismiss / إغلاق
                   </button>
@@ -295,7 +267,7 @@ export const Navbar = ({
           <div className="flex xl:hidden items-center space-x-2 shrink-0">
             <button
               onClick={() => setDarkMode(!darkMode)}
-              className="p-2 rounded-full bg-slate-100 dark:bg-rak-slate-900 border border-slate-200 dark:border-rak-slate-800 text-slate-700 dark:text-rak-slate-200"
+              className="p-2 rounded-full bg-rak-slate-900/90 border border-white/15 text-slate-200"
               aria-label="Toggle theme"
             >
               {darkMode ? <Sun className="w-4 h-4 text-amber-400" /> : <Moon className="w-4 h-4 text-rak-magenta" />}
@@ -303,7 +275,7 @@ export const Navbar = ({
 
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2.5 rounded-xl bg-slate-100 dark:bg-rak-slate-900 border border-slate-200 dark:border-rak-slate-800 text-slate-900 dark:text-rak-slate-200"
+              className="p-2.5 rounded-xl bg-rak-slate-900/90 border border-white/15 text-white"
               aria-label="Open Navigation Menu"
             >
               {mobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
@@ -317,14 +289,14 @@ export const Navbar = ({
       {mobileMenuOpen && (
         <div 
           onClick={() => setMobileMenuOpen(false)}
-          className="xl:hidden fixed inset-0 top-[72px] bg-black/50 backdrop-blur-sm z-[99] animate-in fade-in duration-200"
+          className="xl:hidden fixed inset-0 top-[68px] bg-black/60 backdrop-blur-sm z-[99] animate-in fade-in duration-200"
           aria-hidden="true"
         />
       )}
 
       {/* Mobile & Tablet Drawer Menu */}
       {mobileMenuOpen && (
-        <div className="xl:hidden fixed inset-x-0 top-[72px] max-h-[calc(100vh-72px)] overflow-y-auto bg-white/98 dark:bg-rak-slate-950/98 backdrop-blur-2xl border-b border-slate-200 dark:border-rak-slate-800 p-6 shadow-2xl z-[100] animate-in slide-in-from-top duration-300">
+        <div className="xl:hidden fixed inset-x-0 top-[68px] max-h-[calc(100vh-68px)] overflow-y-auto bg-rak-slate-950/98 backdrop-blur-2xl border-b border-white/15 p-6 shadow-2xl z-[100] animate-in slide-in-from-top duration-300">
           <div className="space-y-2">
             {navItems.map((item) => {
               const Icon = item.icon;
@@ -344,7 +316,7 @@ export const Navbar = ({
                   className={`w-full flex items-center justify-between p-3.5 rounded-xl text-sm font-semibold transition-all ${
                     isActive 
                       ? 'bg-rak-magenta text-white' 
-                      : 'text-slate-800 dark:text-rak-slate-200 hover:bg-slate-100 dark:hover:bg-rak-slate-900'
+                      : 'text-slate-200 hover:bg-white/10 hover:text-white'
                   }`}
                 >
                   <div className="flex items-center space-x-3">
@@ -354,7 +326,7 @@ export const Navbar = ({
                       <span className={`px-2 py-0.5 text-[9px] font-black rounded-full font-mono ${
                         isActive 
                           ? 'bg-white text-rak-magenta shadow-sm' 
-                          : 'bg-rak-magenta/15 text-rak-magenta border border-rak-magenta/30'
+                          : 'bg-rak-magenta/20 text-rak-magenta border border-rak-magenta/40'
                       }`}>
                         {item.badge}
                       </span>
@@ -364,7 +336,7 @@ export const Navbar = ({
               );
             })}
 
-            <div className="pt-4 border-t border-slate-200 dark:border-rak-slate-800">
+            <div className="pt-4 border-t border-white/10">
               <button
                 onClick={() => {
                   setMobileMenuOpen(false);

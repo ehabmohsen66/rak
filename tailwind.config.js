@@ -51,11 +51,13 @@ export default {
         }
       },
       fontFamily: {
-        sans: ['Gilroy', 'Plus Jakarta Sans', 'Inter', 'sans-serif'],
-        heading: ['Eurostile Extended', 'Eurostile', 'Gilroy', 'sans-serif'],
-        eurostile: ['Eurostile Extended', 'Eurostile', 'sans-serif'],
+        sans: ['Gilroy', 'sans-serif'],
+        heading: ['Eurostile', 'Impact', 'Gilroy', 'sans-serif'],
+        eurostile: ['Eurostile', 'Impact', 'Gilroy', 'sans-serif'],
+        impact: ['Impact', 'Eurostile', 'Gilroy', 'sans-serif'],
         gilroy: ['Gilroy', 'sans-serif'],
-        mono: ['JetBrains Mono', 'monospace'],
+        janna: ['"Janna LT"', 'Janna', 'sans-serif'],
+        mono: ['Gilroy', 'Eurostile', 'sans-serif'],
       },
       boxShadow: {
         'magenta-glow': '0 0 45px -5px rgba(236, 0, 140, 0.5)',

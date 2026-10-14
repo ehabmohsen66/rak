@@ -1,7 +1,7 @@
 @font-face {
   font-family: 'Gilroy';
   src: url('/fonts/Gilroy-Regular.ttf') format('truetype');
-  font-weight: 400;
+  font-weight: 300 400;
   font-style: normal;
   font-display: swap;
 }
@@ -9,7 +9,7 @@
 @font-face {
   font-family: 'Gilroy';
   src: url('/fonts/Gilroy-Medium.ttf') format('truetype');
-  font-weight: 500;
+  font-weight: 500 600;
   font-style: normal;
   font-display: swap;
 }
@@ -17,7 +17,7 @@
 @font-face {
   font-family: 'Gilroy';
   src: url('/fonts/Gilroy-Bold.ttf') format('truetype');
-  font-weight: 700;
+  font-weight: 700 900;
   font-style: normal;
   font-display: swap;
 }
@@ -25,7 +25,7 @@
 @font-face {
   font-family: 'Eurostile';
   src: url('/fonts/eurostile.TTF') format('truetype');
-  font-weight: 400;
+  font-weight: 400 900;
   font-style: normal;
   font-display: swap;
 }
@@ -33,7 +33,47 @@
 @font-face {
   font-family: 'Eurostile Extended';
   src: url('/fonts/EurostileExtendedBlack.ttf') format('truetype');
-  font-weight: 900;
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Impact';
+  src: local('Impact'), url('/fonts/Impact.ttf') format('truetype');
+  font-weight: 400 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Janna LT';
+  src: url('/fonts/JannaLT-Regular.ttf') format('truetype');
+  font-weight: 400 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Janna LT';
+  src: url('/fonts/JannaLT-Bold.ttf') format('truetype');
+  font-weight: 600 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Janna';
+  src: url('/fonts/JannaLT-Regular.ttf') format('truetype');
+  font-weight: 400 500;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Janna';
+  src: url('/fonts/JannaLT-Bold.ttf') format('truetype');
+  font-weight: 600 900;
   font-style: normal;
   font-display: swap;
 }
@@ -65,17 +105,52 @@
     --brand-violet: #7C3AED;
   }
 
+  html {
+    font-kerning: normal;
+    -webkit-text-size-adjust: 100%;
+    text-rendering: optimizeLegibility;
+  }
+
   body {
     background-color: var(--bg-primary);
     color: var(--text-primary);
-    font-family: 'Gilroy', 'Plus Jakarta Sans', sans-serif;
-    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+    font-family: 'Gilroy', sans-serif;
+    font-kerning: normal;
+    letter-spacing: 0.015em;
     overflow-x: hidden;
   }
 
   h1, h2, h3, h4, h5, h6 {
-    font-family: 'Eurostile Extended', 'Eurostile', 'Gilroy', sans-serif;
+    font-family: 'Eurostile', 'Impact', 'Gilroy', sans-serif;
+    font-weight: 700;
+    font-kerning: normal;
+    letter-spacing: 0.045em !important;
+    font-style: normal !important;
+    overflow-wrap: break-word;
   }
+}
+
+/* Prevent squeezed letter-spacing and non-brand italics across all devices */
+.tracking-tight,
+.tracking-tighter {
+  letter-spacing: 0.03em !important;
+}
+
+.font-heading,
+.font-eurostile,
+.font-impact {
+  letter-spacing: 0.045em !important;
+  font-kerning: normal;
+  font-style: normal !important;
+}
+
+.font-janna {
+  font-family: 'Janna LT', 'Janna', sans-serif !important;
+  letter-spacing: 0 !important;
+}
+
+.italic {
+  font-style: normal !important;
 }
 
 /* Vibrant Animated Background Gradients */

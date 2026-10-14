@@ -14,25 +14,22 @@ export const WovenLightHero = ({ onOpenPlanner = () => {} }) => {
       metric: '$180M+',
       label: 'Enterprise Value Created',
       tag: 'COMMERCIAL ROI',
-      color: 'text-rak-cyan'
+      color: 'text-slate-900 dark:text-white'
     },
     {
       metric: '100%',
       label: 'Production-Tested Blueprints',
       tag: 'EXECUTION ASSURANCE',
-      color: 'text-rak-violet'
+      color: 'text-rak-magenta'
     }
   ];
 
   return (
-    <section className="relative w-full overflow-hidden bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white border-b border-slate-200 dark:border-white/10 -mt-16 pt-32 sm:pt-40 pb-16 sm:pb-24 transition-colors duration-300">
+    <section className="relative w-full overflow-hidden bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white border-b border-slate-200 dark:border-white/10 pt-32 sm:pt-40 pb-16 sm:pb-24 transition-colors duration-300">
       
-      {/* Subtle Architectural Grid & Soft Ambient Light */}
-      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(15,23,42,0.04)_1px,transparent_1px),linear-gradient(to_bottom,rgba(15,23,42,0.04)_1px,transparent_1px)] dark:bg-[linear-gradient(to_right,rgba(255,255,255,0.03)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.03)_1px,transparent_1px)] bg-[size:4rem_4rem] pointer-events-none z-0" />
-      
-      {/* Balanced Soft Glow Orbs (Subtle, Not Overpowering) */}
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-gradient-to-r from-rak-magenta/8 via-rak-violet/8 to-rak-cyan/8 rounded-full blur-[140px] pointer-events-none z-0" />
-      <div className="absolute bottom-10 right-10 w-[400px] h-[250px] bg-rak-cyan/5 rounded-full blur-[120px] pointer-events-none z-0" />
+      {/* Balanced Soft Brand Glow Orbs (No Grid Pattern) */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[650px] h-[350px] bg-rak-magenta/10 rounded-full blur-[140px] pointer-events-none z-0" />
+      <div className="absolute bottom-10 right-10 w-[400px] h-[250px] bg-rak-magenta/5 rounded-full blur-[120px] pointer-events-none z-0" />
 
       <div className="relative z-10 max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12 sm:space-y-16 text-center">
         
@@ -55,10 +52,10 @@ export const WovenLightHero = ({ onOpenPlanner = () => {} }) => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.1 }}
-            className="text-4xl sm:text-6xl lg:text-7xl font-extrabold tracking-tight text-slate-900 dark:text-white leading-[1.08] font-heading"
+            className="text-3xl sm:text-5xl lg:text-6xl font-bold text-slate-900 dark:text-white leading-[1.12] font-heading"
           >
             Proven Transformations.{' '}
-            <span className="block mt-1 bg-clip-text text-transparent bg-gradient-to-r from-rak-magenta via-pink-500 to-rak-violet">
+            <span className="block mt-1 text-rak-magenta">
               Measured at Scale.
             </span>
           </motion.h1>

@@ -14,42 +14,42 @@ export const WorkPage = ({ onSelectProject }) => {
     : RAK4_CREATIONS.filter(p => p.category === filter);
 
   return (
-    <div className="pt-16 pb-16 space-y-16 sm:space-y-24 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
+    <div className="pb-16 space-y-16 sm:space-y-24 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
       {/* 3D GLSL WEBGL HERO */}
-      <section className="relative w-full min-h-screen bg-slate-950 flex flex-col justify-between overflow-hidden border-b border-slate-200 dark:border-rak-slate-800/80 -mt-16 pt-28">
-        <WebGLShader className="opacity-90" />
+      <section className="relative w-full min-h-screen bg-slate-950 flex flex-col justify-between overflow-hidden border-b border-slate-200 dark:border-rak-slate-800/80 pt-28">
+        <WebGLShader className="opacity-95" />
         
         {/* Ambient Dark Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/70 via-transparent to-slate-950 pointer-events-none z-10" />
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-transparent to-slate-950 pointer-events-none z-10" />
 
         {/* Hero Main Content */}
-        <div className="relative z-20 space-y-8 text-center max-w-5xl mx-auto px-4 sm:px-6 my-auto py-16 md:py-24">
+        <div className="relative z-20 space-y-6 sm:space-y-8 text-center max-w-5xl mx-auto px-4 sm:px-6 my-auto py-12 md:py-20">
           <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
             <Sparkles className="w-4 h-4 text-rak-magenta animate-spin-slow" />
             <span>Interactive WebGL Portfolio Archive</span>
           </div>
           
           <h1 
-            className="text-[clamp(2.5rem,10vw,140px)] font-black text-white tracking-tight uppercase leading-[0.9] font-heading"
+            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white uppercase leading-[1.08] font-heading px-2"
             style={{ 
-              textShadow: '0 0 50px rgba(236, 0, 140, 0.4)' 
+              textShadow: '0 0 40px rgba(236, 0, 140, 0.35)' 
             }}
           >
             THE <span className="text-gradient-magenta">RAK4</span> CREATIONS
           </h1>
           
-          <p className="text-base sm:text-xl text-slate-200 leading-relaxed font-normal max-w-3xl mx-auto drop-shadow-md">
+          <p className="text-sm sm:text-lg md:text-xl text-slate-200 leading-relaxed font-normal max-w-3xl mx-auto drop-shadow-md px-2">
             From ground zero to new heights. Explore how we create big ideas and execute online and offline presence that makes a real impact.
           </p>
 
           {/* Category Filter Pills */}
-          <div className="flex flex-wrap items-center justify-center gap-3 pt-6">
+          <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 pt-4">
             {categories.map((cat) => (
               <button
                 key={cat}
                 onClick={() => setFilter(cat)}
-                className={`px-6 py-2.5 text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-300 backdrop-blur-md cursor-pointer ${
+                className={`px-5 sm:px-6 py-2 sm:py-2.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-full transition-all duration-300 backdrop-blur-md cursor-pointer ${
                   filter === cat 
                     ? 'bg-rak-magenta text-white shadow-magenta-glow scale-105' 
                     : 'bg-slate-900/90 border border-slate-700/80 text-slate-300 hover:border-rak-magenta/40 hover:text-white'
@@ -67,10 +67,10 @@ export const WorkPage = ({ onSelectProject }) => {
             
             {/* Card 1 */}
             <div className="bg-slate-50 dark:bg-rak-slate-950/80 rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center relative border border-slate-200 dark:border-rak-slate-800 hover:border-rak-magenta/50 transition-all shadow-sm">
-              <h3 className="text-lg md:text-xl uppercase leading-tight mb-2 font-black text-slate-900 dark:text-white font-heading">
+              <h3 className="text-lg md:text-xl uppercase leading-tight mb-2 font-bold text-slate-900 dark:text-white font-heading">
                 SELECTED<br/>CREATIONS
               </h3>
-              <p className="text-[10px] md:text-xs text-slate-600 dark:text-rak-slate-400 font-medium mb-4">
+              <p className="text-[11px] md:text-xs text-slate-600 dark:text-rak-slate-400 font-medium mb-4">
                 Curated portfolio showcase of global enterprise digital transformations
               </p>
               <div className="mt-auto px-4 py-1.5 bg-rak-magenta/10 dark:bg-rak-magenta/20 border border-rak-magenta/40 text-rak-magenta rounded-full text-[10px] font-bold uppercase tracking-wider font-mono">
@@ -80,26 +80,26 @@ export const WorkPage = ({ onSelectProject }) => {
 
             {/* Card 2 */}
             <div className="bg-slate-50 dark:bg-rak-slate-950/80 rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center relative border border-slate-200 dark:border-rak-slate-800 hover:border-rak-magenta/50 transition-all shadow-sm">
-              <h3 className="text-lg md:text-xl uppercase leading-tight mb-2 font-black text-slate-900 dark:text-white font-heading">
+              <h3 className="text-lg md:text-xl uppercase leading-tight mb-2 font-bold text-slate-900 dark:text-white font-heading">
                 360° DIGITAL<br/>EXECUTION
               </h3>
-              <p className="text-[10px] md:text-xs text-slate-600 dark:text-rak-slate-400 font-medium mb-4">
+              <p className="text-[11px] md:text-xs text-slate-600 dark:text-rak-slate-400 font-medium mb-4">
                 Integrating brand identity, web software, media production, and growth ads
               </p>
-              <div className="mt-auto px-4 py-1.5 bg-rak-cyan/10 dark:bg-rak-cyan/20 border border-rak-cyan/40 text-rak-cyan rounded-full text-[10px] font-bold uppercase tracking-wider font-mono">
+              <div className="mt-auto px-4 py-1.5 bg-rak-magenta text-white rounded-full text-[10px] font-bold uppercase tracking-wider font-mono shadow-sm">
                 End-To-End Delivery
               </div>
             </div>
 
             {/* Card 3 */}
             <div className="bg-slate-50 dark:bg-rak-slate-950/80 rounded-[2rem] p-6 sm:p-8 flex flex-col items-center text-center relative border border-slate-200 dark:border-rak-slate-800 hover:border-rak-magenta/50 transition-all shadow-sm">
-              <h3 className="text-lg md:text-xl uppercase leading-tight mb-2 font-black text-slate-900 dark:text-white font-heading">
+              <h3 className="text-lg md:text-xl uppercase leading-tight mb-2 font-bold text-slate-900 dark:text-white font-heading">
                 PROVEN<br/>ENTERPRISE ROI
               </h3>
-              <p className="text-[10px] md:text-xs text-slate-600 dark:text-rak-slate-400 font-medium mb-4">
+              <p className="text-[11px] md:text-xs text-slate-600 dark:text-rak-slate-400 font-medium mb-4">
                 Delivering high conversion, brand dominance, and measurable revenue scaling
               </p>
-              <div className="mt-auto px-4 py-1.5 bg-emerald-500/10 dark:bg-emerald-500/20 border border-emerald-500/40 text-emerald-600 dark:text-emerald-400 rounded-full text-[10px] font-bold uppercase tracking-wider font-mono">
+              <div className="mt-auto px-4 py-1.5 bg-rak-magenta/10 dark:bg-rak-magenta/20 border border-rak-magenta/40 text-rak-magenta rounded-full text-[10px] font-bold uppercase tracking-wider font-mono">
                 Global Recognition
               </div>
             </div>

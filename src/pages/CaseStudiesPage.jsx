@@ -5,7 +5,7 @@ import { WovenLightHero } from '../components/WovenLightHero';
 
 export const CaseStudiesPage = ({ onSelectProject, onOpenPlanner }) => {
   return (
-    <div className="pt-16 pb-16 space-y-20 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
+    <div className="pb-16 space-y-20 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
       {/* WOVEN LIGHT 3D HERO FOR CASE STUDIES */}
       <WovenLightHero onOpenPlanner={onOpenPlanner} />
