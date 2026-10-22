@@ -111,10 +111,13 @@ const VideoBackground = ({ videoRef, isMuted }) => {
 
 export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = () => {} }) => {
   const [phraseIndex, setPhraseIndex] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const videoRef = useRef(null);
   const audioCtxRef = useRef(null);
-  const bubbleTimerRef = useRef(null);
+  const autoOffTimerRef = useRef(null);
+  const secondBlipTimerRef = useRef(null);
+  const manuallyMutedRef = useRef(false);
+  const hasAutoPlayedRef = useRef(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -124,58 +127,113 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
   }, []);
 
   const stopBubbleAudio = useCallback(() => {
-    if (bubbleTimerRef.current) {
-      clearInterval(bubbleTimerRef.current);
-      bubbleTimerRef.current = null;
+    if (autoOffTimerRef.current) {
+      clearTimeout(autoOffTimerRef.current);
+      autoOffTimerRef.current = null;
+    }
+    if (secondBlipTimerRef.current) {
+      clearTimeout(secondBlipTimerRef.current);
+      secondBlipTimerRef.current = null;
     }
     if (videoRef.current) {
       videoRef.current.muted = true;
     }
   }, []);
 
-  const toggleSound = () => {
-    const nextState = !soundEnabled;
-    setSoundEnabled(nextState);
+  const playBubbleOnceAndAutoOff = useCallback((ctx) => {
+    if (!ctx) return;
+    stopBubbleAudio();
+    setSoundEnabled(true);
 
-    if (nextState) {
-      // Unmute video element if it has an embedded audio track
-      if (videoRef.current) {
-        videoRef.current.muted = false;
+    // Play first "blip, blip" cluster immediately, and a soft second cluster at 650ms
+    playBubbleCluster(ctx);
+    secondBlipTimerRef.current = setTimeout(() => {
+      if (ctx.state === 'running' && !manuallyMutedRef.current) {
+        playBubbleCluster(ctx);
       }
+    }, 650);
 
-      // Initialize or resume Web Audio API context for synthesized bubble blips
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        if (!audioCtxRef.current) {
-          audioCtxRef.current = new AudioCtx();
-        }
-        if (audioCtxRef.current.state === 'suspended') {
-          audioCtxRef.current.resume();
-        }
-        // Immediate playful "blip, blip!" feedback on toggle
-        playBubbleCluster(audioCtxRef.current);
-
-        // Ambient periodic bubble blips synced with the floating bubble animation
-        if (bubbleTimerRef.current) clearInterval(bubbleTimerRef.current);
-        bubbleTimerRef.current = setInterval(() => {
-          if (document.visibilityState === 'visible' && audioCtxRef.current?.state === 'running') {
-            playBubbleCluster(audioCtxRef.current);
-          }
-        }, 2400);
-      }
-    } else {
+    // Automatically turn off after playing once (~1.5s) so it never annoys the user
+    autoOffTimerRef.current = setTimeout(() => {
       stopBubbleAudio();
-    }
-  };
+      setSoundEnabled(false);
+    }, 1500);
+  }, [stopBubbleAudio]);
 
+  // Autoplay bubble sound once on load (with first-gesture fallback if browser blocks unmuted audio)
   useEffect(() => {
-    return () => {
-      stopBubbleAudio();
-      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
-        audioCtxRef.current.close().catch(() => {});
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    if (!AudioCtx) return;
+
+    const ctx = new AudioCtx();
+    audioCtxRef.current = ctx;
+
+    const handleFirstGesture = () => {
+      if (hasAutoPlayedRef.current || manuallyMutedRef.current) return;
+      hasAutoPlayedRef.current = true;
+      if (ctx.state === 'suspended') {
+        ctx.resume().then(() => {
+          if (!manuallyMutedRef.current) {
+            playBubbleOnceAndAutoOff(ctx);
+          }
+        }).catch(() => {});
+      } else {
+        playBubbleOnceAndAutoOff(ctx);
       }
     };
-  }, [stopBubbleAudio]);
+
+    if (ctx.state === 'running') {
+      hasAutoPlayedRef.current = true;
+      playBubbleOnceAndAutoOff(ctx);
+    } else {
+      ctx.resume().then(() => {
+        if (ctx.state === 'running' && !hasAutoPlayedRef.current && !manuallyMutedRef.current) {
+          hasAutoPlayedRef.current = true;
+          playBubbleOnceAndAutoOff(ctx);
+        }
+      }).catch(() => {});
+
+      window.addEventListener('pointerdown', handleFirstGesture, { once: true, passive: true });
+      window.addEventListener('keydown', handleFirstGesture, { once: true, passive: true });
+      window.addEventListener('touchstart', handleFirstGesture, { once: true, passive: true });
+    }
+
+    return () => {
+      window.removeEventListener('pointerdown', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+      window.removeEventListener('touchstart', handleFirstGesture);
+      stopBubbleAudio();
+      if (ctx.state !== 'closed') {
+        ctx.close().catch(() => {});
+      }
+    };
+  }, [playBubbleOnceAndAutoOff, stopBubbleAudio]);
+
+  const toggleSound = (e) => {
+    e?.stopPropagation();
+    if (soundEnabled) {
+      // Turn off immediately
+      manuallyMutedRef.current = true;
+      stopBubbleAudio();
+      setSoundEnabled(false);
+    } else {
+      // Play once and auto-turn-off
+      manuallyMutedRef.current = false;
+      hasAutoPlayedRef.current = true;
+      const AudioCtx = window.AudioContext || window.webkitAudioContext;
+      if (AudioCtx) {
+        if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
+          audioCtxRef.current = new AudioCtx();
+        }
+        const ctx = audioCtxRef.current;
+        if (ctx.state === 'suspended') {
+          ctx.resume().then(() => playBubbleOnceAndAutoOff(ctx)).catch(() => {});
+        } else {
+          playBubbleOnceAndAutoOff(ctx);
+        }
+      }
+    }
+  };
 
   const handleActionClick = () => {
     if (chapter.actionType === 'open-planner') {
@@ -190,22 +248,8 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
 
   return (
     <section className="relative w-full min-h-[85vh] sm:min-h-screen py-28 sm:py-32 overflow-hidden flex items-center justify-start">
-      <style>{`
-        @keyframes bubble-eq-1 { 0%, 100% { height: 4px; } 50% { height: 14px; } }
-        @keyframes bubble-eq-2 { 0%, 100% { height: 12px; } 50% { height: 5px; } }
-        @keyframes bubble-eq-3 { 0%, 100% { height: 6px; } 50% { height: 15px; } }
-        @keyframes bubble-float-ring {
-          0% { transform: scale(0.85); opacity: 0.75; }
-          100% { transform: scale(1.75); opacity: 0; }
-        }
-        .bubble-eq-bar-1 { animation: bubble-eq-1 0.7s ease-in-out infinite; }
-        .bubble-eq-bar-2 { animation: bubble-eq-2 0.55s ease-in-out infinite; }
-        .bubble-eq-bar-3 { animation: bubble-eq-3 0.8s ease-in-out infinite; }
-        .bubble-pulse-ring { animation: bubble-float-ring 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite; }
-      `}</style>
-
       {/* 1. Full-Screen Native HD Video Background */}
-      <VideoBackground videoRef={videoRef} isMuted={!soundEnabled} />
+      <VideoBackground videoRef={videoRef} isMuted={true} />
 
       {/* 2. Chapter Content Overlay */}
       <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
@@ -249,8 +293,8 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
             {chapter.description}
           </motion.p>
 
-          {/* Refined Action Pill Button + Bubble Sound Toggle */}
-          <motion.div variants={fadeIn} className="pt-2 flex flex-wrap items-center gap-3.5">
+          {/* Refined Action Pill Button */}
+          <motion.div variants={fadeIn} className="pt-2">
             <button
               onClick={handleActionClick}
               className="relative inline-flex items-center justify-center px-7 py-3.5 text-xs font-bold uppercase tracking-widest text-white bg-rak-magenta rounded-full shadow-lg hover:bg-rak-magenta-dark hover:scale-105 transition-all duration-300 group overflow-hidden cursor-pointer"
@@ -260,41 +304,23 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
                 <ArrowUpRight className="w-4 h-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               </span>
             </button>
-
-            {/* Interactive Bubble Sound Toggle Button */}
-            <button
-              onClick={toggleSound}
-              aria-label={soundEnabled ? 'Mute bubble sound' : 'Unmute bubble sound'}
-              title={soundEnabled ? 'Mute Bubble Sound' : 'Play Bubble Sound (Blip, Blip!)'}
-              className={`relative inline-flex items-center space-x-2.5 px-5 py-3.5 rounded-full text-xs font-bold uppercase tracking-wider backdrop-blur-xl border transition-all duration-300 cursor-pointer ${
-                soundEnabled
-                  ? 'bg-rak-magenta/90 border-pink-400 text-white shadow-[0_0_20px_rgba(236,0,140,0.55)] scale-105'
-                  : 'bg-slate-900/75 hover:bg-slate-900/95 border-white/25 hover:border-rak-magenta/60 text-slate-100 hover:text-white shadow-lg'
-              }`}
-            >
-              {soundEnabled && (
-                <span className="absolute inset-0 rounded-full border border-pink-400 bubble-pulse-ring pointer-events-none" />
-              )}
-              {soundEnabled ? (
-                <>
-                  <Volume2 className="w-4 h-4 text-white shrink-0" />
-                  <span>Sound On</span>
-                  <span className="flex items-end space-x-0.5 h-3.5 ml-1" aria-hidden="true">
-                    <span className="w-0.5 bg-white rounded-full bubble-eq-bar-1" />
-                    <span className="w-0.5 bg-white rounded-full bubble-eq-bar-2" />
-                    <span className="w-0.5 bg-white rounded-full bubble-eq-bar-3" />
-                  </span>
-                </>
-              ) : (
-                <>
-                  <VolumeX className="w-4 h-4 text-rak-magenta shrink-0" />
-                  <span>Bubble Sound</span>
-                </>
-              )}
-            </button>
           </motion.div>
         </motion.div>
       </div>
+
+      {/* 3. Small Black Sound Icon Button — Bottom-Right of the Video */}
+      <button
+        onClick={toggleSound}
+        aria-label={soundEnabled ? 'Turn off bubble sound' : 'Play bubble sound once'}
+        title={soundEnabled ? 'Turn off sound' : 'Play bubble sound'}
+        className="absolute bottom-5 right-5 sm:bottom-7 sm:right-7 z-40 w-10 h-10 rounded-full bg-black/85 hover:bg-black border border-white/15 text-white flex items-center justify-center shadow-xl backdrop-blur-md transition-all duration-200 hover:scale-105 cursor-pointer"
+      >
+        {soundEnabled ? (
+          <Volume2 className="w-4 h-4 text-white" />
+        ) : (
+          <VolumeX className="w-4 h-4 text-white/70" />
+        )}
+      </button>
 
     </section>
   );
