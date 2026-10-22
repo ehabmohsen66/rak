@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { UserCheck, Play, Pause, Maximize2 } from 'lucide-react';
+import { UserCheck, Play, Maximize2 } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
 
 export const TeamMarqueeSection = () => {
@@ -101,9 +101,6 @@ export const TeamMarqueeSection = () => {
                 Your browser does not support the video tag.
               </video>
 
-              {/* Gradient Vignette */}
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/30 pointer-events-none rounded-2xl" />
-
               {/* Center Play Button Overlay when paused */}
               {!isPlaying && (
                 <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
@@ -113,46 +110,15 @@ export const TeamMarqueeSection = () => {
                 </div>
               )}
 
-              {/* Top Controls Bar */}
-              <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-center justify-between z-20 pointer-events-auto">
-                <span className="px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-sm flex items-center space-x-1.5 font-mono">
-                  <span className="w-1.5 h-1.5 rounded-full bg-rak-magenta animate-pulse" />
-                  <span>Behind RAK 4 Creative</span>
-                </span>
-
-                <div className="flex items-center space-x-2">
-                  {/* Fullscreen Button */}
-                  <button
-                    onClick={toggleFullscreen}
-                    aria-label="View Fullscreen"
-                    className="p-2 rounded-full bg-black/60 hover:bg-rak-magenta backdrop-blur-md border border-white/20 text-white transition-all duration-300 hover:scale-110 cursor-pointer"
-                  >
-                    <Maximize2 className="w-3.5 h-3.5" />
-                  </button>
-                </div>
-              </div>
-
-              {/* Bottom Caption Overlay */}
-              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-xl bg-slate-900/90 dark:bg-rak-slate-950/85 backdrop-blur-md border border-rak-magenta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10 shadow-xl pointer-events-auto">
-                <div className="flex items-center space-x-3">
-                  <button
-                    onClick={togglePlay}
-                    aria-label={isPlaying ? 'Pause' : 'Play'}
-                    className="p-2 sm:p-2.5 rounded-lg bg-rak-magenta hover:bg-rak-magenta-dark text-white transition-all shadow-magenta-glow shrink-0 cursor-pointer"
-                  >
-                    {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white translate-x-0.5" />}
-                  </button>
-                  <div>
-                    <span className="text-[10px] font-mono text-rak-magenta uppercase tracking-widest font-extrabold">FEATURED SHOWCASE</span>
-                    <h3 className="text-xs sm:text-sm font-bold text-white font-heading">The RAK 4 Creative Powerhouse</h3>
-                  </div>
-                </div>
-
-                <div className="flex items-center space-x-2">
-                  <span className="text-[10px] font-semibold text-slate-300 px-2.5 py-1 bg-slate-800/90 dark:bg-rak-slate-900/90 border border-white/10 rounded-lg shrink-0 font-mono">
-                    Strategy • Production • 3D • Tech
-                  </span>
-                </div>
+              {/* Subtle Corner Fullscreen Button (visible on hover) */}
+              <div className="absolute top-3 right-3 sm:top-4 sm:right-4 z-20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-auto">
+                <button
+                  onClick={toggleFullscreen}
+                  aria-label="View Fullscreen"
+                  className="p-2.5 rounded-full bg-black/60 hover:bg-rak-magenta backdrop-blur-md border border-white/20 text-white transition-all duration-300 hover:scale-110 cursor-pointer shadow-lg"
+                >
+                  <Maximize2 className="w-4 h-4" />
+                </button>
               </div>
             </div>
           </SpotlightCard>
