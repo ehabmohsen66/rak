@@ -209,9 +209,12 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     };
 
     const removeGestureListeners = () => {
-      window.removeEventListener('pointerdown', handleFirstGesture);
-      window.removeEventListener('touchstart', handleFirstGesture);
-      window.removeEventListener('keydown', handleFirstGesture);
+      window.removeEventListener('pointerdown', handleFirstGesture, true);
+      window.removeEventListener('click', handleFirstGesture, true);
+      window.removeEventListener('touchstart', handleFirstGesture, true);
+      window.removeEventListener('keydown', handleFirstGesture, true);
+      document.removeEventListener('pointerdown', handleFirstGesture, true);
+      document.removeEventListener('click', handleFirstGesture, true);
     };
 
     // Try playing immediately if browser permits (e.g. active user engagement or unblocked session)
@@ -226,10 +229,13 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
             playAudioFor12Seconds();
           })
           .catch(() => {
-            // Autoplay blocked by browser policy without gesture — wait for first click/tap anywhere
-            window.addEventListener('pointerdown', handleFirstGesture, { once: true, passive: true });
-            window.addEventListener('touchstart', handleFirstGesture, { once: true, passive: true });
-            window.addEventListener('keydown', handleFirstGesture, { once: true, passive: true });
+            // Autoplay blocked by browser security policy without gesture — activate on first interaction anywhere
+            window.addEventListener('pointerdown', handleFirstGesture, { capture: true, once: true });
+            window.addEventListener('click', handleFirstGesture, { capture: true, once: true });
+            window.addEventListener('touchstart', handleFirstGesture, { capture: true, once: true });
+            window.addEventListener('keydown', handleFirstGesture, { capture: true, once: true });
+            document.addEventListener('pointerdown', handleFirstGesture, { capture: true, once: true });
+            document.addEventListener('click', handleFirstGesture, { capture: true, once: true });
           });
       }
     }
