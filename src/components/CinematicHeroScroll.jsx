@@ -19,31 +19,17 @@ const chapter = {
   actionType: 'scroll-capabilities'
 };
 
-// Preload the lightweight (33 KB) trimmed hero audio at module initialization for 0ms playback
-const preloadedHeroAudio = typeof window !== 'undefined' ? new Audio('/videos/hero-bubble.mp3') : null;
-if (preloadedHeroAudio) {
-  preloadedHeroAudio.preload = 'auto';
-  preloadedHeroAudio.volume = 0.85;
-  try {
-    preloadedHeroAudio.load();
-  } catch {
-    // Ignore load errors in SSR/restricted environments
-  }
-}
-
 // --- Web Audio API Synthesizer for Playful Bubble "Blip, Blip" Sounds ---
 const playSingleBubbleBlip = (ctx, startTimeOffset = 0, baseFreq = 340, endFreq = 860, duration = 0.095, volume = 0.22) => {
-  if (!ctx) return;
+  if (!ctx || ctx.state !== 'running') return;
   const now = ctx.currentTime + startTimeOffset;
   const osc = ctx.createOscillator();
   const gain = ctx.createGain();
 
   osc.type = 'sine';
-  // Classic water bubble physics: rapid upward exponential pitch sweep
   osc.frequency.setValueAtTime(baseFreq, now);
   osc.frequency.exponentialRampToValueAtTime(endFreq, now + duration);
 
-  // Soft attack and clean decay to avoid clicks
   gain.gain.setValueAtTime(0.001, now);
   gain.gain.linearRampToValueAtTime(volume, now + duration * 0.25);
   gain.gain.exponentialRampToValueAtTime(0.0001, now + duration);
@@ -56,8 +42,7 @@ const playSingleBubbleBlip = (ctx, startTimeOffset = 0, baseFreq = 340, endFreq 
 };
 
 const playBubbleCluster = (ctx) => {
-  if (!ctx) return;
-  // "Blip, blip!" double/triple harmonic bubble pop
+  if (!ctx || ctx.state !== 'running') return;
   const pitchShift = 0.9 + Math.random() * 0.25;
   playSingleBubbleBlip(ctx, 0, 320 * pitchShift, 780 * pitchShift, 0.09, 0.22);
   playSingleBubbleBlip(ctx, 0.12, 410 * pitchShift, 980 * pitchShift, 0.085, 0.18);
@@ -92,16 +77,16 @@ const fadeIn = {
   }
 };
 
-// --- Sub-Components ---
-
 const SOUND_DURATION_MS = 12000;
 const BUBBLE_BLIP_OFFSETS_MS = [
-  0, 650, 1400, 2200, 3000, 3850, 4700, 5550, 6400, 7250, 8100, 8950, 9800, 10650, 11350
+  0, 800, 1600, 2500, 3400, 4300, 5200, 6100, 7000, 8000, 9000, 10000, 11000
 ];
 
-const VideoBackground = React.memo(({ videoRef, onVideoReady }) => {
+// --- Sub-Components ---
+// Video is permanently muted to guarantee 100% smooth, 60fps, zero-lag playback on all browsers
+const VideoBackground = React.memo(({ videoRef }) => {
   return (
-    <div className="absolute inset-0 h-full w-full overflow-hidden bg-slate-950">
+    <div className="absolute inset-0 h-full w-full overflow-hidden bg-slate-950 pointer-events-none">
       <video
         ref={videoRef}
         autoPlay
@@ -109,9 +94,6 @@ const VideoBackground = React.memo(({ videoRef, onVideoReady }) => {
         loop
         playsInline
         preload="auto"
-        onLoadedData={onVideoReady}
-        onCanPlay={onVideoReady}
-        onPlaying={onVideoReady}
         className="h-full w-full object-cover"
         style={{
           transform: 'translateZ(0)',
@@ -127,24 +109,17 @@ const VideoBackground = React.memo(({ videoRef, onVideoReady }) => {
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/25" />
     </div>
   );
-}, () => true);
+});
 
 export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = () => {} }) => {
   const [phraseIndex, setPhraseIndex] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(true);
+  const [soundEnabled, setSoundEnabled] = useState(false);
   const videoRef = useRef(null);
-  const domAudioRef = useRef(null);
-  const soundBtnRef = useRef(null);
+  const audioElRef = useRef(null);
   const audioCtxRef = useRef(null);
   const autoOffTimerRef = useRef(null);
   const blipTimersRef = useRef([]);
-  const manuallyMutedRef = useRef(false);
   const hasAutoPlayedRef = useRef(false);
-  const isPlayingRef = useRef(false);
-  const blipsScheduledRef = useRef(false);
-  const isAttemptingAudioRef = useRef(false);
-  const isAttemptingVideoRef = useRef(false);
-  const tryStartAudioRef = useRef(() => {});
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -153,11 +128,14 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     return () => clearInterval(timer);
   }, []);
 
-  const stopBubbleAudio = useCallback(() => {
-    isPlayingRef.current = false;
-    blipsScheduledRef.current = false;
-    isAttemptingAudioRef.current = false;
-    isAttemptingVideoRef.current = false;
+  // Ensure video plays smoothly right away on mount
+  useEffect(() => {
+    if (videoRef.current) {
+      videoRef.current.play().catch(() => {});
+    }
+  }, []);
+
+  const stopAudio = useCallback(() => {
     if (autoOffTimerRef.current) {
       clearTimeout(autoOffTimerRef.current);
       autoOffTimerRef.current = null;
@@ -166,274 +144,115 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
       blipTimersRef.current.forEach((id) => clearTimeout(id));
       blipTimersRef.current = [];
     }
-    if (preloadedHeroAudio) {
-      preloadedHeroAudio.pause();
-      preloadedHeroAudio.currentTime = 0;
+    if (audioElRef.current) {
+      audioElRef.current.pause();
+      audioElRef.current.currentTime = 0;
     }
-    if (domAudioRef.current) {
-      domAudioRef.current.pause();
-      domAudioRef.current.currentTime = 0;
-    }
-    if (videoRef.current) {
-      videoRef.current.muted = true;
-    }
+    setSoundEnabled(false);
   }, []);
 
-  const startBlipSequence = useCallback((ctx) => {
-    if (!ctx || ctx.state !== 'running' || manuallyMutedRef.current || blipsScheduledRef.current) return;
-    blipsScheduledRef.current = true;
-    BUBBLE_BLIP_OFFSETS_MS.forEach((delayMs) => {
-      if (delayMs === 0) {
-        playBubbleCluster(ctx);
-      } else {
-        const timerId = setTimeout(() => {
-          if (ctx.state === 'running' && !manuallyMutedRef.current && isPlayingRef.current) {
-            playBubbleCluster(ctx);
-          }
-        }, delayMs);
-        blipTimersRef.current.push(timerId);
-      }
-    });
-  }, []);
+  const playAudioFor12Seconds = useCallback(() => {
+    // Stop any existing playback and timers first
+    if (autoOffTimerRef.current) clearTimeout(autoOffTimerRef.current);
+    blipTimersRef.current.forEach((id) => clearTimeout(id));
+    blipTimersRef.current = [];
 
-  const playBubbleOnceAndAutoOff = useCallback((ctx) => {
-    stopBubbleAudio();
-    hasAutoPlayedRef.current = true;
-    isPlayingRef.current = true;
-    setSoundEnabled(true);
-
-    // 1. Play the 12s trimmed audio track immediately (0ms delay)
-    const audioTarget = domAudioRef.current || preloadedHeroAudio;
-    if (audioTarget) {
-      audioTarget.currentTime = 0;
-      audioTarget.volume = 0.85;
-      audioTarget.play().catch(() => {});
+    // 1. Play the 12s high-energy bubble track
+    if (audioElRef.current) {
+      audioElRef.current.currentTime = 0;
+      audioElRef.current.volume = 0.95;
+      audioElRef.current.play().catch(() => {});
     }
 
-    // 2. Unmute the hero video element in parallel (never blocks audio)
-    const video = videoRef.current;
-    if (video) {
-      video.muted = false;
-      const playPromise = video.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(() => {
-          video.muted = true;
-          video.play().catch(() => {});
-        });
-      }
-    }
-
-    // 3. Schedule playful Web Audio API bubble clusters across the full 12s duration
-    const activeCtx = ctx || audioCtxRef.current;
-    if (activeCtx) {
-      if (activeCtx.state === 'running') {
-        startBlipSequence(activeCtx);
-      } else if (activeCtx.state === 'suspended') {
-        activeCtx.resume().then(() => startBlipSequence(activeCtx)).catch(() => {});
-      }
-    }
-
-    // Automatically turn off after playing for 12 seconds
-    autoOffTimerRef.current = setTimeout(() => {
-      stopBubbleAudio();
-      setSoundEnabled(false);
-    }, SOUND_DURATION_MS);
-  }, [stopBubbleAudio, startBlipSequence]);
-
-  // Autoplay bubble sound on window load / refresh for 12s
-  useEffect(() => {
-    manuallyMutedRef.current = false;
-    hasAutoPlayedRef.current = false;
-    isPlayingRef.current = false;
-    blipsScheduledRef.current = false;
-    isAttemptingAudioRef.current = false;
-    isAttemptingVideoRef.current = false;
-
+    // 2. Schedule synthesized harmonic bubble pops across the 12 seconds
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (AudioCtx && (!audioCtxRef.current || audioCtxRef.current.state === 'closed')) {
-      audioCtxRef.current = new AudioCtx();
-    }
-    const ctx = audioCtxRef.current;
-
-    const unlockEvents = [
-      'pointerdown', 'pointerup', 'pointermove', 'mousemove',
-      'wheel', 'touchstart', 'touchend', 'keydown', 'keyup', 'click', 'scroll'
-    ];
-    let retryIntervalId = null;
-
-    const cleanupTriggers = () => {
-      unlockEvents.forEach((evt) => {
-        window.removeEventListener(evt, handleUnlock);
-        document.removeEventListener(evt, handleUnlock);
-      });
-      window.removeEventListener('load', tryStartAudioSync);
-      window.removeEventListener('focus', tryStartAudioSync);
-      if (retryIntervalId) {
-        clearInterval(retryIntervalId);
-        retryIntervalId = null;
-      }
-    };
-
-    const onChannelStarted = () => {
-      if (manuallyMutedRef.current) {
-        stopBubbleAudio();
-        return;
-      }
-      if (!hasAutoPlayedRef.current) {
-        hasAutoPlayedRef.current = true;
-        isPlayingRef.current = true;
-        setSoundEnabled(true);
-        cleanupTriggers();
-
-        const audioTarget = domAudioRef.current || preloadedHeroAudio;
-        if (audioTarget && audioTarget.paused && !isAttemptingAudioRef.current) {
-          audioTarget.volume = 0.85;
-          audioTarget.play().catch(() => {});
-        }
-
-        autoOffTimerRef.current = setTimeout(() => {
-          stopBubbleAudio();
-          setSoundEnabled(false);
-        }, SOUND_DURATION_MS);
-      }
-
-      if (ctx && ctx.state === 'running') {
-        startBlipSequence(ctx);
-      }
-    };
-
-    // Initiate all 3 audio channels without aborting any in-flight play() request
-    function tryStartAudioSync() {
-      if (manuallyMutedRef.current || hasAutoPlayedRef.current) return;
-
-      // Channel 1: DOM <audio autoPlay> or preloaded 12s MP3
-      const audioTarget = domAudioRef.current || preloadedHeroAudio;
-      if (audioTarget) {
-        if (!audioTarget.paused && audioTarget.currentTime > 0) {
-          onChannelStarted();
-        } else if (audioTarget.paused && !isAttemptingAudioRef.current) {
-          isAttemptingAudioRef.current = true;
-          try {
-            audioTarget.volume = 0.85;
-            const p = audioTarget.play();
-            if (p !== undefined) {
-              p.then(() => {
-                isAttemptingAudioRef.current = false;
-                onChannelStarted();
-              }).catch(() => {
-                isAttemptingAudioRef.current = false;
-              });
-            } else {
-              isAttemptingAudioRef.current = false;
-            }
-          } catch {
-            isAttemptingAudioRef.current = false;
-          }
-        }
-      }
-
-      // Channel 2: Web Audio API synthesizer (0 KB — instant)
-      if (ctx) {
-        if (ctx.state === 'running') {
-          onChannelStarted();
-        } else if (ctx.state === 'suspended') {
-          ctx.resume().then(() => {
-            if (ctx.state === 'running') {
-              onChannelStarted();
-            }
-          }).catch(() => {});
-        }
-      }
-
-      // Channel 3: Hero Video unmuted playback once video has started buffering/playing
-      const video = videoRef.current;
-      if (video && video.readyState >= 2 && !isAttemptingVideoRef.current) {
-        isAttemptingVideoRef.current = true;
-        try {
-          video.muted = false;
-          const vp = video.play();
-          if (vp !== undefined) {
-            vp.then(() => {
-              isAttemptingVideoRef.current = false;
-              if (!video.muted && !video.paused) {
-                onChannelStarted();
-              }
-            }).catch(() => {
-              isAttemptingVideoRef.current = false;
-              if (!isPlayingRef.current) {
-                video.muted = true;
-                video.play().catch(() => {});
-              }
-            });
-          } else {
-            isAttemptingVideoRef.current = false;
-          }
-        } catch {
-          isAttemptingVideoRef.current = false;
-          video.muted = true;
-          video.play().catch(() => {});
-        }
-      }
-    }
-
-    tryStartAudioRef.current = tryStartAudioSync;
-
-    function handleUnlock(e) {
-      // Ignore clicks directly on the sound button so toggleSound handles them cleanly on first click
-      if (soundBtnRef.current && e?.target && soundBtnRef.current.contains(e.target)) {
-        return;
-      }
-      if (manuallyMutedRef.current || hasAutoPlayedRef.current) {
-        cleanupTriggers();
-        return;
-      }
-      tryStartAudioSync();
-    }
-
-    unlockEvents.forEach((evt) => {
-      window.addEventListener(evt, handleUnlock, { passive: true });
-      document.addEventListener(evt, handleUnlock, { passive: true });
-    });
-    window.addEventListener('load', tryStartAudioSync);
-    window.addEventListener('focus', tryStartAudioSync);
-
-    tryStartAudioSync();
-    retryIntervalId = setInterval(() => {
-      if (manuallyMutedRef.current || hasAutoPlayedRef.current) {
-        cleanupTriggers();
-        return;
-      }
-      tryStartAudioSync();
-    }, 250);
-
-    return () => {
-      cleanupTriggers();
-      stopBubbleAudio();
-    };
-  }, [stopBubbleAudio, startBlipSequence]);
-
-  const toggleSound = (e) => {
-    e?.stopPropagation();
-    if (soundEnabled && isPlayingRef.current) {
-      // Turn off immediately if currently playing
-      manuallyMutedRef.current = true;
-      stopBubbleAudio();
-      setSoundEnabled(false);
-    } else {
-      // Play immediately on first click for 12s and auto-turn-off
-      manuallyMutedRef.current = false;
-      const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx && (!audioCtxRef.current || audioCtxRef.current.state === 'closed')) {
+    if (AudioCtx) {
+      if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
         audioCtxRef.current = new AudioCtx();
       }
       const ctx = audioCtxRef.current;
-      if (ctx && ctx.state === 'suspended') {
-        ctx.resume().then(() => playBubbleOnceAndAutoOff(ctx)).catch(() => {
-          playBubbleOnceAndAutoOff(ctx);
+      const triggerBlips = () => {
+        BUBBLE_BLIP_OFFSETS_MS.forEach((delayMs) => {
+          if (delayMs === 0) {
+            playBubbleCluster(ctx);
+          } else {
+            const timerId = setTimeout(() => {
+              playBubbleCluster(ctx);
+            }, delayMs);
+            blipTimersRef.current.push(timerId);
+          }
         });
-      } else {
-        playBubbleOnceAndAutoOff(ctx);
+      };
+
+      if (ctx.state === 'suspended') {
+        ctx.resume().then(triggerBlips).catch(() => {});
+      } else if (ctx.state === 'running') {
+        triggerBlips();
       }
+    }
+
+    setSoundEnabled(true);
+
+    // Auto-turn off sound cleanly after exactly 12 seconds
+    autoOffTimerRef.current = setTimeout(() => {
+      stopAudio();
+    }, SOUND_DURATION_MS);
+  }, [stopAudio]);
+
+  // Attempt automatic play on load, with first-gesture fallback if browser enforces autoplay restrictions
+  useEffect(() => {
+    const handleFirstGesture = () => {
+      if (hasAutoPlayedRef.current) return;
+      hasAutoPlayedRef.current = true;
+      removeGestureListeners();
+      playAudioFor12Seconds();
+    };
+
+    const removeGestureListeners = () => {
+      window.removeEventListener('pointerdown', handleFirstGesture);
+      window.removeEventListener('touchstart', handleFirstGesture);
+      window.removeEventListener('keydown', handleFirstGesture);
+    };
+
+    // Try playing immediately if browser permits (e.g. active user engagement or unblocked session)
+    if (audioElRef.current) {
+      audioElRef.current.volume = 0.95;
+      const playPromise = audioElRef.current.play();
+      if (playPromise !== undefined) {
+        playPromise
+          .then(() => {
+            // Autoplay succeeded!
+            hasAutoPlayedRef.current = true;
+            playAudioFor12Seconds();
+          })
+          .catch(() => {
+            // Autoplay blocked by browser policy without gesture — wait for first click/tap anywhere
+            window.addEventListener('pointerdown', handleFirstGesture, { once: true, passive: true });
+            window.addEventListener('touchstart', handleFirstGesture, { once: true, passive: true });
+            window.addEventListener('keydown', handleFirstGesture, { once: true, passive: true });
+          });
+      }
+    }
+
+    return () => {
+      removeGestureListeners();
+      stopAudio();
+      if (audioCtxRef.current && audioCtxRef.current.state !== 'closed') {
+        audioCtxRef.current.close().catch(() => {});
+      }
+    };
+  }, [playAudioFor12Seconds, stopAudio]);
+
+  const toggleSound = (e) => {
+    e?.stopPropagation();
+    hasAutoPlayedRef.current = true;
+
+    if (soundEnabled) {
+      // User clicked to mute
+      stopAudio();
+    } else {
+      // User clicked to play -> play for 12 seconds immediately
+      playAudioFor12Seconds();
     }
   };
 
@@ -448,25 +267,18 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     }
   };
 
-  const handleMediaReady = useCallback(() => {
-    tryStartAudioRef.current?.();
-  }, []);
-
   return (
     <section className="relative w-full min-h-[85vh] sm:min-h-screen py-28 sm:py-32 overflow-hidden flex items-center justify-start">
-      {/* Native Autoplay Audio Element for 12s Hero Bubble Sound */}
+      {/* Dedicated HTML5 audio element for the 12s bubble sound */}
       <audio
-        ref={domAudioRef}
+        ref={audioElRef}
         src="/videos/hero-bubble.mp3"
-        autoPlay
         preload="auto"
-        onCanPlay={handleMediaReady}
-        onPlaying={handleMediaReady}
         className="hidden"
       />
 
-      {/* 1. Full-Screen Native HD Video Background */}
-      <VideoBackground videoRef={videoRef} onVideoReady={handleMediaReady} />
+      {/* 1. Full-Screen Native HD Video Background — Muted for 60fps zero-lag performance */}
+      <VideoBackground videoRef={videoRef} />
 
       {/* 2. Chapter Content Overlay */}
       <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
@@ -527,11 +339,12 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
 
       {/* 3. Small Black Sound Icon Button — Bottom-Right of the Video */}
       <button
-        ref={soundBtnRef}
         onClick={toggleSound}
-        aria-label={soundEnabled ? 'Turn off bubble sound' : 'Play bubble sound'}
-        title={soundEnabled ? 'Turn off sound' : 'Play bubble sound'}
-        className="absolute bottom-5 right-5 sm:bottom-7 sm:right-7 z-40 w-10 h-10 rounded-full bg-black/85 hover:bg-black border border-white/15 text-white flex items-center justify-center shadow-xl backdrop-blur-md transition-all duration-200 hover:scale-105 cursor-pointer"
+        aria-label={soundEnabled ? 'Turn off sound' : 'Play sound (12s)'}
+        title={soundEnabled ? 'Turn off sound' : 'Play sound (12s)'}
+        className={`absolute bottom-5 right-5 sm:bottom-7 sm:right-7 z-40 w-10 h-10 rounded-full bg-black/85 hover:bg-black border border-white/15 text-white flex items-center justify-center shadow-xl backdrop-blur-md transition-all duration-200 hover:scale-105 cursor-pointer ${
+          soundEnabled ? 'ring-2 ring-rak-magenta/80 shadow-[0_0_15px_rgba(236,0,140,0.5)]' : ''
+        }`}
       >
         {soundEnabled ? (
           <Volume2 className="w-4 h-4 text-white" />
