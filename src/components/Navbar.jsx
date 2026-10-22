@@ -145,10 +145,10 @@ export const Navbar = ({
                   >
                     <span>{item.label}</span>
                     {item.badge && (
-                      <span className={`ml-1.5 px-1.5 py-0.5 text-[8px] font-black rounded-full whitespace-nowrap transition-colors tracking-normal font-mono ${
+                      <span className={`ml-1.5 px-2 py-0.5 text-[9px] font-black rounded-full whitespace-nowrap transition-all tracking-wider font-mono ${
                         isActive 
                           ? 'bg-white text-rak-magenta shadow-sm' 
-                          : 'bg-rak-magenta/20 text-rak-magenta border border-rak-magenta/40 [animation:pulse_2s_cubic-bezier(0.4,0,0.6,1)_4]'
+                          : 'bg-emerald-400 text-slate-950 border border-emerald-300 shadow-[0_0_12px_rgba(52,211,153,0.55)] [animation:pulse_2s_cubic-bezier(0.4,0,0.6,1)_4]'
                       }`}>
                         {item.badge}
                       </span>
@@ -326,7 +326,7 @@ export const Navbar = ({
                       <span className={`px-2 py-0.5 text-[9px] font-black rounded-full font-mono ${
                         isActive 
                           ? 'bg-white text-rak-magenta shadow-sm' 
-                          : 'bg-rak-magenta/20 text-rak-magenta border border-rak-magenta/40 [animation:pulse_2s_cubic-bezier(0.4,0,0.6,1)_4]'
+                          : 'bg-emerald-400 text-slate-950 border border-emerald-300 shadow-[0_0_10px_rgba(52,211,153,0.5)] [animation:pulse_2s_cubic-bezier(0.4,0,0.6,1)_4]'
                       }`}>
                         {item.badge}
                       </span>
