@@ -94,16 +94,24 @@ const fadeIn = {
 
 // --- Sub-Components ---
 
-const VideoBackground = ({ videoRef, isMuted }) => {
+const SOUND_DURATION_MS = 12000;
+const BUBBLE_BLIP_OFFSETS_MS = [
+  0, 650, 1400, 2200, 3000, 3850, 4700, 5550, 6400, 7250, 8100, 8950, 9800, 10650, 11350
+];
+
+const VideoBackground = React.memo(({ videoRef, onVideoReady }) => {
   return (
     <div className="absolute inset-0 h-full w-full overflow-hidden bg-slate-950">
       <video
         ref={videoRef}
         autoPlay
-        muted={isMuted}
+        muted
         loop
         playsInline
         preload="auto"
+        onLoadedData={onVideoReady}
+        onCanPlay={onVideoReady}
+        onPlaying={onVideoReady}
         className="h-full w-full object-cover"
         style={{
           transform: 'translateZ(0)',
@@ -119,12 +127,13 @@ const VideoBackground = ({ videoRef, isMuted }) => {
       <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/25" />
     </div>
   );
-};
+}, () => true);
 
 export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = () => {} }) => {
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const videoRef = useRef(null);
+  const domAudioRef = useRef(null);
   const soundBtnRef = useRef(null);
   const audioCtxRef = useRef(null);
   const autoOffTimerRef = useRef(null);
@@ -135,6 +144,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
   const blipsScheduledRef = useRef(false);
   const isAttemptingAudioRef = useRef(false);
   const isAttemptingVideoRef = useRef(false);
+  const tryStartAudioRef = useRef(() => {});
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -160,6 +170,10 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
       preloadedHeroAudio.pause();
       preloadedHeroAudio.currentTime = 0;
     }
+    if (domAudioRef.current) {
+      domAudioRef.current.pause();
+      domAudioRef.current.currentTime = 0;
+    }
     if (videoRef.current) {
       videoRef.current.muted = true;
     }
@@ -168,8 +182,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
   const startBlipSequence = useCallback((ctx) => {
     if (!ctx || ctx.state !== 'running' || manuallyMutedRef.current || blipsScheduledRef.current) return;
     blipsScheduledRef.current = true;
-    const offsetsMs = [0, 650, 1400, 2200, 3000, 3850, 4700, 5500];
-    offsetsMs.forEach((delayMs) => {
+    BUBBLE_BLIP_OFFSETS_MS.forEach((delayMs) => {
       if (delayMs === 0) {
         playBubbleCluster(ctx);
       } else {
@@ -189,10 +202,12 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     isPlayingRef.current = true;
     setSoundEnabled(true);
 
-    // 1. Play the preloaded 6.5s trimmed audio track immediately (0ms delay)
-    if (preloadedHeroAudio) {
-      preloadedHeroAudio.currentTime = 0;
-      preloadedHeroAudio.play().catch(() => {});
+    // 1. Play the 12s trimmed audio track immediately (0ms delay)
+    const audioTarget = domAudioRef.current || preloadedHeroAudio;
+    if (audioTarget) {
+      audioTarget.currentTime = 0;
+      audioTarget.volume = 0.85;
+      audioTarget.play().catch(() => {});
     }
 
     // 2. Unmute the hero video element in parallel (never blocks audio)
@@ -208,7 +223,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
       }
     }
 
-    // 3. Schedule playful Web Audio API bubble clusters across the full 6.5s duration
+    // 3. Schedule playful Web Audio API bubble clusters across the full 12s duration
     const activeCtx = ctx || audioCtxRef.current;
     if (activeCtx) {
       if (activeCtx.state === 'running') {
@@ -218,14 +233,14 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
       }
     }
 
-    // Automatically turn off after playing for 6.5 seconds
+    // Automatically turn off after playing for 12 seconds
     autoOffTimerRef.current = setTimeout(() => {
       stopBubbleAudio();
       setSoundEnabled(false);
-    }, 6500);
+    }, SOUND_DURATION_MS);
   }, [stopBubbleAudio, startBlipSequence]);
 
-  // Autoplay bubble sound on window load / refresh for 6.5s
+  // Autoplay bubble sound on window load / refresh for 12s
   useEffect(() => {
     manuallyMutedRef.current = false;
     hasAutoPlayedRef.current = false;
@@ -240,9 +255,23 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     }
     const ctx = audioCtxRef.current;
 
-    const unlockEvents = ['pointerdown', 'pointermove', 'mousemove', 'wheel', 'touchstart', 'keydown', 'click', 'scroll'];
-    const removeUnlockListeners = () => {
-      unlockEvents.forEach((evt) => window.removeEventListener(evt, handleUnlock));
+    const unlockEvents = [
+      'pointerdown', 'pointerup', 'pointermove', 'mousemove',
+      'wheel', 'touchstart', 'touchend', 'keydown', 'keyup', 'click', 'scroll'
+    ];
+    let retryIntervalId = null;
+
+    const cleanupTriggers = () => {
+      unlockEvents.forEach((evt) => {
+        window.removeEventListener(evt, handleUnlock);
+        document.removeEventListener(evt, handleUnlock);
+      });
+      window.removeEventListener('load', tryStartAudioSync);
+      window.removeEventListener('focus', tryStartAudioSync);
+      if (retryIntervalId) {
+        clearInterval(retryIntervalId);
+        retryIntervalId = null;
+      }
     };
 
     const onChannelStarted = () => {
@@ -254,17 +283,18 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
         hasAutoPlayedRef.current = true;
         isPlayingRef.current = true;
         setSoundEnabled(true);
-        removeUnlockListeners();
+        cleanupTriggers();
 
-        // Ensure the 6.5s audio element is also running if unlocked via WebAudio/video
-        if (preloadedHeroAudio && preloadedHeroAudio.paused && !isAttemptingAudioRef.current) {
-          preloadedHeroAudio.play().catch(() => {});
+        const audioTarget = domAudioRef.current || preloadedHeroAudio;
+        if (audioTarget && audioTarget.paused && !isAttemptingAudioRef.current) {
+          audioTarget.volume = 0.85;
+          audioTarget.play().catch(() => {});
         }
 
         autoOffTimerRef.current = setTimeout(() => {
           stopBubbleAudio();
           setSoundEnabled(false);
-        }, 6500);
+        }, SOUND_DURATION_MS);
       }
 
       if (ctx && ctx.state === 'running') {
@@ -273,26 +303,32 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     };
 
     // Initiate all 3 audio channels without aborting any in-flight play() request
-    const tryStartAudioSync = () => {
+    function tryStartAudioSync() {
       if (manuallyMutedRef.current || hasAutoPlayedRef.current) return;
 
-      // Channel 1: Preloaded 6.5s MP3 (71 KB — instant)
-      if (preloadedHeroAudio && preloadedHeroAudio.paused && !isAttemptingAudioRef.current) {
-        isAttemptingAudioRef.current = true;
-        try {
-          const p = preloadedHeroAudio.play();
-          if (p !== undefined) {
-            p.then(() => {
+      // Channel 1: DOM <audio autoPlay> or preloaded 12s MP3
+      const audioTarget = domAudioRef.current || preloadedHeroAudio;
+      if (audioTarget) {
+        if (!audioTarget.paused && audioTarget.currentTime > 0) {
+          onChannelStarted();
+        } else if (audioTarget.paused && !isAttemptingAudioRef.current) {
+          isAttemptingAudioRef.current = true;
+          try {
+            audioTarget.volume = 0.85;
+            const p = audioTarget.play();
+            if (p !== undefined) {
+              p.then(() => {
+                isAttemptingAudioRef.current = false;
+                onChannelStarted();
+              }).catch(() => {
+                isAttemptingAudioRef.current = false;
+              });
+            } else {
               isAttemptingAudioRef.current = false;
-              onChannelStarted();
-            }).catch(() => {
-              isAttemptingAudioRef.current = false;
-            });
-          } else {
+            }
+          } catch {
             isAttemptingAudioRef.current = false;
           }
-        } catch {
-          isAttemptingAudioRef.current = false;
         }
       }
 
@@ -309,9 +345,9 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
         }
       }
 
-      // Channel 3: Hero Video unmuted playback (allowed by Chrome MEI on main viewport video)
+      // Channel 3: Hero Video unmuted playback once video has started buffering/playing
       const video = videoRef.current;
-      if (video && !isAttemptingVideoRef.current) {
+      if (video && video.readyState >= 2 && !isAttemptingVideoRef.current) {
         isAttemptingVideoRef.current = true;
         try {
           video.muted = false;
@@ -319,7 +355,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
           if (vp !== undefined) {
             vp.then(() => {
               isAttemptingVideoRef.current = false;
-              if (!video.muted) {
+              if (!video.muted && !video.paused) {
                 onChannelStarted();
               }
             }).catch(() => {
@@ -338,7 +374,9 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
           video.play().catch(() => {});
         }
       }
-    };
+    }
+
+    tryStartAudioRef.current = tryStartAudioSync;
 
     function handleUnlock(e) {
       // Ignore clicks directly on the sound button so toggleSound handles them cleanly on first click
@@ -346,17 +384,30 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
         return;
       }
       if (manuallyMutedRef.current || hasAutoPlayedRef.current) {
-        removeUnlockListeners();
+        cleanupTriggers();
         return;
       }
       tryStartAudioSync();
     }
 
-    unlockEvents.forEach((evt) => window.addEventListener(evt, handleUnlock, { passive: true }));
+    unlockEvents.forEach((evt) => {
+      window.addEventListener(evt, handleUnlock, { passive: true });
+      document.addEventListener(evt, handleUnlock, { passive: true });
+    });
+    window.addEventListener('load', tryStartAudioSync);
+    window.addEventListener('focus', tryStartAudioSync);
+
     tryStartAudioSync();
+    retryIntervalId = setInterval(() => {
+      if (manuallyMutedRef.current || hasAutoPlayedRef.current) {
+        cleanupTriggers();
+        return;
+      }
+      tryStartAudioSync();
+    }, 250);
 
     return () => {
-      removeUnlockListeners();
+      cleanupTriggers();
       stopBubbleAudio();
     };
   }, [stopBubbleAudio, startBlipSequence]);
@@ -369,7 +420,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
       stopBubbleAudio();
       setSoundEnabled(false);
     } else {
-      // Play immediately on first click for 6.5s and auto-turn-off
+      // Play immediately on first click for 12s and auto-turn-off
       manuallyMutedRef.current = false;
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
       if (AudioCtx && (!audioCtxRef.current || audioCtxRef.current.state === 'closed')) {
@@ -397,10 +448,25 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     }
   };
 
+  const handleMediaReady = useCallback(() => {
+    tryStartAudioRef.current?.();
+  }, []);
+
   return (
     <section className="relative w-full min-h-[85vh] sm:min-h-screen py-28 sm:py-32 overflow-hidden flex items-center justify-start">
+      {/* Native Autoplay Audio Element for 12s Hero Bubble Sound */}
+      <audio
+        ref={domAudioRef}
+        src="/videos/hero-bubble.mp3"
+        autoPlay
+        preload="auto"
+        onCanPlay={handleMediaReady}
+        onPlaying={handleMediaReady}
+        className="hidden"
+      />
+
       {/* 1. Full-Screen Native HD Video Background */}
-      <VideoBackground videoRef={videoRef} isMuted={!soundEnabled} />
+      <VideoBackground videoRef={videoRef} onVideoReady={handleMediaReady} />
 
       {/* 2. Chapter Content Overlay */}
       <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
