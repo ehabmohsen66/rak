@@ -1,11 +1,10 @@
 import React, { useState, useRef } from 'react';
-import { UserCheck, Play, Pause, Volume2, VolumeX, Maximize2 } from 'lucide-react';
+import { UserCheck, Play, Pause, Maximize2 } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
 
 export const TeamMarqueeSection = () => {
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
-  const [isMuted, setIsMuted] = useState(true);
 
   const togglePlay = (e) => {
     e?.stopPropagation();
@@ -17,13 +16,6 @@ export const TeamMarqueeSection = () => {
       videoRef.current.pause();
       setIsPlaying(false);
     }
-  };
-
-  const toggleMute = (e) => {
-    e?.stopPropagation();
-    if (!videoRef.current) return;
-    videoRef.current.muted = !videoRef.current.muted;
-    setIsMuted(videoRef.current.muted);
   };
 
   const toggleFullscreen = (e) => {
@@ -96,17 +88,16 @@ export const TeamMarqueeSection = () => {
               <video
                 ref={videoRef}
                 autoPlay
-                muted={isMuted}
+                muted
                 loop
                 playsInline
                 preload="metadata"
-                poster="/videos/drc-oof-poster.jpg"
+                poster="/videos/banner2-poster.jpg"
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
                 className="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out filter drop-shadow-2xl"
               >
-                <source src="/videos/Export DRC OOF _ en.mp4" type="video/mp4" />
-                <source src="/videos/Export%20DRC%20OOF%20_%20en.mp4" type="video/mp4" />
+                <source src="/videos/RAK4-WebsiteBanner2-211026.mp4" type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
 
@@ -126,33 +117,10 @@ export const TeamMarqueeSection = () => {
               <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-center justify-between z-20 pointer-events-auto">
                 <span className="px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-sm flex items-center space-x-1.5 font-mono">
                   <span className="w-1.5 h-1.5 rounded-full bg-rak-magenta animate-pulse" />
-                  <span>DRC • Out Of Frame</span>
+                  <span>Behind RAK 4 Creative</span>
                 </span>
 
                 <div className="flex items-center space-x-2">
-                  {/* Audio Mute/Unmute Button */}
-                  <button
-                    onClick={toggleMute}
-                    aria-label={isMuted ? 'Unmute video audio' : 'Mute video audio'}
-                    className={`px-3 py-1.5 rounded-full backdrop-blur-md border text-xs font-semibold flex items-center space-x-1.5 transition-all duration-300 cursor-pointer shadow-lg ${
-                      isMuted
-                        ? 'bg-black/65 border-white/20 text-white hover:bg-rak-magenta hover:border-rak-magenta'
-                        : 'bg-rak-magenta border-rak-magenta text-white shadow-magenta-glow'
-                    }`}
-                  >
-                    {isMuted ? (
-                      <>
-                        <VolumeX className="w-3.5 h-3.5" />
-                        <span className="hidden sm:inline text-[11px]">Unmute</span>
-                      </>
-                    ) : (
-                      <>
-                        <Volume2 className="w-3.5 h-3.5 animate-pulse" />
-                        <span className="hidden sm:inline text-[11px]">Sound On</span>
-                      </>
-                    )}
-                  </button>
-
                   {/* Fullscreen Button */}
                   <button
                     onClick={toggleFullscreen}
@@ -175,8 +143,8 @@ export const TeamMarqueeSection = () => {
                     {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white translate-x-0.5" />}
                   </button>
                   <div>
-                    <span className="text-[10px] font-mono text-rak-magenta uppercase tracking-widest font-extrabold">FEATURED PRODUCTION</span>
-                    <h3 className="text-xs sm:text-sm font-bold text-white font-heading">DRC — Out of Frame</h3>
+                    <span className="text-[10px] font-mono text-rak-magenta uppercase tracking-widest font-extrabold">FEATURED SHOWCASE</span>
+                    <h3 className="text-xs sm:text-sm font-bold text-white font-heading">The RAK 4 Creative Powerhouse</h3>
                   </div>
                 </div>
 
