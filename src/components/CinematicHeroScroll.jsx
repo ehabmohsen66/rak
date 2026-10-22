@@ -82,13 +82,13 @@ const fadeIn = {
 
 // --- Sub-Components ---
 
-const VideoBackground = ({ videoRef, isMuted }) => {
+const VideoBackground = ({ videoRef }) => {
   return (
     <div className="absolute inset-0 h-full w-full overflow-hidden bg-slate-950">
       <video
         ref={videoRef}
         autoPlay
-        muted={isMuted}
+        muted
         loop
         playsInline
         preload="auto"
@@ -141,71 +141,126 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
   }, []);
 
   const playBubbleOnceAndAutoOff = useCallback((ctx) => {
-    if (!ctx) return;
     stopBubbleAudio();
+    hasAutoPlayedRef.current = true;
     setSoundEnabled(true);
 
-    // Play first "blip, blip" cluster immediately, and a soft second cluster at 650ms
-    playBubbleCluster(ctx);
-    secondBlipTimerRef.current = setTimeout(() => {
-      if (ctx.state === 'running' && !manuallyMutedRef.current) {
-        playBubbleCluster(ctx);
+    // Unmute the embedded video audio track for 1 cycle (~5s)
+    const video = videoRef.current;
+    if (video) {
+      video.currentTime = 0;
+      video.muted = false;
+      const playPromise = video.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(() => {
+          // If browser blocks unmuted video autoplay on refresh before interaction, keep video playing muted
+          video.muted = true;
+          video.play().catch(() => {});
+        });
       }
-    }, 650);
+    }
 
-    // Automatically turn off after playing once (~1.5s) so it never annoys the user
+    // Play synthesized "blip, blip" bubble clusters via Web Audio API
+    const activeCtx = ctx || audioCtxRef.current;
+    if (activeCtx) {
+      const triggerBlips = () => {
+        if (manuallyMutedRef.current || activeCtx.state !== 'running') return;
+        playBubbleCluster(activeCtx);
+        secondBlipTimerRef.current = setTimeout(() => {
+          if (activeCtx.state === 'running' && !manuallyMutedRef.current) {
+            playBubbleCluster(activeCtx);
+          }
+        }, 650);
+      };
+
+      if (activeCtx.state === 'running') {
+        triggerBlips();
+      } else if (activeCtx.state === 'suspended') {
+        activeCtx.resume().then(triggerBlips).catch(() => {});
+      }
+    }
+
+    // Automatically turn off after playing once so it never annoys the user
     autoOffTimerRef.current = setTimeout(() => {
       stopBubbleAudio();
       setSoundEnabled(false);
-    }, 1500);
+    }, 5000);
   }, [stopBubbleAudio]);
 
-  // Autoplay bubble sound once on load (with first-gesture fallback if browser blocks unmuted audio)
+  // Autoplay bubble sound once on window load / refresh (with instant fallback if browser requires a gesture after hard refresh)
   useEffect(() => {
+    manuallyMutedRef.current = false;
+    hasAutoPlayedRef.current = false;
+
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
-    if (!AudioCtx) return;
+    if (AudioCtx && (!audioCtxRef.current || audioCtxRef.current.state === 'closed')) {
+      audioCtxRef.current = new AudioCtx();
+    }
+    const ctx = audioCtxRef.current;
 
-    const ctx = new AudioCtx();
-    audioCtxRef.current = ctx;
+    const tryAutoPlayOnRefresh = async () => {
+      if (manuallyMutedRef.current || hasAutoPlayedRef.current) return;
 
-    const handleFirstGesture = () => {
-      if (hasAutoPlayedRef.current || manuallyMutedRef.current) return;
-      hasAutoPlayedRef.current = true;
-      if (ctx.state === 'suspended') {
-        ctx.resume().then(() => {
-          if (!manuallyMutedRef.current) {
-            playBubbleOnceAndAutoOff(ctx);
-          }
-        }).catch(() => {});
-      } else {
+      // 1. Try unmuting the hero video directly (plays the embedded audio track immediately if allowed)
+      let playedUnmuted = false;
+      const video = videoRef.current;
+      if (video) {
+        try {
+          video.currentTime = 0;
+          video.muted = false;
+          await video.play();
+          playedUnmuted = !video.muted;
+        } catch {
+          video.muted = true;
+          video.play().catch(() => {});
+        }
+      }
+
+      // 2. Try resuming Web Audio API context for the synthesized bubble blips
+      if (ctx && ctx.state === 'suspended') {
+        try {
+          await ctx.resume();
+        } catch {
+          // Suspended until gesture
+        }
+      }
+
+      if (playedUnmuted || (ctx && ctx.state === 'running')) {
         playBubbleOnceAndAutoOff(ctx);
       }
     };
 
-    if (ctx.state === 'running') {
-      hasAutoPlayedRef.current = true;
-      playBubbleOnceAndAutoOff(ctx);
-    } else {
-      ctx.resume().then(() => {
-        if (ctx.state === 'running' && !hasAutoPlayedRef.current && !manuallyMutedRef.current) {
-          hasAutoPlayedRef.current = true;
-          playBubbleOnceAndAutoOff(ctx);
-        }
-      }).catch(() => {});
+    tryAutoPlayOnRefresh();
 
-      window.addEventListener('pointerdown', handleFirstGesture, { once: true, passive: true });
-      window.addEventListener('keydown', handleFirstGesture, { once: true, passive: true });
-      window.addEventListener('touchstart', handleFirstGesture, { once: true, passive: true });
+    // Fallback: if browser strict autoplay policy blocked audio on hard refresh, trigger the moment the user moves, scrolls, touches, or clicks
+    const unlockEvents = ['pointerdown', 'pointermove', 'mousemove', 'wheel', 'touchstart', 'keydown', 'click'];
+    const removeUnlockListeners = () => {
+      unlockEvents.forEach((evt) => window.removeEventListener(evt, handleUnlock));
+    };
+
+    function handleUnlock() {
+      if (manuallyMutedRef.current || hasAutoPlayedRef.current) {
+        removeUnlockListeners();
+        return;
+      }
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume().then(() => {
+          if (ctx.state === 'running' && !hasAutoPlayedRef.current && !manuallyMutedRef.current) {
+            removeUnlockListeners();
+            playBubbleOnceAndAutoOff(ctx);
+          }
+        }).catch(() => {});
+      } else {
+        removeUnlockListeners();
+        playBubbleOnceAndAutoOff(ctx);
+      }
     }
 
+    unlockEvents.forEach((evt) => window.addEventListener(evt, handleUnlock, { passive: true }));
+
     return () => {
-      window.removeEventListener('pointerdown', handleFirstGesture);
-      window.removeEventListener('keydown', handleFirstGesture);
-      window.removeEventListener('touchstart', handleFirstGesture);
+      removeUnlockListeners();
       stopBubbleAudio();
-      if (ctx.state !== 'closed') {
-        ctx.close().catch(() => {});
-      }
     };
   }, [playBubbleOnceAndAutoOff, stopBubbleAudio]);
 
@@ -219,18 +274,17 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     } else {
       // Play once and auto-turn-off
       manuallyMutedRef.current = false;
-      hasAutoPlayedRef.current = true;
       const AudioCtx = window.AudioContext || window.webkitAudioContext;
-      if (AudioCtx) {
-        if (!audioCtxRef.current || audioCtxRef.current.state === 'closed') {
-          audioCtxRef.current = new AudioCtx();
-        }
-        const ctx = audioCtxRef.current;
-        if (ctx.state === 'suspended') {
-          ctx.resume().then(() => playBubbleOnceAndAutoOff(ctx)).catch(() => {});
-        } else {
+      if (AudioCtx && (!audioCtxRef.current || audioCtxRef.current.state === 'closed')) {
+        audioCtxRef.current = new AudioCtx();
+      }
+      const ctx = audioCtxRef.current;
+      if (ctx && ctx.state === 'suspended') {
+        ctx.resume().then(() => playBubbleOnceAndAutoOff(ctx)).catch(() => {
           playBubbleOnceAndAutoOff(ctx);
-        }
+        });
+      } else {
+        playBubbleOnceAndAutoOff(ctx);
       }
     }
   };
@@ -249,7 +303,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
   return (
     <section className="relative w-full min-h-[85vh] sm:min-h-screen py-28 sm:py-32 overflow-hidden flex items-center justify-start">
       {/* 1. Full-Screen Native HD Video Background */}
-      <VideoBackground videoRef={videoRef} isMuted={true} />
+      <VideoBackground videoRef={videoRef} />
 
       {/* 2. Chapter Content Overlay */}
       <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
