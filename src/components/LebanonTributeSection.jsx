@@ -7,19 +7,19 @@ import { ArrowUpRight } from 'lucide-react';
    Red is reserved for one element only: the heart.
    ────────────────────────────────────────────────────────────── */
 const C = {
-  pageBg:   '#F9FAFC',
-  surface:  '#FFFFFF',
-  chip:     '#F2F5F9',
-  border:   '#E4E8EF',
-  navy:     '#101729',
-  body:     '#717A88',
-  muted:    '#A2A4A9',
+  pageBg:   '#070B14',
+  surface:  '#0D1326',
+  chip:     'rgba(255, 255, 255, 0.07)',
+  border:   'rgba(236, 0, 140, 0.28)',
+  navy:     '#FFFFFF',
+  body:     '#CBD5E1',
+  muted:    '#94A3B8',
   magenta:  '#EC008C',
   magentaD: '#C80074',
-  coral:    '#E04E64',
-  pink:     '#E1709F',
-  violet:   '#CB4CDC',
-  mint:     '#5FC3A2',
+  coral:    '#FF4D79',
+  pink:     '#F472B6',
+  violet:   '#C084FC',
+  mint:     '#34D399',
   heart:    '#EE161F', // the only red
 };
 
@@ -240,16 +240,16 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
       <div
         className="relative overflow-hidden rounded-[28px]"
         style={{
-          backgroundColor: C.surface,
+          background: 'linear-gradient(135deg, #0D1326 0%, #161130 55%, #090D1A 100%)',
           border: `1px solid ${C.border}`,
-          boxShadow: '0 24px 60px -32px rgba(16,23,41,0.22)',
+          boxShadow: '0 28px 70px -24px rgba(236, 0, 140, 0.25), 0 24px 60px -32px rgba(8, 12, 24, 0.7)',
         }}
       >
         {/* Soft brand wash */}
         <div className="pointer-events-none absolute inset-0">
-          <div className="absolute -top-32 -left-20 w-[520px] h-[380px] rounded-full blur-[110px]" style={{ backgroundColor: C.magenta, opacity: 0.07 }} />
-          <div className="absolute top-1/3 right-0 w-[480px] h-[480px] rounded-full blur-[120px]" style={{ backgroundColor: C.violet, opacity: 0.06 }} />
-          <div className="absolute bottom-0 left-1/3 w-[420px] h-[260px] rounded-full blur-[100px]" style={{ backgroundColor: C.mint, opacity: 0.05 }} />
+          <div className="absolute -top-32 -left-20 w-[520px] h-[380px] rounded-full blur-[110px]" style={{ backgroundColor: C.magenta, opacity: 0.16 }} />
+          <div className="absolute top-1/3 right-0 w-[480px] h-[480px] rounded-full blur-[120px]" style={{ backgroundColor: C.violet, opacity: 0.14 }} />
+          <div className="absolute bottom-0 left-1/3 w-[420px] h-[260px] rounded-full blur-[100px]" style={{ backgroundColor: C.mint, opacity: 0.08 }} />
         </div>
 
         <div className="relative grid grid-cols-1 lg:grid-cols-12">
@@ -385,7 +385,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             >
               <defs>
                 <pattern id="rakGrid" width="42" height="42" patternUnits="userSpaceOnUse">
-                  <path d="M42 0H0V42" fill="none" stroke="rgba(16,23,41,0.045)" strokeWidth="1" />
+                  <path d="M42 0H0V42" fill="none" stroke="rgba(255,255,255,0.045)" strokeWidth="1" />
                 </pattern>
                 <linearGradient id="rakRoute" x1="0" y1="0" x2="1" y2="0">
                   <stop offset="0%" stopColor={C.magenta} />
@@ -393,8 +393,8 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                   <stop offset="100%" stopColor={C.violet} />
                 </linearGradient>
                 <radialGradient id="rakCore">
-                  <stop offset="0%" stopColor={C.magenta} stopOpacity="0.10" />
-                  <stop offset="70%" stopColor={C.violet} stopOpacity="0.04" />
+                  <stop offset="0%" stopColor={C.magenta} stopOpacity="0.22" />
+                  <stop offset="70%" stopColor={C.violet} stopOpacity="0.09" />
                   <stop offset="100%" stopColor={C.mint} stopOpacity="0" />
                 </radialGradient>
               </defs>
@@ -403,9 +403,9 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               <circle cx={CX} cy={CY} r={R * 1.4} fill="url(#rakCore)" />
 
               <g className="rak-drift">
-                <circle cx={CX} cy={CY} r={R} fill="rgba(255,255,255,0.75)" stroke="rgba(16,23,41,0.13)" strokeWidth="1" />
+                <circle cx={CX} cy={CY} r={R} fill="rgba(15,23,42,0.82)" stroke="rgba(236,0,140,0.32)" strokeWidth="1.2" />
 
-                <g fill="none" stroke="rgba(16,23,41,0.085)" strokeWidth="0.8">
+                <g fill="none" stroke="rgba(255,255,255,0.12)" strokeWidth="0.8">
                   {GRATICULE.map((d, i) => <path key={i} d={d} />)}
                 </g>
 

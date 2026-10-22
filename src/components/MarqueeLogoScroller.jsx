@@ -74,7 +74,7 @@ export const MarqueeLogoScroller = React.forwardRef(
                     {title}
                   </h2>
                 </div>
-                <p className="text-slate-600 dark:text-rak-slate-300 text-xs sm:text-sm leading-relaxed text-balance">
+                <p className="text-slate-700 dark:text-rak-slate-200 text-lg sm:text-xl md:text-2xl font-medium leading-snug text-balance">
                   {description}
                 </p>
               </div>
