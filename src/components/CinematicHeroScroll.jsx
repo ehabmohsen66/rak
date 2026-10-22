@@ -94,13 +94,13 @@ const fadeIn = {
 
 // --- Sub-Components ---
 
-const VideoBackground = ({ videoRef }) => {
+const VideoBackground = ({ videoRef, isMuted }) => {
   return (
     <div className="absolute inset-0 h-full w-full overflow-hidden bg-slate-950">
       <video
         ref={videoRef}
         autoPlay
-        muted
+        muted={isMuted}
         loop
         playsInline
         preload="auto"
@@ -123,7 +123,7 @@ const VideoBackground = ({ videoRef }) => {
 
 export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = () => {} }) => {
   const [phraseIndex, setPhraseIndex] = useState(0);
-  const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(true);
   const videoRef = useRef(null);
   const soundBtnRef = useRef(null);
   const audioCtxRef = useRef(null);
@@ -133,6 +133,8 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
   const hasAutoPlayedRef = useRef(false);
   const isPlayingRef = useRef(false);
   const blipsScheduledRef = useRef(false);
+  const isAttemptingAudioRef = useRef(false);
+  const isAttemptingVideoRef = useRef(false);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -144,6 +146,8 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
   const stopBubbleAudio = useCallback(() => {
     isPlayingRef.current = false;
     blipsScheduledRef.current = false;
+    isAttemptingAudioRef.current = false;
+    isAttemptingVideoRef.current = false;
     if (autoOffTimerRef.current) {
       clearTimeout(autoOffTimerRef.current);
       autoOffTimerRef.current = null;
@@ -221,12 +225,14 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     }, 6500);
   }, [stopBubbleAudio, startBlipSequence]);
 
-  // Autoplay bubble sound on window load / refresh for 6.5s (non-blocking, synchronous gesture activation)
+  // Autoplay bubble sound on window load / refresh for 6.5s
   useEffect(() => {
     manuallyMutedRef.current = false;
     hasAutoPlayedRef.current = false;
     isPlayingRef.current = false;
     blipsScheduledRef.current = false;
+    isAttemptingAudioRef.current = false;
+    isAttemptingVideoRef.current = false;
 
     const AudioCtx = window.AudioContext || window.webkitAudioContext;
     if (AudioCtx && (!audioCtxRef.current || audioCtxRef.current.state === 'closed')) {
@@ -234,7 +240,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
     }
     const ctx = audioCtxRef.current;
 
-    const unlockEvents = ['pointerdown', 'pointermove', 'mousemove', 'wheel', 'touchstart', 'keydown', 'click'];
+    const unlockEvents = ['pointerdown', 'pointermove', 'mousemove', 'wheel', 'touchstart', 'keydown', 'click', 'scroll'];
     const removeUnlockListeners = () => {
       unlockEvents.forEach((evt) => window.removeEventListener(evt, handleUnlock));
     };
@@ -251,8 +257,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
         removeUnlockListeners();
 
         // Ensure the 6.5s audio element is also running if unlocked via WebAudio/video
-        if (preloadedHeroAudio && preloadedHeroAudio.paused) {
-          preloadedHeroAudio.currentTime = 0;
+        if (preloadedHeroAudio && preloadedHeroAudio.paused && !isAttemptingAudioRef.current) {
           preloadedHeroAudio.play().catch(() => {});
         }
 
@@ -267,20 +272,27 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
       }
     };
 
-    // Synchronously initiate all 3 audio channels in the same tick (never await-blocking each other)
+    // Initiate all 3 audio channels without aborting any in-flight play() request
     const tryStartAudioSync = () => {
       if (manuallyMutedRef.current || hasAutoPlayedRef.current) return;
 
       // Channel 1: Preloaded 6.5s MP3 (71 KB — instant)
-      if (preloadedHeroAudio && preloadedHeroAudio.paused) {
+      if (preloadedHeroAudio && preloadedHeroAudio.paused && !isAttemptingAudioRef.current) {
+        isAttemptingAudioRef.current = true;
         try {
-          preloadedHeroAudio.currentTime = 0;
           const p = preloadedHeroAudio.play();
           if (p !== undefined) {
-            p.then(() => onChannelStarted()).catch(() => {});
+            p.then(() => {
+              isAttemptingAudioRef.current = false;
+              onChannelStarted();
+            }).catch(() => {
+              isAttemptingAudioRef.current = false;
+            });
+          } else {
+            isAttemptingAudioRef.current = false;
           }
         } catch {
-          // Blocked until gesture
+          isAttemptingAudioRef.current = false;
         }
       }
 
@@ -299,23 +311,29 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
 
       // Channel 3: Hero Video unmuted playback (allowed by Chrome MEI on main viewport video)
       const video = videoRef.current;
-      if (video) {
+      if (video && !isAttemptingVideoRef.current) {
+        isAttemptingVideoRef.current = true;
         try {
           video.muted = false;
           const vp = video.play();
           if (vp !== undefined) {
             vp.then(() => {
+              isAttemptingVideoRef.current = false;
               if (!video.muted) {
                 onChannelStarted();
               }
             }).catch(() => {
+              isAttemptingVideoRef.current = false;
               if (!isPlayingRef.current) {
                 video.muted = true;
                 video.play().catch(() => {});
               }
             });
+          } else {
+            isAttemptingVideoRef.current = false;
           }
         } catch {
+          isAttemptingVideoRef.current = false;
           video.muted = true;
           video.play().catch(() => {});
         }
@@ -382,7 +400,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
   return (
     <section className="relative w-full min-h-[85vh] sm:min-h-screen py-28 sm:py-32 overflow-hidden flex items-center justify-start">
       {/* 1. Full-Screen Native HD Video Background */}
-      <VideoBackground videoRef={videoRef} />
+      <VideoBackground videoRef={videoRef} isMuted={!soundEnabled} />
 
       {/* 2. Chapter Content Overlay */}
       <div className="relative z-30 w-full max-w-7xl mx-auto px-4 sm:px-8 md:px-12 lg:px-16">
