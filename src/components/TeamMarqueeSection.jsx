@@ -1,8 +1,41 @@
-import React from 'react';
-import { UserCheck } from 'lucide-react';
+import React, { useState, useRef } from 'react';
+import { UserCheck, Play, Pause, Volume2, VolumeX, Maximize2 } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
 
 export const TeamMarqueeSection = () => {
+  const videoRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(true);
+  const [isMuted, setIsMuted] = useState(true);
+
+  const togglePlay = (e) => {
+    e?.stopPropagation();
+    if (!videoRef.current) return;
+    if (videoRef.current.paused) {
+      videoRef.current.play();
+      setIsPlaying(true);
+    } else {
+      videoRef.current.pause();
+      setIsPlaying(false);
+    }
+  };
+
+  const toggleMute = (e) => {
+    e?.stopPropagation();
+    if (!videoRef.current) return;
+    videoRef.current.muted = !videoRef.current.muted;
+    setIsMuted(videoRef.current.muted);
+  };
+
+  const toggleFullscreen = (e) => {
+    e?.stopPropagation();
+    if (!videoRef.current) return;
+    if (videoRef.current.requestFullscreen) {
+      videoRef.current.requestFullscreen();
+    } else if (videoRef.current.webkitRequestFullscreen) {
+      videoRef.current.webkitRequestFullscreen();
+    }
+  };
+
   return (
     <section className="relative w-full overflow-hidden bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-rak-slate-800 rounded-3xl py-10 md:py-16 backdrop-blur-xl shadow-xl transition-colors duration-300">
       {/* Background Decorative SVG Curve */}
@@ -49,32 +82,109 @@ export const TeamMarqueeSection = () => {
           </p>
         </div>
 
-        {/* Featured Official Team Photo */}
-        <div className="relative w-full max-w-4xl mx-auto">
+        {/* Featured Video Showcase */}
+        <div className="relative w-full max-w-5xl mx-auto">
           <SpotlightCard
             spotlightColor="rgba(236, 0, 140, 0.2)"
             borderColor="rgba(236, 0, 140, 0.3)"
-            className="p-2.5 sm:p-4 bg-slate-50 dark:bg-rak-slate-950/90 border border-slate-200 dark:border-rak-slate-800 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl group"
+            className="p-2 sm:p-3 bg-slate-50 dark:bg-rak-slate-950/90 border border-slate-200 dark:border-rak-slate-800 rounded-3xl overflow-hidden shadow-2xl backdrop-blur-xl group"
           >
-            <div className="relative w-full max-h-[80vh] overflow-hidden rounded-2xl bg-slate-950 flex flex-col items-center justify-center">
-              <img
-                src="/rak-team.webp"
-                alt="RAK 4 Creative Team"
-                className="w-full h-auto max-h-[78vh] object-contain rounded-2xl transition-transform duration-700 ease-out filter drop-shadow-2xl"
-                loading="lazy"
-                decoding="async"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/75 via-transparent to-transparent pointer-events-none rounded-2xl" />
-              
-              {/* Bottom Caption Overlay */}
-              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-xl bg-slate-900/90 dark:bg-rak-slate-950/85 backdrop-blur-md border border-rak-magenta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10 shadow-xl">
-                <div>
-                  <span className="text-[10px] font-mono text-rak-magenta uppercase tracking-widest font-extrabold">OFFICIAL TEAM PHOTOGRAPH</span>
-                  <h3 className="text-xs sm:text-sm font-bold text-white font-heading">The RAK 4 Creative Powerhouse</h3>
+            <div 
+              className="relative w-full aspect-video max-h-[80vh] overflow-hidden rounded-2xl bg-slate-950 flex flex-col items-center justify-center cursor-pointer"
+              onClick={togglePlay}
+            >
+              <video
+                ref={videoRef}
+                autoPlay
+                muted={isMuted}
+                loop
+                playsInline
+                preload="metadata"
+                poster="/videos/drc-oof-poster.jpg"
+                onPlay={() => setIsPlaying(true)}
+                onPause={() => setIsPlaying(false)}
+                className="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out filter drop-shadow-2xl"
+              >
+                <source src="/videos/Export DRC OOF _ en.mp4" type="video/mp4" />
+                <source src="/videos/Export%20DRC%20OOF%20_%20en.mp4" type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
+
+              {/* Gradient Vignette */}
+              <div className="absolute inset-0 bg-gradient-to-t from-slate-950/85 via-transparent to-slate-950/30 pointer-events-none rounded-2xl" />
+
+              {/* Center Play Button Overlay when paused */}
+              {!isPlaying && (
+                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                  <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-rak-magenta/90 text-white flex items-center justify-center shadow-magenta-glow backdrop-blur-md transition-transform scale-100 hover:scale-110">
+                    <Play className="w-8 h-8 fill-white translate-x-0.5" />
+                  </div>
                 </div>
-                <span className="text-[10px] font-semibold text-slate-300 px-2.5 py-1 bg-slate-800/90 dark:bg-rak-slate-900/90 border border-white/10 rounded-lg shrink-0 font-mono">
-                  Strategy • Design • 3D • Tech • Media
+              )}
+
+              {/* Top Controls Bar */}
+              <div className="absolute top-3 left-3 right-3 sm:top-4 sm:left-4 sm:right-4 flex items-center justify-between z-20 pointer-events-auto">
+                <span className="px-3 py-1.5 rounded-full text-[10px] font-extrabold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-white/20 text-white shadow-sm flex items-center space-x-1.5 font-mono">
+                  <span className="w-1.5 h-1.5 rounded-full bg-rak-magenta animate-pulse" />
+                  <span>DRC • Out Of Frame</span>
                 </span>
+
+                <div className="flex items-center space-x-2">
+                  {/* Audio Mute/Unmute Button */}
+                  <button
+                    onClick={toggleMute}
+                    aria-label={isMuted ? 'Unmute video audio' : 'Mute video audio'}
+                    className={`px-3 py-1.5 rounded-full backdrop-blur-md border text-xs font-semibold flex items-center space-x-1.5 transition-all duration-300 cursor-pointer shadow-lg ${
+                      isMuted
+                        ? 'bg-black/65 border-white/20 text-white hover:bg-rak-magenta hover:border-rak-magenta'
+                        : 'bg-rak-magenta border-rak-magenta text-white shadow-magenta-glow'
+                    }`}
+                  >
+                    {isMuted ? (
+                      <>
+                        <VolumeX className="w-3.5 h-3.5" />
+                        <span className="hidden sm:inline text-[11px]">Unmute</span>
+                      </>
+                    ) : (
+                      <>
+                        <Volume2 className="w-3.5 h-3.5 animate-pulse" />
+                        <span className="hidden sm:inline text-[11px]">Sound On</span>
+                      </>
+                    )}
+                  </button>
+
+                  {/* Fullscreen Button */}
+                  <button
+                    onClick={toggleFullscreen}
+                    aria-label="View Fullscreen"
+                    className="p-2 rounded-full bg-black/60 hover:bg-rak-magenta backdrop-blur-md border border-white/20 text-white transition-all duration-300 hover:scale-110 cursor-pointer"
+                  >
+                    <Maximize2 className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Bottom Caption Overlay */}
+              <div className="absolute bottom-3 left-3 right-3 sm:bottom-4 sm:left-4 sm:right-4 p-3 sm:p-4 rounded-xl bg-slate-900/90 dark:bg-rak-slate-950/85 backdrop-blur-md border border-rak-magenta/30 flex flex-col sm:flex-row sm:items-center justify-between gap-2 z-10 shadow-xl pointer-events-auto">
+                <div className="flex items-center space-x-3">
+                  <button
+                    onClick={togglePlay}
+                    aria-label={isPlaying ? 'Pause' : 'Play'}
+                    className="p-2 sm:p-2.5 rounded-lg bg-rak-magenta hover:bg-rak-magenta-dark text-white transition-all shadow-magenta-glow shrink-0 cursor-pointer"
+                  >
+                    {isPlaying ? <Pause className="w-4 h-4 fill-white" /> : <Play className="w-4 h-4 fill-white translate-x-0.5" />}
+                  </button>
+                  <div>
+                    <span className="text-[10px] font-mono text-rak-magenta uppercase tracking-widest font-extrabold">FEATURED PRODUCTION</span>
+                    <h3 className="text-xs sm:text-sm font-bold text-white font-heading">DRC — Out of Frame</h3>
+                  </div>
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <span className="text-[10px] font-semibold text-slate-300 px-2.5 py-1 bg-slate-800/90 dark:bg-rak-slate-900/90 border border-white/10 rounded-lg shrink-0 font-mono">
+                    Strategy • Production • 3D • Tech
+                  </span>
+                </div>
               </div>
             </div>
           </SpotlightCard>
