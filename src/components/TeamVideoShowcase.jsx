@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Play, 
@@ -83,7 +83,28 @@ const VideoCard = ({ item, onOpenModal }) => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [isMuted, setIsMuted] = useState(true);
   const [isHovered, setIsHovered] = useState(false);
+  const [isInView, setIsInView] = useState(false);
+  const cardRef = useRef(null);
   const videoRef = useRef(null);
+
+  useEffect(() => {
+    const el = cardRef.current;
+    if (!el || typeof IntersectionObserver === 'undefined') {
+      setIsInView(true);
+      return;
+    }
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsInView(true);
+          observer.disconnect();
+        }
+      },
+      { rootMargin: '500px' }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, []);
 
   const togglePlay = (e) => {
     e.stopPropagation();
@@ -106,6 +127,7 @@ const VideoCard = ({ item, onOpenModal }) => {
 
   return (
     <div 
+      ref={cardRef}
       className="group relative rounded-3xl overflow-hidden bg-white dark:bg-rak-slate-900 border border-slate-200/90 dark:border-white/10 shadow-lg hover:shadow-2xl transition-all duration-500 cursor-pointer"
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
@@ -115,7 +137,8 @@ const VideoCard = ({ item, onOpenModal }) => {
       <div className={`relative w-full ${item.aspect} bg-slate-950 overflow-hidden`}>
         <video
           ref={videoRef}
-          src={item.src}
+          src={isInView ? item.src : undefined}
+          preload={isInView ? 'metadata' : 'none'}
           autoPlay
           muted={isMuted}
           loop
