@@ -60,6 +60,15 @@ function writeJsonFile(string $filename, $data): bool {
     return @rename($tmpPath, $path);
 }
 
+function readCmsContent(): array {
+    $content = readJsonFile('cms_data.json', []);
+    if (isset($content['seo']['ogImage']) && strpos((string)$content['seo']['ogImage'], 'photo-1618005182384-a83a8bd57fbe') !== false) {
+        $content['seo']['ogImage'] = 'https://rak4creative.com/og-logo.png';
+        writeJsonFile('cms_data.json', $content);
+    }
+    return $content;
+}
+
 function getAuthConfig(): array {
     $auth = readJsonFile('auth.json', []);
     if (empty($auth['passwordHash']) || empty($auth['secret'])) {
@@ -506,7 +515,7 @@ $method = $_SERVER['REQUEST_METHOD'];
 
 // 1. PUBLIC BOOTSTRAP (Content + Pixels)
 if ($route === 'bootstrap' && $method === 'GET') {
-    $content = readJsonFile('cms_data.json', []);
+    $content = readCmsContent();
     $pixels = readJsonFile('pixels.json', []);
     respond([
         'ok' => true,
@@ -576,7 +585,7 @@ if ($route === 'change-password' && $method === 'POST') {
 // 4. CONTENT MANAGEMENT
 if ($route === 'content') {
     if ($method === 'GET') {
-        respond(['ok' => true, 'content' => readJsonFile('cms_data.json', [])]);
+        respond(['ok' => true, 'content' => readCmsContent()]);
     }
     if ($method === 'PUT' || $method === 'POST') {
         requireAdminAuth();

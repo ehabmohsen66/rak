@@ -641,7 +641,7 @@ export const SEO_SETTINGS = {
   siteTitle: "RAK 4 CREATIVE | Global Digital & Brand Innovation Agency",
   metaDescription: "RAK 4 CREATIVE transforms ambitious enterprises into market leaders through brand identity, digital product design, web architecture, and growth strategy.",
   metaKeywords: "RAK 4 Creative, Brand Strategy, UI/UX Design, Web Development, CRO, Digital Transformation, Enterprise Agency",
-  ogImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
+  ogImage: "https://rak4creative.com/og-logo.png",
   canonicalUrl: "https://rak4creative.com",
   pageTitles: {
     home: "RAK 4 CREATIVE | Global Digital & Brand Innovation Agency",

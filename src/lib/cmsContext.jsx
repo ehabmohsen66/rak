@@ -46,6 +46,10 @@ function normalizeContent(raw = {}) {
     seo: {
       ...INITIAL_CMS_CONTENT.seo,
       ...(raw.seo || {}),
+      ogImage:
+        raw.seo?.ogImage && !String(raw.seo.ogImage).includes('photo-1618005182384-a83a8bd57fbe')
+          ? raw.seo.ogImage
+          : INITIAL_CMS_CONTENT.seo.ogImage,
       pageTitles: {
         ...INITIAL_CMS_CONTENT.seo.pageTitles,
         ...(raw.seo?.pageTitles || {})
