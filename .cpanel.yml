@@ -1,8 +1,9 @@
 ---
 deployment:
   tasks:
-    # 1. Target cPanel document root
+    # 1. Auto-detect cPanel Document Root (Addon Domain /home/$USER/rak4creative.com vs Primary /home/$USER/public_html)
     - export DEPLOYPATH=/home/$USER/public_html/
+    - if [ -d "/home/$USER/rak4creative.com" ]; then export DEPLOYPATH=/home/$USER/rak4creative.com/; elif [ -d "/home/$USER/public_html/rak4creative.com" ]; then export DEPLOYPATH=/home/$USER/public_html/rak4creative.com/; fi
     - export BACKUPPATH=/home/$USER/.rak_cms_backup/
     # 2. Build Vite bundle on cPanel if npm is available in PATH
     - command -v npm >/dev/null 2>&1 && npm install --no-audit --no-fund && npm run build || true
@@ -10,7 +11,7 @@ deployment:
     - /bin/mkdir -p $BACKUPPATH/storage $BACKUPPATH/uploads
     - /bin/cp -Rn $DEPLOYPATH/api/storage/*.json $BACKUPPATH/storage/ 2>/dev/null || true
     - /bin/cp -Rn $DEPLOYPATH/uploads/* $BACKUPPATH/uploads/ 2>/dev/null || true
-    # 4. Deploy all built production files and .htaccess into public_html
+    # 4. Deploy all built production files and .htaccess into Document Root
     - /bin/mkdir -p $DEPLOYPATH/api/storage $DEPLOYPATH/uploads/media $DEPLOYPATH/uploads/resumes
     - /bin/cp -Rf dist/* $DEPLOYPATH 2>/dev/null || /bin/cp -Rf public/* $DEPLOYPATH
     - /bin/cp -f dist/.htaccess $DEPLOYPATH 2>/dev/null || /bin/cp -f public/.htaccess $DEPLOYPATH

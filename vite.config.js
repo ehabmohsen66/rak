@@ -257,16 +257,23 @@ function rakCmsDevServerPlugin() {
           const logs = Array.isArray(emailSettings.deliveryLogs) ? emailSettings.deliveryLogs : []
           const prefix = emailSettings.subjectPrefix || '[RAK4Creative Lead]'
           if (emailSettings.enableAdminNotification !== false) {
-            logs.unshift({
-              id: `log-${Date.now()}-admin`,
-              type: 'admin_notification',
-              leadId: lead.id,
-              recipient: emailSettings.notifyEmails || 'hello@rak4creative.com',
-              subject: `${prefix} New ${source.toUpperCase()} Submission from ${lead.name}`,
-              driver: emailSettings.driver || 'mail',
-              ok: true,
-              message: 'Queued & verified (cPanel PHP mail/SMTP ready on production host).',
-              timestamp: new Date().toISOString()
+            const rawNotify = emailSettings.notifyEmails || 'Farah Younes <farah@rak4cloud.com>, ehab.m@rak4digital.com'
+            const targets = String(rawNotify)
+              .split(/[,;]+/)
+              .map((s) => s.trim())
+              .filter((s) => s.includes('@'))
+            targets.forEach((rcpt, idx) => {
+              logs.unshift({
+                id: `log-${Date.now()}-admin-${idx}`,
+                type: 'admin_notification',
+                leadId: lead.id,
+                recipient: rcpt,
+                subject: `${prefix} New ${source.toUpperCase()} Submission from ${lead.name}`,
+                driver: emailSettings.driver || 'mail',
+                ok: true,
+                message: 'Queued & verified (cPanel PHP mail/SMTP ready on production host).',
+                timestamp: new Date().toISOString()
+              })
             })
           }
           if (emailSettings.enableAutoResponder !== false) {
@@ -346,26 +353,41 @@ function rakCmsDevServerPlugin() {
       if (route === 'test-email' && req.method === 'POST') {
         if (!verifyToken(req)) return send(401, { ok: false, error: 'Unauthorized.' })
         const settings = body.emailSettings || readJson('email_settings.json', {})
-        const recipient = String(body.recipient || settings.fromEmail || '').trim()
-        if (!recipient || !recipient.includes('@')) {
-          return send(400, { ok: false, error: 'Provide a valid recipient email address for the test.' })
+        const rawRecipients = String(body.recipient || settings.notifyEmails || settings.fromEmail || '').trim()
+        const targets = rawRecipients
+          .split(/[,;]+/)
+          .map((s) => s.trim())
+          .filter((s) => s.includes('@'))
+        if (targets.length === 0) {
+          return send(400, { ok: false, error: 'Provide at least one valid recipient email address for the test.' })
         }
         const stored = readJson('email_settings.json', settings)
         const logs = Array.isArray(stored.deliveryLogs) ? stored.deliveryLogs : []
-        const entry = {
-          id: `log-${Date.now()}`,
-          type: 'diagnostic_test',
-          recipient,
-          subject: `[RAK 4 CREATIVE CMS] Diagnostic Test Email (${String(settings.driver || 'mail').toUpperCase()})`,
-          driver: settings.driver || 'mail',
-          ok: true,
-          message: `Diagnostic payload validated for ${recipient} via ${String(settings.driver || 'mail').toUpperCase()} driver.`,
-          timestamp: new Date().toISOString()
-        }
-        logs.unshift(entry)
+        const entries = targets.map((rcpt, idx) => {
+          const entry = {
+            id: `log-${Date.now()}-${idx}`,
+            type: 'diagnostic_test',
+            recipient: rcpt,
+            subject: `[RAK 4 CREATIVE CMS] Lead Pipeline Verification (${String(settings.driver || 'mail').toUpperCase()})`,
+            driver: settings.driver || 'mail',
+            ok: true,
+            message: `Diagnostic payload validated for ${rcpt} via ${String(settings.driver || 'mail').toUpperCase()} driver.`,
+            timestamp: new Date().toISOString()
+          }
+          logs.unshift(entry)
+          return entry
+        })
         stored.deliveryLogs = logs.slice(0, 50)
         writeJson('email_settings.json', stored)
-        return send(200, { ok: true, result: entry, deliveryLogs: stored.deliveryLogs })
+        return send(200, {
+          ok: true,
+          result: {
+            ok: true,
+            message: `Dispatched diagnostic test to ${entries.length} recipients: ${targets.join(', ')}`,
+            results: entries
+          },
+          deliveryLogs: stored.deliveryLogs
+        })
       }
 
       if (route === 'upload' && req.method === 'POST') {

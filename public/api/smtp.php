@@ -8,41 +8,110 @@ class RakMailer {
         $this->settings = $settings;
     }
 
+    public static function parseAddress(string $raw): ?array {
+        $trimmed = trim($raw);
+        if ($trimmed === '') {
+            return null;
+        }
+        if (preg_match('/^(.*?)<\s*([^<>@\s]+@[^<>@\s]+)\s*>$/', $trimmed, $m)) {
+            $name = trim($m[1], " \t\n\r\0\x0B\"'");
+            $email = trim($m[2]);
+            if (filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                $formatted = $name !== ''
+                    ? ('=?UTF-8?B?' . base64_encode($name) . '?= <' . $email . '>')
+                    : $email;
+                return [
+                    'name' => $name,
+                    'email' => $email,
+                    'display' => $name !== '' ? "{$name} <{$email}>" : $email,
+                    'formatted' => $formatted
+                ];
+            }
+            return null;
+        }
+        if (filter_var($trimmed, FILTER_VALIDATE_EMAIL)) {
+            return [
+                'name' => '',
+                'email' => $trimmed,
+                'display' => $trimmed,
+                'formatted' => $trimmed
+            ];
+        }
+        return null;
+    }
+
+    public static function parseAddressList($raw): array {
+        if (is_array($raw)) {
+            $parts = $raw;
+        } else {
+            $parts = preg_split('/[,;]+/', (string)$raw) ?: [];
+        }
+        $parsed = [];
+        $seen = [];
+        foreach ($parts as $part) {
+            $item = self::parseAddress((string)$part);
+            if ($item && !isset($seen[strtolower($item['email'])])) {
+                $seen[strtolower($item['email'])] = true;
+                $parsed[] = $item;
+            }
+        }
+        return $parsed;
+    }
+
     public function send(string $to, string $subject, string $htmlBody, string $textBody = '', string $replyTo = '', array $ccList = []): array {
         $driver = $this->settings['driver'] ?? 'mail';
-        $fromEmail = trim($this->settings['fromEmail'] ?? 'noreply@rak4creative.com');
-        $fromName = trim($this->settings['fromName'] ?? 'RAK 4 CREATIVE');
-        $effectiveReplyTo = trim($replyTo !== '' ? $replyTo : ($this->settings['replyToEmail'] ?? $fromEmail));
+        $fromParsed = self::parseAddress((string)($this->settings['fromEmail'] ?? 'noreply@rak4creative.com'));
+        $fromEmail = $fromParsed ? $fromParsed['email'] : 'noreply@rak4creative.com';
+        $fromName = trim((string)($this->settings['fromName'] ?? 'RAK 4 CREATIVE'));
+
+        $rawReply = trim($replyTo !== '' ? $replyTo : (string)($this->settings['replyToEmail'] ?? $fromEmail));
+        $replyParsed = self::parseAddress($rawReply);
+        $effectiveReplyTo = $replyParsed ? $replyParsed['email'] : $fromEmail;
+
+        $toParsed = self::parseAddress($to);
+        if (!$toParsed) {
+            return [
+                'ok' => false,
+                'driver' => $driver,
+                'recipient' => $to,
+                'timestamp' => gmdate('c'),
+                'message' => 'Invalid recipient email address: ' . $to
+            ];
+        }
+
+        $parsedCc = self::parseAddressList($ccList);
 
         if ($textBody === '') {
             $textBody = trim(strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>', '</div>', '</tr>'], "\n", $htmlBody)));
         }
 
         if ($driver === 'smtp') {
-            return $this->sendViaSmtp($to, $subject, $htmlBody, $textBody, $fromEmail, $fromName, $effectiveReplyTo, $ccList);
+            return $this->sendViaSmtp($toParsed, $subject, $htmlBody, $textBody, $fromEmail, $fromName, $effectiveReplyTo, $parsedCc);
         }
 
-        return $this->sendViaPhpMail($to, $subject, $htmlBody, $textBody, $fromEmail, $fromName, $effectiveReplyTo, $ccList);
+        return $this->sendViaPhpMail($toParsed, $subject, $htmlBody, $textBody, $fromEmail, $fromName, $effectiveReplyTo, $parsedCc);
     }
 
-    private function sendViaPhpMail(string $to, string $subject, string $htmlBody, string $textBody, string $fromEmail, string $fromName, string $replyTo, array $ccList): array {
+    private function sendViaPhpMail(array $toParsed, string $subject, string $htmlBody, string $textBody, string $fromEmail, string $fromName, string $replyTo, array $parsedCc): array {
         $boundary = '==RAK_MIME_' . md5((string)microtime(true));
         $encodedFromName = '=?UTF-8?B?' . base64_encode($fromName) . '?=';
         $encodedSubject = '=?UTF-8?B?' . base64_encode($subject) . '?=';
+        $domainParts = explode('@', $fromEmail);
+        $msgDomain = $domainParts[1] ?? ($_SERVER['SERVER_NAME'] ?? 'rak4creative.com');
 
         $headers = [];
+        $headers[] = "Date: " . date('r');
+        $headers[] = "Message-ID: <" . md5(uniqid((string)mt_rand(), true)) . "@{$msgDomain}>";
         $headers[] = "MIME-Version: 1.0";
         $headers[] = "From: {$encodedFromName} <{$fromEmail}>";
         if ($replyTo !== '') {
             $headers[] = "Reply-To: {$replyTo}";
         }
-        if (!empty($ccList)) {
-            $validCc = array_filter(array_map('trim', $ccList), function ($email) {
-                return filter_var($email, FILTER_VALIDATE_EMAIL);
-            });
-            if (!empty($validCc)) {
-                $headers[] = "Cc: " . implode(', ', $validCc);
-            }
+        if (!empty($parsedCc)) {
+            $ccHeaders = array_map(function ($item) {
+                return $item['formatted'];
+            }, $parsedCc);
+            $headers[] = "Cc: " . implode(', ', $ccHeaders);
         }
         $headers[] = "Content-Type: multipart/alternative; boundary=\"{$boundary}\"";
         $headers[] = "X-Mailer: RAK4Creative-CMS-PHP/" . PHP_VERSION;
@@ -61,35 +130,36 @@ class RakMailer {
         $headerString = implode("\r\n", $headers);
         $params = filter_var($fromEmail, FILTER_VALIDATE_EMAIL) ? "-f{$fromEmail}" : "";
 
-        $ok = @mail($to, $encodedSubject, $body, $headerString, $params);
+        $toHeader = $toParsed['formatted'];
+        $ok = @mail($toHeader, $encodedSubject, $body, $headerString, $params);
         if (!$ok) {
-            $ok = @mail($to, $encodedSubject, $body, $headerString);
+            $ok = @mail($toParsed['email'], $encodedSubject, $body, $headerString);
         }
 
         return [
             'ok' => (bool)$ok,
             'driver' => 'mail',
-            'recipient' => $to,
+            'recipient' => $toParsed['display'],
             'timestamp' => gmdate('c'),
             'message' => $ok
-                ? 'Accepted by cPanel local MTA via PHP mail().'
+                ? 'Accepted by cPanel local Exim MTA via PHP mail().'
                 : 'PHP mail() returned false. Verify cPanel Email Routing or switch driver to SMTP.'
         ];
     }
 
-    private function sendViaSmtp(string $to, string $subject, string $htmlBody, string $textBody, string $fromEmail, string $fromName, string $replyTo, array $ccList): array {
-        $host = trim($this->settings['smtpHost'] ?? '');
+    private function sendViaSmtp(array $toParsed, string $subject, string $htmlBody, string $textBody, string $fromEmail, string $fromName, string $replyTo, array $parsedCc): array {
+        $host = trim((string)($this->settings['smtpHost'] ?? ''));
         $port = (int)($this->settings['smtpPort'] ?? 465);
-        $encryption = strtolower(trim($this->settings['smtpEncryption'] ?? 'ssl'));
-        $username = trim($this->settings['smtpUser'] ?? '');
+        $encryption = strtolower(trim((string)($this->settings['smtpEncryption'] ?? 'ssl')));
+        $username = trim((string)($this->settings['smtpUser'] ?? ''));
         $password = (string)($this->settings['smtpPass'] ?? '');
-        $timeout = 12;
+        $timeout = 15;
 
         if ($host === '' || $port <= 0) {
             return [
                 'ok' => false,
                 'driver' => 'smtp',
-                'recipient' => $to,
+                'recipient' => $toParsed['display'],
                 'timestamp' => gmdate('c'),
                 'message' => 'SMTP host and port are required when SMTP driver is active.'
             ];
@@ -120,7 +190,7 @@ class RakMailer {
             return [
                 'ok' => false,
                 'driver' => 'smtp',
-                'recipient' => $to,
+                'recipient' => $toParsed['display'],
                 'timestamp' => gmdate('c'),
                 'message' => "SMTP connection failed ({$errno}): {$errstr}"
             ];
@@ -130,37 +200,39 @@ class RakMailer {
         $greeting = $this->readSmtpResponse($socket);
         if (strpos($greeting, '220') !== 0) {
             fclose($socket);
-            return [
-                'ok' => false,
-                'driver' => 'smtp',
-                'recipient' => $to,
-                'timestamp' => gmdate('c'),
-                'message' => "Unexpected SMTP greeting: {$greeting}"
-            ];
+            return $this->smtpError($toParsed['display'], "Unexpected SMTP greeting: {$greeting}");
         }
 
-        $serverName = $_SERVER['SERVER_NAME'] ?? 'rak4creative.com';
+        $domainParts = explode('@', $fromEmail);
+        $serverName = $_SERVER['SERVER_NAME'] ?? ($domainParts[1] ?? 'rak4creative.com');
         $ehlo = $this->sendSmtpCommand($socket, "EHLO {$serverName}", ['250']);
         if (!$ehlo['ok']) {
             fclose($socket);
-            return $this->smtpError($to, 'EHLO failed: ' . $ehlo['response']);
+            return $this->smtpError($toParsed['display'], 'EHLO failed: ' . $ehlo['response']);
         }
 
         if ($encryption === 'tls') {
             $startTls = $this->sendSmtpCommand($socket, "STARTTLS", ['220']);
             if (!$startTls['ok']) {
                 fclose($socket);
-                return $this->smtpError($to, 'STARTTLS failed: ' . $startTls['response']);
+                return $this->smtpError($toParsed['display'], 'STARTTLS failed: ' . $startTls['response']);
             }
-            $cryptoOk = @stream_socket_enable_crypto($socket, true, STREAM_CRYPTO_METHOD_TLS_CLIENT);
+            $cryptoMethod = STREAM_CRYPTO_METHOD_TLS_CLIENT;
+            if (defined('STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT')) {
+                $cryptoMethod |= STREAM_CRYPTO_METHOD_TLSv1_2_CLIENT;
+            }
+            if (defined('STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT')) {
+                $cryptoMethod |= STREAM_CRYPTO_METHOD_TLSv1_3_CLIENT;
+            }
+            $cryptoOk = @stream_socket_enable_crypto($socket, true, $cryptoMethod);
             if (!$cryptoOk) {
                 fclose($socket);
-                return $this->smtpError($to, 'Failed to negotiate TLS encryption.');
+                return $this->smtpError($toParsed['display'], 'Failed to negotiate TLS 1.2/1.3 encryption.');
             }
             $ehloTls = $this->sendSmtpCommand($socket, "EHLO {$serverName}", ['250']);
             if (!$ehloTls['ok']) {
                 fclose($socket);
-                return $this->smtpError($to, 'Post-TLS EHLO failed: ' . $ehloTls['response']);
+                return $this->smtpError($toParsed['display'], 'Post-TLS EHLO failed: ' . $ehloTls['response']);
             }
         }
 
@@ -168,42 +240,45 @@ class RakMailer {
             $auth = $this->sendSmtpCommand($socket, "AUTH LOGIN", ['334']);
             if (!$auth['ok']) {
                 fclose($socket);
-                return $this->smtpError($to, 'SMTP AUTH LOGIN rejected: ' . $auth['response']);
+                return $this->smtpError($toParsed['display'], 'SMTP AUTH LOGIN rejected: ' . $auth['response']);
             }
             $userStep = $this->sendSmtpCommand($socket, base64_encode($username), ['334']);
             if (!$userStep['ok']) {
                 fclose($socket);
-                return $this->smtpError($to, 'SMTP username rejected: ' . $userStep['response']);
+                return $this->smtpError($toParsed['display'], 'SMTP username rejected: ' . $userStep['response']);
             }
             $passStep = $this->sendSmtpCommand($socket, base64_encode($password), ['235']);
             if (!$passStep['ok']) {
                 fclose($socket);
-                return $this->smtpError($to, 'SMTP password authentication failed: ' . $passStep['response']);
+                return $this->smtpError($toParsed['display'], 'SMTP password authentication failed: ' . $passStep['response']);
             }
         }
 
         $mailFrom = $this->sendSmtpCommand($socket, "MAIL FROM:<{$fromEmail}>", ['250']);
         if (!$mailFrom['ok']) {
             fclose($socket);
-            return $this->smtpError($to, 'MAIL FROM rejected: ' . $mailFrom['response']);
+            return $this->smtpError($toParsed['display'], 'MAIL FROM rejected: ' . $mailFrom['response']);
         }
 
-        $allRecipients = array_unique(array_filter(array_merge([$to], $ccList), function ($addr) {
-            return filter_var(trim($addr), FILTER_VALIDATE_EMAIL);
-        }));
+        $rcptEmails = [$toParsed['email']];
+        foreach ($parsedCc as $ccItem) {
+            if (!in_array($ccItem['email'], $rcptEmails, true)) {
+                $rcptEmails[] = $ccItem['email'];
+            }
+        }
 
-        foreach ($allRecipients as $rcpt) {
-            $rcptCmd = $this->sendSmtpCommand($socket, "RCPT TO:<" . trim($rcpt) . ">", ['250', '251']);
+        foreach ($rcptEmails as $rcptAddr) {
+            $rcptCmd = $this->sendSmtpCommand($socket, "RCPT TO:<{$rcptAddr}>", ['250', '251']);
             if (!$rcptCmd['ok']) {
                 fclose($socket);
-                return $this->smtpError($to, "RCPT TO <{$rcpt}> rejected: " . $rcptCmd['response']);
+                return $this->smtpError($toParsed['display'], "RCPT TO <{$rcptAddr}> rejected: " . $rcptCmd['response']);
             }
         }
 
         $dataCmd = $this->sendSmtpCommand($socket, "DATA", ['354']);
         if (!$dataCmd['ok']) {
             fclose($socket);
-            return $this->smtpError($to, 'SMTP DATA command rejected: ' . $dataCmd['response']);
+            return $this->smtpError($toParsed['display'], 'SMTP DATA command rejected: ' . $dataCmd['response']);
         }
 
         $boundary = '==RAK_SMTP_' . md5((string)microtime(true));
@@ -212,13 +287,16 @@ class RakMailer {
 
         $msgHeaders = [];
         $msgHeaders[] = "Date: " . date('r');
-        $msgHeaders[] = "To: <{$to}>";
+        $msgHeaders[] = "To: {$toParsed['formatted']}";
         $msgHeaders[] = "From: {$encodedFromName} <{$fromEmail}>";
         if ($replyTo !== '') {
             $msgHeaders[] = "Reply-To: <{$replyTo}>";
         }
-        if (!empty($ccList)) {
-            $msgHeaders[] = "Cc: " . implode(', ', $ccList);
+        if (!empty($parsedCc)) {
+            $ccHeaders = array_map(function ($item) {
+                return $item['formatted'];
+            }, $parsedCc);
+            $msgHeaders[] = "Cc: " . implode(', ', $ccHeaders);
         }
         $msgHeaders[] = "Subject: {$encodedSubject}";
         $msgHeaders[] = "Message-ID: <" . md5(uniqid((string)mt_rand(), true)) . "@{$serverName}>";
@@ -241,13 +319,13 @@ class RakMailer {
         fclose($socket);
 
         if (!$sendData['ok']) {
-            return $this->smtpError($to, 'SMTP message transmission failed: ' . $sendData['response']);
+            return $this->smtpError($toParsed['display'], 'SMTP message transmission failed: ' . $sendData['response']);
         }
 
         return [
             'ok' => true,
             'driver' => 'smtp',
-            'recipient' => $to,
+            'recipient' => $toParsed['display'],
             'timestamp' => gmdate('c'),
             'message' => 'Delivered via SMTP (' . $host . ':' . $port . ').'
         ];

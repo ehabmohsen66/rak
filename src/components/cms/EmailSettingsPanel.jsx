@@ -53,8 +53,8 @@ export default function EmailSettingsPanel({
       if (res && res.ok && res.emailSettings) {
         setDraft(res.emailSettings);
         setIsDirty(false);
-        if (!testRecipient && res.emailSettings.fromEmail) {
-          setTestRecipient(res.emailSettings.fromEmail);
+        if (!testRecipient && (res.emailSettings.notifyEmails || res.emailSettings.fromEmail)) {
+          setTestRecipient(res.emailSettings.notifyEmails || res.emailSettings.fromEmail);
         }
       } else {
         setLoadError(res?.error || 'Could not load email settings from server.');
@@ -498,20 +498,31 @@ export default function EmailSettingsPanel({
 
               {/* Diagnostic Test Email Card */}
               <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
-                <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
-                  Send Diagnostic Test Email
-                </h3>
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                    Send Diagnostic Test Email
+                  </h3>
+                  {draft.notifyEmails && testRecipient !== draft.notifyEmails && (
+                    <button
+                      type="button"
+                      onClick={() => setTestRecipient(draft.notifyEmails)}
+                      className="text-xs font-bold text-[#B8006D] dark:text-[#FF66C4] hover:underline cursor-pointer"
+                    >
+                      Use Active Lead Recipients
+                    </button>
+                  )}
+                </div>
                 <p className="text-xs text-slate-600 dark:text-slate-400 leading-relaxed">
-                  Tests your current settings immediately without needing to submit a public website form.
+                  Supports single or comma-separated recipients (including Name &lt;email@domain.com&gt;) to verify delivery to all lead inboxes at once.
                 </p>
                 <form onSubmit={handleSendTest} className="flex flex-col sm:flex-row gap-2.5">
                   <input
-                    type="email"
+                    type="text"
                     required
-                    aria-label="Test email recipient address"
+                    aria-label="Test email recipient addresses"
                     value={testRecipient}
                     onChange={(e) => setTestRecipient(e.target.value)}
-                    placeholder="recipient@yourdomain.com"
+                    placeholder="recipient@yourdomain.com, second@yourdomain.com"
                     className={`${CMS_INPUT_CLASS} flex-1`}
                   />
                   <button

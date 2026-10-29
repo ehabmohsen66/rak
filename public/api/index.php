@@ -239,13 +239,12 @@ function dispatchLeadEmails(array $lead): array {
     $subject = "{$prefix} New {$sourceLabel} Submission from " . ($lead['name'] ?? 'Website Visitor');
 
     if (!empty($emailSettings['enableAdminNotification'])) {
-        $rawNotify = (string)($emailSettings['notifyEmails'] ?? 'hello@rak4creative.com');
-        $recipients = array_values(array_filter(array_map('trim', preg_split('/[,;]+/', $rawNotify)), function ($e) {
-            return filter_var($e, FILTER_VALIDATE_EMAIL);
-        }));
-        $ccList = array_values(array_filter(array_map('trim', preg_split('/[,;]+/', (string)($emailSettings['ccEmails'] ?? ''))), function ($e) {
-            return filter_var($e, FILTER_VALIDATE_EMAIL);
-        }));
+        $rawNotify = (string)($emailSettings['notifyEmails'] ?? 'Farah Younes <farah@rak4cloud.com>, ehab.m@rak4digital.com');
+        $parsedRecipients = RakMailer::parseAddressList($rawNotify);
+        $parsedCc = RakMailer::parseAddressList((string)($emailSettings['ccEmails'] ?? ''));
+        $ccRawList = array_map(function ($item) {
+            return $item['display'];
+        }, $parsedCc);
 
         $rowsHtml = '';
         $fields = [
@@ -280,8 +279,9 @@ function dispatchLeadEmails(array $lead): array {
             . "<div style=\"padding:20px 24px;\"><table style=\"width:100%;border-collapse:collapse;font-size:14px;\">{$rowsHtml}</table></div>"
             . "</div></body></html>";
 
-        foreach ($recipients as $idx => $toAddr) {
-            $res = $mailer->send($toAddr, $subject, $htmlBody, '', $lead['email'] ?? '', $idx === 0 ? $ccList : []);
+        foreach ($parsedRecipients as $idx => $rcptItem) {
+            $toDisplay = $rcptItem['display'];
+            $res = $mailer->send($toDisplay, $subject, $htmlBody, '', $lead['email'] ?? '', $idx === 0 ? $ccRawList : []);
             if ($res['ok']) {
                 $adminSent = true;
             }
@@ -289,7 +289,7 @@ function dispatchLeadEmails(array $lead): array {
                 'id' => 'log-' . uniqid(),
                 'type' => 'admin_notification',
                 'leadId' => $lead['id'] ?? null,
-                'recipient' => $toAddr,
+                'recipient' => $toDisplay,
                 'subject' => $subject,
                 'driver' => $res['driver'],
                 'ok' => $res['ok'],
@@ -429,14 +429,17 @@ function buildAuditReport(): array {
 
     $email = readJsonFile('email_settings.json', []);
     $driver = $email['driver'] ?? 'mail';
-    $fromValid = filter_var($email['fromEmail'] ?? '', FILTER_VALIDATE_EMAIL) !== false;
+    $fromParsed = RakMailer::parseAddress((string)($email['fromEmail'] ?? ''));
+    $notifyParsed = RakMailer::parseAddressList((string)($email['notifyEmails'] ?? ''));
+    $fromValid = $fromParsed !== null && count($notifyParsed) > 0;
     $smtpReady = ($driver !== 'smtp') || (!empty($email['smtpHost']) && !empty($email['smtpPort']) && !empty($email['smtpUser']));
+    $notifySummary = implode(', ', array_map(function ($item) { return $item['display']; }, $notifyParsed));
     $checks[] = [
         'id' => 'email-routing',
         'category' => 'Email & SMTP',
         'title' => 'Email Notification & Auto-Responder Configuration',
         'status' => ($fromValid && $smtpReady) ? 'pass' : 'warn',
-        'detail' => 'Driver: ' . strtoupper($driver) . ' • From: ' . ($email['fromEmail'] ?? 'not set') . ' • Notify: ' . ($email['notifyEmails'] ?? 'not set'),
+        'detail' => 'Driver: ' . strtoupper($driver) . ' • From: ' . ($email['fromEmail'] ?? 'not set') . ' • Recipients (' . count($notifyParsed) . '): ' . ($notifySummary !== '' ? $notifySummary : 'none'),
         'recommendation' => ($fromValid && $smtpReady) ? 'Email routing configured. Send a test email in the Email Settings tab after deploying to cPanel.' : 'Complete sender email and SMTP credentials in Email Settings.'
     ];
 
@@ -760,43 +763,62 @@ if ($route === 'test-email' && $method === 'POST') {
     $settings = isset($body['emailSettings']) && is_array($body['emailSettings'])
         ? $body['emailSettings']
         : readJsonFile('email_settings.json', []);
-    $recipient = trim((string)($body['recipient'] ?? $settings['fromEmail'] ?? ''));
-    if ($recipient === '' || !filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
-        respond(['ok' => false, 'error' => 'Provide a valid recipient email address for the test.'], 400);
+    $rawRecipients = trim((string)($body['recipient'] ?? $settings['notifyEmails'] ?? $settings['fromEmail'] ?? ''));
+    $parsedTargets = RakMailer::parseAddressList($rawRecipients);
+    if (empty($parsedTargets)) {
+        respond(['ok' => false, 'error' => 'Provide at least one valid recipient email address for the test.'], 400);
     }
 
     $mailer = new RakMailer($settings);
-    $subject = '[RAK 4 CREATIVE CMS] Diagnostic Test Email (' . strtoupper($settings['driver'] ?? 'mail') . ')';
+    $subject = '[RAK 4 CREATIVE CMS] Lead Pipeline Verification (' . strtoupper($settings['driver'] ?? 'mail') . ')';
     $html = "<!DOCTYPE html><html><body style=\"background:#07080B;color:#F8FAFC;font-family:Arial,sans-serif;padding:24px;\">"
         . "<div style=\"max-width:560px;margin:0 auto;background:#0F172A;border:1px solid #EC008C;border-radius:16px;padding:28px;\">"
-        . "<h2 style=\"color:#EC008C;margin-top:0;\">RAK 4 CREATIVE • Email Pipeline Verified</h2>"
-        . "<p style=\"color:#E2E8F0;line-height:1.6;\">This diagnostic message confirms that your cPanel PHP email configuration is active.</p>"
+        . "<h2 style=\"color:#EC008C;margin-top:0;\">RAK 4 CREATIVE • Lead Notification Pipeline Verified</h2>"
+        . "<p style=\"color:#E2E8F0;line-height:1.6;\">This diagnostic message confirms that lead notifications from <strong>rak4creative.com</strong> are delivering cleanly to your inbox.</p>"
         . "<ul style=\"color:#94A3B8;font-size:13px;line-height:1.8;\">"
         . "<li><strong>Driver:</strong> " . htmlspecialchars(strtoupper($settings['driver'] ?? 'mail')) . "</li>"
         . "<li><strong>From:</strong> " . htmlspecialchars(($settings['fromName'] ?? '') . ' <' . ($settings['fromEmail'] ?? '') . '>') . "</li>"
+        . "<li><strong>Active Lead Recipients:</strong> " . htmlspecialchars((string)($settings['notifyEmails'] ?? '')) . "</li>"
         . "<li><strong>Server Time (UTC):</strong> " . gmdate('Y-m-d H:i:s') . "</li>"
         . "</ul></div></body></html>";
 
-    $result = $mailer->send($recipient, $subject, $html);
-
     $storedSettings = readJsonFile('email_settings.json', $settings);
     $logs = is_array($storedSettings['deliveryLogs'] ?? null) ? $storedSettings['deliveryLogs'] : [];
-    array_unshift($logs, [
-        'id' => 'log-' . uniqid(),
-        'type' => 'diagnostic_test',
-        'recipient' => $recipient,
-        'subject' => $subject,
-        'driver' => $result['driver'],
-        'ok' => $result['ok'],
-        'message' => $result['message'],
-        'timestamp' => gmdate('c')
-    ]);
+    $results = [];
+    $allOk = true;
+
+    foreach ($parsedTargets as $target) {
+        $res = $mailer->send($target['display'], $subject, $html);
+        $results[] = $res;
+        if (!$res['ok']) {
+            $allOk = false;
+        }
+        array_unshift($logs, [
+            'id' => 'log-' . uniqid(),
+            'type' => 'diagnostic_test',
+            'recipient' => $target['display'],
+            'subject' => $subject,
+            'driver' => $res['driver'],
+            'ok' => $res['ok'],
+            'message' => $res['message'],
+            'timestamp' => gmdate('c')
+        ]);
+    }
+
     $storedSettings['deliveryLogs'] = array_slice($logs, 0, 50);
     writeJsonFile('email_settings.json', $storedSettings);
 
+    $summaryMsg = count($results) > 1
+        ? ('Dispatched diagnostic test to ' . count($results) . ' recipients: ' . implode(', ', array_map(function ($r) { return $r['recipient']; }, $results)))
+        : ($results[0]['message'] ?? 'Test email completed.');
+
     respond([
-        'ok' => $result['ok'],
-        'result' => $result,
+        'ok' => $allOk,
+        'result' => [
+            'ok' => $allOk,
+            'message' => $summaryMsg,
+            'results' => $results
+        ],
         'deliveryLogs' => $storedSettings['deliveryLogs']
     ]);
 }
