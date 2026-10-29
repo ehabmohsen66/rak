@@ -152,6 +152,7 @@ if (isset($routeMap[$lowerPath])) {
 
 if ($isNotFound) {
     http_response_code(404);
+    header('Cache-Control: no-store, no-cache, must-revalidate');
 }
 
 // Resolve route title & meta description

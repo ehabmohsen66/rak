@@ -5,6 +5,7 @@ import fs from 'fs'
 import crypto from 'crypto'
 
 function rakCmsDevServerPlugin() {
+  const publicDir = path.resolve(__dirname, 'public')
   const storageDir = path.resolve(__dirname, 'public/api/storage')
   const uploadsDir = path.resolve(__dirname, 'public/uploads')
 
@@ -558,11 +559,25 @@ export default defineConfig({
     },
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-motion': ['framer-motion'],
-          'vendor-three': ['three'],
-          'vendor-spline': ['@splinetool/react-spline', '@splinetool/runtime'],
+        manualChunks(id) {
+          if (
+            id.includes('vite/preload-helper') ||
+            id.includes('commonjsHelpers') ||
+            id.includes('/node_modules/react/') ||
+            id.includes('/node_modules/react-dom/') ||
+            id.includes('/node_modules/scheduler/')
+          ) {
+            return 'vendor-react';
+          }
+          if (id.includes('/node_modules/framer-motion/')) {
+            return 'vendor-motion';
+          }
+          if (id.includes('/node_modules/lucide-react/')) {
+            return 'vendor-icons';
+          }
+          if (id.includes('/node_modules/three/')) {
+            return 'vendor-three';
+          }
         },
       },
     },

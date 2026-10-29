@@ -8,15 +8,53 @@ import ProjectEstimatorModal from './components/ProjectEstimatorModal';
 import { useCms } from './lib/cmsContext';
 
 import HomePage from './pages/HomePage';
-const AboutPage = React.lazy(() => import('./pages/AboutPage'));
-const ServicesPage = React.lazy(() => import('./pages/ServicesPage'));
-const WorkPage = React.lazy(() => import('./pages/WorkPage'));
-const CaseStudiesPage = React.lazy(() => import('./pages/CaseStudiesPage'));
-const CareersPage = React.lazy(() => import('./pages/CareersPage'));
-const BlogPage = React.lazy(() => import('./pages/BlogPage'));
-const BlogPostPage = React.lazy(() => import('./pages/BlogPostPage'));
-const ContactPage = React.lazy(() => import('./pages/ContactPage'));
-const AdminCmsPage = React.lazy(() => import('./pages/AdminCmsPage'));
+
+function lazyWithRetry(importer, chunkKey) {
+  return React.lazy(async () => {
+    const storageKey = `rak_chunk_retry_${chunkKey}`;
+    try {
+      const mod = await importer();
+      try {
+        window.sessionStorage.removeItem(storageKey);
+      } catch {
+        // Ignore sessionStorage restrictions
+      }
+      return mod;
+    } catch (err) {
+      const msg = String(err?.message || err || '');
+      const isChunkLoadFailure =
+        msg.includes('Failed to fetch dynamically imported module') ||
+        msg.includes('Importing a module script failed') ||
+        msg.includes('error loading dynamically imported module') ||
+        err?.name === 'ChunkLoadError';
+
+      if (isChunkLoadFailure && typeof window !== 'undefined') {
+        try {
+          const hasRetried = window.sessionStorage.getItem(storageKey);
+          if (!hasRetried) {
+            window.sessionStorage.setItem(storageKey, '1');
+            window.location.reload();
+            return new Promise(() => {});
+          }
+          window.sessionStorage.removeItem(storageKey);
+        } catch {
+          // Fall through to ErrorBoundary if sessionStorage is unavailable
+        }
+      }
+      throw err;
+    }
+  });
+}
+
+const AboutPage = lazyWithRetry(() => import('./pages/AboutPage'), 'about');
+const ServicesPage = lazyWithRetry(() => import('./pages/ServicesPage'), 'services');
+const WorkPage = lazyWithRetry(() => import('./pages/WorkPage'), 'work');
+const CaseStudiesPage = lazyWithRetry(() => import('./pages/CaseStudiesPage'), 'case-studies');
+const CareersPage = lazyWithRetry(() => import('./pages/CareersPage'), 'careers');
+const BlogPage = lazyWithRetry(() => import('./pages/BlogPage'), 'blog');
+const BlogPostPage = lazyWithRetry(() => import('./pages/BlogPostPage'), 'blog-post');
+const ContactPage = lazyWithRetry(() => import('./pages/ContactPage'), 'contact');
+const AdminCmsPage = lazyWithRetry(() => import('./pages/AdminCmsPage'), 'admin');
 
 const TAB_TO_PATH = {
   home: '/',

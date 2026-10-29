@@ -39,6 +39,10 @@ DirectoryIndex seo.php index.html
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
+  # Never rewrite missing static /assets/* files to HTML (prevents MIME mismatch & CDN 404 caching)
+  RewriteCond %{REQUEST_URI} ^/assets/
+  RewriteRule ^ - [R=404,L]
+
   # All SPA routes (/services, /about, /work, /case-studies, /careers, /blog/*, /contact, /admin) route through seo.php
   RewriteRule ^ seo.php [L]
 </IfModule>

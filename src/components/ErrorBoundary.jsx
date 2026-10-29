@@ -17,16 +17,28 @@ export class ErrorBoundary extends React.Component {
     console.error("Uncaught React Render Error:", error, errorInfo);
   }
 
+  clearChunkRetryMarkers = () => {
+    try {
+      Object.keys(window.sessionStorage).forEach((key) => {
+        if (key.startsWith('rak_chunk_retry_')) {
+          window.sessionStorage.removeItem(key);
+        }
+      });
+    } catch {
+      // Ignore storage access errors
+    }
+  };
+
   handleReload = () => {
+    this.clearChunkRetryMarkers();
     this.setState({ hasError: false, error: null, errorInfo: null });
     window.location.reload();
   };
 
   handleResetState = () => {
+    this.clearChunkRetryMarkers();
     this.setState({ hasError: false, error: null, errorInfo: null });
-    if (window.location.hash || window.location.search) {
-      window.location.href = window.location.pathname;
-    }
+    window.location.href = '/';
   };
 
   render() {
