@@ -1,8 +1,8 @@
 import React from 'react';
 import { cn } from '../lib/utils';
 import { BRAND_INFO } from '../data/contentData';
+import { useCms } from '../lib/cmsContext';
 
-// Color gradient presets to give each client logo a distinct glowing hover effect
 const GRADIENT_PRESETS = [
   { from: 'rgba(236, 0, 140, 0.5)', via: 'rgba(124, 58, 237, 0.5)', to: 'rgba(6, 182, 212, 0.5)' },
   { from: 'rgba(6, 182, 212, 0.5)', via: 'rgba(59, 130, 246, 0.5)', to: 'rgba(147, 51, 234, 0.5)' },
@@ -24,7 +24,9 @@ export const MarqueeLogoScroller = React.forwardRef(
     },
     ref
   ) => {
-    // Map speed prop to animation duration
+    const { content } = useCms();
+    const cmsClients = content?.brandInfo?.clients || BRAND_INFO.clients;
+
     const durationMap = {
       normal: '40s',
       slow: '80s',
@@ -32,8 +34,7 @@ export const MarqueeLogoScroller = React.forwardRef(
     };
     const animationDuration = durationMap[speed] || '40s';
 
-    // Fallback to BRAND_INFO.clients formatted with images and gradients if no logos array passed
-    const logoItems = (logos.length > 0 ? logos : BRAND_INFO.clients).slice(0, 14).map((client, idx) => {
+    const logoItems = (logos.length > 0 ? logos : cmsClients).slice(0, 20).map((client, idx) => {
       const preset = GRADIENT_PRESETS[idx % GRADIENT_PRESETS.length];
       return {
         src: client.src || client.image,
@@ -45,7 +46,6 @@ export const MarqueeLogoScroller = React.forwardRef(
 
     return (
       <>
-        {/* Keyframe animation injected inline */}
         <style>{`
           @keyframes marquee-scroll {
             from { transform: translateX(0); }
@@ -62,7 +62,6 @@ export const MarqueeLogoScroller = React.forwardRef(
           )}
           {...props}
         >
-          {/* Header Section */}
           {showHeader && (
             <div className="p-6 md:p-8 lg:p-10 pb-4">
               <div className="grid grid-cols-1 lg:grid-cols-[3fr_2fr] gap-4 lg:gap-8 pb-6 border-b border-slate-100 dark:border-white/10 items-end">
@@ -81,7 +80,6 @@ export const MarqueeLogoScroller = React.forwardRef(
             </div>
           )}
 
-          {/* Marquee Section */}
           <div
             className="w-full overflow-hidden py-4"
             style={{
@@ -97,13 +95,11 @@ export const MarqueeLogoScroller = React.forwardRef(
                 animation: `marquee-scroll ${animationDuration} linear infinite`,
               }}
             >
-              {/* Render logos twice for seamless loop */}
               {[...logoItems, ...logoItems].map((logo, index) => (
                 <div
                   key={index}
                   className="group relative h-20 w-36 sm:w-44 shrink-0 flex items-center justify-center p-2 cursor-pointer transition-all duration-300 hover:scale-110"
                 >
-                  {/* Logo Image */}
                   {logo.src ? (
                     <img
                       src={logo.src}
@@ -122,7 +118,6 @@ export const MarqueeLogoScroller = React.forwardRef(
                     />
                   ) : null}
 
-                  {/* Fallback Text if image missing */}
                   <span
                     className="relative z-10 text-xs font-bold font-mono text-slate-900 dark:text-white tracking-wider group-hover:text-rak-magenta transition-colors"
                     style={{ display: logo.src ? 'none' : 'inline-block' }}

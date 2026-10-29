@@ -98,7 +98,7 @@ function HeroContent({ onExploreClick }) {
         Elevate your <br className="hidden sm:inline" />creative workflow<br className="hidden sm:inline" /> to an art form.
       </h1>
       <p className="text-base sm:text-lg md:text-xl mb-8 opacity-90 max-w-2xl leading-relaxed text-rak-slate-300 font-normal">
-        Manage all of your media and assets — video, photos, design files, docs, PDFs, and more — on a single secure surface to create and deliver high-quality content faster.
+        Manage all of your media and assets, including video, photos, design files, docs, and PDFs, on a single secure surface to create and deliver high-quality content faster.
       </p>
       <div className="flex pointer-events-auto flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4">
         <button 

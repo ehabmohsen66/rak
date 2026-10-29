@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, Volume2, VolumeX } from 'lucide-react';
 import { GradientShimmer } from './ui/GradientShimmer';
+import { useCms } from '../lib/cmsContext';
 
 const HERO_PHRASES = [
   "Next Level.",
@@ -112,6 +113,8 @@ const VideoBackground = React.memo(({ videoRef }) => {
 });
 
 export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = () => {} }) => {
+  const { content } = useCms();
+  const heroDescription = content?.brandInfo?.description || chapter.description;
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const videoRef = useRef(null);
@@ -229,7 +232,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
             playAudioFor12Seconds();
           })
           .catch(() => {
-            // Autoplay blocked by browser security policy without gesture — activate on first interaction anywhere
+            // Autoplay blocked by browser security policy without gesture: activate on first interaction anywhere
             window.addEventListener('pointerdown', handleFirstGesture, { capture: true, once: true });
             window.addEventListener('click', handleFirstGesture, { capture: true, once: true });
             window.addEventListener('touchstart', handleFirstGesture, { capture: true, once: true });
@@ -283,7 +286,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
         className="hidden"
       />
 
-      {/* 1. Full-Screen Native HD Video Background — Muted for 60fps zero-lag performance */}
+      {/* 1. Full-Screen Native HD Video Background: Muted for 60fps zero-lag performance */}
       <VideoBackground videoRef={videoRef} />
 
       {/* 2. Chapter Content Overlay */}
@@ -325,7 +328,7 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
             variants={fadeIn}
             className="text-sm sm:text-base lg:text-lg text-slate-200 max-w-xl leading-relaxed font-normal drop-shadow"
           >
-            {chapter.description}
+            {heroDescription}
           </motion.p>
 
           {/* Refined Action Pill Button */}
@@ -343,12 +346,12 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
         </motion.div>
       </div>
 
-      {/* 3. Small Black Sound Icon Button — Bottom-Right of the Video */}
+      {/* 3. Small Black Sound Icon Button at Bottom-Right of the Video */}
       <button
         onClick={toggleSound}
         aria-label={soundEnabled ? 'Turn off sound' : 'Play sound (12s)'}
         title={soundEnabled ? 'Turn off sound' : 'Play sound (12s)'}
-        className={`absolute bottom-5 right-5 sm:bottom-7 sm:right-7 z-40 w-10 h-10 rounded-full bg-black/85 hover:bg-black border border-white/15 text-white flex items-center justify-center shadow-xl backdrop-blur-md transition-all duration-200 hover:scale-105 cursor-pointer ${
+        className={`absolute bottom-5 right-5 sm:bottom-7 sm:right-7 z-40 w-11 h-11 rounded-full bg-black/85 hover:bg-black border border-white/15 text-white flex items-center justify-center shadow-xl backdrop-blur-md transition-all duration-200 hover:scale-105 cursor-pointer ${
           soundEnabled ? 'ring-2 ring-rak-magenta/80 shadow-[0_0_15px_rgba(236,0,140,0.5)]' : ''
         }`}
       >

@@ -9,23 +9,30 @@ Options -Indexes -MultiViews
 AddDefaultCharset UTF-8
 
 # ------------------------------------------------------------------------------
-# 1. SPA ROUTING & HTTPS REDIRECTION (mod_rewrite)
+# 1. API ROUTING, UPLOADS PROTECTION & SPA ROUTING (mod_rewrite)
 # ------------------------------------------------------------------------------
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # Enforce HTTPS (Uncomment if your cPanel domain has SSL active)
-  # RewriteCond %{HTTPS} !=on
-  # RewriteCond %{HTTP_HOST} ^(?:www\.)?(.+)$ [NC]
-  # RewriteRule ^ https://%1%{REQUEST_URI} [L,R=301]
+  # Pass Authorization headers to PHP on cPanel CGI/FastCGI
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
 
-  # Serve real files or directories if they exist
+  # Block direct web access to /api/storage
+  RewriteRule ^api/storage(/.*)?$ - [F,L]
+
+  # Route /api/* requests to the PHP CMS controller
+  RewriteCond %{REQUEST_URI} ^/api/
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteRule ^api/(.*)$ api/index.php?route=$1 [QSA,L]
+
+  # Serve real files or directories if they exist (including /uploads/* and /api/index.php)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # All other requests route to index.html for client-side React SPA routing
+  # All other requests (including /admin) route to index.html for React SPA routing
   RewriteRule ^ index.html [L]
 </IfModule>
 
@@ -51,15 +58,15 @@ AddDefaultCharset UTF-8
   AddOutputFilterByType DEFLATE text/html
   AddOutputFilterByType DEFLATE text/plain
   AddOutputFilterByType DEFLATE text/xml
-  AddOutputFilterByType text/css
-  AddOutputFilterByType application/javascript
-  AddOutputFilterByType application/x-javascript
-  AddOutputFilterByType application/json
-  AddOutputFilterByType application/xml
-  AddOutputFilterByType image/svg+xml
-  AddOutputFilterByType font/woff2
-  AddOutputFilterByType font/woff
-  AddOutputFilterByType font/ttf
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/x-javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+  AddOutputFilterByType DEFLATE font/woff2
+  AddOutputFilterByType DEFLATE font/woff
+  AddOutputFilterByType DEFLATE font/ttf
 </IfModule>
 
 # ------------------------------------------------------------------------------
@@ -69,8 +76,9 @@ AddDefaultCharset UTF-8
   ExpiresActive On
   ExpiresDefault "access plus 1 month"
 
-  # HTML documents - Never cache long to ensure new app builds update instantly
+  # HTML & dynamic JSON API responses - Never cache long so CMS updates appear immediately
   ExpiresByType text/html "access plus 0 seconds"
+  ExpiresByType application/json "access plus 0 seconds"
 
   # CSS & JS with Vite cache busting hashes
   ExpiresByType text/css "access plus 1 year"

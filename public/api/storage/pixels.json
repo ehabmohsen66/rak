@@ -1,0 +1,22 @@
+{
+  "metaPixelEnabled": false,
+  "metaPixelId": "",
+  "gtmEnabled": false,
+  "gtmId": "",
+  "ga4Enabled": false,
+  "ga4Id": "",
+  "tiktokPixelEnabled": false,
+  "tiktokPixelId": "",
+  "linkedinEnabled": false,
+  "linkedinPartnerId": "",
+  "snapPixelEnabled": false,
+  "snapPixelId": "",
+  "twitterPixelEnabled": false,
+  "twitterPixelId": "",
+  "trackLeadEvents": true,
+  "trackPageViews": true,
+  "customHeadScripts": "",
+  "customBodyStartScripts": "",
+  "customBodyEndScripts": "",
+  "customConversionScript": ""
+}

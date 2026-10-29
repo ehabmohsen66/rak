@@ -6,6 +6,7 @@ export const BRAND_INFO = {
   quote: "Your vision + our expertise = something amazing. Let's create something unforgettable together.",
   differentiation: "With the ever-evolving creative market, how do you choose the agency that perfectly aligns with your goals? We create big ideas from ground zero and take them to new heights. With bold creativity and a bit of tech magic, we build the online and offline presence that makes a real impact in today's market.",
   whatWeDo: "RAK4Creative brings brand strategy, creative production, and digital performance marketing together under one roof, so nothing gets lost in translation between the idea and the execution.",
+  contactEmail: "hello@rak4creative.com",
   whatWeDoSpans: [
     "Brand strategy, identity, and communications",
     "Content, video, and creative production",
@@ -58,7 +59,6 @@ export const BRAND_INFO = {
   ]
 };
 
-// Agency Pillars (replacing generic Services)
 export const PILLARS = [
   {
     id: "digital-consultancy",
@@ -115,8 +115,8 @@ export const PILLARS = [
       "Influencer Marketing",
       "Community Management",
       "Social Media Advertising",
-      "WhatsApp Marketing — reaching audiences directly and building customer relationships",
-      "Meta Campaigns — audience development, tailored strategy, and community monitoring"
+      "WhatsApp Marketing: reaching audiences directly and building customer relationships",
+      "Meta Campaigns: audience development, tailored strategy, and community monitoring"
     ],
     featuredImage: "https://images.unsplash.com/photo-1611162617474-5b21e879e113?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
@@ -174,7 +174,7 @@ export const PILLARS = [
       "Media Reporting",
       "Media Technology",
       "Special Ad Execution",
-      "PPC — multi-format ad campaigns designed to drive traffic and conversion"
+      "PPC: multi-format ad campaigns designed to drive traffic and conversion"
     ],
     featuredImage: "https://images.unsplash.com/photo-1551836022-d5d88e9218df?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
@@ -192,12 +192,12 @@ export const PILLARS = [
       "Articles & Blogs",
       "Design Execution",
       "Animation",
-      "Video Production — storyboard, script, direction, shooting, and editing",
+      "Video Production: storyboard, script, direction, shooting, and editing",
       "Photography",
       "Integrated Campaigns",
-      "Print Design — newspaper, magazine, and direct mail",
-      "Copywriting — email, social, website, and online ads",
-      "Email Marketing — compelling emails to promote products and maintain loyalty"
+      "Print Design: newspaper, magazine, and direct mail",
+      "Copywriting: email, social, website, and online ads",
+      "Email Marketing: compelling emails to promote products and maintain loyalty"
     ],
     featuredImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=600&fm=webp&auto=format&fit=crop"
   },
@@ -217,18 +217,16 @@ export const PILLARS = [
       "Messaging Statement",
       "Marketing Collaterals",
       "Newsletters",
-      "Graphics — illustration, logo design, and presentations",
-      "Out of Home — billboards, signage, and sponsorships",
+      "Graphics: illustration, logo design, and presentations",
+      "Out of Home: billboards, signage, and sponsorships",
       "Public Relations"
     ],
     featuredImage: "https://images.unsplash.com/photo-1581291518633-83b4ebd1d83e?q=80&w=600&fm=webp&auto=format&fit=crop"
   }
 ];
 
-// Alias for backwards compatibility
 export const SERVICES = PILLARS;
 
-// Core Values from document (What Makes Us… Us)
 export const VALUES = [
   { name: "Creativity", description: "Creating big ideas from ground zero and taking them to new heights." },
   { name: "Craft", description: "Precision in every headline, pixel, video frame, and code architecture." },
@@ -244,11 +242,53 @@ export const VALUES = [
 export const CAREERS_COPY = {
   title: "Join the Team",
   subtitle: "At RAK4Creative, good ideas don't wait for permission.",
-  body: "We're a team of strategists, designers, and storytellers who care about the work as much as the client does… sometimes more. You'll get real ownership from day one, a seat at the table, and people around you who'd rather argue about a headline for twenty minutes than ship something average.",
+  body: "We're a team of strategists, designers, and storytellers who care about the work as much as the client does... sometimes more. You'll get real ownership from day one, a seat at the table, and people around you who'd rather argue about a headline for twenty minutes than ship something average.",
   cta: "Your Next Move Starts Here"
 };
 
-// RAK4 Creations (Portfolio)
+export const OPEN_ROLES = [
+  {
+    id: "sr-brand-strategist",
+    title: "Senior Brand Strategist",
+    department: "Brand Strategy",
+    location: "Beirut / Remote",
+    type: "Full-Time",
+    salary: "Competitive + Performance Bonus",
+    description: "Lead comprehensive market research, brand positioning, and messaging strategy for enterprise clients.",
+    active: true
+  },
+  {
+    id: "lead-ui-ux-designer",
+    title: "Lead UI/UX & Design Systems Architect",
+    department: "Product Design",
+    location: "Toronto / Remote",
+    type: "Full-Time",
+    salary: "Competitive + Performance Bonus",
+    description: "Craft bespoke design systems, Figma token architectures, and frictionless user experiences.",
+    active: true
+  },
+  {
+    id: "full-stack-webgl-engineer",
+    title: "Full-Stack Web & Creative Developer",
+    department: "Engineering",
+    location: "Beirut / Remote",
+    type: "Full-Time",
+    salary: "Competitive + Performance Bonus",
+    description: "Build ultra-fast frontend web platforms, custom PHP integrations, and interactive visual graphics.",
+    active: true
+  },
+  {
+    id: "media-buying-director",
+    title: "Media Buying & Performance Ad Ops Lead",
+    department: "Paid Media",
+    location: "Beirut / Toronto",
+    type: "Full-Time",
+    salary: "Competitive + Performance Bonus",
+    description: "Manage omnichannel paid media campaigns across Meta, Google, TikTok, and LinkedIn.",
+    active: true
+  }
+];
+
 export const RAK4_CREATIONS = [
   {
     id: "apex-global",
@@ -330,17 +370,17 @@ export const RAK4_CREATIONS = [
 
 export const PROJECTS = RAK4_CREATIONS;
 
-// Blog Posts from attached document
 export const BLOG_POSTS = [
   {
     id: "ultimate-ai-tier-list",
-    title: "The Ultimate AI Tier List for Businesses",
+    title: "The Practical AI Tier List for Agencies and Enterprises",
     subtitle: "We ranked five of the biggest AI platforms with a tier list, minimal patience, and zero chill.",
     category: "AI & Digital Strategy",
     date: "July 2026",
     readTime: "5 min read",
     author: "RAK4Creative Strategy Team",
     image: "https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&fm=webp&auto=format&fit=crop",
+    featured: true,
     excerpt: "Every agency has that one meeting where someone asks, should we be using AI for this? The answer is yes, obviously, but which AI is the real question.",
     content: `Every agency has that one meeting where someone asks, should we be using AI for this? The answer is yes, obviously, but which AI is the real question.
 
@@ -354,7 +394,7 @@ Claude is the colleague who actually reads the brief before responding. Long doc
 It writes like a human who went to therapy, thinks before it talks, and doesn't need three follow up prompts to stop sounding like a robot wrote your Instagram caption.
 
 **Best For:** Copywriting, strategy decks, client ready drafts, anything where tone matters more than speed.
-**Watch Out For:** It might write your performance review better than you could. Awkward. But you may be able to produce visuals better than it does!!!
+**Watch Out For:** It might write your performance review better than you could. Awkward. But you may be able to produce visuals better than it does!
 
 ### A Tier: ChatGPT
 The reigning heavyweight champ, the one everyone's uncle has heard of. ChatGPT is fast, flexible, and genuinely great at a little bit of everything: brainstorming, first drafts, code snippets, that email you've been avoiding.
@@ -387,9 +427,9 @@ Google's entry is the reliable coworker who's plugged into everything: Docs, She
 ### The Verdict
 There's no single best AI platform; there's the best one for the job in front of you. Need punchy, on brand copy? Claude. Need speed and breadth? ChatGPT. Need visuals that make your deck pop? Midjourney. Need receipts? Perplexity. Already living in Google Docs? Gemini's got you.
 
-The real unlock isn't picking one; it's knowing which tool to reach for, and when. Which, coincidentally, is exactly the kind of strategic thinking a good agency gets paid for.
+The real advantage isn't picking one; it's knowing which tool to reach for, and when. Which, coincidentally, is the exact kind of strategic thinking a good agency gets paid for.
 
-Got thoughts on this tier list? Fight us in the comments.`
+Got thoughts on this tier list? Share them with our team.`
   },
   {
     id: "design-systems-scale-2026",
@@ -400,8 +440,9 @@ Got thoughts on this tier list? Fight us in the comments.`
     readTime: "7 min read",
     author: "RAK Product Design Practice",
     image: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?q=80&w=1000&fm=webp&auto=format&fit=crop",
+    featured: false,
     excerpt: "Design systems are built with good intentions, yet most stall within 12 months. We analyze token scaling, component ownership, and cross-platform governance.",
-    content: `Design systems are often pitched as the ultimate silver bullet for product teams: build once, reuse everywhere, accelerate speed-to-market by 40%.
+    content: `Design systems are often pitched as the silver bullet for product teams: build once, reuse everywhere, accelerate speed-to-market by 40%.
 
 Yet behind closed doors, 84% of enterprise design systems end up abandoned or treated as glorified Figma UI kits. Why?
 
@@ -429,8 +470,9 @@ At RAK 4 Creative, we architect enterprise design systems that scale across glob
     readTime: "6 min read",
     author: "RAK Performance Engineering",
     image: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?q=80&w=1000&fm=webp&auto=format&fit=crop",
+    featured: false,
     excerpt: "Conversion rate optimization is no longer just A/B testing button colors. It is an end-to-end performance discipline uniting DOM optimization, edge caching, and behavioral psychology.",
-    content: `Every 100 millisecond delay in page load time reduces enterprise conversion rates by 7%. In 2026, web performance is not an engineering vanity metric—it is the single highest leverage lever for revenue growth.
+    content: `Every 100 millisecond delay in page load time reduces enterprise conversion rates by 7%. In 2026, web performance is not an engineering vanity metric: it is the single highest leverage lever for revenue growth.
 
 ### The Physics of Conversion
 Modern high-converting web applications leverage three core architectural principles:
@@ -450,7 +492,8 @@ When performance engineering meets conversion architecture, pipeline velocity mu
     readTime: "8 min read",
     author: "RAK 3D & Creative Media Lab",
     image: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1000&fm=webp&auto=format&fit=crop",
-    excerpt: "Immersive WebGL canvas graphics can double dwell time and brand recall—if built with strict frame-budgeting. Here is our technical blueprint for high-performance 3D web experiences.",
+    featured: false,
+    excerpt: "Immersive WebGL canvas graphics can double dwell time and brand recall when built with strict frame-budgeting. Here is our technical blueprint for high-performance 3D web experiences.",
     content: `Interactive 3D on the web has evolved from experimental novelty to an enterprise brand differentiator. From custom GLSL particle canvases to interactive 3D product customizers, 3D experiences capture audience attention in an increasingly distracted digital landscape.
 
 ### Performance & Frame-Budgeting
@@ -472,8 +515,9 @@ When executed with precision, 3D WebGL transforms passive website visitors into 
     readTime: "6 min read",
     author: "RAK Global Brand Strategy",
     image: "https://images.unsplash.com/photo-1542744173-8e7e53415bb0?q=80&w=1000&fm=webp&auto=format&fit=crop",
+    featured: false,
     excerpt: "Modern consumers touch over 14 digital and physical channels before making a decision. Learn how unified agency execution prevents message dilution across touchpoints.",
-    content: `A successful product launch requires absolute alignment across online and offline touchpoints. Disconnected agencies—where one handles digital ads, another manages OOH billboards, and a third builds the landing page—inevitably lead to fragmented brand identity.
+    content: `A successful product launch requires alignment across online and offline touchpoints. Disconnected agencies (where one handles digital ads, another manages OOH billboards, and a third builds the landing page) inevitably lead to fragmented brand identity.
 
 ### The Unified 360° Framework
 RAK 4 Creative operates as a one-stop agency engine, uniting all 8 capability pillars:
@@ -493,6 +537,7 @@ Unified execution guarantees maximum ROI without single-point agency friction.`
     readTime: "5 min read",
     author: "RAK Data & Analytics Team",
     image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&fm=webp&auto=format&fit=crop",
+    featured: false,
     excerpt: "Traditional focus groups are slow and retrospective. Realtime analytics listening and behavioral cluster modeling allow brands to predict consumer shifts before competitors respond.",
     content: `Data without actionable strategy is noise. Leading enterprise brands leverage predictive analytics listening to understand sentiment, brand perception, and emerging consumer demand in real time.
 
@@ -512,7 +557,8 @@ export const OFFICES = [
     address: "Badaro Executive Tower, Level 6, Beirut",
     email: "lebanon@rak4creative.com",
     phone: "+961 1 380 400",
-    status: "Middle East Headquarters"
+    status: "Middle East Headquarters",
+    timezone: "GMT+2"
   },
   {
     city: "Toronto",
@@ -520,7 +566,8 @@ export const OFFICES = [
     address: "Financial District, 100 King Street West, Suite 5600, Toronto, ON M5X 1C9",
     email: "canada@rak4creative.com",
     phone: "+1 (416) 800-4820",
-    status: "North America Headquarters"
+    status: "North America Headquarters",
+    timezone: "EST"
   }
 ];
 
@@ -589,3 +636,79 @@ export const TESTIMONIALS = [
     avatar: "https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?q=80&w=200&auto=format&fit=crop"
   }
 ];
+
+export const SEO_SETTINGS = {
+  siteTitle: "RAK 4 CREATIVE | Global Digital & Brand Innovation Agency",
+  metaDescription: "RAK 4 CREATIVE transforms ambitious enterprises into market leaders through brand identity, digital product design, web architecture, and growth strategy.",
+  metaKeywords: "RAK 4 Creative, Brand Strategy, UI/UX Design, Web Development, CRO, Digital Transformation, Enterprise Agency",
+  ogImage: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?q=80&w=1200&auto=format&fit=crop",
+  canonicalUrl: "https://rak4creative.com",
+  pageTitles: {
+    home: "RAK 4 CREATIVE | Global Digital & Brand Innovation Agency",
+    about: "About Us | RAK 4 CREATIVE Brand Architecture",
+    services: "Services & Capabilities | RAK 4 CREATIVE",
+    work: "Selected Portfolio Work | RAK 4 CREATIVE",
+    "case-studies": "Enterprise Case Studies & ROI | RAK 4 CREATIVE",
+    careers: "Careers & Open Roles | RAK 4 CREATIVE",
+    blog: "Executive Editorial & Insights | RAK 4 CREATIVE",
+    "blog-post": "Editorial Insight | RAK 4 CREATIVE",
+    contact: "Contact & Executive Inquiry | RAK 4 CREATIVE",
+    admin: "CMS Operations Portal | RAK 4 CREATIVE"
+  }
+};
+
+export const DEFAULT_PIXELS = {
+  metaPixelEnabled: false,
+  metaPixelId: "",
+  gtmEnabled: false,
+  gtmId: "",
+  ga4Enabled: false,
+  ga4Id: "",
+  tiktokPixelEnabled: false,
+  tiktokPixelId: "",
+  linkedinEnabled: false,
+  linkedinPartnerId: "",
+  snapPixelEnabled: false,
+  snapPixelId: "",
+  twitterPixelEnabled: false,
+  twitterPixelId: "",
+  trackLeadEvents: true,
+  trackPageViews: true,
+  customHeadScripts: "",
+  customBodyStartScripts: "",
+  customBodyEndScripts: "",
+  customConversionScript: ""
+};
+
+export const DEFAULT_EMAIL_SETTINGS = {
+  driver: "mail",
+  fromName: "RAK 4 CREATIVE",
+  fromEmail: "hello@rak4creative.com",
+  replyToEmail: "hello@rak4creative.com",
+  notifyEmails: "hello@rak4creative.com, lebanon@rak4creative.com",
+  ccEmails: "",
+  subjectPrefix: "[RAK4Creative Lead]",
+  enableAdminNotification: true,
+  enableAutoResponder: true,
+  autoResponderSubject: "We received your inquiry | RAK 4 CREATIVE",
+  autoResponderBody: "Hello {{name}},\n\nThank you for reaching out to RAK 4 CREATIVE regarding {{service}}.\n\nOur strategy team has received your submission and will respond within 12 business hours.\n\nBest regards,\nRAK 4 CREATIVE Executive Team\nhttps://rak4creative.com",
+  smtpHost: "mail.rak4creative.com",
+  smtpPort: 465,
+  smtpEncryption: "ssl",
+  smtpUser: "hello@rak4creative.com",
+  smtpPass: "",
+  deliveryLogs: []
+};
+
+export const INITIAL_CMS_CONTENT = {
+  brandInfo: BRAND_INFO,
+  pillars: PILLARS,
+  values: VALUES,
+  careersCopy: CAREERS_COPY,
+  openRoles: OPEN_ROLES,
+  projects: RAK4_CREATIONS,
+  blogPosts: BLOG_POSTS,
+  offices: OFFICES,
+  testimonials: TESTIMONIALS,
+  seo: SEO_SETTINGS
+};

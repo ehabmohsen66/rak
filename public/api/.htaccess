@@ -1,0 +1,16 @@
+Options -Indexes -MultiViews
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Pass Authorization header to PHP on cPanel FastCGI/CGI
+  RewriteCond %{HTTP:Authorization} .
+  RewriteRule .* - [E=HTTP_AUTHORIZATION:%{HTTP:Authorization}]
+
+  # Deny direct access to storage subfolder
+  RewriteRule ^storage(/.*)?$ - [F,L]
+
+  # Route clean API paths to index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php?route=$1 [QSA,L]
+</IfModule>

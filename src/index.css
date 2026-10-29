@@ -310,6 +310,29 @@
   animation: border-rotate 8s linear infinite;
 }
 
+/* Accessible Keyboard Focus Indicator */
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[role="button"]:focus-visible,
+[role="tab"]:focus-visible {
+  outline: 2px solid #EC008C;
+  outline-offset: 2px;
+}
+
+.light button:focus-visible,
+.light a:focus-visible,
+.light input:focus-visible,
+.light select:focus-visible,
+.light textarea:focus-visible,
+.light [role="button"]:focus-visible,
+.light [role="tab"]:focus-visible {
+  outline: 2px solid #D1007C;
+  outline-offset: 2px;
+}
+
 /* Mobile Touch & iOS Input Optimization */
 @media (max-width: 640px) {
   input, select, textarea {

@@ -17,3 +17,6 @@ ChatGPT_files/
 /videos/
 /Export DRC OOF _ en.mp4
 Untitled design.png
+public/api/storage/auth.json
+public/api/storage/auth.dev.json
+public/api/storage/cms_data.backup.json

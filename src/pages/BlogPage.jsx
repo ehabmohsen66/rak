@@ -1,23 +1,28 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useMemo } from 'react';
 import { Search, Clock } from 'lucide-react';
-import { BLOG_POSTS } from '../data/contentData';
+import { useCms } from '../lib/cmsContext';
 import { BlogHeroSpline } from '../components/BlogHeroSpline';
 
 export const BlogPage = ({ onSelectArticle }) => {
+  const { content } = useCms();
+  const blogPosts = content.blogPosts || [];
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
   const articlesRef = useRef(null);
 
-  const categories = ['All', 'Design Architecture', 'Growth & CRO', 'Engineering'];
+  const categories = useMemo(() => {
+    const unique = Array.from(new Set(blogPosts.map((p) => p.category).filter(Boolean)));
+    return ['All', ...unique];
+  }, [blogPosts]);
 
-  const filteredPosts = BLOG_POSTS.filter(post => {
-    const matchesSearch = post.title.toLowerCase().includes(searchQuery.toLowerCase()) || 
-                          post.excerpt.toLowerCase().includes(searchQuery.toLowerCase());
+  const filteredPosts = blogPosts.filter(post => {
+    const matchesSearch = (post.title || '').toLowerCase().includes(searchQuery.toLowerCase()) || 
+                          (post.excerpt || '').toLowerCase().includes(searchQuery.toLowerCase());
     const matchesCategory = selectedCategory === 'All' || post.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
-  const featuredPost = BLOG_POSTS.find(p => p.featured) || BLOG_POSTS[0];
+  const featuredPost = blogPosts.find(p => p.featured) || blogPosts[0];
 
   const handleScrollToArticles = () => {
     articlesRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -26,29 +31,29 @@ export const BlogPage = ({ onSelectArticle }) => {
   return (
     <div className="pb-16 space-y-16 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
-      {/* 3D SPLINE HERO */}
       <BlogHeroSpline onExploreClick={handleScrollToArticles} />
 
-      {/* SEARCH & CATEGORY FILTERS */}
       <section ref={articlesRef} className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <div className="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 p-6 bg-white dark:bg-rak-slate-950 border border-slate-200 dark:border-rak-slate-800 rounded-3xl shadow-sm backdrop-blur-xl">
           <div className="relative w-full md:w-96">
             <Search className="w-4 h-4 text-slate-400 dark:text-rak-slate-500 absolute left-4 top-3.5" />
             <input
               type="text"
+              aria-label="Search executive articles"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search executive articles..."
-              className="w-full pl-11 pr-4 py-3 text-xs bg-slate-50 dark:bg-rak-slate-900/90 border border-slate-200 dark:border-rak-slate-700/80 rounded-full text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-rak-slate-500 focus:outline-none focus:border-rak-magenta focus:ring-1 focus:ring-rak-magenta transition-colors"
+              className="w-full pl-11 pr-4 py-3 text-xs bg-slate-50 dark:bg-rak-slate-900/90 border border-slate-200 dark:border-rak-slate-700/80 rounded-full text-slate-900 dark:text-white placeholder-slate-400 dark:placeholder-rak-slate-500 focus:outline-none focus:border-rak-magenta focus:ring-2 focus:ring-rak-magenta transition-colors"
             />
           </div>
 
           <div className="flex flex-wrap gap-2">
             {categories.map((cat) => (
               <button
+                type="button"
                 key={cat}
                 onClick={() => setSelectedCategory(cat)}
-                className={`px-4 py-2 text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 cursor-pointer font-mono ${
+                className={`px-4 py-2 text-[11px] font-bold uppercase tracking-wider rounded-full transition-all duration-300 cursor-pointer font-mono focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rak-magenta ${
                   selectedCategory === cat
                     ? 'bg-rak-magenta text-white shadow-magenta-glow scale-105'
                     : 'bg-slate-100 dark:bg-rak-slate-900/90 border border-slate-200 dark:border-rak-slate-800 text-slate-700 dark:text-rak-slate-300 hover:border-rak-magenta/40 hover:text-rak-magenta'
@@ -61,8 +66,7 @@ export const BlogPage = ({ onSelectArticle }) => {
         </div>
       </section>
 
-      {/* FEATURED POST */}
-      {featuredPost && (
+      {featuredPost && selectedCategory === 'All' && !searchQuery && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div 
             onClick={() => onSelectArticle(featuredPost)}
@@ -97,41 +101,54 @@ export const BlogPage = ({ onSelectArticle }) => {
                 <span className="text-xs font-bold text-slate-900 dark:text-white">
                   {typeof featuredPost.author === 'string' ? featuredPost.author : featuredPost.author?.name}
                 </span>
-                <span className="text-xs text-slate-400 dark:text-rak-slate-500">• {featuredPost.date}</span>
+                <span className="text-xs text-slate-500 dark:text-rak-slate-400">• {featuredPost.date}</span>
               </div>
             </div>
           </div>
         </section>
       )}
 
-      {/* ARTICLE GRID */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {filteredPosts.map((post) => (
-            <div 
-              key={post.id}
-              onClick={() => onSelectArticle(post)}
-              className="group cursor-pointer p-6 bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-rak-slate-800 rounded-3xl hover:border-rak-magenta/50 transition-all space-y-4 shadow-sm hover:shadow-md backdrop-blur-xl"
+        {filteredPosts.length === 0 ? (
+          <div className="p-12 text-center rounded-3xl bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-rak-slate-800 space-y-3">
+            <h2 className="text-xl font-bold text-slate-900 dark:text-white">No articles matched your filter</h2>
+            <p className="text-xs text-slate-600 dark:text-rak-slate-300">Clear your search query or reset the category filter to browse all insights.</p>
+            <button
+              type="button"
+              onClick={() => { setSearchQuery(''); setSelectedCategory('All'); }}
+              className="px-5 py-2.5 bg-rak-magenta text-white text-xs font-bold uppercase tracking-wider rounded-full cursor-pointer"
             >
-              <div className="relative h-48 rounded-2xl overflow-hidden bg-slate-100 dark:bg-rak-slate-950">
-                <img src={post.image} alt={post.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95" />
-              </div>
-
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-rak-slate-400">
-                  <span className="text-rak-magenta font-bold uppercase tracking-wider font-mono">{post.category}</span>
-                  <span className="font-mono">{post.readTime}</span>
+              Reset Article Filters
+            </button>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {filteredPosts.map((post) => (
+              <div 
+                key={post.id}
+                onClick={() => onSelectArticle(post)}
+                className="group cursor-pointer p-6 bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-rak-slate-800 rounded-3xl hover:border-rak-magenta/50 transition-all space-y-4 shadow-sm hover:shadow-md backdrop-blur-xl"
+              >
+                <div className="relative h-48 rounded-2xl overflow-hidden bg-slate-100 dark:bg-rak-slate-950">
+                  <img src={post.image} alt={post.title} loading="lazy" decoding="async" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-95" />
                 </div>
 
-                <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-rak-magenta transition-colors leading-tight font-heading">
-                  {post.title}
-                </h3>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between text-[11px] text-slate-500 dark:text-rak-slate-400">
+                    <span className="text-rak-magenta font-bold uppercase tracking-wider font-mono">{post.category}</span>
+                    <span className="font-mono">{post.readTime}</span>
+                  </div>
 
-                <p className="text-xs text-slate-600 dark:text-rak-slate-400 line-clamp-2">{post.excerpt}</p>
+                  <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-rak-magenta transition-colors leading-tight font-heading">
+                    {post.title}
+                  </h3>
+
+                  <p className="text-xs text-slate-600 dark:text-rak-slate-300 line-clamp-2">{post.excerpt}</p>
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </section>
 
     </div>

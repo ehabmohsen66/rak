@@ -33,7 +33,7 @@ const TEAM_VIDEOS = [
     title: 'Cinematic High-Impact Films',
     category: 'Commercial Production',
     vibe: '4K Storytelling',
-    caption: 'Directing, lighting, filming, and post-production — pure cinema crafted to make audiences stop scrolling.',
+    caption: 'Directing, lighting, filming, and post-production: pure cinema crafted to make audiences stop scrolling.',
     aspect: 'aspect-[16/10]',
     tagColor: 'from-rak-magenta to-purple-600'
   },
@@ -53,7 +53,7 @@ const TEAM_VIDEOS = [
     title: 'Architectural & Spatial Vision',
     category: 'Spatial Branding',
     vibe: 'Modern Precision',
-    caption: 'Elevating real-world spaces with cutting-edge visual architecture and high-end aesthetics.',
+    caption: 'Elevating real-world spaces with modern visual architecture and high-end aesthetics.',
     aspect: 'aspect-[4/5]',
     tagColor: 'from-amber-500 to-orange-600'
   },
@@ -73,7 +73,7 @@ const TEAM_VIDEOS = [
     title: 'High-Retention Viral Motion',
     category: 'Social First',
     vibe: 'Fast & Electric',
-    caption: 'Engineered for social speed and instant visual hook — crafted for modern digital culture.',
+    caption: 'Engineered for social speed and instant visual hook, crafted for modern digital culture.',
     aspect: 'aspect-[9/14]',
     tagColor: 'from-violet-500 to-rak-magenta'
   }
@@ -243,7 +243,7 @@ export const TeamVideoShowcase = () => {
           </h2>
 
           <p className="text-sm sm:text-base text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal pt-1">
-            Step behind the scenes. From crazy 3D experiments and cinematic shoots to pure studio laughter — meet the passionate creators turning bold ideas into iconic work.
+            Step behind the scenes. From crazy 3D experiments and cinematic shoots to pure studio laughter, meet the passionate creators turning bold ideas into iconic work.
           </p>
         </div>
 

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { 
   ArrowUpRight, 
   Sparkles, 
@@ -15,13 +15,12 @@ import {
   Calendar,
   Clock
 } from 'lucide-react';
-import { BRAND_INFO, PROJECTS, TESTIMONIALS, PILLARS, BLOG_POSTS } from '../data/contentData';
+import { useCms } from '../lib/cmsContext';
 import { CinematicHeroScroll } from '../components/CinematicHeroScroll';
 import { TeamVideoShowcase } from '../components/TeamVideoShowcase';
 import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
-import { GradientShimmer } from '../components/ui/GradientShimmer';
 import { LebanonTributeSection } from '../components/LebanonTributeSection';
 
 const getPillarIcon = (iconName) => {
@@ -44,13 +43,20 @@ export const HomePage = ({
   onSelectArticle = () => {},
   onOpenPlanner = () => {} 
 }) => {
+  const { content } = useCms();
+  const pillars = content.pillars || [];
+  const projects = content.projects || [];
+  const testimonials = content.testimonials || [];
+  const blogPosts = content.blogPosts || [];
+
+  const featuredProjects = projects.filter((p) => p.featured);
+  const displayProjects = (featuredProjects.length > 0 ? featuredProjects : projects).slice(0, 4);
+
   return (
     <div className="space-y-16 sm:space-y-20 lg:space-y-24 pb-20 relative bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
-      {/* 1. ARTISTIC CINEMATIC SCROLL HERO SECTION */}
       <CinematicHeroScroll onOpenPlanner={onOpenPlanner} setActiveTab={setActiveTab} />
 
-      {/* 2. CLIENT BRANDS MARQUEE SCROLLER */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <MarqueeLogoScroller 
           title="Trusted by Ambitious Enterprises & Global Innovators"
@@ -59,7 +65,6 @@ export const HomePage = ({
         />
       </section>
 
-      {/* 3. PILLARS OF CAPABILITY (BRIGHT BENTO GRID) */}
       <section id="capabilities" className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10 scroll-mt-24">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
@@ -75,13 +80,13 @@ export const HomePage = ({
             onClick={(e) => { e.preventDefault(); setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-widest text-rak-magenta hover:text-slate-900 dark:hover:text-white transition-colors"
           >
-            <span>View All 8 Pillars</span>
+            <span>View All {pillars.length} Pillars</span>
             <ArrowUpRight className="w-4 h-4" />
           </a>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {PILLARS.slice(0, 6).map((s) => {
+          {pillars.slice(0, 6).map((s) => {
             const IconComp = getPillarIcon(s.icon);
             return (
               <SpotlightCard
@@ -110,7 +115,7 @@ export const HomePage = ({
                 </div>
 
                 <div className="pt-5 mt-5 border-t border-slate-100 dark:border-white/10 flex flex-wrap gap-2 relative z-10">
-                  {s.items.slice(0, 3).map((b, i) => (
+                  {(s.items || []).slice(0, 3).map((b, i) => (
                     <span key={i} className="text-[10px] sm:text-[11px] text-slate-700 dark:text-rak-slate-300 font-medium px-2.5 py-1 rounded-xl bg-slate-100 dark:bg-white/[0.03] border border-slate-200 dark:border-white/10 flex items-center space-x-1.5">
                       <CheckCircle2 className="w-3 h-3 text-rak-magenta shrink-0" />
                       <span>{b}</span>
@@ -123,7 +128,6 @@ export const HomePage = ({
         </div>
       </section>
 
-      {/* 4. SELECTED CREATIONS SHOWCASE */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
@@ -139,13 +143,13 @@ export const HomePage = ({
             onClick={(e) => { e.preventDefault(); setActiveTab('work'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
             className="inline-flex items-center space-x-2 text-xs font-bold uppercase tracking-widest text-rak-magenta hover:text-slate-900 dark:hover:text-white transition-colors"
           >
-            <span>Explore Full Archive</span>
+            <span>View Full Portfolio</span>
             <ArrowUpRight className="w-4 h-4" />
           </a>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {PROJECTS.filter(p => p.featured).slice(0, 4).map((p) => (
+          {displayProjects.map((p) => (
             <SpotlightCard 
               key={p.id}
               spotlightColor="rgba(236, 0, 140, 0.1)"
@@ -199,56 +203,61 @@ export const HomePage = ({
         </div>
       </section>
 
-      {/* 5. TEAM CULTURE & VIDEO SHOWCASE ("WE'RE NOT JUST A BUSINESS...") */}
       <TeamVideoShowcase />
 
-      {/* 6. EXECUTIVE TESTIMONIALS */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <SpotlightCard 
-          spotlightColor="rgba(236, 0, 140, 0.1)"
-          borderColor="rgba(226, 232, 240, 0.8)"
-          className="bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-white/10 rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden backdrop-blur-xl shadow-sm"
-        >
-          <div className="space-y-2 text-center max-w-2xl mx-auto">
-            <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
-              Client Feedback
-            </span>
-            <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">What Partners Say About RAK.</h2>
-          </div>
+      {testimonials.length > 0 && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <SpotlightCard 
+            spotlightColor="rgba(236, 0, 140, 0.1)"
+            borderColor="rgba(226, 232, 240, 0.8)"
+            className="bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-white/10 rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden backdrop-blur-xl shadow-sm"
+          >
+            <div className="space-y-2 text-center max-w-2xl mx-auto">
+              <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
+                Client Feedback
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">What Partners Say About RAK.</h2>
+            </div>
 
-          <InfiniteSlider gap={24} duration={65} durationOnHover={180} className="py-4">
-            {TESTIMONIALS.map((t) => (
-              <SpotlightCard 
-                key={t.id} 
-                spotlightColor="rgba(236, 0, 140, 0.15)"
-                className="w-80 sm:w-96 shrink-0 p-6 bg-slate-50 dark:bg-rak-slate-950/90 border border-slate-200 dark:border-white/10 rounded-2xl space-y-5 flex flex-col justify-between backdrop-blur-md shadow-md"
-              >
-                <div className="space-y-3">
-                  <div className="flex text-amber-400 space-x-1">
-                    {[...Array(t.rating)].map((_, r) => (
-                      <Star key={r} className="w-4 h-4 fill-amber-400 text-amber-400" />
-                    ))}
+            <InfiniteSlider gap={24} duration={65} durationOnHover={180} className="py-4">
+              {testimonials.map((t) => (
+                <SpotlightCard 
+                  key={t.id} 
+                  spotlightColor="rgba(236, 0, 140, 0.15)"
+                  className="w-80 sm:w-96 shrink-0 p-6 bg-slate-50 dark:bg-rak-slate-950/90 border border-slate-200 dark:border-white/10 rounded-2xl space-y-5 flex flex-col justify-between backdrop-blur-md shadow-md"
+                >
+                  <div className="space-y-3">
+                    <div className="flex text-amber-400 space-x-1">
+                      {[...Array(Number(t.rating) || 5)].map((_, r) => (
+                        <Star key={r} className="w-4 h-4 fill-amber-400 text-amber-400" />
+                      ))}
+                    </div>
+                    <p className="text-xs sm:text-sm text-slate-700 dark:text-rak-slate-200 leading-relaxed font-normal">
+                      "{t.quote}"
+                    </p>
                   </div>
-                  <p className="text-xs sm:text-sm text-slate-700 dark:text-rak-slate-200 leading-relaxed font-normal">
-                    "{t.quote}"
-                  </p>
-                </div>
 
-                <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center space-x-3">
-                  <img src={t.avatar} alt={t.author} loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover border-2 border-rak-magenta shrink-0" />
-                  <div>
-                    <div className="text-xs font-bold text-slate-900 dark:text-white tracking-wide">{t.author}</div>
-                    <div className="text-[10px] text-slate-500 dark:text-rak-slate-400 font-medium">{t.role}</div>
-                    <div className="text-[10px] text-rak-magenta font-semibold">{t.company}</div>
+                  <div className="pt-4 border-t border-slate-200 dark:border-white/10 flex items-center space-x-3">
+                    {t.avatar ? (
+                      <img src={t.avatar} alt={t.author} loading="lazy" decoding="async" className="w-11 h-11 rounded-full object-cover border-2 border-rak-magenta shrink-0" />
+                    ) : (
+                      <div className="w-11 h-11 rounded-full bg-rak-magenta/20 border-2 border-rak-magenta text-rak-magenta flex items-center justify-center font-bold text-xs shrink-0">
+                        {String(t.author || 'R').slice(0, 2).toUpperCase()}
+                      </div>
+                    )}
+                    <div>
+                      <div className="text-xs font-bold text-slate-900 dark:text-white tracking-wide">{t.author}</div>
+                      <div className="text-[10px] text-slate-500 dark:text-rak-slate-400 font-medium">{t.role}</div>
+                      <div className="text-[10px] text-rak-magenta font-semibold">{t.company}</div>
+                    </div>
                   </div>
-                </div>
-              </SpotlightCard>
-            ))}
-          </InfiniteSlider>
-        </SpotlightCard>
-      </section>
+                </SpotlightCard>
+              ))}
+            </InfiniteSlider>
+          </SpotlightCard>
+        </section>
+      )}
 
-      {/* 6. STRATEGIC INSIGHTS / EDITORIAL */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
@@ -270,7 +279,7 @@ export const HomePage = ({
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {BLOG_POSTS.slice(0, 4).map((post) => (
+          {blogPosts.slice(0, 4).map((post) => (
             <SpotlightCard
               key={post.id}
               spotlightColor="rgba(236, 0, 140, 0.1)"
@@ -329,7 +338,6 @@ export const HomePage = ({
         </div>
       </section>
 
-      {/* 7. FROM BEIRUT TO THE WORLD - LEBANON TRIBUTE (THE LAND OF CEDARS) */}
       <LebanonTributeSection onOpenPlanner={onOpenPlanner} />
 
     </div>

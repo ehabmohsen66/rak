@@ -1,0 +1,19 @@
+{
+  "driver": "mail",
+  "fromName": "RAK 4 CREATIVE",
+  "fromEmail": "hello@rak4creative.com",
+  "replyToEmail": "hello@rak4creative.com",
+  "notifyEmails": "hello@rak4creative.com, lebanon@rak4creative.com",
+  "ccEmails": "",
+  "subjectPrefix": "[RAK4Creative Lead]",
+  "enableAdminNotification": true,
+  "enableAutoResponder": true,
+  "autoResponderSubject": "We received your inquiry | RAK 4 CREATIVE",
+  "autoResponderBody": "Hello {{name}},\n\nThank you for reaching out to RAK 4 CREATIVE regarding {{service}}.\n\nOur strategy team has received your submission and will respond within 12 business hours.\n\nBest regards,\nRAK 4 CREATIVE Executive Team\nhttps://rak4creative.com",
+  "smtpHost": "mail.rak4creative.com",
+  "smtpPort": 465,
+  "smtpEncryption": "ssl",
+  "smtpUser": "hello@rak4creative.com",
+  "smtpPass": "",
+  "deliveryLogs": []
+}

@@ -31,7 +31,7 @@ export function CareersHero({ onScrollToRoles }) {
               We <span className="text-rak-magenta">think</span>, you{" "}
               <span className="text-rak-magenta">grow</span>
               <br />
-              <span className="text-white">— that's the deal</span>
+              <span className="text-white">that's the deal.</span>
             </h1>
           </div>
 

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { BrandLogo } from './BrandLogo';
+import { useCms } from '../lib/cmsContext';
 import { 
   Menu, 
   X, 
@@ -26,6 +27,7 @@ export const Navbar = ({
   onOpenPlanner = onOpenProjectPlanner
 }) => {
 
+  const { content } = useCms();
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [servicesDropdown, setServicesDropdown] = useState(false);
@@ -66,16 +68,10 @@ export const Navbar = ({
     { id: 'contact', label: 'Contact', icon: MessageSquare }
   ];
 
-  const pillarsList = [
-    { name: 'Digital Consultancy', id: 'digital-consultancy' },
-    { name: 'Data & Analytics', id: 'data-analytics' },
-    { name: 'Social Media Marketing', id: 'social-media-marketing' },
-    { name: 'Web & E-Commerce', id: 'web-development' },
-    { name: 'Search Marketing', id: 'search-marketing' },
-    { name: 'Paid Media', id: 'paid-media' },
-    { name: 'Content Creation & Media Production', id: 'content-creation' },
-    { name: 'Branding & OOH', id: 'branding' }
-  ];
+  const pillarsList = (content?.pillars || []).map((p) => ({
+    name: p.title,
+    id: p.id
+  }));
 
   const handlePillarSelect = (pillarId, e) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -103,7 +99,7 @@ export const Navbar = ({
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between gap-4 xl:gap-8">
           
-          {/* Brand Logo — White & Fuchsia to pop up */}
+          {/* Brand Logo */}
           <a 
             href="/"
             onClick={(e) => {
@@ -162,7 +158,7 @@ export const Navbar = ({
                       <div className="backdrop-blur-xl border rounded-2xl p-3 shadow-2xl bg-rak-slate-900/95 border-white/15">
                         <div className="text-[10px] font-bold uppercase tracking-widest text-rak-magenta px-3 py-1.5 mb-1 flex items-center justify-between border-b border-white/10 pb-2">
                           <span>Pillars of Capability</span>
-                          <span className="text-[9px] text-slate-400 font-normal">8 Core Units</span>
+                          <span className="text-[9px] text-slate-400 font-normal">{pillarsList.length} Core Units</span>
                         </div>
                         <div className="space-y-0.5 pt-1">
                           {pillarsList.map((p) => (

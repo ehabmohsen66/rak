@@ -188,7 +188,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
     try {
       localStorage.setItem('rak_beirut_love_count', newCount.toString());
     } catch {
-      /* storage unavailable — counter still updates for this session */
+      /* storage unavailable: counter still updates for this session */
     }
 
     setAnimKey((prev) => prev + 1);
@@ -272,7 +272,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               </span>
             </div>
 
-            {/* Headline — navy, with the homepage gradient on line two */}
+            {/* Headline: navy, with the homepage gradient on line two */}
             <h2
               className="font-heading font-bold uppercase text-2xl leading-[1.1] sm:text-4xl lg:text-5xl"
               style={{ color: C.navy }}
@@ -291,7 +291,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               carries Beirut&rsquo;s restless imagination into brands built to move the world.
             </p>
 
-            {/* Arabic pulse line — Janna Font */}
+            {/* Arabic pulse line: Janna Font */}
             <div className="pl-5 py-1 border-l-2" style={{ borderColor: C.magenta }}>
               <p
                 className="text-lg sm:text-2xl font-janna font-bold leading-relaxed"
@@ -409,7 +409,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                   {GRATICULE.map((d, i) => <path key={i} d={d} />)}
                 </g>
 
-                {/* Routes — a solid line keeps every arc physically joined to
+                {/* Routes: a solid line keeps every arc physically joined to
                     Beirut, with the dashed flow animating on top of it. */}
                 <g fill="none" stroke="url(#rakRoute)" strokeLinecap="round">
                   {ARCS.map((a) => (
@@ -452,7 +452,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                   </g>
                 ))}
 
-                {/* Lebanon — verified origin */}
+                {/* Lebanon: verified origin */}
                 <g>
                   <circle className="rak-ring" cx={ORIGIN.x} cy={ORIGIN.y} r="15" fill="none" stroke={C.magenta} strokeWidth="1.4" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
                   <circle className="rak-ring rak-ring-2" cx={ORIGIN.x} cy={ORIGIN.y} r="15" fill="none" stroke={C.magenta} strokeWidth="1.4" style={{ transformOrigin: `${ORIGIN.x}px ${ORIGIN.y}px` }} />
