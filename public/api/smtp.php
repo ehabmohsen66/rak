@@ -85,11 +85,140 @@ class RakMailer {
             $textBody = trim(strip_tags(str_replace(['<br>', '<br/>', '<br />', '</p>', '</div>', '</tr>'], "\n", $htmlBody)));
         }
 
+        if ($driver === 'resend') {
+            return $this->sendViaResendApi($toParsed, $subject, $htmlBody, $textBody, $fromEmail, $fromName, $effectiveReplyTo, $parsedCc);
+        }
+
         if ($driver === 'smtp') {
             return $this->sendViaSmtp($toParsed, $subject, $htmlBody, $textBody, $fromEmail, $fromName, $effectiveReplyTo, $parsedCc);
         }
 
         return $this->sendViaPhpMail($toParsed, $subject, $htmlBody, $textBody, $fromEmail, $fromName, $effectiveReplyTo, $parsedCc);
+    }
+
+    private function sendViaResendApi(array $toParsed, string $subject, string $htmlBody, string $textBody, string $fromEmail, string $fromName, string $replyTo, array $parsedCc): array {
+        $apiKey = trim((string)($this->settings['resendApiKey'] ?? ''));
+        if ($apiKey === '') {
+            $smtpCandidate = trim((string)($this->settings['smtpPass'] ?? ''));
+            if (strpos($smtpCandidate, 're_') === 0) {
+                $apiKey = $smtpCandidate;
+            }
+        }
+
+        if ($apiKey === '') {
+            return [
+                'ok' => false,
+                'driver' => 'resend',
+                'recipient' => $toParsed['display'],
+                'timestamp' => gmdate('c'),
+                'message' => 'Resend API key (re_...) is required when Resend API driver is active.'
+            ];
+        }
+
+        $fromHeader = $fromName !== '' ? "{$fromName} <{$fromEmail}>" : $fromEmail;
+        $payload = [
+            'from' => $fromHeader,
+            'to' => [$toParsed['display']],
+            'subject' => $subject,
+            'html' => $htmlBody,
+            'text' => $textBody
+        ];
+        if ($replyTo !== '') {
+            $payload['reply_to'] = $replyTo;
+        }
+        if (!empty($parsedCc)) {
+            $payload['cc'] = array_values(array_map(function ($item) {
+                return $item['display'];
+            }, $parsedCc));
+        }
+
+        $jsonPayload = json_encode($payload, JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+        $endpoint = 'https://api.resend.com/emails';
+        $httpCode = 0;
+        $rawResponse = '';
+        $transportErr = '';
+
+        if (function_exists('curl_init')) {
+            $ch = curl_init($endpoint);
+            curl_setopt_array($ch, [
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => $jsonPayload,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 20,
+                CURLOPT_CONNECTTIMEOUT => 10,
+                CURLOPT_HTTPHEADER => [
+                    'Authorization: Bearer ' . $apiKey,
+                    'Content-Type: application/json',
+                    'Accept: application/json',
+                    'User-Agent: RAK4Creative-CMS-PHP/' . PHP_VERSION
+                ]
+            ]);
+            $resBody = curl_exec($ch);
+            if ($resBody === false) {
+                $transportErr = curl_error($ch);
+            } else {
+                $rawResponse = (string)$resBody;
+            }
+            $httpCode = (int)curl_getinfo($ch, CURLINFO_HTTP_CODE);
+            curl_close($ch);
+        } else {
+            $ctx = stream_context_create([
+                'http' => [
+                    'method' => 'POST',
+                    'header' => "Authorization: Bearer {$apiKey}\r\nContent-Type: application/json\r\nAccept: application/json\r\nUser-Agent: RAK4Creative-CMS-PHP/" . PHP_VERSION . "\r\n",
+                    'content' => $jsonPayload,
+                    'timeout' => 20,
+                    'ignore_errors' => true
+                ]
+            ]);
+            $resBody = @file_get_contents($endpoint, false, $ctx);
+            if ($resBody === false) {
+                $transportErr = 'HTTPS stream connection to api.resend.com failed.';
+            } else {
+                $rawResponse = (string)$resBody;
+            }
+            if (isset($http_response_header) && is_array($http_response_header)) {
+                foreach ($http_response_header as $hdr) {
+                    if (preg_match('/^HTTP\/\S+\s+(\d{3})/', $hdr, $m)) {
+                        $httpCode = (int)$m[1];
+                    }
+                }
+            }
+        }
+
+        if ($transportErr !== '') {
+            return [
+                'ok' => false,
+                'driver' => 'resend',
+                'recipient' => $toParsed['display'],
+                'timestamp' => gmdate('c'),
+                'message' => 'Resend HTTPS connection failed: ' . $transportErr
+            ];
+        }
+
+        $decoded = json_decode($rawResponse, true);
+        if ($httpCode >= 200 && $httpCode < 300 && is_array($decoded) && !empty($decoded['id'])) {
+            return [
+                'ok' => true,
+                'driver' => 'resend',
+                'emailId' => (string)$decoded['id'],
+                'recipient' => $toParsed['display'],
+                'timestamp' => gmdate('c'),
+                'message' => 'Delivered via Resend HTTPS API (ID: ' . $decoded['id'] . ').'
+            ];
+        }
+
+        $errMsg = is_array($decoded) && !empty($decoded['message'])
+            ? (string)$decoded['message']
+            : trim(substr($rawResponse, 0, 260));
+
+        return [
+            'ok' => false,
+            'driver' => 'resend',
+            'recipient' => $toParsed['display'],
+            'timestamp' => gmdate('c'),
+            'message' => "Resend API rejected message ({$httpCode}): {$errMsg}"
+        ];
     }
 
     private function sendViaPhpMail(array $toParsed, string $subject, string $htmlBody, string $textBody, string $fromEmail, string $fromName, string $replyTo, array $parsedCc): array {
@@ -187,6 +316,9 @@ class RakMailer {
         );
 
         if (!$socket) {
+            if (stripos($host, 'resend.com') !== false && (strpos($password, 're_') === 0 || trim((string)($this->settings['resendApiKey'] ?? '')) !== '')) {
+                return $this->sendViaResendApi($toParsed, $subject, $htmlBody, $textBody, $fromEmail, $fromName, $replyTo, $parsedCc);
+            }
             return [
                 'ok' => false,
                 'driver' => 'smtp',

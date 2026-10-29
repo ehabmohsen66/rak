@@ -40,6 +40,7 @@ export default function EmailSettingsPanel({
   const [isDirty, setIsDirty] = useState(false);
   const [saving, setSaving] = useState(false);
   const [showSmtpPass, setShowSmtpPass] = useState(false);
+  const [showResendKey, setShowResendKey] = useState(false);
   const [notice, setNotice] = useState(null);
 
   const [testRecipient, setTestRecipient] = useState('');
@@ -169,7 +170,7 @@ export default function EmailSettingsPanel({
             {isDirty && <CmsStatusBadge tone="warning">Unsaved changes</CmsStatusBadge>}
           </div>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-            Configure cPanel local PHP mail or authenticated SSL/TLS SMTP, internal team notification recipients, and lead confirmation auto-responders.
+            Configure Resend HTTPS API, authenticated SSL/TLS SMTP, or cPanel local PHP mail, plus team notification recipients and lead confirmation auto-responders.
           </p>
         </div>
 
@@ -238,21 +239,21 @@ export default function EmailSettingsPanel({
                 </h3>
               </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                 <button
                   type="button"
-                  onClick={() => updateField('driver', 'mail')}
+                  onClick={() => updateField('driver', 'resend')}
                   className={`p-4 rounded-xl border text-left transition-colors cursor-pointer ${
-                    draft.driver !== 'smtp'
+                    draft.driver === 'resend'
                       ? 'border-[#D1007C] bg-pink-50/70 dark:bg-pink-950/30'
                       : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40'
                   }`}
                 >
                   <p className="text-sm font-bold text-slate-900 dark:text-white">
-                    cPanel Local PHP mail()
+                    Resend API (HTTPS 443)
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-                    Uses cPanel local Exim MTA with zero external credentials. Ensure From Email matches your cPanel domain.
+                    Dispatches via api.resend.com over HTTPS port 443. Works reliably even when cPanel blocks outbound SMTP ports.
                   </p>
                 </button>
 
@@ -269,20 +270,88 @@ export default function EmailSettingsPanel({
                     Authenticated SMTP Socket
                   </p>
                   <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
-                    Connects via SSL (465) or STARTTLS (587) to cPanel Email Accounts, Google Workspace, Microsoft 365, or SendGrid.
+                    Connects via SSL (465) or STARTTLS (587) to smtp.resend.com, cPanel Email, Google Workspace, or Microsoft 365.
+                  </p>
+                </button>
+
+                <button
+                  type="button"
+                  onClick={() => updateField('driver', 'mail')}
+                  className={`p-4 rounded-xl border text-left transition-colors cursor-pointer ${
+                    draft.driver !== 'smtp' && draft.driver !== 'resend'
+                      ? 'border-[#D1007C] bg-pink-50/70 dark:bg-pink-950/30'
+                      : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40'
+                  }`}
+                >
+                  <p className="text-sm font-bold text-slate-900 dark:text-white">
+                    cPanel Local PHP mail()
+                  </p>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 leading-relaxed">
+                    Uses cPanel local Exim MTA with zero external credentials. Ensure From Email matches your cPanel domain.
                   </p>
                 </button>
               </div>
 
+              {draft.driver === 'resend' && (
+                <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-3">
+                  <CmsField
+                    label="Resend API Key"
+                    htmlFor="resend-api-key"
+                    hint="Paste your Resend secret key starting with re_. Ensure your From Email Address below belongs to a verified domain in Resend."
+                  >
+                    <div className="relative">
+                      <input
+                        id="resend-api-key"
+                        type={showResendKey ? 'text' : 'password'}
+                        value={draft.resendApiKey || ''}
+                        placeholder="re_xxxxxxxxxxxxxxxxxxxxxxxxx"
+                        onChange={(e) => updateField('resendApiKey', e.target.value)}
+                        className={`${CMS_INPUT_CLASS} font-mono pr-12`}
+                      />
+                      <button
+                        type="button"
+                        aria-label={showResendKey ? 'Hide Resend API key' : 'Show Resend API key'}
+                        onClick={() => setShowResendKey(!showResendKey)}
+                        className="absolute right-0.5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-200/70 dark:hover:bg-slate-800 cursor-pointer"
+                      >
+                        {showResendKey ? (
+                          <EyeOff className="w-4 h-4" aria-hidden="true" />
+                        ) : (
+                          <Eye className="w-4 h-4" aria-hidden="true" />
+                        )}
+                      </button>
+                    </div>
+                  </CmsField>
+                </div>
+              )}
+
               {draft.driver === 'smtp' && (
                 <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-4">
+                  <div className="flex flex-wrap items-center justify-between gap-2">
+                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                      SMTP Socket Credentials
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        updateField('smtpHost', 'smtp.resend.com');
+                        updateField('smtpPort', 465);
+                        updateField('smtpEncryption', 'ssl');
+                        updateField('smtpUser', 'resend');
+                      }}
+                      className="min-h-[36px] px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-[#B8006D] dark:text-[#FF66C4] hover:border-[#D1007C] cursor-pointer"
+                    >
+                      Apply Resend SMTP Preset
+                    </button>
+                  </div>
+
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     <CmsField label="SMTP Host" htmlFor="smtp-host" className="sm:col-span-2">
                       <input
                         id="smtp-host"
                         type="text"
                         value={draft.smtpHost || ''}
-                        placeholder="mail.yourdomain.com"
+                        placeholder="smtp.resend.com"
                         onChange={(e) => updateField('smtpHost', e.target.value)}
                         className={`${CMS_INPUT_CLASS} font-mono`}
                       />
@@ -325,7 +394,7 @@ export default function EmailSettingsPanel({
                         id="smtp-user"
                         type="text"
                         value={draft.smtpUser || ''}
-                        placeholder="hello@yourdomain.com"
+                        placeholder="resend or hello@yourdomain.com"
                         onChange={(e) => updateField('smtpUser', e.target.value)}
                         className={CMS_INPUT_CLASS}
                       />
@@ -339,13 +408,13 @@ export default function EmailSettingsPanel({
                           value={draft.smtpPass || ''}
                           placeholder="Mailbox or API password"
                           onChange={(e) => updateField('smtpPass', e.target.value)}
-                          className={`${CMS_INPUT_CLASS} pr-11`}
+                          className={`${CMS_INPUT_CLASS} pr-12`}
                         />
                         <button
                           type="button"
                           aria-label={showSmtpPass ? 'Hide SMTP password' : 'Show SMTP password'}
                           onClick={() => setShowSmtpPass(!showSmtpPass)}
-                          className="absolute right-1.5 top-1/2 -translate-y-1/2 w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-200/70 dark:hover:bg-slate-800 cursor-pointer"
+                          className="absolute right-0.5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-200/70 dark:hover:bg-slate-800 cursor-pointer"
                         >
                           {showSmtpPass ? (
                             <EyeOff className="w-4 h-4" aria-hidden="true" />

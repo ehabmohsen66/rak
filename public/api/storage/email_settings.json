@@ -15,5 +15,6 @@
   "smtpEncryption": "ssl",
   "smtpUser": "noreply@rak4creative.com",
   "smtpPass": "",
+  "resendApiKey": "",
   "deliveryLogs": []
 }

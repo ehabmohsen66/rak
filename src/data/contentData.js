@@ -697,6 +697,7 @@ export const DEFAULT_EMAIL_SETTINGS = {
   smtpEncryption: "ssl",
   smtpUser: "noreply@rak4creative.com",
   smtpPass: "",
+  resendApiKey: "",
   deliveryLogs: []
 };
 

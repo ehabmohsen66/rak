@@ -432,15 +432,25 @@ function buildAuditReport(): array {
     $fromParsed = RakMailer::parseAddress((string)($email['fromEmail'] ?? ''));
     $notifyParsed = RakMailer::parseAddressList((string)($email['notifyEmails'] ?? ''));
     $fromValid = $fromParsed !== null && count($notifyParsed) > 0;
-    $smtpReady = ($driver !== 'smtp') || (!empty($email['smtpHost']) && !empty($email['smtpPort']) && !empty($email['smtpUser']));
+    $resendKey = trim((string)($email['resendApiKey'] ?? ''));
+    if ($resendKey === '' && strpos(trim((string)($email['smtpPass'] ?? '')), 're_') === 0) {
+        $resendKey = trim((string)$email['smtpPass']);
+    }
+    if ($driver === 'resend') {
+        $transportReady = $resendKey !== '';
+    } elseif ($driver === 'smtp') {
+        $transportReady = !empty($email['smtpHost']) && !empty($email['smtpPort']) && !empty($email['smtpUser']);
+    } else {
+        $transportReady = true;
+    }
     $notifySummary = implode(', ', array_map(function ($item) { return $item['display']; }, $notifyParsed));
     $checks[] = [
         'id' => 'email-routing',
         'category' => 'Email & SMTP',
         'title' => 'Email Notification & Auto-Responder Configuration',
-        'status' => ($fromValid && $smtpReady) ? 'pass' : 'warn',
+        'status' => ($fromValid && $transportReady) ? 'pass' : 'warn',
         'detail' => 'Driver: ' . strtoupper($driver) . ' • From: ' . ($email['fromEmail'] ?? 'not set') . ' • Recipients (' . count($notifyParsed) . '): ' . ($notifySummary !== '' ? $notifySummary : 'none'),
-        'recommendation' => ($fromValid && $smtpReady) ? 'Email routing configured. Send a test email in the Email Settings tab after deploying to cPanel.' : 'Complete sender email and SMTP credentials in Email Settings.'
+        'recommendation' => ($fromValid && $transportReady) ? 'Email routing configured. Send a test email in the Email Settings tab after deploying to cPanel.' : 'Complete sender email and transport credentials in Email Settings.'
     ];
 
     $rootHtaccess = file_exists(dirname(__DIR__) . '/.htaccess');
@@ -742,16 +752,17 @@ if ($route === 'email-settings') {
         $body = getJsonBody();
         $incoming = isset($body['emailSettings']) && is_array($body['emailSettings']) ? $body['emailSettings'] : $body;
         $existing = readJsonFile('email_settings.json', []);
+        $merged = is_array($existing) ? array_merge($existing, $incoming) : $incoming;
         if (!isset($incoming['deliveryLogs']) && isset($existing['deliveryLogs'])) {
-            $incoming['deliveryLogs'] = $existing['deliveryLogs'];
+            $merged['deliveryLogs'] = $existing['deliveryLogs'];
         }
-        if (!writeJsonFile('email_settings.json', $incoming)) {
+        if (!writeJsonFile('email_settings.json', $merged)) {
             respond(['ok' => false, 'error' => 'Failed to save email settings.'], 500);
         }
         respond([
             'ok' => true,
             'updatedAt' => gmdate('c'),
-            'emailSettings' => $incoming
+            'emailSettings' => $merged
         ]);
     }
 }
@@ -763,7 +774,7 @@ if ($route === 'test-email' && $method === 'POST') {
     $settings = isset($body['emailSettings']) && is_array($body['emailSettings'])
         ? $body['emailSettings']
         : readJsonFile('email_settings.json', []);
-    $rawRecipients = trim((string)($body['recipient'] ?? $settings['notifyEmails'] ?? $settings['fromEmail'] ?? ''));
+    $rawRecipients = trim((string)($body['recipient'] ?? $body['to'] ?? $settings['notifyEmails'] ?? $settings['fromEmail'] ?? ''));
     $parsedTargets = RakMailer::parseAddressList($rawRecipients);
     if (empty($parsedTargets)) {
         respond(['ok' => false, 'error' => 'Provide at least one valid recipient email address for the test.'], 400);

@@ -342,18 +342,19 @@ function rakCmsDevServerPlugin() {
         if (req.method === 'PUT' || req.method === 'POST') {
           const incoming = body.emailSettings || body
           const existing = readJson('email_settings.json', {})
+          const merged = { ...existing, ...incoming }
           if (!incoming.deliveryLogs && existing.deliveryLogs) {
-            incoming.deliveryLogs = existing.deliveryLogs
+            merged.deliveryLogs = existing.deliveryLogs
           }
-          writeJson('email_settings.json', incoming)
-          return send(200, { ok: true, updatedAt: new Date().toISOString(), emailSettings: incoming })
+          writeJson('email_settings.json', merged)
+          return send(200, { ok: true, updatedAt: new Date().toISOString(), emailSettings: merged })
         }
       }
 
       if (route === 'test-email' && req.method === 'POST') {
         if (!verifyToken(req)) return send(401, { ok: false, error: 'Unauthorized.' })
         const settings = body.emailSettings || readJson('email_settings.json', {})
-        const rawRecipients = String(body.recipient || settings.notifyEmails || settings.fromEmail || '').trim()
+        const rawRecipients = String(body.recipient || body.to || settings.notifyEmails || settings.fromEmail || '').trim()
         const targets = rawRecipients
           .split(/[,;]+/)
           .map((s) => s.trim())
