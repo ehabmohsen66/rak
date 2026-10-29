@@ -300,21 +300,39 @@ function dispatchLeadEmails(array $lead): array {
     }
 
     if (!empty($emailSettings['enableAutoResponder']) && !empty($lead['email']) && filter_var($lead['email'], FILTER_VALIDATE_EMAIL)) {
-        $autoSubj = (string)($emailSettings['autoResponderSubject'] ?? 'We received your inquiry | RAK 4 CREATIVE');
-        $autoTemplate = (string)($emailSettings['autoResponderBody'] ?? "Hello {{name}},\n\nThank you for contacting RAK 4 CREATIVE.");
+        $autoSubj = trim((string)($emailSettings['autoResponderSubject'] ?? ''));
+        if ($autoSubj === '') {
+            $autoSubj = 'Thank you! We received your request | RAK 4 CREATIVE';
+        }
+        $autoTemplate = trim((string)($emailSettings['autoResponderBody'] ?? ''));
+        if ($autoTemplate === '') {
+            $autoTemplate = "Hello {{name}},\n\nThank you for contacting RAK 4 CREATIVE. We have received your request and our team will review your details and get back to you shortly.\n\nIf you would like to share any additional information in the meantime, simply reply directly to this email.\n\nBest regards,\nRAK 4 CREATIVE Team\nhttps://rak4creative.com";
+        }
+        $leadName = trim((string)($lead['name'] ?? '')) !== '' ? trim((string)$lead['name']) : 'there';
+        $leadCompany = trim((string)($lead['company'] ?? '')) !== '' ? trim((string)$lead['company']) : 'your organization';
+        $leadService = trim((string)($lead['service'] ?? '')) !== ''
+            ? trim((string)$lead['service'])
+            : (trim((string)($lead['roleTitle'] ?? '')) !== '' ? trim((string)$lead['roleTitle']) : 'your request');
+        $leadRole = trim((string)($lead['roleTitle'] ?? '')) !== '' ? trim((string)$lead['roleTitle']) : $leadService;
+
         $replacements = [
-            '{{name}}' => $lead['name'] ?? 'there',
-            '{{company}}' => $lead['company'] ?? 'your organization',
-            '{{service}}' => $lead['service'] ?? ($lead['roleTitle'] ?? 'your inquiry'),
-            '{{role}}' => $lead['roleTitle'] ?? ($lead['service'] ?? 'your application'),
-            '{{budget}}' => $lead['budget'] ?? ''
+            '{{name}}' => $leadName,
+            '{{company}}' => $leadCompany,
+            '{{service}}' => $leadService,
+            '{{role}}' => $leadRole,
+            '{{budget}}' => trim((string)($lead['budget'] ?? ''))
         ];
         $autoText = strtr($autoTemplate, $replacements);
         $autoSubj = strtr($autoSubj, $replacements);
-        $autoHtml = "<!DOCTYPE html><html><body style=\"background:#07080B;color:#F8FAFC;font-family:Arial,sans-serif;padding:24px;\">"
-            . "<div style=\"max-width:600px;margin:0 auto;background:#0F172A;border:1px solid #334155;border-radius:16px;padding:28px;line-height:1.6;color:#E2E8F0;\">"
-            . "<div style=\"color:#EC008C;font-weight:bold;font-size:14px;letter-spacing:1px;text-transform:uppercase;margin-bottom:16px;\">RAK 4 CREATIVE</div>"
-            . "<div>" . nl2br(htmlspecialchars($autoText, ENT_QUOTES, 'UTF-8')) . "</div>"
+        $autoHtml = "<!DOCTYPE html><html><body style=\"background:#07080B;color:#F8FAFC;font-family:Arial,sans-serif;padding:24px;margin:0;\">"
+            . "<div style=\"max-width:600px;margin:0 auto;background:#0F172A;border:1px solid #EC008C;border-radius:16px;overflow:hidden;\">"
+            . "<div style=\"background:#EC008C;color:#FFFFFF;padding:18px 24px;font-size:16px;font-weight:bold;letter-spacing:0.5px;\">RAK 4 CREATIVE • Request Received</div>"
+            . "<div style=\"padding:28px 24px;line-height:1.7;color:#E2E8F0;font-size:15px;\">"
+            . nl2br(htmlspecialchars($autoText, ENT_QUOTES, 'UTF-8'))
+            . "</div>"
+            . "<div style=\"padding:14px 24px;background:#07080B;border-top:1px solid #1E293B;font-size:12px;color:#94A3B8;\">"
+            . "RAK 4 CREATIVE • Your One-Stop Agency • <a href=\"https://rak4creative.com\" style=\"color:#FF66C4;text-decoration:none;\">rak4creative.com</a>"
+            . "</div>"
             . "</div></body></html>";
 
         $resAuto = $mailer->send($lead['email'], $autoSubj, $autoHtml, $autoText);
