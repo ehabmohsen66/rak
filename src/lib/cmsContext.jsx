@@ -17,6 +17,72 @@ const USER_STORAGE_KEY = 'rak_cms_auth_user_v1';
 
 const CmsContext = createContext(null);
 
+const LEGACY_SITE_TITLES = [
+  'RAK 4 CREATIVE | Global Digital & Brand Innovation Agency'
+];
+const LEGACY_DESCRIPTIONS = [
+  'RAK 4 CREATIVE transforms ambitious enterprises into market leaders through brand identity, digital product design, web architecture, and growth strategy.'
+];
+const LEGACY_KEYWORDS = [
+  'RAK 4 Creative, Brand Strategy, UI/UX Design, Web Development, CRO, Digital Transformation, Enterprise Agency'
+];
+const LEGACY_PAGE_TITLES = {
+  home: 'RAK 4 CREATIVE | Global Digital & Brand Innovation Agency',
+  about: 'About Us | RAK 4 CREATIVE Brand Architecture',
+  services: 'Services & Capabilities | RAK 4 CREATIVE',
+  work: 'Selected Portfolio Work | RAK 4 CREATIVE',
+  'case-studies': 'Enterprise Case Studies & ROI | RAK 4 CREATIVE',
+  careers: 'Careers & Open Roles | RAK 4 CREATIVE',
+  blog: 'Executive Editorial & Insights | RAK 4 CREATIVE',
+  'blog-post': 'Editorial Insight | RAK 4 CREATIVE',
+  contact: 'Contact & Executive Inquiry | RAK 4 CREATIVE'
+};
+
+function normalizeSeo(rawSeo = {}) {
+  const defaultSeo = INITIAL_CMS_CONTENT.seo;
+  const siteTitle =
+    rawSeo.siteTitle && !LEGACY_SITE_TITLES.includes(rawSeo.siteTitle)
+      ? rawSeo.siteTitle
+      : defaultSeo.siteTitle;
+  const metaDescription =
+    rawSeo.metaDescription && !LEGACY_DESCRIPTIONS.includes(rawSeo.metaDescription)
+      ? rawSeo.metaDescription
+      : defaultSeo.metaDescription;
+  const metaKeywords =
+    rawSeo.metaKeywords && !LEGACY_KEYWORDS.includes(rawSeo.metaKeywords)
+      ? rawSeo.metaKeywords
+      : defaultSeo.metaKeywords;
+  const ogImage =
+    rawSeo.ogImage && !String(rawSeo.ogImage).includes('photo-1618005182384-a83a8bd57fbe')
+      ? rawSeo.ogImage
+      : defaultSeo.ogImage;
+
+  const pageTitles = { ...defaultSeo.pageTitles };
+  if (rawSeo.pageTitles && typeof rawSeo.pageTitles === 'object') {
+    for (const [k, v] of Object.entries(rawSeo.pageTitles)) {
+      if (v && LEGACY_PAGE_TITLES[k] !== v) {
+        pageTitles[k] = v;
+      }
+    }
+  }
+
+  const pageDescriptions = {
+    ...(defaultSeo.pageDescriptions || {}),
+    ...(rawSeo.pageDescriptions || {})
+  };
+
+  return {
+    ...defaultSeo,
+    ...rawSeo,
+    siteTitle,
+    metaDescription,
+    metaKeywords,
+    ogImage,
+    pageTitles,
+    pageDescriptions
+  };
+}
+
 function normalizeContent(raw = {}) {
   return {
     brandInfo: {
@@ -43,18 +109,7 @@ function normalizeContent(raw = {}) {
     blogPosts: Array.isArray(raw.blogPosts) && raw.blogPosts.length > 0 ? raw.blogPosts : INITIAL_CMS_CONTENT.blogPosts,
     offices: Array.isArray(raw.offices) && raw.offices.length > 0 ? raw.offices : INITIAL_CMS_CONTENT.offices,
     testimonials: Array.isArray(raw.testimonials) && raw.testimonials.length > 0 ? raw.testimonials : INITIAL_CMS_CONTENT.testimonials,
-    seo: {
-      ...INITIAL_CMS_CONTENT.seo,
-      ...(raw.seo || {}),
-      ogImage:
-        raw.seo?.ogImage && !String(raw.seo.ogImage).includes('photo-1618005182384-a83a8bd57fbe')
-          ? raw.seo.ogImage
-          : INITIAL_CMS_CONTENT.seo.ogImage,
-      pageTitles: {
-        ...INITIAL_CMS_CONTENT.seo.pageTitles,
-        ...(raw.seo?.pageTitles || {})
-      }
-    }
+    seo: normalizeSeo(raw.seo || {})
   };
 }
 

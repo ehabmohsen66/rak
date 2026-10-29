@@ -315,7 +315,16 @@ export const HomePage = ({
                   </div>
 
                   <h3 className="text-base font-bold text-slate-900 dark:text-white group-hover:text-rak-magenta transition-colors line-clamp-2 leading-snug tracking-tight">
-                    {post.title}
+                    <a
+                      href={`/blog/${post.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onSelectArticle(post);
+                      }}
+                    >
+                      {post.title}
+                    </a>
                   </h3>
 
                   <p className="text-xs text-slate-600 dark:text-rak-slate-300 line-clamp-2 leading-relaxed font-normal">

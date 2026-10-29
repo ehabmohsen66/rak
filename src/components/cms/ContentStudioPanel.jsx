@@ -2371,34 +2371,58 @@ export default function ContentStudioPanel({
 
           <div className={`${CMS_CARD} lg:col-span-6 p-5 sm:p-6 space-y-4`}>
             <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
-              Route-Specific Browser Tab Titles
+              Route-Specific Titles & Meta Descriptions
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-4">
               {Object.entries(draft.seo?.pageTitles || {}).map(([routeKey, routeTitle]) => (
-                <CmsField
-                  key={routeKey}
-                  label={`/${routeKey === 'home' ? '' : routeKey}`}
-                  htmlFor={`seo-route-${routeKey}`}
-                >
-                  <input
-                    id={`seo-route-${routeKey}`}
-                    type="text"
-                    value={routeTitle || ''}
-                    onChange={(e) =>
-                      updateDraft((p) => ({
-                        ...p,
-                        seo: {
-                          ...p.seo,
-                          pageTitles: {
-                            ...(p.seo?.pageTitles || {}),
-                            [routeKey]: e.target.value
+                <div key={routeKey} className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/50 space-y-2.5">
+                  <CmsField
+                    label={`/${routeKey === 'home' ? '' : routeKey} — Page Title`}
+                    htmlFor={`seo-route-${routeKey}`}
+                  >
+                    <input
+                      id={`seo-route-${routeKey}`}
+                      type="text"
+                      value={routeTitle || ''}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          seo: {
+                            ...p.seo,
+                            pageTitles: {
+                              ...(p.seo?.pageTitles || {}),
+                              [routeKey]: e.target.value
+                            }
                           }
-                        }
-                      }))
-                    }
-                    className={CMS_INPUT_CLASS}
-                  />
-                </CmsField>
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                  <CmsField
+                    label={`/${routeKey === 'home' ? '' : routeKey} — Meta Description`}
+                    htmlFor={`seo-desc-${routeKey}`}
+                  >
+                    <textarea
+                      id={`seo-desc-${routeKey}`}
+                      rows={2}
+                      value={draft.seo?.pageDescriptions?.[routeKey] || ''}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          seo: {
+                            ...p.seo,
+                            pageDescriptions: {
+                              ...(p.seo?.pageDescriptions || {}),
+                              [routeKey]: e.target.value
+                            }
+                          }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                </div>
               ))}
             </div>
           </div>

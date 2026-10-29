@@ -87,7 +87,16 @@ export const BlogPage = ({ onSelectArticle }) => {
               </div>
 
               <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white group-hover:text-rak-magenta transition-colors font-heading">
-                {featuredPost.title}
+                <a
+                  href={`/blog/${featuredPost.id}`}
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    onSelectArticle(featuredPost);
+                  }}
+                >
+                  {featuredPost.title}
+                </a>
               </h2>
 
               <p className="text-xs sm:text-sm text-slate-600 dark:text-rak-slate-300 leading-relaxed">
@@ -140,7 +149,16 @@ export const BlogPage = ({ onSelectArticle }) => {
                   </div>
 
                   <h3 className="text-lg font-bold text-slate-900 dark:text-white group-hover:text-rak-magenta transition-colors leading-tight font-heading">
-                    {post.title}
+                    <a
+                      href={`/blog/${post.id}`}
+                      onClick={(e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onSelectArticle(post);
+                      }}
+                    >
+                      {post.title}
+                    </a>
                   </h3>
 
                   <p className="text-xs text-slate-600 dark:text-rak-slate-300 line-clamp-2">{post.excerpt}</p>

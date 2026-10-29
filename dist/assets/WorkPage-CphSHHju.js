@@ -1,4 +1,4 @@
-import{r as c,j as e}from"./vendor-motion-17e86ITY.js";import{u as k,a as w,h as v,A as y}from"./index-BPcOLVC6.js";import{b as j,S as N,W as E,c as C,O as S,B as R,d as A,R as z,D as M,M as I}from"./vendor-three-CJVTFr_q.js";import"./vendor-react-Byy3ypJR.js";import"./vendor-spline-Dgr4B6rY.js";function W({className:p=""}){const d=c.useRef(null),s=c.useRef({scene:null,camera:null,renderer:null,mesh:null,uniforms:null,animationId:null});return c.useEffect(()=>{if(!d.current)return;const r=d.current,{current:t}=s,h=`
+import{r as c,j as e}from"./vendor-motion-17e86ITY.js";import{u as k,a as w,h as v,A as y}from"./index-D27V5I6-.js";import{b as j,S as N,W as E,c as C,O as S,B as R,d as A,R as z,D as M,M as I}from"./vendor-three-CJVTFr_q.js";import"./vendor-react-Byy3ypJR.js";import"./vendor-spline-Dgr4B6rY.js";function W({className:p=""}){const d=c.useRef(null),s=c.useRef({scene:null,camera:null,renderer:null,mesh:null,uniforms:null,animationId:null});return c.useEffect(()=>{if(!d.current)return;const r=d.current,{current:t}=s,h=`
       attribute vec3 position;
       void main() {
         gl_Position = vec4(position, 1.0);

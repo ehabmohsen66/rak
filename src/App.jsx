@@ -69,6 +69,17 @@ function setMetaContent(selector, value) {
   }
 }
 
+function setCanonicalHref(url) {
+  if (!url) return;
+  let link = document.querySelector('link[rel="canonical"]');
+  if (!link) {
+    link = document.createElement('link');
+    link.setAttribute('rel', 'canonical');
+    document.head.appendChild(link);
+  }
+  link.setAttribute('href', url);
+}
+
 export function App() {
   const { content, recordPageView } = useCms();
   const [activeTab, setActiveTabState] = useState(() => getTabFromLocation());
@@ -235,32 +246,67 @@ export function App() {
     };
   }, []);
 
-  // Sync CMS SEO Document Title & Meta Tags
+  // Sync CMS SEO Document Title, Per-Route Meta Descriptions, Canonical URL & Robots Tags
   useEffect(() => {
     const seo = content?.seo || {};
     const pageTitles = seo.pageTitles || {};
+    const pageDescriptions = seo.pageDescriptions || {};
+    const baseCanonical = (seo.canonicalUrl || 'https://rak4creative.com').replace(/\/$/, '');
+
     let nextTitle =
       pageTitles[activeTab] ||
       seo.siteTitle ||
-      'RAK 4 CREATIVE | Global Digital & Brand Innovation Agency';
+      'Digital Marketing Agency in Lebanon | RAK 4 CREATIVE';
+
+    let nextDescription =
+      pageDescriptions[activeTab] ||
+      seo.metaDescription ||
+      'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.';
+
+    let nextOgImage = seo.ogImage || 'https://rak4creative.com/og-logo.png';
+    let nextOgType = 'website';
+    let routePath = TAB_TO_PATH[activeTab] || '/';
 
     if (activeTab === 'blog-post' && blogSlug) {
+      routePath = `/blog/${blogSlug}`;
+      nextOgType = 'article';
       const matchedPost = (content?.blogPosts || []).find((p) => p.id === blogSlug);
-      if (matchedPost?.title) {
-        nextTitle = `${matchedPost.title} | RAK 4 CREATIVE`;
+      if (matchedPost) {
+        if (matchedPost.title) {
+          nextTitle = `${matchedPost.title} | RAK 4 CREATIVE`;
+        }
+        if (matchedPost.excerpt || matchedPost.subtitle) {
+          nextDescription = matchedPost.excerpt || matchedPost.subtitle;
+        }
+        if (matchedPost.image) {
+          nextOgImage = matchedPost.image.startsWith('http')
+            ? matchedPost.image
+            : `${baseCanonical}${matchedPost.image.startsWith('/') ? '' : '/'}${matchedPost.image}`;
+        }
       }
     }
 
+    const fullCanonicalUrl = routePath === '/' ? `${baseCanonical}/` : `${baseCanonical}${routePath}`;
+    const robotsDirective =
+      activeTab === 'admin'
+        ? 'noindex, nofollow'
+        : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
+
     document.title = nextTitle;
+    setCanonicalHref(fullCanonicalUrl);
+    setMetaContent('meta[name="robots"]', robotsDirective);
     setMetaContent('meta[name="title"]', nextTitle);
+    setMetaContent('meta[property="og:type"]', nextOgType);
+    setMetaContent('meta[property="og:url"]', fullCanonicalUrl);
+    setMetaContent('meta[property="twitter:url"]', fullCanonicalUrl);
     setMetaContent('meta[property="og:title"]', nextTitle);
     setMetaContent('meta[property="twitter:title"]', nextTitle);
-    setMetaContent('meta[name="description"]', seo.metaDescription);
-    setMetaContent('meta[property="og:description"]', seo.metaDescription);
-    setMetaContent('meta[property="twitter:description"]', seo.metaDescription);
+    setMetaContent('meta[name="description"]', nextDescription);
+    setMetaContent('meta[property="og:description"]', nextDescription);
+    setMetaContent('meta[property="twitter:description"]', nextDescription);
     setMetaContent('meta[name="keywords"]', seo.metaKeywords);
-    setMetaContent('meta[property="og:image"]', seo.ogImage);
-    setMetaContent('meta[property="twitter:image"]', seo.ogImage);
+    setMetaContent('meta[property="og:image"]', nextOgImage);
+    setMetaContent('meta[property="twitter:image"]', nextOgImage);
   }, [activeTab, blogSlug, content?.seo, content?.blogPosts]);
 
   // Dispatch SPA PageView pixel events on public route transitions

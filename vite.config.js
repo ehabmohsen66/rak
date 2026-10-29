@@ -489,6 +489,14 @@ function rakCmsDevServerPlugin() {
             status: rootHtaccess ? 'pass' : 'fail',
             detail: `Root .htaccess: ${rootHtaccess ? 'present' : 'missing'} • .cpanel.yml deployment script: configured`,
             recommendation: 'Ensure dotfiles (.htaccess) are included when deploying to public_html.'
+          },
+          {
+            id: 'seo-engine',
+            category: 'SEO & Indexing',
+            title: 'Server-Side SEO Pre-Renderer, Dynamic Sitemap & Robots.txt',
+            status: fs.existsSync(path.join(publicDir, 'seo.php')) && fs.existsSync(path.join(publicDir, 'sitemap.php')) && fs.existsSync(path.join(publicDir, 'robots.txt')) ? 'pass' : 'warn',
+            detail: 'seo.php: active • sitemap.xml: active • robots.txt: active',
+            recommendation: 'Submit https://rak4creative.com/sitemap.xml in Google Search Console.'
           }
         ]
 

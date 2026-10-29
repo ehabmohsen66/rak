@@ -91,6 +91,7 @@ export const Footer = ({
           <div className="flex flex-wrap items-center gap-6">
             <a
               href="/admin"
+              rel="nofollow"
               onClick={(e) => { e.preventDefault(); setActiveTab('admin', '/admin'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
               className="inline-flex items-center space-x-1.5 text-slate-300 hover:text-rak-magenta transition-colors cursor-pointer font-mono text-[11px] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rak-magenta rounded px-1"
             >

@@ -5,11 +5,12 @@
 # Disable directory browsing & multi-views
 Options -Indexes -MultiViews
 
-# Default charset
+# Default charset & directory index
 AddDefaultCharset UTF-8
+DirectoryIndex seo.php index.html
 
 # ------------------------------------------------------------------------------
-# 1. API ROUTING, UPLOADS PROTECTION & SPA ROUTING (mod_rewrite)
+# 1. API ROUTING, SITEMAP, UPLOADS PROTECTION & SERVER-SIDE SEO SPA ROUTING
 # ------------------------------------------------------------------------------
 <IfModule mod_rewrite.c>
   RewriteEngine On
@@ -22,18 +23,24 @@ AddDefaultCharset UTF-8
   # Block direct web access to /api/storage
   RewriteRule ^api/storage(/.*)?$ - [F,L]
 
+  # Dynamic XML Sitemap for Google, Bing & AI Search Crawlers
+  RewriteRule ^sitemap\.xml$ sitemap.php [L]
+
+  # Root homepage routes through server-side PHP SEO pre-renderer
+  RewriteRule ^$ seo.php [L]
+
   # Route /api/* requests to the PHP CMS controller
   RewriteCond %{REQUEST_URI} ^/api/
   RewriteCond %{REQUEST_FILENAME} !-f
   RewriteRule ^api/(.*)$ api/index.php?route=$1 [QSA,L]
 
-  # Serve real files or directories if they exist (including /uploads/* and /api/index.php)
+  # Serve real files or directories if they exist (including /robots.txt, /og-logo.png, /uploads/*, /assets/*, /seo.php, /api/index.php)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # All other requests (including /admin) route to index.html for React SPA routing
-  RewriteRule ^ index.html [L]
+  # All SPA routes (/services, /about, /work, /case-studies, /careers, /blog/*, /contact, /admin) route through seo.php
+  RewriteRule ^ seo.php [L]
 </IfModule>
 
 # ------------------------------------------------------------------------------

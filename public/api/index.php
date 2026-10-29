@@ -62,10 +62,105 @@ function writeJsonFile(string $filename, $data): bool {
 
 function readCmsContent(): array {
     $content = readJsonFile('cms_data.json', []);
-    if (isset($content['seo']['ogImage']) && strpos((string)$content['seo']['ogImage'], 'photo-1618005182384-a83a8bd57fbe') !== false) {
-        $content['seo']['ogImage'] = 'https://rak4creative.com/og-logo.png';
+    if (empty($content) || !is_array($content)) {
+        return [];
+    }
+
+    $defaultSeo = [
+        'siteTitle' => 'Digital Marketing Agency in Lebanon | RAK 4 CREATIVE',
+        'metaDescription' => 'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.',
+        'metaKeywords' => 'Digital Marketing Agency Lebanon, Digital Marketing Agency in Beirut, Social Media Marketing Lebanon, Paid Media Agency Lebanon, Meta Ads Agency Beirut, Google Ads PPC Lebanon, SEO Agency Lebanon, Creative Agency Beirut, Branding & Web Development Lebanon, RAK 4 Creative',
+        'ogImage' => 'https://rak4creative.com/og-logo.png',
+        'canonicalUrl' => 'https://rak4creative.com',
+        'pageTitles' => [
+            'home' => 'Digital Marketing Agency in Lebanon | RAK 4 CREATIVE',
+            'about' => 'About RAK 4 CREATIVE | Creative & Digital Marketing Agency in Beirut',
+            'services' => 'Social Media, Paid Ads & Digital Marketing Services Lebanon | RAK 4 CREATIVE',
+            'work' => 'Digital Marketing, Branding & Paid Media Portfolio | RAK 4 CREATIVE Lebanon',
+            'case-studies' => 'Digital Marketing & Paid Media Case Studies & ROI | RAK 4 CREATIVE',
+            'careers' => 'Digital Marketing & Creative Agency Careers in Beirut | RAK 4 CREATIVE',
+            'blog' => 'Digital Marketing, Paid Media & AI Strategy Insights | RAK 4 CREATIVE Blog',
+            'blog-post' => 'Digital Marketing Insight | RAK 4 CREATIVE',
+            'contact' => 'Contact Our Digital Marketing Agency in Beirut, Lebanon | RAK 4 CREATIVE',
+            'admin' => 'CMS Operations Portal | RAK 4 CREATIVE'
+        ],
+        'pageDescriptions' => [
+            'home' => 'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.',
+            'about' => 'Meet RAK 4 CREATIVE, your one-stop digital marketing and creative agency in Beirut, Lebanon and Toronto, uniting brand strategy, social media, paid ads & tech.',
+            'services' => "Explore RAK 4 CREATIVE's 8 agency pillars in Lebanon: social media marketing, Meta & Google PPC paid ads, SEO, web development, branding, OOH & video production.",
+            'work' => 'Browse selected creations by RAK 4 CREATIVE: paid media scaling, social media campaigns, brand identity, 3D web platforms & e-commerce across MENA & global markets.',
+            'case-studies' => "See measurable ROI from RAK 4 CREATIVE's digital marketing, Meta & PPC ad scaling, brand overhauls, and high-conversion web platforms for ambitious enterprises.",
+            'careers' => 'Join RAK 4 CREATIVE in Beirut, Lebanon or remote. Explore open roles in paid media buying, brand strategy, social media, UI/UX design & full-stack web engineering.',
+            'blog' => "Insights from RAK 4 CREATIVE's strategy team in Lebanon on digital marketing, paid media ROI, AI workflows, high-conversion web architecture & omnichannel growth.",
+            'blog-post' => 'Executive insights on digital marketing, social media, paid ads, brand strategy, and web performance by RAK 4 CREATIVE.',
+            'contact' => 'Partner with RAK 4 CREATIVE in Beirut, Lebanon (Badaro) or Toronto. Request a proposal for social media marketing, Meta & Google paid ads, SEO, branding & web.',
+            'admin' => 'Internal CMS Operations Portal for RAK 4 CREATIVE.'
+        ]
+    ];
+
+    $legacyPageTitles = [
+        'home' => 'RAK 4 CREATIVE | Global Digital & Brand Innovation Agency',
+        'about' => 'About Us | RAK 4 CREATIVE Brand Architecture',
+        'services' => 'Services & Capabilities | RAK 4 CREATIVE',
+        'work' => 'Selected Portfolio Work | RAK 4 CREATIVE',
+        'case-studies' => 'Enterprise Case Studies & ROI | RAK 4 CREATIVE',
+        'careers' => 'Careers & Open Roles | RAK 4 CREATIVE',
+        'blog' => 'Executive Editorial & Insights | RAK 4 CREATIVE',
+        'blog-post' => 'Editorial Insight | RAK 4 CREATIVE',
+        'contact' => 'Contact & Executive Inquiry | RAK 4 CREATIVE'
+    ];
+
+    $changed = false;
+    if (!isset($content['seo']) || !is_array($content['seo'])) {
+        $content['seo'] = $defaultSeo;
+        $changed = true;
+    } else {
+        $seo = &$content['seo'];
+        if (empty($seo['ogImage']) || strpos((string)$seo['ogImage'], 'photo-1618005182384-a83a8bd57fbe') !== false) {
+            $seo['ogImage'] = $defaultSeo['ogImage'];
+            $changed = true;
+        }
+        if (empty($seo['siteTitle']) || $seo['siteTitle'] === 'RAK 4 CREATIVE | Global Digital & Brand Innovation Agency') {
+            $seo['siteTitle'] = $defaultSeo['siteTitle'];
+            $changed = true;
+        }
+        if (empty($seo['metaDescription']) || strpos((string)$seo['metaDescription'], 'RAK 4 CREATIVE transforms ambitious enterprises into market leaders') === 0) {
+            $seo['metaDescription'] = $defaultSeo['metaDescription'];
+            $changed = true;
+        }
+        if (empty($seo['metaKeywords']) || $seo['metaKeywords'] === 'RAK 4 Creative, Brand Strategy, UI/UX Design, Web Development, CRO, Digital Transformation, Enterprise Agency') {
+            $seo['metaKeywords'] = $defaultSeo['metaKeywords'];
+            $changed = true;
+        }
+        if (!isset($seo['pageTitles']) || !is_array($seo['pageTitles'])) {
+            $seo['pageTitles'] = $defaultSeo['pageTitles'];
+            $changed = true;
+        } else {
+            foreach ($defaultSeo['pageTitles'] as $k => $defVal) {
+                $cur = $seo['pageTitles'][$k] ?? '';
+                if ($cur === '' || (isset($legacyPageTitles[$k]) && $cur === $legacyPageTitles[$k])) {
+                    $seo['pageTitles'][$k] = $defVal;
+                    $changed = true;
+                }
+            }
+        }
+        if (!isset($seo['pageDescriptions']) || !is_array($seo['pageDescriptions'])) {
+            $seo['pageDescriptions'] = $defaultSeo['pageDescriptions'];
+            $changed = true;
+        } else {
+            foreach ($defaultSeo['pageDescriptions'] as $k => $defVal) {
+                if (empty($seo['pageDescriptions'][$k])) {
+                    $seo['pageDescriptions'][$k] = $defVal;
+                    $changed = true;
+                }
+            }
+        }
+    }
+
+    if ($changed) {
         writeJsonFile('cms_data.json', $content);
     }
+
     return $content;
 }
 
@@ -403,7 +498,7 @@ function buildAuditReport(): array {
         'recommendation' => 'Uploaded media and candidate resumes are isolated from script execution.'
     ];
 
-    $content = readJsonFile('cms_data.json', []);
+    $content = readCmsContent();
     $hasPillars = !empty($content['pillars']) && is_array($content['pillars']);
     $hasProjects = !empty($content['projects']) && is_array($content['projects']);
     $hasBlogs = !empty($content['blogPosts']) && is_array($content['blogPosts']);
@@ -488,6 +583,18 @@ function buildAuditReport(): array {
         'status' => $rootHtaccess ? 'pass' : 'warn',
         'detail' => 'Root .htaccess present: ' . ($rootHtaccess ? 'yes' : 'no') . ' • API .htaccess present: ' . (file_exists(__DIR__ . '/.htaccess') ? 'yes' : 'no'),
         'recommendation' => 'Ensure dotfiles (.htaccess) are included when uploading or deploying via .cpanel.yml.'
+    ];
+
+    $seoRouterOk = file_exists(dirname(__DIR__) . '/seo.php');
+    $sitemapOk = file_exists(dirname(__DIR__) . '/sitemap.php');
+    $robotsOk = file_exists(dirname(__DIR__) . '/robots.txt');
+    $checks[] = [
+        'id' => 'seo-engine',
+        'category' => 'SEO & Indexing',
+        'title' => 'Server-Side SEO Pre-Renderer, Dynamic Sitemap & Robots.txt',
+        'status' => ($seoRouterOk && $sitemapOk && $robotsOk) ? 'pass' : 'warn',
+        'detail' => 'seo.php: ' . ($seoRouterOk ? 'active' : 'missing') . ' • sitemap.xml: ' . ($sitemapOk ? 'active' : 'missing') . ' • robots.txt: ' . ($robotsOk ? 'active' : 'missing'),
+        'recommendation' => 'Submit https://rak4creative.com/sitemap.xml in Google Search Console.'
     ];
 
     $passCount = count(array_filter($checks, function ($c) { return $c['status'] === 'pass'; }));
