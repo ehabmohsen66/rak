@@ -2,11 +2,14 @@ import React, { useState, useMemo } from 'react';
 import { Sparkles, CheckCircle2, ArrowUpRight, Compass, BarChart3, Share2, Code, Search, Target, Video } from 'lucide-react';
 import { GLSLHills } from '../components/GLSLHills';
 import { useCms } from '../lib/cmsContext';
+import { useBanner, RichTitle, BannerMedia, BannerOverlay } from '../components/BannerKit';
+import { followBannerLink } from '../lib/banners';
 
 export const ServicesPage = ({ onOpenPlanner }) => {
   const { content } = useCms();
   const pillars = content.pillars || [];
   const [activeCategory, setActiveCategory] = useState('All');
+  const banner = useBanner('services', { count: pillars.length });
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(pillars.map((p) => p.category).filter(Boolean)));
@@ -36,44 +39,64 @@ export const ServicesPage = ({ onOpenPlanner }) => {
       <section className="relative w-full min-h-[80vh] md:min-h-[88vh] pt-28 pb-16 bg-slate-950 flex flex-col items-center justify-center overflow-hidden border-b border-slate-200 dark:border-rak-slate-800/80">
         
         <div className="absolute inset-0 w-full h-full z-0">
-          <GLSLHills width="100%" height="100%" speed={0.4} colorRgb={[0.93, 0.0, 0.55]} />
+          <BannerMedia
+            banner={banner}
+            fallback={<GLSLHills width="100%" height="100%" speed={0.4} colorRgb={[0.93, 0.0, 0.55]} />}
+          />
         </div>
 
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-transparent to-slate-950 z-[1] pointer-events-none" />
+        <BannerOverlay banner={banner} className="z-[1]" />
 
         <div className="relative z-10 w-full max-w-5xl mx-auto px-4 sm:px-6 text-center space-y-6 sm:space-y-8 py-8">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
-            <Sparkles className="w-4 h-4" />
-            <span>{pillars.length} Pillars of Capability</span>
-          </div>
+          {banner.eyebrow && (
+            <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
+              <Sparkles className="w-4 h-4" />
+              <span>{banner.eyebrow}</span>
+            </div>
+          )}
 
-          <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white uppercase leading-tight font-heading px-2">
-            <span className="text-rak-magenta">{pillars.length} CORE</span> PILLARS
-          </h1>
+          {banner.title && (
+            <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white uppercase leading-tight font-heading px-2">
+              <RichTitle text={banner.title} />
+            </h1>
+          )}
 
-          <p className="text-sm sm:text-lg md:text-xl text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal px-2">
-            One stop for every stage of the work. From ideation and strategy to execution, performance monitoring, and enterprise evaluation.
-          </p>
+          {banner.subtitle && (
+            <p className="text-sm sm:text-lg md:text-xl text-slate-200 max-w-2xl mx-auto leading-relaxed font-normal px-2">
+              {banner.subtitle}
+            </p>
+          )}
 
-          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2">
-            <button
-              type="button"
-              onClick={onOpenPlanner}
-              className="px-6 sm:px-8 py-3.5 sm:py-4 bg-rak-magenta hover:bg-rak-magenta-dark text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-magenta-glow transition-all flex items-center space-x-2 hover:scale-105 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
-            >
-              <span>Initiate Project Brief</span>
-              <ArrowUpRight className="w-4 h-4" />
-            </button>
+          {(banner.primaryCtaLabel || (banner.secondaryCtaLabel && (pillars[0] || banner.secondaryCtaHref))) && (
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 pt-2">
+              {banner.primaryCtaLabel && (
+                <button
+                  type="button"
+                  onClick={() => { if (!followBannerLink(banner.primaryCtaHref)) onOpenPlanner(); }}
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 bg-rak-magenta hover:bg-rak-magenta-dark text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-magenta-glow transition-all flex items-center space-x-2 hover:scale-105 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                >
+                  <span>{banner.primaryCtaLabel}</span>
+                  <ArrowUpRight className="w-4 h-4" />
+                </button>
+              )}
 
-            {pillars[0] && (
-              <a
-                href={`#${pillars[0].id}`}
-                className="px-6 sm:px-8 py-3.5 sm:py-4 bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 text-xs font-bold uppercase tracking-wider rounded-full backdrop-blur-md transition-all hover:scale-105 cursor-pointer"
-              >
-                <span>View Capability Units</span>
-              </a>
-            )}
-          </div>
+              {banner.secondaryCtaLabel && (pillars[0] || banner.secondaryCtaHref) && (
+                <a
+                  href={banner.secondaryCtaHref || `#${pillars[0].id}`}
+                  onClick={(e) => {
+                    if (banner.secondaryCtaHref) {
+                      e.preventDefault();
+                      followBannerLink(banner.secondaryCtaHref);
+                    }
+                  }}
+                  className="px-6 sm:px-8 py-3.5 sm:py-4 bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white border border-slate-700/80 text-xs font-bold uppercase tracking-wider rounded-full backdrop-blur-md transition-all hover:scale-105 cursor-pointer"
+                >
+                  <span>{banner.secondaryCtaLabel}</span>
+                </a>
+              )}
+            </div>
+          )}
 
           <div className="pt-6 sm:pt-8 border-t border-white/10">
             <p className="text-[11px] font-bold uppercase tracking-widest text-slate-300 mb-4 font-mono">Filter Capabilities by Domain</p>

@@ -1,3 +1,5 @@
+import { DEFAULT_BANNERS } from '../lib/banners';
+
 export const BRAND_INFO = {
   name: "RAK4Creative",
   tagline: "Your One-Stop Agency",
@@ -723,5 +725,6 @@ export const INITIAL_CMS_CONTENT = {
   blogPosts: BLOG_POSTS,
   offices: OFFICES,
   testimonials: TESTIMONIALS,
+  banners: DEFAULT_BANNERS,
   seo: SEO_SETTINGS
 };

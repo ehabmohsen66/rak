@@ -9,6 +9,7 @@ import {
   trackPageView,
   trackLeadConversion
 } from './pixelEngine';
+import { normalizeBanners } from './banners';
 
 const CONTENT_STORAGE_KEY = 'rak_cms_content_v1';
 const PIXELS_STORAGE_KEY = 'rak_cms_pixels_v1';
@@ -109,6 +110,7 @@ function normalizeContent(raw = {}) {
     blogPosts: Array.isArray(raw.blogPosts) && raw.blogPosts.length > 0 ? raw.blogPosts : INITIAL_CMS_CONTENT.blogPosts,
     offices: Array.isArray(raw.offices) && raw.offices.length > 0 ? raw.offices : INITIAL_CMS_CONTENT.offices,
     testimonials: Array.isArray(raw.testimonials) && raw.testimonials.length > 0 ? raw.testimonials : INITIAL_CMS_CONTENT.testimonials,
+    banners: normalizeBanners(raw.banners),
     seo: normalizeSeo(raw.seo || {})
   };
 }
@@ -389,23 +391,45 @@ export function CmsProvider({ children }) {
     });
   };
 
-  const uploadMediaFile = async (file) => {
+  // Multipart upload via XHR so large banner videos stream without base64 inflation and report progress.
+  const uploadMediaFile = (file, onProgress) => {
     return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.onload = async () => {
-        const res = await apiCall('upload', {
-          method: 'POST',
-          body: JSON.stringify({
-            fileName: file.name,
-            dataUrl: reader.result
-          })
-        });
-        resolve(res);
+      const form = new FormData();
+      form.append('file', file, file.name);
+      const xhr = new XMLHttpRequest();
+      xhr.open('POST', '/api/index.php?route=upload');
+      if (token) {
+        xhr.setRequestHeader('X-CMS-Token', token);
+        xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      }
+      if (xhr.upload && typeof onProgress === 'function') {
+        xhr.upload.onprogress = (e) => {
+          if (e.lengthComputable) onProgress(Math.round((e.loaded / e.total) * 100));
+        };
+      }
+      xhr.onload = () => {
+        let data;
+        try {
+          data = JSON.parse(xhr.responseText);
+        } catch {
+          data = {
+            ok: false,
+            error:
+              xhr.status === 413
+                ? 'File is larger than the server allows. Raise upload_max_filesize / post_max_size in cPanel.'
+                : `Upload failed (HTTP ${xhr.status}).`
+          };
+        }
+        resolve({ status: xhr.status, ...data });
       };
-      reader.onerror = () => resolve({ ok: false, error: 'Failed to read selected file.' });
-      reader.readAsDataURL(file);
+      xhr.onerror = () => resolve({ ok: false, error: 'Network error while uploading file.' });
+      xhr.send(form);
     });
   };
+
+  const fetchMediaLibrary = useCallback(async () => {
+    return apiCall('media', { method: 'GET' });
+  }, [apiCall]);
 
   const runServerAudit = useCallback(async () => {
     return apiCall('audit', { method: 'GET' });
@@ -438,6 +462,7 @@ export function CmsProvider({ children }) {
     saveEmailSettings,
     sendTestEmail,
     uploadMediaFile,
+    fetchMediaLibrary,
     runServerAudit,
     recordPageView
   };

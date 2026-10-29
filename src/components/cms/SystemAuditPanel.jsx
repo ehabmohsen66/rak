@@ -171,12 +171,12 @@ export default function SystemAuditPanel({
   return (
     <div className="space-y-6">
       {/* Header Bar */}
-      <div className={`${CMS_CARD} p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4`}>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between pb-6 border-b border-black/[0.07] dark:border-white/[0.07]">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <h2 className="text-lg sm:text-xl font-heading font-bold text-slate-900 dark:text-white">
-              Pre-Launch System Audit & cPanel Readiness
-            </h2>
+            <h1 className="cms-page-title text-2xl sm:text-[28px] leading-tight text-slate-900 dark:text-white">
+              Pre-Launch Audit
+            </h1>
             {auditReport && (
               <CmsStatusBadge
                 tone={summary.fail > 0 ? 'danger' : summary.warn > 0 ? 'warning' : 'success'}
@@ -185,7 +185,7 @@ export default function SystemAuditPanel({
               </CmsStatusBadge>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
             Audits PHP runtime compatibility, Apache .htaccess security rules, JSON storage writability, content integrity, pixels, CRM intake, and mail configuration.
           </p>
         </div>
@@ -233,7 +233,7 @@ export default function SystemAuditPanel({
       {selfTestSteps.length > 0 && (
         <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
               Live End-to-End Pipeline Self-Test Results
             </h3>
             <CmsStatusBadge
@@ -246,7 +246,7 @@ export default function SystemAuditPanel({
             {selfTestSteps.map((step) => (
               <div
                 key={step.id}
-                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3.5 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02]"
               >
                 <div className="flex items-start gap-2.5">
                   {step.ok ? (
@@ -296,10 +296,10 @@ export default function SystemAuditPanel({
               <div key={item.id} className={`${CMS_CARD} p-5 space-y-3`}>
                 <div className="flex items-start justify-between gap-3">
                   <div>
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-500 dark:text-slate-400">
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400">
                       {item.category}
                     </span>
-                    <h3 className="text-sm sm:text-base font-heading font-bold text-slate-900 dark:text-white mt-0.5">
+                    <h3 className="text-sm sm:text-[15px] font-semibold text-slate-900 dark:text-white mt-0.5">
                       {item.title}
                     </h3>
                   </div>
@@ -321,7 +321,7 @@ export default function SystemAuditPanel({
                   )}
                 </div>
 
-                <p className="text-xs font-mono p-2.5 rounded-lg bg-slate-100 dark:bg-[#07080B] text-slate-700 dark:text-slate-300 break-words">
+                <p className="text-xs font-mono p-2.5 rounded-lg bg-slate-100 dark:bg-[#0E0E11] text-slate-700 dark:text-slate-300 break-words">
                   {item.detail}
                 </p>
 
@@ -340,19 +340,19 @@ export default function SystemAuditPanel({
       <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
         <div className="flex items-center gap-2">
           <Server className="w-5 h-5 text-[#B8006D] dark:text-[#FF66C4]" aria-hidden="true" />
-          <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+          <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
             cPanel PHP Go-Live Checklist
           </h3>
         </div>
         <ol className="list-decimal list-inside space-y-2 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
           <li>
-            Build the production bundle with <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">npm run build</code> and upload the contents of <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">dist/</code> (including hidden <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">.htaccess</code> files) to <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">public_html/</code>, or deploy via cPanel Git Version Control (<code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">.cpanel.yml</code> preserves live JSON data and uploads automatically).
+            Build the production bundle with <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06]">npm run build</code> and upload the contents of <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06]">dist/</code> (including hidden <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06]">.htaccess</code> files) to <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06]">public_html/</code>, or deploy via cPanel Git Version Control (<code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06]">.cpanel.yml</code> preserves live JSON data and uploads automatically).
           </li>
           <li>
-            Verify in cPanel MultiPHP Manager that your domain runs <strong>PHP 7.4, 8.1, 8.2, or 8.3</strong>, and confirm <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">public_html/api/storage/</code> and <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">public_html/uploads/</code> have writable directory permissions (<code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">0755</code>).
+            Verify in cPanel MultiPHP Manager that your domain runs <strong>PHP 7.4, 8.1, 8.2, or 8.3</strong>, and confirm <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06]">public_html/api/storage/</code> and <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06]">public_html/uploads/</code> have writable directory permissions (<code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06]">0755</code>).
           </li>
           <li>
-            Open <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800">/admin</code> on your live domain and use <strong>Account Security</strong> in the top header to rotate the initial administrator password immediately.
+            Open <code className="font-mono px-1.5 py-0.5 rounded bg-slate-100 dark:bg-white/[0.06]">/admin</code> on your live domain and use <strong>Account Security</strong> in the top header to rotate the initial administrator password immediately.
           </li>
           <li>
             In <strong>Email &amp; SMTP</strong>, set From Email to a mailbox hosted on your cPanel domain (or enter authenticated SMTP credentials on port 465 SSL) and send a diagnostic test email to confirm SPF/DKIM delivery.

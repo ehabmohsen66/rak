@@ -292,18 +292,18 @@ export default function LeadsCrmPanel({
   return (
     <div className="space-y-6">
       {/* Header & Primary Actions */}
-      <div className={`${CMS_CARD} p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4`}>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between pb-6 border-b border-black/[0.07] dark:border-white/[0.07]">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <h2 className="text-lg sm:text-xl font-heading font-bold text-slate-900 dark:text-white">
-              Leads & Talent CRM
-            </h2>
+            <h1 className="cms-page-title text-2xl sm:text-[28px] leading-tight text-slate-900 dark:text-white">
+              Leads
+            </h1>
             <CmsStatusBadge tone="brand">{leads.length} total records</CmsStatusBadge>
             {statusCounts.new > 0 && (
               <CmsStatusBadge tone="warning">{statusCounts.new} new</CmsStatusBadge>
             )}
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
             Unified inbox for Contact inquiries, 3-step Project Planner briefs, and Career job applications with attached resumes.
           </p>
         </div>
@@ -364,10 +364,10 @@ export default function LeadsCrmPanel({
           <button
             type="button"
             onClick={() => setStatusFilter('all')}
-            className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border transition-colors cursor-pointer ${
+            className={`min-h-[44px] sm:min-h-[34px] px-3 rounded-md text-[13px] font-medium whitespace-nowrap transition-colors cursor-pointer ${
               statusFilter === 'all'
-                ? 'bg-[#D1007C] text-white border-[#D1007C]'
-                : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
+                ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                : 'text-slate-600 dark:text-slate-400 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] hover:text-slate-900 dark:hover:text-white'
             }`}
           >
             All ({statusCounts.all || 0})
@@ -377,10 +377,10 @@ export default function LeadsCrmPanel({
               key={st.id}
               type="button"
               onClick={() => setStatusFilter(st.id)}
-              className={`min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-bold whitespace-nowrap border transition-colors cursor-pointer ${
+              className={`min-h-[44px] sm:min-h-[34px] px-3 rounded-md text-[13px] font-medium whitespace-nowrap transition-colors cursor-pointer ${
                 statusFilter === st.id
-                  ? 'bg-[#D1007C] text-white border-[#D1007C]'
-                  : 'bg-slate-50 dark:bg-slate-900 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800'
+                  ? 'bg-slate-900 text-white dark:bg-white dark:text-slate-900'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] hover:text-slate-900 dark:hover:text-white'
               }`}
             >
               {st.label} ({statusCounts[st.id] || 0})
@@ -429,7 +429,7 @@ export default function LeadsCrmPanel({
         </div>
       ) : filteredLeads.length === 0 ? (
         <div className={`${CMS_CARD} p-10 text-center space-y-3`}>
-          <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+          <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
             {leads.length === 0
               ? 'No leads captured yet'
               : 'No leads match your active filters'}
@@ -471,10 +471,10 @@ export default function LeadsCrmPanel({
                   key={lead.id}
                   type="button"
                   onClick={() => setSelectedLeadId(lead.id)}
-                  className={`w-full text-left p-3.5 rounded-xl border transition-colors cursor-pointer ${
+                  className={`w-full text-left p-3.5 rounded-lg border transition-colors cursor-pointer ${
                     selected
-                      ? 'border-[#D1007C] bg-pink-50/70 dark:bg-pink-950/30'
-                      : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40 hover:border-slate-300 dark:hover:border-slate-700'
+                      ? 'border-[#D1007C]/50 dark:border-pink-400/40 bg-pink-50/60 dark:bg-pink-500/[0.08]'
+                      : 'border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.02] hover:border-slate-300 dark:hover:border-slate-700'
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
@@ -511,7 +511,7 @@ export default function LeadsCrmPanel({
           {/* Lead Detail Workspace */}
           {activeLead && (
             <div className={`${CMS_CARD} lg:col-span-7 p-5 sm:p-6 space-y-6`}>
-              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-slate-200 dark:border-slate-800 pb-5">
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4 border-b border-slate-200 dark:border-white/[0.07] pb-5">
                 <div className="space-y-1.5">
                   <div className="flex flex-wrap items-center gap-2">
                     <CmsStatusBadge tone="brand">
@@ -524,7 +524,7 @@ export default function LeadsCrmPanel({
                       <CmsStatusBadge tone="danger">Urgent</CmsStatusBadge>
                     )}
                   </div>
-                  <h3 className="text-xl font-heading font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white">
                     {activeLead.name}
                   </h3>
                   <p className="text-xs text-slate-600 dark:text-slate-400 font-mono">
@@ -626,10 +626,10 @@ export default function LeadsCrmPanel({
               </div>
 
               {/* Submission Metadata Grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 text-sm">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 p-4 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] text-sm">
                 {activeLead.company && (
                   <div>
-                    <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 block">
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">
                       Company / Organization
                     </span>
                     <span className="font-semibold text-slate-900 dark:text-white inline-flex items-center gap-1.5 mt-0.5">
@@ -640,7 +640,7 @@ export default function LeadsCrmPanel({
                 )}
                 {(activeLead.service || activeLead.roleTitle) && (
                   <div>
-                    <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 block">
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">
                       {activeLead.roleTitle ? 'Position Applied' : 'Requested Capability'}
                     </span>
                     <span className="font-semibold text-slate-900 dark:text-white block mt-0.5">
@@ -650,7 +650,7 @@ export default function LeadsCrmPanel({
                 )}
                 {activeLead.selectedServices?.length > 0 && (
                   <div className="sm:col-span-2">
-                    <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 block">
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">
                       Selected Project Planner Scope
                     </span>
                     <div className="flex flex-wrap gap-1.5 mt-1.5">
@@ -664,7 +664,7 @@ export default function LeadsCrmPanel({
                 )}
                 {activeLead.timeline && (
                   <div>
-                    <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 block">
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">
                       Target Timeline
                     </span>
                     <span className="font-semibold text-slate-900 dark:text-white block mt-0.5">
@@ -674,7 +674,7 @@ export default function LeadsCrmPanel({
                 )}
                 {activeLead.linkedin && (
                   <div>
-                    <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 block">
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">
                       LinkedIn Profile
                     </span>
                     <a
@@ -690,7 +690,7 @@ export default function LeadsCrmPanel({
                 )}
                 {activeLead.portfolio && (
                   <div>
-                    <span className="text-xs font-bold uppercase text-slate-500 dark:text-slate-400 block">
+                    <span className="text-xs font-medium text-slate-500 dark:text-slate-400 block">
                       Portfolio / Website
                     </span>
                     <a
@@ -724,10 +724,10 @@ export default function LeadsCrmPanel({
 
               {/* Project Brief / Cover Message */}
               <div className="space-y-1.5">
-                <span className="text-xs font-bold uppercase tracking-wider text-slate-700 dark:text-slate-300 block">
+                <span className="text-xs font-medium text-slate-700 dark:text-slate-300 block">
                   Submitted Brief / Message
                 </span>
-                <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#07080B] text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">
+                <div className="p-4 rounded-lg border border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-[#0E0E11] text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">
                   {activeLead.message || 'No written message included with this submission.'}
                 </div>
               </div>
@@ -782,7 +782,7 @@ export default function LeadsCrmPanel({
             <div className="flex items-center justify-between">
               <h3
                 id="manual-lead-modal-title"
-                className="text-lg font-heading font-bold text-slate-900 dark:text-white"
+                className="text-base font-semibold text-slate-900 dark:text-white"
               >
                 Log Manual Inquiry
               </h3>
@@ -790,7 +790,7 @@ export default function LeadsCrmPanel({
                 type="button"
                 aria-label="Close modal"
                 onClick={() => setManualModalOpen(false)}
-                className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-slate-800 cursor-pointer"
+                className="w-10 h-10 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-100 dark:hover:bg-white/[0.07] cursor-pointer"
               >
                 <X className="w-4 h-4" aria-hidden="true" />
               </button>

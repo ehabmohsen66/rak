@@ -16,13 +16,20 @@ import {
   BookOpen,
   Users,
   MapPin,
-  Globe
+  Globe,
+  PanelsTopLeft,
+  X
 } from 'lucide-react';
+import BannersEditor from './BannersEditor';
 import {
   CMS_BTN_PRIMARY,
   CMS_BTN_SECONDARY,
   CMS_BTN_DANGER,
+  CMS_BTN_GHOST,
   CMS_CARD,
+  CMS_SECTION_TITLE,
+  CMS_SUBTLE_PANEL,
+  CmsPageHeader,
   CMS_INPUT_CLASS,
   CmsField,
   CmsToggle,
@@ -32,14 +39,55 @@ import {
   ConfirmDialog
 } from './cmsTheme';
 
-const CONTENT_SECTIONS = [
-  { id: 'brand', label: 'Brand & Hero', icon: FileText },
-  { id: 'pillars', label: 'Core Pillars', icon: Layers },
-  { id: 'projects', label: 'Portfolio & Case Studies', icon: Briefcase },
-  { id: 'blog', label: 'Editorial Blog', icon: BookOpen },
-  { id: 'careers', label: 'Careers & Open Roles', icon: Users },
-  { id: 'offices', label: 'Offices & Testimonials', icon: MapPin },
-  { id: 'seo', label: 'SEO & Metadata', icon: Globe }
+export const CONTENT_SECTIONS = [
+  {
+    id: 'banners',
+    label: 'Page Banners',
+    icon: PanelsTopLeft,
+    description: 'Headline, text, buttons and background video or image for the top banner of every page.'
+  },
+  {
+    id: 'brand',
+    label: 'Brand & Story',
+    icon: FileText,
+    description: 'Agency name, story copy, key stats and client logos used across the site.'
+  },
+  {
+    id: 'pillars',
+    label: 'Service Pillars',
+    icon: Layers,
+    description: 'Capability pillars shown on the Home and Services pages.'
+  },
+  {
+    id: 'projects',
+    label: 'Portfolio',
+    icon: Briefcase,
+    description: 'Projects listed on Work and Case Studies, including featured picks for Home.'
+  },
+  {
+    id: 'blog',
+    label: 'Blog',
+    icon: BookOpen,
+    description: 'Articles, covers and reading metadata for the editorial blog.'
+  },
+  {
+    id: 'careers',
+    label: 'Careers',
+    icon: Users,
+    description: 'Careers page copy and open roles that accept applications.'
+  },
+  {
+    id: 'offices',
+    label: 'Offices & Testimonials',
+    icon: MapPin,
+    description: 'Office locations for Contact and client testimonials for Home.'
+  },
+  {
+    id: 'seo',
+    label: 'SEO & Metadata',
+    icon: Globe,
+    description: 'Search titles, descriptions and social sharing image per page.'
+  }
 ];
 
 const ICON_OPTIONS = [
@@ -67,11 +115,12 @@ function slugifyText(value = '') {
 
 export default function ContentStudioPanel({
   content,
+  section = 'banners',
   onSaveContent,
   onResetDefaultContent,
-  onUploadFile
+  onUploadFile,
+  onDirtyChange = () => {}
 }) {
-  const [section, setSection] = useState('brand');
   const [draft, setDraft] = useState(() => JSON.parse(JSON.stringify(content)));
   const [isDirty, setIsDirty] = useState(false);
   const [saving, setSaving] = useState(false);
@@ -88,6 +137,28 @@ export default function ContentStudioPanel({
       setDraft(JSON.parse(JSON.stringify(content)));
     }
   }, [content, isDirty]);
+
+  useEffect(() => {
+    onDirtyChange(isDirty);
+  }, [isDirty, onDirtyChange]);
+
+  // Warn before leaving the browser tab with unpublished edits.
+  useEffect(() => {
+    if (!isDirty) return undefined;
+    const handler = (e) => {
+      e.preventDefault();
+      e.returnValue = '';
+    };
+    window.addEventListener('beforeunload', handler);
+    return () => window.removeEventListener('beforeunload', handler);
+  }, [isDirty]);
+
+  // Success notices clear themselves; errors stay until dismissed.
+  useEffect(() => {
+    if (!notice || notice.tone === 'error') return undefined;
+    const timer = setTimeout(() => setNotice(null), 5000);
+    return () => clearTimeout(timer);
+  }, [notice]);
 
   const updateDraft = (updater) => {
     setDraft((prev) => {
@@ -189,122 +260,60 @@ export default function ContentStudioPanel({
   const activePillar = draft.pillars?.[selectedPillarIdx] || draft.pillars?.[0] || null;
   const activeProject = draft.projects?.[selectedProjectIdx] || draft.projects?.[0] || null;
   const activeBlog = draft.blogPosts?.[selectedBlogIdx] || draft.blogPosts?.[0] || null;
+  const activeSection = CONTENT_SECTIONS.find((s) => s.id === section) || CONTENT_SECTIONS[0];
 
   return (
-    <div className="space-y-6">
-      {/* Operational Save Bar */}
-      <div className={`${CMS_CARD} p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4`}>
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2.5">
-            <h2 className="text-lg sm:text-xl font-heading font-bold text-slate-900 dark:text-white">
-              Content Studio
-            </h2>
-            {isDirty ? (
-              <CmsStatusBadge tone="warning">Unsaved edits</CmsStatusBadge>
-            ) : (
-              <CmsStatusBadge tone="success">Published & Synced</CmsStatusBadge>
-            )}
-          </div>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-            Edit agency copy, capabilities, portfolio case studies, editorial posts, open roles, offices, and SEO metadata.
-          </p>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2.5">
-          <button type="button" onClick={handleExportJson} className={CMS_BTN_SECONDARY}>
-            <Download className="w-4 h-4" aria-hidden="true" />
-            <span>Backup JSON</span>
-          </button>
-          <button
-            type="button"
-            onClick={() => setConfirmResetOpen(true)}
-            className={CMS_BTN_SECONDARY}
-          >
-            <RotateCcw className="w-4 h-4" aria-hidden="true" />
-            <span>Reset Defaults</span>
-          </button>
-          {isDirty && (
-            <button type="button" onClick={handleDiscard} className={CMS_BTN_SECONDARY}>
-              Discard
+    <div className="space-y-6 pb-4">
+      <CmsPageHeader
+        eyebrow="Website content"
+        title={activeSection.label}
+        description={activeSection.description}
+        badge={
+          isDirty ? (
+            <CmsStatusBadge tone="warning">Unpublished changes</CmsStatusBadge>
+          ) : (
+            <CmsStatusBadge tone="success">Live</CmsStatusBadge>
+          )
+        }
+        actions={
+          <>
+            <button type="button" onClick={handleExportJson} className={CMS_BTN_GHOST}>
+              <Download className="w-4 h-4" aria-hidden="true" />
+              <span>Backup</span>
             </button>
-          )}
-          <button
-            type="button"
-            disabled={saving}
-            onClick={handlePublish}
-            className={CMS_BTN_PRIMARY}
-          >
-            {saving ? (
-              <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
-            ) : (
-              <Save className="w-4 h-4" aria-hidden="true" />
+            <button type="button" onClick={() => setConfirmResetOpen(true)} className={CMS_BTN_GHOST}>
+              <RotateCcw className="w-4 h-4" aria-hidden="true" />
+              <span>Restore defaults</span>
+            </button>
+            {isDirty && (
+              <button
+                type="button"
+                disabled={saving}
+                onClick={handlePublish}
+                className={CMS_BTN_PRIMARY}
+              >
+                {saving ? (
+                  <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <Save className="w-4 h-4" aria-hidden="true" />
+                )}
+                <span>{saving ? 'Publishing…' : 'Publish'}</span>
+              </button>
             )}
-            <span>{saving ? 'Publishing...' : 'Publish Changes'}</span>
-          </button>
-        </div>
-      </div>
+          </>
+        }
+      />
 
-      {notice && (
-        <CmsBanner
-          tone={notice.tone}
-          title={notice.title}
-          message={notice.message}
-          onDismiss={() => setNotice(null)}
-        />
+      {/* 0. PAGE BANNERS */}
+      {section === 'banners' && (
+        <BannersEditor draft={draft} updateDraft={updateDraft} onUploadFile={onUploadFile} />
       )}
-
-      {/* Section Navigation */}
-      <div
-        role="tablist"
-        aria-label="Content Studio Sections"
-        className="flex items-center gap-2 overflow-x-auto pb-1"
-      >
-        {CONTENT_SECTIONS.map((tab) => {
-          const Icon = tab.icon;
-          const active = section === tab.id;
-          let countLabel = null;
-          if (tab.id === 'pillars') countLabel = draft.pillars?.length || 0;
-          if (tab.id === 'projects') countLabel = draft.projects?.length || 0;
-          if (tab.id === 'blog') countLabel = draft.blogPosts?.length || 0;
-          if (tab.id === 'careers') countLabel = draft.openRoles?.length || 0;
-          if (tab.id === 'offices') countLabel = draft.offices?.length || 0;
-
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => setSection(tab.id)}
-              className={`inline-flex items-center gap-2 min-h-[44px] px-4 py-2 rounded-xl text-sm font-bold whitespace-nowrap border transition-colors cursor-pointer ${
-                active
-                  ? 'bg-[#D1007C] text-white border-[#D1007C]'
-                  : 'bg-white dark:bg-[#0F172A] text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-800 hover:border-[#D1007C]'
-              }`}
-            >
-              <Icon className="w-4 h-4" aria-hidden="true" />
-              <span>{tab.label}</span>
-              {countLabel !== null && (
-                <span
-                  className={`px-2 py-0.5 text-xs rounded-full ${
-                    active
-                      ? 'bg-white/20 text-white'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300'
-                  }`}
-                >
-                  {countLabel}
-                </span>
-              )}
-            </button>
-          );
-        })}
-      </div>
 
       {/* 1. BRAND & HERO */}
       {section === 'brand' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className={`${CMS_CARD} lg:col-span-7 p-5 sm:p-6 space-y-5`}>
-            <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
               Core Brand Narrative & Hero Copy
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -462,7 +471,7 @@ export default function ContentStudioPanel({
             {/* Key Agency Metrics */}
             <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
               <div className="flex items-center justify-between">
-                <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                   Key Agency Stats ({draft.brandInfo?.stats?.length || 0})
                 </h3>
                 <button
@@ -490,7 +499,7 @@ export default function ContentStudioPanel({
                 {(draft.brandInfo?.stats || []).map((stat, idx) => (
                   <div
                     key={idx}
-                    className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-2.5"
+                    className="p-3.5 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-2.5"
                   >
                     <div className="grid grid-cols-3 gap-2">
                       <input
@@ -549,7 +558,7 @@ export default function ContentStudioPanel({
                             }
                           }))
                         }
-                        className="min-w-[44px] min-h-[44px] rounded-xl border border-rose-200 dark:border-rose-900 flex items-center justify-center text-[#BE123C] dark:text-[#FDA4AF] hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer"
+                        className="min-w-[44px] min-h-[44px] sm:min-w-[38px] sm:min-h-[38px] rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
@@ -563,7 +572,7 @@ export default function ContentStudioPanel({
             <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
               <div className="flex items-center justify-between gap-2">
                 <div>
-                  <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                     Client Marquee Logos ({draft.brandInfo?.clients?.length || 0})
                   </h3>
                   <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -599,7 +608,7 @@ export default function ContentStudioPanel({
                 {(draft.brandInfo?.clients || []).map((client, idx) => (
                   <div
                     key={idx}
-                    className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-2.5"
+                    className="p-3 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-2.5"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <input
@@ -632,7 +641,7 @@ export default function ContentStudioPanel({
                             }
                           }))
                         }
-                        className="min-w-[44px] min-h-[44px] rounded-xl border border-rose-200 dark:border-rose-900 flex items-center justify-center text-[#BE123C] dark:text-[#FDA4AF] cursor-pointer"
+                        className="min-w-[44px] min-h-[44px] sm:min-w-[38px] sm:min-h-[38px] rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 cursor-pointer"
                       >
                         <Trash2 className="w-4 h-4" aria-hidden="true" />
                       </button>
@@ -663,7 +672,7 @@ export default function ContentStudioPanel({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className={`${CMS_CARD} lg:col-span-4 p-4 sm:p-5 space-y-3`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                 Agency Pillars ({draft.pillars?.length || 0})
               </h3>
               <button
@@ -703,10 +712,10 @@ export default function ContentStudioPanel({
                   return (
                     <div
                       key={pillar.id || idx}
-                      className={`flex items-center justify-between gap-2 p-3 rounded-xl border transition-colors ${
+                      className={`flex items-center justify-between gap-2 p-3 rounded-lg border transition-colors ${
                         selected
-                          ? 'border-[#D1007C] bg-pink-50/70 dark:bg-pink-950/30'
-                          : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40'
+                          ? 'border-[#D1007C]/50 dark:border-pink-400/40 bg-pink-50/60 dark:bg-pink-500/[0.08]'
+                          : 'border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.02]'
                       }`}
                     >
                       <button
@@ -730,7 +739,7 @@ export default function ContentStudioPanel({
                             moveItem('pillars', idx, -1);
                             setSelectedPillarIdx(Math.max(0, idx - 1));
                           }}
-                          className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-slate-200/70 dark:hover:bg-slate-800 cursor-pointer"
+                          className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
                         >
                           <ArrowUp className="w-4 h-4" aria-hidden="true" />
                         </button>
@@ -742,7 +751,7 @@ export default function ContentStudioPanel({
                             moveItem('pillars', idx, 1);
                             setSelectedPillarIdx(Math.min(draft.pillars.length - 1, idx + 1));
                           }}
-                          className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-slate-200/70 dark:hover:bg-slate-800 cursor-pointer"
+                          className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
                         >
                           <ArrowDown className="w-4 h-4" aria-hidden="true" />
                         </button>
@@ -762,7 +771,7 @@ export default function ContentStudioPanel({
             ) : (
               <>
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                     Editing: {activePillar.title}
                   </h3>
                   <button
@@ -974,7 +983,7 @@ export default function ContentStudioPanel({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className={`${CMS_CARD} lg:col-span-4 p-4 sm:p-5 space-y-3`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                 Case Studies ({draft.projects?.length || 0})
               </h3>
               <button
@@ -1019,10 +1028,10 @@ export default function ContentStudioPanel({
                     key={proj.id || idx}
                     type="button"
                     onClick={() => setSelectedProjectIdx(idx)}
-                    className={`w-full text-left p-3 rounded-xl border transition-colors cursor-pointer ${
+                    className={`w-full text-left p-3 rounded-lg border transition-colors cursor-pointer ${
                       selected
-                        ? 'border-[#D1007C] bg-pink-50/70 dark:bg-pink-950/30'
-                        : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40'
+                        ? 'border-[#D1007C]/50 dark:border-pink-400/40 bg-pink-50/60 dark:bg-pink-500/[0.08]'
+                        : 'border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.02]'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -1048,7 +1057,7 @@ export default function ContentStudioPanel({
             ) : (
               <>
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                     Editing: {activeProject.title}
                   </h3>
                   <button
@@ -1261,7 +1270,7 @@ export default function ContentStudioPanel({
                     {(activeProject.results || []).map((resItem, rIdx) => (
                       <div
                         key={rIdx}
-                        className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-2"
+                        className="p-3 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-2"
                       >
                         <input
                           type="text"
@@ -1338,7 +1347,7 @@ export default function ContentStudioPanel({
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className={`${CMS_CARD} lg:col-span-4 p-4 sm:p-5 space-y-3`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                 Articles ({draft.blogPosts?.length || 0})
               </h3>
               <button
@@ -1383,10 +1392,10 @@ export default function ContentStudioPanel({
                     key={post.id || idx}
                     type="button"
                     onClick={() => setSelectedBlogIdx(idx)}
-                    className={`w-full text-left p-3 rounded-xl border transition-colors cursor-pointer ${
+                    className={`w-full text-left p-3 rounded-lg border transition-colors cursor-pointer ${
                       selected
-                        ? 'border-[#D1007C] bg-pink-50/70 dark:bg-pink-950/30'
-                        : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40'
+                        ? 'border-[#D1007C]/50 dark:border-pink-400/40 bg-pink-50/60 dark:bg-pink-500/[0.08]'
+                        : 'border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.02]'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-2">
@@ -1412,7 +1421,7 @@ export default function ContentStudioPanel({
             ) : (
               <>
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                     Editing Article
                   </h3>
                   <div className="flex items-center gap-2">
@@ -1447,9 +1456,9 @@ export default function ContentStudioPanel({
                 </div>
 
                 {blogPreviewMode ? (
-                  <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-[#07080B] space-y-4">
+                  <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-[#0E0E11] space-y-4">
                     <CmsStatusBadge tone="brand">{activeBlog.category}</CmsStatusBadge>
-                    <h4 className="text-2xl font-heading font-bold text-slate-900 dark:text-white">
+                    <h4 className="text-xl font-semibold text-slate-900 dark:text-white">
                       {activeBlog.title}
                     </h4>
                     {activeBlog.subtitle && (
@@ -1461,7 +1470,7 @@ export default function ContentStudioPanel({
                       By {activeBlog.author} · {activeBlog.date} · {activeBlog.readTime} · URL:{' '}
                       <code className="font-mono">/blog/{activeBlog.id}</code>
                     </p>
-                    <div className="border-t border-slate-200 dark:border-slate-800 pt-4 space-y-3 text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">
+                    <div className="border-t border-slate-200 dark:border-white/[0.07] pt-4 space-y-3 text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">
                       {activeBlog.content}
                     </div>
                   </div>
@@ -1686,7 +1695,7 @@ export default function ContentStudioPanel({
       {section === 'careers' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className={`${CMS_CARD} lg:col-span-5 p-5 sm:p-6 space-y-4`}>
-            <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
               Careers Page Narrative
             </h3>
             <CmsField label="Page Headline" htmlFor="careers-title">
@@ -1750,7 +1759,7 @@ export default function ContentStudioPanel({
           <div className={`${CMS_CARD} lg:col-span-7 p-5 sm:p-6 space-y-4`}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                   Open Job Postings ({draft.openRoles?.length || 0})
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -1785,7 +1794,7 @@ export default function ContentStudioPanel({
             </div>
 
             {(draft.openRoles || []).length === 0 ? (
-              <div className="p-8 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center text-sm text-slate-600 dark:text-slate-400">
+              <div className="p-8 rounded-lg border border-dashed border-slate-300 dark:border-white/[0.12] text-center text-sm text-slate-600 dark:text-slate-400">
                 No job postings listed. Visitors can still submit an Open Talent Application on the Careers page.
               </div>
             ) : (
@@ -1793,7 +1802,7 @@ export default function ContentStudioPanel({
                 {draft.openRoles.map((role, idx) => (
                   <div
                     key={role.id || idx}
-                    className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-3"
+                    className="p-4 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-3"
                   >
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div className="flex items-center gap-2">
@@ -1927,7 +1936,7 @@ export default function ContentStudioPanel({
           <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                   Global Offices ({draft.offices?.length || 0})
                 </h3>
                 <p className="text-xs text-slate-600 dark:text-slate-400">
@@ -1964,7 +1973,7 @@ export default function ContentStudioPanel({
               {(draft.offices || []).map((office, idx) => (
                 <div
                   key={idx}
-                  className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-3"
+                  className="p-4 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-3"
                 >
                   <div className="flex items-center justify-between">
                     <span className="text-sm font-bold text-slate-900 dark:text-white">
@@ -2093,7 +2102,7 @@ export default function ContentStudioPanel({
           {/* Client Testimonials */}
           <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                 Client Testimonials ({draft.testimonials?.length || 0})
               </h3>
               <button
@@ -2126,7 +2135,7 @@ export default function ContentStudioPanel({
               {(draft.testimonials || []).map((t, idx) => (
                 <div
                   key={t.id || idx}
-                  className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-3"
+                  className="p-4 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-3"
                 >
                   <div className="flex items-center justify-between gap-2">
                     <span className="text-sm font-bold text-slate-900 dark:text-white">
@@ -2212,7 +2221,7 @@ export default function ContentStudioPanel({
           {/* Agency Values */}
           <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                 Agency Core Values ({draft.values?.length || 0})
               </h3>
               <button
@@ -2236,7 +2245,7 @@ export default function ContentStudioPanel({
               {(draft.values || []).map((val, idx) => (
                 <div
                   key={idx}
-                  className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-2"
+                  className="p-3.5 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-2"
                 >
                   <div className="flex items-center gap-2">
                     <input
@@ -2291,7 +2300,7 @@ export default function ContentStudioPanel({
       {section === 'seo' && (
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           <div className={`${CMS_CARD} lg:col-span-6 p-5 sm:p-6 space-y-4`}>
-            <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
               Global Search & Social Metadata
             </h3>
             <CmsField label="Default Site Title" htmlFor="seo-title">
@@ -2370,12 +2379,12 @@ export default function ContentStudioPanel({
           </div>
 
           <div className={`${CMS_CARD} lg:col-span-6 p-5 sm:p-6 space-y-4`}>
-            <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
               Route-Specific Titles & Meta Descriptions
             </h3>
             <div className="space-y-4">
               {Object.entries(draft.seo?.pageTitles || {}).map(([routeKey, routeTitle]) => (
-                <div key={routeKey} className="p-3.5 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50/70 dark:bg-slate-900/50 space-y-2.5">
+                <div key={routeKey} className="p-3.5 rounded-lg border border-slate-200 dark:border-white/[0.07] bg-slate-50/70 dark:bg-white/[0.02] space-y-2.5">
                   <CmsField
                     label={`/${routeKey === 'home' ? '' : routeKey} — Page Title`}
                     htmlFor={`seo-route-${routeKey}`}
@@ -2429,11 +2438,57 @@ export default function ContentStudioPanel({
         </div>
       )}
 
+      {/* Sticky publish bar: appears while edits are unpublished, then carries the result notice */}
+      {(isDirty || notice) && (
+        <div className="sticky bottom-4 z-30 flex justify-center pointer-events-none">
+          {isDirty ? (
+            <div
+              role="region"
+              aria-label="Unpublished changes"
+              className="pointer-events-auto w-full max-w-xl flex flex-wrap items-center justify-between gap-3 pl-4 pr-2 py-2 rounded-lg bg-slate-900 dark:bg-[#22222A] text-white shadow-2xl ring-1 ring-white/10"
+            >
+              <span className="text-sm font-medium">You have unpublished changes</span>
+              <div className="flex items-center gap-2">
+                <button
+                  type="button"
+                  onClick={handleDiscard}
+                  className="inline-flex items-center justify-center min-h-[40px] sm:min-h-[36px] px-3 rounded-lg text-sm font-medium text-slate-300 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
+                >
+                  Discard
+                </button>
+                <button
+                  type="button"
+                  disabled={saving}
+                  onClick={handlePublish}
+                  className={CMS_BTN_PRIMARY}
+                >
+                  {saving ? (
+                    <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                  ) : (
+                    <Save className="w-4 h-4" aria-hidden="true" />
+                  )}
+                  <span>{saving ? 'Publishing…' : 'Publish changes'}</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="pointer-events-auto w-full max-w-xl shadow-2xl rounded-lg bg-white dark:bg-[#17171C]">
+              <CmsBanner
+                tone={notice.tone}
+                title={notice.title}
+                message={notice.message}
+                onDismiss={() => setNotice(null)}
+              />
+            </div>
+          )}
+        </div>
+      )}
+
       <ConfirmDialog
         open={confirmResetOpen}
-        title="Restore Factory Content?"
-        description="This replaces current draft and published website copy with the initial RAK4Creative factory content dataset. Leads, pixels, and email settings are not affected."
-        confirmLabel="Restore Factory Content"
+        title="Restore original content?"
+        description="Replaces all website copy (including page banners) with the original RAK4Creative content and publishes it immediately. Leads, pixels and email settings are not affected. Download a backup first if you may need your current copy."
+        confirmLabel="Restore and publish"
         tone="danger"
         onConfirm={handleConfirmReset}
         onCancel={() => setConfirmResetOpen(false)}

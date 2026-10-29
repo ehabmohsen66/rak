@@ -252,22 +252,47 @@ function resolveRoute(): string {
     return trim((string)$uri, '/');
 }
 
-function handleFileUpload(array $file, string $subDir = ''): array {
+define('MAX_UPLOAD_BYTES', 12 * 1024 * 1024);
+define('MAX_VIDEO_UPLOAD_BYTES', 64 * 1024 * 1024);
+define('ALLOWED_UPLOAD_EXTS', ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg', 'gif', 'mp4', 'webm', 'pdf', 'doc', 'docx']);
+
+function maxBytesForExtension(string $ext): int {
+    return in_array($ext, ['mp4', 'webm'], true) ? MAX_VIDEO_UPLOAD_BYTES : MAX_UPLOAD_BYTES;
+}
+
+function uploadErrorMessage(int $code): string {
+    switch ($code) {
+        case UPLOAD_ERR_INI_SIZE:
+            return 'File exceeds the server upload_max_filesize (' . ini_get('upload_max_filesize') . '). Raise it in cPanel > MultiPHP INI Editor.';
+        case UPLOAD_ERR_FORM_SIZE:
+            return 'File exceeds the allowed form size.';
+        case UPLOAD_ERR_PARTIAL:
+            return 'File was only partially uploaded. Please try again.';
+        case UPLOAD_ERR_NO_FILE:
+            return 'No file was uploaded.';
+        case UPLOAD_ERR_NO_TMP_DIR:
+        case UPLOAD_ERR_CANT_WRITE:
+            return 'Server could not store the uploaded file (temporary folder missing or not writable).';
+        default:
+            return 'File upload error code: ' . $code;
+    }
+}
+
+function handleFileUpload(array $file, string $subDir = '', bool $allowLargeVideo = false): array {
     if (!isset($file['error']) || is_array($file['error'])) {
         return ['ok' => false, 'error' => 'Invalid upload parameters.'];
     }
     if ($file['error'] !== UPLOAD_ERR_OK) {
-        return ['ok' => false, 'error' => 'File upload error code: ' . $file['error']];
-    }
-    $maxBytes = 12 * 1024 * 1024;
-    if ($file['size'] > $maxBytes) {
-        return ['ok' => false, 'error' => 'File exceeds maximum allowed size of 12MB.'];
+        return ['ok' => false, 'error' => uploadErrorMessage((int)$file['error'])];
     }
     $origName = basename((string)$file['name']);
     $ext = strtolower(pathinfo($origName, PATHINFO_EXTENSION));
-    $allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif', 'mp4', 'pdf', 'doc', 'docx'];
-    if (!in_array($ext, $allowedExts, true)) {
+    if (!in_array($ext, ALLOWED_UPLOAD_EXTS, true)) {
         return ['ok' => false, 'error' => 'Unsupported file extension: .' . $ext];
+    }
+    $maxBytes = $allowLargeVideo ? maxBytesForExtension($ext) : MAX_UPLOAD_BYTES;
+    if ($file['size'] > $maxBytes) {
+        return ['ok' => false, 'error' => 'File exceeds maximum allowed size of ' . round($maxBytes / 1048576) . 'MB.'];
     }
     $safeBase = preg_replace('/[^a-zA-Z0-9_-]/', '-', pathinfo($origName, PATHINFO_FILENAME));
     $safeBase = trim(substr($safeBase ?: 'asset', 0, 48), '-');
@@ -298,13 +323,13 @@ function handleBase64Upload(string $fileName, string $dataUrl, string $subDir = 
     if ($binary === false) {
         return ['ok' => false, 'error' => 'Failed to decode base64 file payload.'];
     }
-    if (strlen($binary) > 12 * 1024 * 1024) {
-        return ['ok' => false, 'error' => 'File exceeds maximum allowed size of 12MB.'];
-    }
     $ext = strtolower(pathinfo($fileName, PATHINFO_EXTENSION));
-    $allowedExts = ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif', 'mp4', 'pdf', 'doc', 'docx'];
-    if (!in_array($ext, $allowedExts, true)) {
+    if (!in_array($ext, ALLOWED_UPLOAD_EXTS, true)) {
         return ['ok' => false, 'error' => 'Unsupported file extension: .' . $ext];
+    }
+    $base64Max = $subDir === 'media' ? maxBytesForExtension($ext) : MAX_UPLOAD_BYTES;
+    if (strlen($binary) > $base64Max) {
+        return ['ok' => false, 'error' => 'File exceeds maximum allowed size of ' . round($base64Max / 1048576) . 'MB.'];
     }
     $safeBase = preg_replace('/[^a-zA-Z0-9_-]/', '-', pathinfo($fileName, PATHINFO_FILENAME));
     $safeBase = trim(substr($safeBase ?: 'asset', 0, 48), '-');
@@ -973,7 +998,7 @@ if ($route === 'upload' && $method === 'POST') {
     requireAdminAuth();
     $contentType = $_SERVER['CONTENT_TYPE'] ?? '';
     if (stripos($contentType, 'multipart/form-data') !== false && !empty($_FILES['file'])) {
-        $res = handleFileUpload($_FILES['file'], 'media');
+        $res = handleFileUpload($_FILES['file'], 'media', true);
         respond($res, $res['ok'] ? 201 : 400);
     }
     $body = getJsonBody();
@@ -981,7 +1006,64 @@ if ($route === 'upload' && $method === 'POST') {
         $res = handleBase64Upload((string)$body['fileName'], (string)$body['dataUrl'], 'media');
         respond($res, $res['ok'] ? 201 : 400);
     }
+    $contentLength = (int)($_SERVER['CONTENT_LENGTH'] ?? 0);
+    if ($contentLength > 0 && stripos($contentType, 'multipart/form-data') !== false && empty($_FILES)) {
+        respond([
+            'ok' => false,
+            'error' => 'File is larger than the server post_max_size (' . ini_get('post_max_size') . '). Raise post_max_size and upload_max_filesize in cPanel > MultiPHP INI Editor.'
+        ], 413);
+    }
     respond(['ok' => false, 'error' => 'No file provided in upload request.'], 400);
+}
+
+// 9b. MEDIA LIBRARY (ADMIN): uploaded media plus built-in site videos
+if ($route === 'media' && $method === 'GET') {
+    requireAdminAuth();
+    $publicRoot = dirname(__DIR__);
+    $sources = [
+        ['dir' => UPLOADS_DIR . '/media', 'url' => '/uploads/media', 'source' => 'upload'],
+        ['dir' => $publicRoot . '/videos', 'url' => '/videos', 'source' => 'site']
+    ];
+    $imageExts = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg', 'gif'];
+    $videoExts = ['mp4', 'webm'];
+    $items = [];
+    foreach ($sources as $src) {
+        if (!is_dir($src['dir'])) {
+            continue;
+        }
+        foreach (scandir($src['dir']) ?: [] as $name) {
+            if ($name === '' || $name[0] === '.') {
+                continue;
+            }
+            $path = $src['dir'] . '/' . $name;
+            if (!is_file($path)) {
+                continue;
+            }
+            $ext = strtolower(pathinfo($name, PATHINFO_EXTENSION));
+            $type = in_array($ext, $imageExts, true) ? 'image' : (in_array($ext, $videoExts, true) ? 'video' : 'file');
+            $items[] = [
+                'name' => $name,
+                'url' => $src['url'] . '/' . $name,
+                'type' => $type,
+                'size' => (int)@filesize($path),
+                'modified' => gmdate('c', (int)@filemtime($path)),
+                'source' => $src['source']
+            ];
+        }
+    }
+    usort($items, function ($a, $b) {
+        return strcmp($b['modified'], $a['modified']);
+    });
+    respond([
+        'ok' => true,
+        'items' => $items,
+        'limits' => [
+            'imageMB' => MAX_UPLOAD_BYTES / 1048576,
+            'videoMB' => MAX_VIDEO_UPLOAD_BYTES / 1048576,
+            'serverUploadMax' => ini_get('upload_max_filesize'),
+            'serverPostMax' => ini_get('post_max_size')
+        ]
+    ]);
 }
 
 // 10. SYSTEM AUDIT (ADMIN)

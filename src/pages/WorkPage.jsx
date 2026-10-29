@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Sparkles, ArrowUpRight } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
+import { useBanner, RichTitle, BannerMedia, BannerOverlay } from '../components/BannerKit';
 import { WebGLShader } from '../components/WebGLShader';
 import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
 
@@ -8,6 +9,7 @@ export const WorkPage = ({ onSelectProject }) => {
   const { content } = useCms();
   const projects = content.projects || [];
   const [filter, setFilter] = useState('All');
+  const banner = useBanner('work');
 
   const categories = useMemo(() => {
     const unique = Array.from(new Set(projects.map((p) => p.category).filter(Boolean)));
@@ -22,28 +24,40 @@ export const WorkPage = ({ onSelectProject }) => {
     <div className="pb-16 space-y-16 sm:space-y-24 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
       <section className="relative w-full min-h-screen bg-slate-950 flex flex-col justify-between overflow-hidden border-b border-slate-200 dark:border-rak-slate-800/80 pt-28">
-        <WebGLShader className="opacity-95" />
+        <BannerMedia
+          banner={banner}
+          videoClassName="absolute inset-0"
+          imageClassName="absolute inset-0"
+          fallback={<WebGLShader className="opacity-95" />}
+        />
         
         <div className="absolute inset-0 bg-gradient-to-b from-slate-950/65 via-transparent to-slate-950 pointer-events-none z-10" />
+        <BannerOverlay banner={banner} className="z-10" />
 
         <div className="relative z-20 space-y-6 sm:space-y-8 text-center max-w-5xl mx-auto px-4 sm:px-6 my-auto py-12 md:py-20">
-          <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
-            <Sparkles className="w-4 h-4 text-rak-magenta" />
-            <span>Interactive Portfolio Archive</span>
-          </div>
+          {banner.eyebrow && (
+            <div className="inline-flex items-center space-x-2 px-4 py-1.5 bg-slate-900/90 border border-rak-magenta/40 text-rak-magenta rounded-full text-xs font-bold uppercase tracking-widest backdrop-blur-md shadow-magenta-sm">
+              <Sparkles className="w-4 h-4 text-rak-magenta" />
+              <span>{banner.eyebrow}</span>
+            </div>
+          )}
           
-          <h1 
-            className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white uppercase leading-[1.08] font-heading px-2"
-            style={{ 
-              textShadow: '0 0 40px rgba(236, 0, 140, 0.35)' 
-            }}
-          >
-            THE <span className="text-gradient-magenta">RAK4</span> CREATIONS
-          </h1>
+          {banner.title && (
+            <h1 
+              className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white uppercase leading-[1.08] font-heading px-2"
+              style={{ 
+                textShadow: '0 0 40px rgba(236, 0, 140, 0.35)' 
+              }}
+            >
+              <RichTitle text={banner.title} accentClassName="text-gradient-magenta" />
+            </h1>
+          )}
           
-          <p className="text-sm sm:text-lg md:text-xl text-slate-200 leading-relaxed font-normal max-w-3xl mx-auto drop-shadow-md px-2">
-            From ground zero to new heights. Browse how we shape brand identity, custom software, and performance media campaigns.
-          </p>
+          {banner.subtitle && (
+            <p className="text-sm sm:text-lg md:text-xl text-slate-200 leading-relaxed font-normal max-w-3xl mx-auto drop-shadow-md px-2">
+              {banner.subtitle}
+            </p>
+          )}
 
           <div className="flex flex-wrap items-center justify-center gap-2.5 sm:gap-3 pt-4">
             {categories.map((cat) => (

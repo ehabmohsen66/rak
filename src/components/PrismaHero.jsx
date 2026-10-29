@@ -2,6 +2,8 @@ import React, { useRef } from "react";
 import { motion, useInView } from "framer-motion";
 import { Sparkles, Globe2, ArrowDownRight, Clock, ShieldCheck, MapPin } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
+import { useBanner, RichTitle, BannerMedia, BannerOverlay, hasCustomMedia } from "./BannerKit";
+import { followBannerLink } from "../lib/banners";
 
 /* ---------------- WordsPullUp ---------------- */
 export const WordsPullUp = ({ text = "", className = "", showAsterisk = false, style }) => {
@@ -64,19 +66,44 @@ export const WordsPullUpMultiStyle = ({ segments = [], className = "", style }) 
 };
 
 /* ---------------- On-Brand RAK4Creative Contact Hero ---------------- */
+const STAT_ICONS = [Clock, Globe2, ShieldCheck];
+
 export const PrismaHero = ({ onScrollToForm, onOpenPlanner }) => {
+  const banner = useBanner("contact");
+  const customMedia = hasCustomMedia(banner);
+  const stats = banner.stats.filter((s) => s.value || s.label);
+
+  const handlePrimary = () => {
+    if (!followBannerLink(banner.primaryCtaHref)) onScrollToForm?.();
+  };
+  const handleSecondary = () => {
+    if (!followBannerLink(banner.secondaryCtaHref)) onOpenPlanner?.();
+  };
+
   return (
     <section className="relative min-h-[78vh] sm:min-h-[84vh] w-full overflow-hidden bg-rak-slate-950 flex items-center pt-28 sm:pt-32 pb-16 sm:pb-24 border-b border-white/10">
       {/* Brand Architectural Background Layer */}
       <div className="pointer-events-none absolute inset-0 overflow-hidden">
         {/* Subtle brand architectural backdrop image with deep obsidian wash */}
-        <img
-          src="/rak-team.webp"
-          alt=""
-          aria-hidden="true"
-          className="absolute inset-0 h-full w-full object-cover opacity-15 mix-blend-luminosity"
-        />
-        <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/90 via-rak-slate-950/85 to-rak-slate-950" />
+        {customMedia ? (
+          <>
+            <div className="absolute inset-0">
+              <BannerMedia banner={banner} />
+            </div>
+            <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/60 via-rak-slate-950/50 to-rak-slate-950" />
+          </>
+        ) : (
+          <>
+            <img
+              src="/rak-team.webp"
+              alt=""
+              aria-hidden="true"
+              className="absolute inset-0 h-full w-full object-cover opacity-15 mix-blend-luminosity"
+            />
+            <div className="absolute inset-0 bg-gradient-to-b from-rak-slate-950/90 via-rak-slate-950/85 to-rak-slate-950" />
+          </>
+        )}
+        <BannerOverlay banner={banner} />
 
         {/* RAK Fuchsia & Deep Slate Ambient Glow Orbs */}
         <div
@@ -100,77 +127,68 @@ export const PrismaHero = ({ onScrollToForm, onOpenPlanner }) => {
           {/* Left Column: Brand Headline & Supporting Identity Statement */}
           <div className="lg:col-span-7 space-y-6 sm:space-y-8 text-left">
             {/* Brand Pill */}
-            <motion.div
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-              className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-rak-magenta/40 backdrop-blur-md"
-            >
-              <span className="w-2 h-2 rounded-full bg-rak-magenta animate-pulse" />
-              <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white font-gilroy">
-                Global Executive Concierge • Beirut &amp; Toronto
-              </span>
-            </motion.div>
+            {banner.eyebrow && (
+              <motion.div
+                initial={{ opacity: 0, y: 16 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6 }}
+                className="inline-flex items-center space-x-2.5 px-4 py-1.5 rounded-full bg-white/[0.04] border border-rak-magenta/40 backdrop-blur-md"
+              >
+                <span className="w-2 h-2 rounded-full bg-rak-magenta animate-pulse" />
+                <span className="text-[11px] font-bold uppercase tracking-[0.2em] text-white font-gilroy">
+                  {banner.eyebrow}
+                </span>
+              </motion.div>
+            )}
 
             {/* Primary Brand Headline */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.1 }}
-              className="space-y-2"
-            >
-              <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold uppercase text-white font-heading leading-[1.1] tracking-[0.04em]">
-                Let&apos;s Architect{" "}
-                <span className="block text-rak-magenta mt-1">
-                  Your Next
-                </span>
-                <span className="block text-white mt-1">
-                  Breakthrough.
-                </span>
-              </h1>
-            </motion.div>
+            {banner.title && (
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.1 }}
+                className="space-y-2"
+              >
+                <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold uppercase text-white font-heading leading-[1.1] tracking-[0.04em]">
+                  <RichTitle text={banner.title} />
+                </h1>
+              </motion.div>
+            )}
 
             {/* Supporting Brand Identity Paragraph */}
-            <motion.p
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.2 }}
-              className="text-sm sm:text-base md:text-lg text-rak-slate-200 font-gilroy font-medium leading-relaxed max-w-2xl"
-            >
-              RAK4Creative is a worldwide full-service agency bound by passion and hunger to unlock potential through our unique perspectives, bold creativity, and tech magic.
-            </motion.p>
+            {banner.subtitle && (
+              <motion.p
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.2 }}
+                className="text-sm sm:text-base md:text-lg text-rak-slate-200 font-gilroy font-medium leading-relaxed max-w-2xl"
+              >
+                {banner.subtitle}
+              </motion.p>
+            )}
 
             {/* Executive Trust Metrics Bar */}
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.7, delay: 0.3 }}
-              className="pt-2 grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4 max-w-2xl"
-            >
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
-                <div className="flex items-center space-x-2 text-rak-magenta mb-1">
-                  <Clock className="w-4 h-4 shrink-0" />
-                  <span className="text-sm sm:text-base font-bold font-impact tracking-[0.06em] text-white">&lt; 12 HOURS</span>
-                </div>
-                <p className="text-[11px] text-rak-slate-300 font-gilroy">Executive Response SLA</p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
-                <div className="flex items-center space-x-2 text-rak-magenta mb-1">
-                  <Globe2 className="w-4 h-4 shrink-0" />
-                  <span className="text-sm sm:text-base font-bold font-impact tracking-[0.06em] text-white">2 GLOBAL HUBS</span>
-                </div>
-                <p className="text-[11px] text-rak-slate-300 font-gilroy">Beirut HQ &amp; Toronto Studio</p>
-              </div>
-
-              <div className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
-                <div className="flex items-center space-x-2 text-rak-magenta mb-1">
-                  <ShieldCheck className="w-4 h-4 shrink-0" />
-                  <span className="text-sm sm:text-base font-bold font-impact tracking-[0.06em] text-white">8 PILLARS</span>
-                </div>
-                <p className="text-[11px] text-rak-slate-300 font-gilroy">Full-Service 360° Execution</p>
-              </div>
-            </motion.div>
+            {stats.length > 0 && (
+              <motion.div
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.7, delay: 0.3 }}
+                className={`pt-2 grid grid-cols-1 gap-3 sm:gap-4 max-w-2xl ${stats.length >= 3 ? 'sm:grid-cols-3' : stats.length === 2 ? 'sm:grid-cols-2' : ''}`}
+              >
+                {stats.map((stat, idx) => {
+                  const Icon = STAT_ICONS[idx % STAT_ICONS.length];
+                  return (
+                    <div key={idx} className="p-4 rounded-2xl bg-white/[0.03] border border-white/10 backdrop-blur-md">
+                      <div className="flex items-center space-x-2 text-rak-magenta mb-1">
+                        <Icon className="w-4 h-4 shrink-0" />
+                        <span className="text-sm sm:text-base font-bold font-impact tracking-[0.06em] text-white">{stat.value}</span>
+                      </div>
+                      <p className="text-[11px] text-rak-slate-300 font-gilroy">{stat.label}</p>
+                    </div>
+                  );
+                })}
+              </motion.div>
+            )}
           </div>
 
           {/* Right Column: RAK4Creative Brand Identity Card */}
@@ -227,24 +245,24 @@ export const PrismaHero = ({ onScrollToForm, onOpenPlanner }) => {
 
               {/* Action Buttons */}
               <div className="pt-2 flex flex-col sm:flex-row gap-3">
-                {onScrollToForm && (
+                {onScrollToForm && banner.primaryCtaLabel && (
                   <button
                     type="button"
-                    onClick={onScrollToForm}
+                    onClick={handlePrimary}
                     className="flex-1 py-3.5 px-5 bg-rak-magenta hover:bg-rak-magenta-dark text-white text-xs font-bold uppercase tracking-[0.14em] rounded-xl shadow-magenta-glow flex items-center justify-center space-x-2 transition-all cursor-pointer"
                   >
-                    <span>Start Executive Brief</span>
+                    <span>{banner.primaryCtaLabel}</span>
                     <ArrowDownRight className="w-4 h-4" />
                   </button>
                 )}
-                {onOpenPlanner && (
+                {onOpenPlanner && banner.secondaryCtaLabel && (
                   <button
                     type="button"
-                    onClick={onOpenPlanner}
+                    onClick={handleSecondary}
                     className="py-3.5 px-5 bg-white/[0.06] hover:bg-white/[0.12] text-white border border-white/15 text-xs font-bold uppercase tracking-[0.14em] rounded-xl flex items-center justify-center space-x-2 transition-all cursor-pointer"
                   >
                     <Sparkles className="w-4 h-4 text-rak-magenta" />
-                    <span>Scope Planner</span>
+                    <span>{banner.secondaryCtaLabel}</span>
                   </button>
                 )}
               </div>

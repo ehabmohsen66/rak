@@ -158,18 +158,18 @@ export default function PixelsPanel({ pixels, onSavePixels }) {
   return (
     <div className="space-y-6">
       {/* Header Bar */}
-      <div className={`${CMS_CARD} p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4`}>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between pb-6 border-b border-black/[0.07] dark:border-white/[0.07]">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <h2 className="text-lg sm:text-xl font-heading font-bold text-slate-900 dark:text-white">
-              Pixels & Conversion Scripts
-            </h2>
+            <h1 className="cms-page-title text-2xl sm:text-[28px] leading-tight text-slate-900 dark:text-white">
+              Pixels & Tracking
+            </h1>
             <CmsStatusBadge tone={activeProvidersCount > 0 ? 'brand' : 'neutral'}>
               {activeProvidersCount} active {activeProvidersCount === 1 ? 'pixel' : 'pixels'}
             </CmsStatusBadge>
             {isDirty && <CmsStatusBadge tone="warning">Unsaved changes</CmsStatusBadge>}
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
             Configure ad platform pixels, GTM/GA4 tags, custom HTML/JS snippets, and conversion triggers across Contact, Project Planner, and Career forms.
           </p>
         </div>
@@ -246,7 +246,7 @@ export default function PixelsPanel({ pixels, onSavePixels }) {
                       }`}
                       aria-hidden="true"
                     />
-                    <h3 className="text-sm sm:text-base font-heading font-bold text-slate-900 dark:text-white">
+                    <h3 className="text-sm sm:text-[15px] font-semibold text-slate-900 dark:text-white">
                       {provider.name}
                     </h3>
                   </div>
@@ -290,7 +290,7 @@ export default function PixelsPanel({ pixels, onSavePixels }) {
         <div className={`${CMS_CARD} lg:col-span-7 p-5 sm:p-6 space-y-5`}>
           <div className="flex items-center gap-2">
             <Code2 className="w-5 h-5 text-[#B8006D] dark:text-[#FF66C4]" aria-hidden="true" />
-            <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
               Custom Code Injection (Head, Body & Conversion Callback)
             </h3>
           </div>
@@ -362,7 +362,7 @@ export default function PixelsPanel({ pixels, onSavePixels }) {
             <div className="flex items-center justify-between gap-2">
               <div className="flex items-center gap-2">
                 <Activity className="w-5 h-5 text-[#B8006D] dark:text-[#FF66C4]" aria-hidden="true" />
-                <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                   Live Pixel Event Inspector ({eventLog.length})
                 </h3>
               </div>
@@ -386,7 +386,7 @@ export default function PixelsPanel({ pixels, onSavePixels }) {
             </p>
 
             {eventLog.length === 0 ? (
-              <div className="p-8 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center space-y-2">
+              <div className="p-8 rounded-lg border border-dashed border-slate-300 dark:border-white/[0.12] text-center space-y-2">
                 <p className="text-sm font-semibold text-slate-800 dark:text-slate-200">
                   No pixel events recorded in this session
                 </p>
@@ -399,7 +399,7 @@ export default function PixelsPanel({ pixels, onSavePixels }) {
                 {eventLog.map((entry) => (
                   <div
                     key={entry.id}
-                    className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/60 space-y-1"
+                    className="p-3 rounded-lg border border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.03] space-y-1"
                   >
                     <div className="flex items-center justify-between gap-2">
                       <span className="text-xs font-bold text-[#B8006D] dark:text-[#FF66C4]">

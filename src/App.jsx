@@ -358,11 +358,11 @@ export function App() {
     return (
       <React.Suspense
         fallback={
-          <div className="min-h-screen flex items-center justify-center bg-[#F8FAFC] dark:bg-[#07080B]">
+          <div className="min-h-screen flex items-center justify-center bg-[#F4F4F6] dark:bg-[#0B0B0E]">
             <div className="flex flex-col items-center gap-3">
-              <div className="w-10 h-10 border-4 border-[#D1007C]/25 border-t-[#D1007C] rounded-full animate-spin" />
-              <span className="text-xs font-bold text-[#B8006D] dark:text-[#FF66C4] uppercase tracking-widest">
-                Loading CMS Portal
+              <div className="w-8 h-8 border-[3px] border-slate-300 dark:border-white/15 border-t-[#D1007C] rounded-full animate-spin" />
+              <span className="text-sm font-medium text-slate-600 dark:text-slate-400">
+                Loading CMS…
               </span>
             </div>
           </div>

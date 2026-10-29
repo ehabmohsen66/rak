@@ -75,14 +75,16 @@ function rakCmsDevServerPlugin() {
     }
   }
 
-  const saveBase64Upload = (fileName, dataUrl, subDir = '') => {
-    const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl || '')
-    if (!match) return { ok: false, error: 'Invalid base64 file format.' }
-    const buf = Buffer.from(match[2], 'base64')
-    if (buf.length > 12 * 1024 * 1024) return { ok: false, error: 'File exceeds 12MB limit.' }
+  const VIDEO_EXTS = ['mp4', 'webm']
+  const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg', 'gif', 'mp4', 'webm', 'pdf', 'doc', 'docx']
+  const maxBytesFor = (ext, subDir) =>
+    subDir === 'media' && VIDEO_EXTS.includes(ext) ? 64 * 1024 * 1024 : 12 * 1024 * 1024
+
+  const saveBufferUpload = (fileName, buf, subDir = '') => {
     const ext = path.extname(fileName || '').toLowerCase().replace('.', '')
-    const allowed = ['jpg', 'jpeg', 'png', 'webp', 'svg', 'gif', 'mp4', 'pdf', 'doc', 'docx']
-    if (!allowed.includes(ext)) return { ok: false, error: `Unsupported file extension .${ext}` }
+    if (!ALLOWED_EXTS.includes(ext)) return { ok: false, error: `Unsupported file extension .${ext}` }
+    const maxBytes = maxBytesFor(ext, subDir)
+    if (buf.length > maxBytes) return { ok: false, error: `File exceeds ${Math.round(maxBytes / 1048576)}MB limit.` }
     const base = path.basename(fileName, path.extname(fileName)).replace(/[^a-zA-Z0-9_-]/g, '-').slice(0, 48) || 'asset'
     const folder = subDir ? path.join(uploadsDir, subDir) : uploadsDir
     if (!fs.existsSync(folder)) fs.mkdirSync(folder, { recursive: true })
@@ -95,6 +97,63 @@ function rakCmsDevServerPlugin() {
       storedName: finalName,
       size: buf.length
     }
+  }
+
+  const saveBase64Upload = (fileName, dataUrl, subDir = '') => {
+    const match = /^data:([^;]+);base64,(.+)$/.exec(dataUrl || '')
+    if (!match) return { ok: false, error: 'Invalid base64 file format.' }
+    return saveBufferUpload(fileName, Buffer.from(match[2], 'base64'), subDir)
+  }
+
+  // Minimal multipart/form-data parser: returns the first file part as { fileName, data }.
+  const parseMultipartFile = (buffer, contentType) => {
+    const boundaryMatch = /boundary=(?:"([^"]+)"|([^;]+))/i.exec(contentType || '')
+    if (!boundaryMatch) return null
+    const boundary = Buffer.from(`--${boundaryMatch[1] || boundaryMatch[2]}`)
+    let start = buffer.indexOf(boundary)
+    while (start !== -1) {
+      const headerStart = start + boundary.length + 2
+      const headerEnd = buffer.indexOf('\r\n\r\n', headerStart)
+      if (headerEnd === -1) return null
+      const headers = buffer.slice(headerStart, headerEnd).toString('utf8')
+      const next = buffer.indexOf(boundary, headerEnd)
+      if (next === -1) return null
+      const nameMatch = /filename="([^"]*)"/i.exec(headers)
+      if (nameMatch) {
+        return { fileName: nameMatch[1], data: buffer.slice(headerEnd + 4, next - 2) }
+      }
+      start = next
+    }
+    return null
+  }
+
+  const listMediaLibrary = () => {
+    const imageExts = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg', 'gif']
+    const sources = [
+      { dir: path.join(uploadsDir, 'media'), url: '/uploads/media', source: 'upload' },
+      { dir: path.join(publicDir, 'videos'), url: '/videos', source: 'site' }
+    ]
+    const items = []
+    for (const src of sources) {
+      if (!fs.existsSync(src.dir)) continue
+      for (const name of fs.readdirSync(src.dir)) {
+        if (name.startsWith('.')) continue
+        const full = path.join(src.dir, name)
+        const stat = fs.statSync(full)
+        if (!stat.isFile()) continue
+        const ext = path.extname(name).toLowerCase().replace('.', '')
+        items.push({
+          name,
+          url: `${src.url}/${name}`,
+          type: imageExts.includes(ext) ? 'image' : VIDEO_EXTS.includes(ext) ? 'video' : 'file',
+          size: stat.size,
+          modified: stat.mtime.toISOString(),
+          source: src.source
+        })
+      }
+    }
+    items.sort((a, b) => b.modified.localeCompare(a.modified))
+    return items
   }
 
   const handleApiRequest = (req, res, next) => {
@@ -124,7 +183,9 @@ function rakCmsDevServerPlugin() {
     let bodyChunks = []
     req.on('data', (chunk) => bodyChunks.push(chunk))
     req.on('end', () => {
-      const rawBody = Buffer.concat(bodyChunks).toString('utf8')
+      const rawBuffer = Buffer.concat(bodyChunks)
+      const isMultipart = /multipart\/form-data/i.test(req.headers['content-type'] || '')
+      const rawBody = isMultipart ? '' : rawBuffer.toString('utf8')
       let body = {}
       if (rawBody) {
         try {
@@ -394,11 +455,26 @@ function rakCmsDevServerPlugin() {
 
       if (route === 'upload' && req.method === 'POST') {
         if (!verifyToken(req)) return send(401, { ok: false, error: 'Unauthorized.' })
+        if (isMultipart) {
+          const filePart = parseMultipartFile(rawBuffer, req.headers['content-type'])
+          if (!filePart) return send(400, { ok: false, error: 'No file provided in upload request.' })
+          const resUp = saveBufferUpload(filePart.fileName, filePart.data, 'media')
+          return send(resUp.ok ? 201 : 400, resUp)
+        }
         if (body.fileName && body.dataUrl) {
           const resUp = saveBase64Upload(body.fileName, body.dataUrl, 'media')
           return send(resUp.ok ? 201 : 400, resUp)
         }
         return send(400, { ok: false, error: 'Provide fileName and dataUrl.' })
+      }
+
+      if (route === 'media' && req.method === 'GET') {
+        if (!verifyToken(req)) return send(401, { ok: false, error: 'Unauthorized.' })
+        return send(200, {
+          ok: true,
+          items: listMediaLibrary(),
+          limits: { imageMB: 12, videoMB: 64, serverUploadMax: 'dev', serverPostMax: 'dev' }
+        })
       }
 
       if (route === 'audit' && req.method === 'GET') {

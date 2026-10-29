@@ -15,6 +15,7 @@ deployment:
     - /bin/cp -Rf dist/* $DEPLOYPATH 2>/dev/null || true
     - /bin/cp -f dist/.htaccess $DEPLOYPATH 2>/dev/null || /bin/cp -f public/.htaccess $DEPLOYPATH
     - /bin/cp -f public/api/.htaccess $DEPLOYPATH/api/ 2>/dev/null || true
+    - /bin/cp -f public/api/.user.ini $DEPLOYPATH/api/ 2>/dev/null || true
     - /bin/cp -f public/api/storage/.htaccess $DEPLOYPATH/api/storage/ 2>/dev/null || true
     - /bin/cp -f public/uploads/.htaccess $DEPLOYPATH/uploads/ 2>/dev/null || true
     # 5. Restore live CMS data & ensure writable permissions for PHP on cPanel

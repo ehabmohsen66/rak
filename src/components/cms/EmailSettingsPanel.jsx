@@ -158,18 +158,18 @@ export default function EmailSettingsPanel({
   return (
     <div className="space-y-6">
       {/* Header Bar */}
-      <div className={`${CMS_CARD} p-4 sm:p-5 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4`}>
+      <div className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between pb-6 border-b border-black/[0.07] dark:border-white/[0.07]">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2.5">
-            <h2 className="text-lg sm:text-xl font-heading font-bold text-slate-900 dark:text-white">
-              Email Routing & cPanel SMTP
-            </h2>
+            <h1 className="cms-page-title text-2xl sm:text-[28px] leading-tight text-slate-900 dark:text-white">
+              Email & SMTP
+            </h1>
             <CmsStatusBadge tone="brand">
               Driver: {(draft.driver || 'mail').toUpperCase()}
             </CmsStatusBadge>
             {isDirty && <CmsStatusBadge tone="warning">Unsaved changes</CmsStatusBadge>}
           </div>
-          <p className="text-xs sm:text-sm text-slate-600 dark:text-slate-400">
+          <p className="text-sm text-slate-600 dark:text-slate-400 max-w-2xl leading-relaxed">
             Configure Resend HTTPS API, authenticated SSL/TLS SMTP, or cPanel local PHP mail, plus team notification recipients and lead confirmation auto-responders.
           </p>
         </div>
@@ -234,7 +234,7 @@ export default function EmailSettingsPanel({
             <div className={`${CMS_CARD} lg:col-span-7 p-5 sm:p-6 space-y-5`}>
               <div className="flex items-center gap-2">
                 <Server className="w-5 h-5 text-[#B8006D] dark:text-[#FF66C4]" aria-hidden="true" />
-                <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                   Mail Transport Driver
                 </h3>
               </div>
@@ -243,10 +243,10 @@ export default function EmailSettingsPanel({
                 <button
                   type="button"
                   onClick={() => updateField('driver', 'resend')}
-                  className={`p-4 rounded-xl border text-left transition-colors cursor-pointer ${
+                  className={`p-4 rounded-lg border text-left transition-colors cursor-pointer ${
                     draft.driver === 'resend'
-                      ? 'border-[#D1007C] bg-pink-50/70 dark:bg-pink-950/30'
-                      : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40'
+                      ? 'border-[#D1007C]/50 dark:border-pink-400/40 bg-pink-50/60 dark:bg-pink-500/[0.08]'
+                      : 'border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.02]'
                   }`}
                 >
                   <p className="text-sm font-bold text-slate-900 dark:text-white">
@@ -260,10 +260,10 @@ export default function EmailSettingsPanel({
                 <button
                   type="button"
                   onClick={() => updateField('driver', 'smtp')}
-                  className={`p-4 rounded-xl border text-left transition-colors cursor-pointer ${
+                  className={`p-4 rounded-lg border text-left transition-colors cursor-pointer ${
                     draft.driver === 'smtp'
-                      ? 'border-[#D1007C] bg-pink-50/70 dark:bg-pink-950/30'
-                      : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40'
+                      ? 'border-[#D1007C]/50 dark:border-pink-400/40 bg-pink-50/60 dark:bg-pink-500/[0.08]'
+                      : 'border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.02]'
                   }`}
                 >
                   <p className="text-sm font-bold text-slate-900 dark:text-white">
@@ -277,10 +277,10 @@ export default function EmailSettingsPanel({
                 <button
                   type="button"
                   onClick={() => updateField('driver', 'mail')}
-                  className={`p-4 rounded-xl border text-left transition-colors cursor-pointer ${
+                  className={`p-4 rounded-lg border text-left transition-colors cursor-pointer ${
                     draft.driver !== 'smtp' && draft.driver !== 'resend'
-                      ? 'border-[#D1007C] bg-pink-50/70 dark:bg-pink-950/30'
-                      : 'border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/40'
+                      ? 'border-[#D1007C]/50 dark:border-pink-400/40 bg-pink-50/60 dark:bg-pink-500/[0.08]'
+                      : 'border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.02]'
                   }`}
                 >
                   <p className="text-sm font-bold text-slate-900 dark:text-white">
@@ -293,7 +293,7 @@ export default function EmailSettingsPanel({
               </div>
 
               {draft.driver === 'resend' && (
-                <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-3">
+                <div className="p-4 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-3">
                   <CmsField
                     label="Resend API Key"
                     htmlFor="resend-api-key"
@@ -312,7 +312,7 @@ export default function EmailSettingsPanel({
                         type="button"
                         aria-label={showResendKey ? 'Hide Resend API key' : 'Show Resend API key'}
                         onClick={() => setShowResendKey(!showResendKey)}
-                        className="absolute right-0.5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-200/70 dark:hover:bg-slate-800 cursor-pointer"
+                        className="absolute right-0.5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg flex items-center justify-center text-slate-500 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
                       >
                         {showResendKey ? (
                           <EyeOff className="w-4 h-4" aria-hidden="true" />
@@ -326,9 +326,9 @@ export default function EmailSettingsPanel({
               )}
 
               {draft.driver === 'smtp' && (
-                <div className="p-4 rounded-xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-900/50 space-y-4">
+                <div className="p-4 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-4">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <span className="text-xs font-bold uppercase tracking-wider text-slate-600 dark:text-slate-400">
+                    <span className="text-xs font-medium text-slate-600 dark:text-slate-400">
                       SMTP Socket Credentials
                     </span>
                     <button
@@ -339,7 +339,7 @@ export default function EmailSettingsPanel({
                         updateField('smtpEncryption', 'ssl');
                         updateField('smtpUser', 'resend');
                       }}
-                      className="min-h-[36px] px-3 py-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-xs font-bold text-[#B8006D] dark:text-[#FF66C4] hover:border-[#D1007C] cursor-pointer"
+                      className="min-h-[36px] px-3 py-1 rounded-lg border border-slate-300 dark:border-white/[0.12] bg-white dark:bg-white/[0.06] text-xs font-bold text-[#B8006D] dark:text-[#FF66C4] hover:border-[#D1007C] cursor-pointer"
                     >
                       Apply Resend SMTP Preset
                     </button>
@@ -414,7 +414,7 @@ export default function EmailSettingsPanel({
                           type="button"
                           aria-label={showSmtpPass ? 'Hide SMTP password' : 'Show SMTP password'}
                           onClick={() => setShowSmtpPass(!showSmtpPass)}
-                          className="absolute right-0.5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg flex items-center justify-center text-slate-500 hover:bg-slate-200/70 dark:hover:bg-slate-800 cursor-pointer"
+                          className="absolute right-0.5 top-1/2 -translate-y-1/2 w-11 h-11 rounded-lg flex items-center justify-center text-slate-500 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
                         >
                           {showSmtpPass ? (
                             <EyeOff className="w-4 h-4" aria-hidden="true" />
@@ -428,10 +428,10 @@ export default function EmailSettingsPanel({
                 </div>
               )}
 
-              <div className="border-t border-slate-200 dark:border-slate-800 pt-5 space-y-4">
+              <div className="border-t border-slate-200 dark:border-white/[0.07] pt-5 space-y-4">
                 <div className="flex items-center gap-2">
                   <Mail className="w-5 h-5 text-[#B8006D] dark:text-[#FF66C4]" aria-hidden="true" />
-                  <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                     Sender Identity & Team Notification Routing
                   </h3>
                 </div>
@@ -556,7 +556,7 @@ export default function EmailSettingsPanel({
                         key={token}
                         type="button"
                         onClick={() => insertVariable(token)}
-                        className="min-h-[36px] px-2.5 py-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 text-xs font-mono font-bold text-slate-800 dark:text-slate-200 hover:border-[#D1007C] cursor-pointer"
+                        className="min-h-[36px] px-2.5 py-1 rounded-lg border border-slate-300 dark:border-white/[0.12] bg-slate-100 dark:bg-white/[0.06] text-xs font-mono font-bold text-slate-800 dark:text-slate-200 hover:border-[#D1007C] cursor-pointer"
                       >
                         + {token}
                       </button>
@@ -568,7 +568,7 @@ export default function EmailSettingsPanel({
               {/* Diagnostic Test Email Card */}
               <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
                 <div className="flex flex-wrap items-center justify-between gap-2">
-                  <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                     Send Diagnostic Test Email
                   </h3>
                   {draft.notifyEmails && testRecipient !== draft.notifyEmails && (
@@ -614,7 +614,7 @@ export default function EmailSettingsPanel({
           {/* Email Delivery Logs */}
           <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
             <div className="flex items-center justify-between">
-              <h3 className="text-base font-heading font-bold text-slate-900 dark:text-white">
+              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
                 Recent Email Delivery Log ({logs.length})
               </h3>
               <span className="text-xs text-slate-600 dark:text-slate-400">
@@ -623,14 +623,14 @@ export default function EmailSettingsPanel({
             </div>
 
             {logs.length === 0 ? (
-              <div className="p-8 rounded-xl border border-dashed border-slate-300 dark:border-slate-700 text-center text-sm text-slate-600 dark:text-slate-400">
+              <div className="p-8 rounded-lg border border-dashed border-slate-300 dark:border-white/[0.12] text-center text-sm text-slate-600 dark:text-slate-400">
                 No email dispatches logged yet. Send a diagnostic test email above or submit a form to populate delivery telemetry.
               </div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-sm">
                   <thead>
-                    <tr className="border-b border-slate-200 dark:border-slate-800 text-xs uppercase text-slate-600 dark:text-slate-400">
+                    <tr className="border-b border-slate-200 dark:border-white/[0.07] text-xs uppercase text-slate-600 dark:text-slate-400">
                       <th className="py-3 pr-4 font-bold">Time</th>
                       <th className="py-3 pr-4 font-bold">Type</th>
                       <th className="py-3 pr-4 font-bold">Recipient</th>

@@ -1,5 +1,7 @@
 import React, { useEffect, useRef, useState, Suspense, lazy } from 'react';
 import { useIsMobile } from '../lib/useMobileDetect';
+import { useBanner, RichTitle, BannerMedia, BannerOverlay, hasCustomMedia } from './BannerKit';
+import { followBannerLink } from '../lib/banners';
 
 const Spline = lazy(() => import('@splinetool/react-spline'));
 
@@ -91,37 +93,56 @@ function HeroSplineBackground() {
   );
 }
 
-function HeroContent({ onExploreClick }) {
+function HeroContent({ banner, onExploreClick }) {
+  const handlePrimary = () => {
+    if (!followBannerLink(banner.primaryCtaHref)) onExploreClick?.();
+  };
+  const handleSecondary = () => {
+    if (!followBannerLink(banner.secondaryCtaHref)) onExploreClick?.();
+  };
+
   return (
     <div className="text-left text-white pt-24 sm:pt-32 md:pt-36 px-4 md:px-8 max-w-4xl">
-      <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight uppercase">
-        Elevate your <br className="hidden sm:inline" />creative workflow<br className="hidden sm:inline" /> to an art form.
-      </h1>
-      <p className="text-base sm:text-lg md:text-xl mb-8 opacity-90 max-w-2xl leading-relaxed text-rak-slate-300 font-normal">
-        Manage all of your media and assets, including video, photos, design files, docs, and PDFs, on a single secure surface to create and deliver high-quality content faster.
-      </p>
-      <div className="flex pointer-events-auto flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4">
-        <button 
-          onClick={onExploreClick}
-          className="bg-rak-magenta hover:bg-rak-magenta-dark text-white font-bold py-3 px-8 rounded-full transition-all duration-300 w-full sm:w-auto shadow-magenta-sm cursor-pointer"
-        >
-          Explore Executive Articles
-        </button>
-        <button 
-          onClick={onExploreClick}
-          className="pointer-events-auto bg-black/60 border border-rak-slate-700 hover:border-rak-magenta text-gray-200 hover:text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 flex items-center justify-center w-full sm:w-auto backdrop-blur-md cursor-pointer"
-        >
-          <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-rak-magenta" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
-          </svg>
-          Watch Editorial Video
-        </button>
-      </div>
+      {banner.title && (
+        <h1 className="text-3xl sm:text-5xl md:text-7xl font-extrabold mb-6 leading-tight tracking-tight uppercase">
+          <RichTitle text={banner.title} lineBreakClassName="hidden sm:inline" />
+        </h1>
+      )}
+      {banner.subtitle && (
+        <p className="text-base sm:text-lg md:text-xl mb-8 opacity-90 max-w-2xl leading-relaxed text-rak-slate-300 font-normal">
+          {banner.subtitle}
+        </p>
+      )}
+      {(banner.primaryCtaLabel || banner.secondaryCtaLabel) && (
+        <div className="flex pointer-events-auto flex-col sm:flex-row items-start space-y-3 sm:space-y-0 sm:space-x-4">
+          {banner.primaryCtaLabel && (
+            <button 
+              onClick={handlePrimary}
+              className="bg-rak-magenta hover:bg-rak-magenta-dark text-white font-bold py-3 px-8 rounded-full transition-all duration-300 w-full sm:w-auto shadow-magenta-sm cursor-pointer"
+            >
+              {banner.primaryCtaLabel}
+            </button>
+          )}
+          {banner.secondaryCtaLabel && (
+            <button 
+              onClick={handleSecondary}
+              className="pointer-events-auto bg-black/60 border border-rak-slate-700 hover:border-rak-magenta text-gray-200 hover:text-white font-semibold py-3 px-8 rounded-full transition-all duration-300 flex items-center justify-center w-full sm:w-auto backdrop-blur-md cursor-pointer"
+            >
+              <svg className="w-4 h-4 sm:w-5 sm:h-5 mr-2 text-rak-magenta" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clipRule="evenodd" />
+              </svg>
+              {banner.secondaryCtaLabel}
+            </button>
+          )}
+        </div>
+      )}
     </div>
   );
 }
 
 export function BlogHeroSpline({ onExploreClick }) {
+  const banner = useBanner('blog');
+  const customMedia = hasCustomMedia(banner);
   const heroContentRef = useRef(null);
 
   useEffect(() => {
@@ -145,7 +166,23 @@ export function BlogHeroSpline({ onExploreClick }) {
     <div className="relative overflow-hidden">
       <div className="relative min-h-[80vh] sm:min-h-[85vh]">
         <div className="absolute inset-0 z-0 pointer-events-auto">
-          <HeroSplineBackground />
+          {customMedia ? (
+            <div className="relative w-full h-[100vh] overflow-hidden bg-rak-slate-950">
+              <BannerMedia banner={banner} />
+              <div
+                className="absolute inset-0 pointer-events-none"
+                style={{
+                  background: `
+                    linear-gradient(to right, rgba(0, 0, 0, 0.85), transparent 30%, transparent 70%, rgba(0, 0, 0, 0.85)),
+                    linear-gradient(to bottom, transparent 40%, rgba(3, 7, 18, 0.95))
+                  `
+                }}
+              />
+            </div>
+          ) : (
+            <HeroSplineBackground />
+          )}
+          <BannerOverlay banner={banner} />
         </div>
 
         <div 
@@ -156,7 +193,7 @@ export function BlogHeroSpline({ onExploreClick }) {
           }}
         >
           <div className="container mx-auto">
-            <HeroContent onExploreClick={onExploreClick} />
+            <HeroContent banner={banner} onExploreClick={onExploreClick} />
           </div>
         </div>
       </div>

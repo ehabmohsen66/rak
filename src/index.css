@@ -350,3 +350,54 @@ textarea:focus-visible,
   }
 }
 
+/* CMS workspace: dense UI typography. The public site's wide-tracked Eurostile headings
+   are kept only for the page title (.cms-page-title) as the brand moment. */
+.cms-shell {
+  letter-spacing: normal;
+  -webkit-font-smoothing: antialiased;
+}
+
+.cms-shell h1,
+.cms-shell h2,
+.cms-shell h3,
+.cms-shell h4,
+.cms-shell h5,
+.cms-shell h6,
+.cms-shell .font-heading,
+.cms-shell .tracking-tight {
+  font-family: 'Gilroy', sans-serif;
+  letter-spacing: -0.005em !important;
+}
+
+.cms-shell .cms-preview-heading {
+  font-family: 'Eurostile', 'Impact', 'Gilroy', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.03em !important;
+}
+
+.cms-shell .cms-page-title {
+  font-family: 'Eurostile', 'Gilroy', sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em !important;
+}
+
+/* Inputs use a ring + border focus indicator instead of the site-wide outline */
+.cms-shell input:focus-visible,
+.cms-shell select:focus-visible,
+.cms-shell textarea:focus-visible {
+  outline: none;
+}
+
+.cms-shell ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.cms-shell ::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.35);
+  border-radius: 8px;
+}
+
+.cms-shell ::-webkit-scrollbar-thumb:hover {
+  background: rgba(100, 116, 139, 0.6);
+}
+
