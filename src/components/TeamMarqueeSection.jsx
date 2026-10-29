@@ -1,8 +1,14 @@
 import React, { useState, useRef } from 'react';
 import { UserCheck, Play, Maximize2 } from 'lucide-react';
 import { SpotlightCard } from './SpotlightCard';
+import { useCms } from '../lib/cmsContext';
 
 export const TeamMarqueeSection = () => {
+  const { content } = useCms();
+  const brandInfo = content?.brandInfo || {};
+  const videoSrc = brandInfo.teamVideo || '/videos/RAK4-WebsiteBanner2-211026.mp4';
+  const posterSrc = brandInfo.teamVideoPoster || '/videos/banner2-poster.jpg';
+
   const videoRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(true);
 
@@ -63,14 +69,15 @@ export const TeamMarqueeSection = () => {
           </div>
 
           <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest font-mono">
-            Behind RAK 4 Creative
+            {brandInfo.teamEyebrow || 'Behind RAK 4 Creative'}
           </span>
 
           <h2 className="relative font-extrabold text-3xl sm:text-5xl text-slate-900 dark:text-white tracking-tight font-heading">
-            Meet Our Creative & Tech Minds
+            {brandInfo.teamHeading || 'Meet Our Creative & Tech Minds'}
           </h2>
           <p className="max-w-2xl text-xs sm:text-sm text-slate-600 dark:text-rak-slate-300 leading-relaxed">
-            Our interdisciplinary team connects strategy, video production, 3D art, and high-speed web tech to elevate your brand.
+            {brandInfo.teamDescription ||
+              'Our interdisciplinary team connects strategy, video production, 3D art, and high-speed web tech to elevate your brand.'}
           </p>
         </div>
 
@@ -86,18 +93,19 @@ export const TeamMarqueeSection = () => {
               onClick={togglePlay}
             >
               <video
+                key={videoSrc}
                 ref={videoRef}
                 autoPlay
                 muted
                 loop
                 playsInline
                 preload="metadata"
-                poster="/videos/banner2-poster.jpg"
+                poster={posterSrc}
                 onPlay={() => setIsPlaying(true)}
                 onPause={() => setIsPlaying(false)}
                 className="w-full h-full object-cover rounded-2xl transition-transform duration-700 ease-out filter drop-shadow-2xl"
               >
-                <source src="/videos/RAK4-WebsiteBanner2-211026.mp4" type="video/mp4" />
+                <source src={videoSrc} type="video/mp4" />
                 Your browser does not support the video tag.
               </video>
 

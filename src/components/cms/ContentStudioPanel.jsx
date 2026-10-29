@@ -48,9 +48,9 @@ export const CONTENT_SECTIONS = [
   },
   {
     id: 'brand',
-    label: 'Brand & Story',
+    label: 'Brand & About Us',
     icon: FileText,
-    description: 'Agency name, story copy, key stats and client logos used across the site.'
+    description: 'About Us page sections ("What Makes Us Different", "What Makes Us… Us.", team video), agency profile, stats and client logos.'
   },
   {
     id: 'pillars',
@@ -309,165 +309,500 @@ export default function ContentStudioPanel({
         <BannersEditor draft={draft} updateDraft={updateDraft} onUploadFile={onUploadFile} />
       )}
 
-      {/* 1. BRAND & HERO */}
+      {/* 1. BRAND & ABOUT US */}
       {section === 'brand' && (
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className={`${CMS_CARD} lg:col-span-7 p-5 sm:p-6 space-y-5`}>
-            <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
-              Core Brand Narrative & Hero Copy
-            </h3>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <CmsField label="Agency Name" htmlFor="brand-name">
-                <input
-                  id="brand-name"
-                  type="text"
-                  value={draft.brandInfo?.name || ''}
-                  onChange={(e) =>
+        <div className="space-y-6">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            {/* LEFT COLUMN: ABOUT US STORY, WHAT MAKES US DIFFERENT, WHAT WE DO */}
+            <div className="lg:col-span-7 space-y-6">
+              <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
+                <div>
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    About Us: “What Makes Us Different” & “What We Do”
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    Top quote card, differentiation block, and capability checklist on the `/about` page.
+                  </p>
+                </div>
+
+                <CmsField
+                  label="Collaboration Quote (Top of About Page)"
+                  htmlFor="brand-quote"
+                >
+                  <input
+                    id="brand-quote"
+                    type="text"
+                    value={draft.brandInfo?.quote || ''}
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, quote: e.target.value }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <CmsField label="Section Eyebrow" htmlFor="brand-diff-eyebrow">
+                    <input
+                      id="brand-diff-eyebrow"
+                      type="text"
+                      value={draft.brandInfo?.diffEyebrow ?? 'What Makes Us Different'}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, diffEyebrow: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                  <CmsField label="Section Heading" htmlFor="brand-diff-heading">
+                    <input
+                      id="brand-diff-heading"
+                      type="text"
+                      value={draft.brandInfo?.diffHeading ?? 'Bold Creativity Meets Tech Magic.'}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, diffHeading: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                </div>
+
+                <CmsField label="What Makes Us Different Paragraph" htmlFor="brand-diff">
+                  <textarea
+                    id="brand-diff"
+                    rows={3}
+                    value={draft.brandInfo?.differentiation || ''}
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, differentiation: e.target.value }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+
+                <CmsField label="What We Do Heading" htmlFor="brand-whatwedo-heading">
+                  <input
+                    id="brand-whatwedo-heading"
+                    type="text"
+                    value={draft.brandInfo?.whatWeDoHeading ?? 'What We Do'}
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, whatWeDoHeading: e.target.value }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+
+                <CmsField label="What We Do Overview" htmlFor="brand-whatwedo">
+                  <textarea
+                    id="brand-whatwedo"
+                    rows={3}
+                    value={draft.brandInfo?.whatWeDo || ''}
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, whatWeDo: e.target.value }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+
+                <CmsField
+                  label="What We Do Checklist (One Line per Item)"
+                  htmlFor="brand-spans"
+                >
+                  <textarea
+                    id="brand-spans"
+                    rows={5}
+                    value={(draft.brandInfo?.whatWeDoSpans || []).join('\n')}
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: {
+                          ...p.brandInfo,
+                          whatWeDoSpans: e.target.value
+                            .split('\n')
+                            .map((s) => s.trim())
+                            .filter(Boolean)
+                        }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+              </div>
+
+              {/* ABOUT US: TEAM VIDEO & BOTTOM CTA */}
+              <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
+                <div>
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    About Us: Team Showcase Video & Bottom CTA
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    The “Behind RAK 4 Creative” video section and bottom call-to-action card on `/about`.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <CmsField label="Team Section Eyebrow" htmlFor="brand-team-eyebrow">
+                    <input
+                      id="brand-team-eyebrow"
+                      type="text"
+                      value={draft.brandInfo?.teamEyebrow ?? 'Behind RAK 4 Creative'}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, teamEyebrow: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                  <CmsField label="Team Section Heading" htmlFor="brand-team-heading">
+                    <input
+                      id="brand-team-heading"
+                      type="text"
+                      value={draft.brandInfo?.teamHeading ?? 'Meet Our Creative & Tech Minds'}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, teamHeading: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                </div>
+
+                <CmsField label="Team Section Description" htmlFor="brand-team-desc">
+                  <textarea
+                    id="brand-team-desc"
+                    rows={2}
+                    value={
+                      draft.brandInfo?.teamDescription ??
+                      'Our interdisciplinary team connects strategy, video production, 3D art, and high-speed web tech to elevate your brand.'
+                    }
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, teamDescription: e.target.value }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+
+                <MediaUploadField
+                  id="brand-team-video"
+                  label="Team Showcase Video (.mp4 / .webm)"
+                  value={draft.brandInfo?.teamVideo ?? '/videos/RAK4-WebsiteBanner2-211026.mp4'}
+                  accept="video/mp4,video/webm,video/quicktime"
+                  uploadLabel="Upload Video"
+                  onUploadFile={onUploadFile}
+                  onChange={(url) =>
                     updateDraft((p) => ({
                       ...p,
-                      brandInfo: { ...p.brandInfo, name: e.target.value }
+                      brandInfo: { ...p.brandInfo, teamVideo: url }
                     }))
                   }
-                  className={CMS_INPUT_CLASS}
                 />
-              </CmsField>
-              <CmsField label="Tagline" htmlFor="brand-tagline">
-                <input
-                  id="brand-tagline"
-                  type="text"
-                  value={draft.brandInfo?.tagline || ''}
-                  onChange={(e) =>
+
+                <MediaUploadField
+                  id="brand-team-poster"
+                  label="Team Video Poster Image"
+                  value={draft.brandInfo?.teamVideoPoster ?? '/videos/banner2-poster.jpg'}
+                  onUploadFile={onUploadFile}
+                  onChange={(url) =>
                     updateDraft((p) => ({
                       ...p,
-                      brandInfo: { ...p.brandInfo, tagline: e.target.value }
+                      brandInfo: { ...p.brandInfo, teamVideoPoster: url }
                     }))
                   }
-                  className={CMS_INPUT_CLASS}
                 />
-              </CmsField>
+
+                <div className="pt-2 border-t border-black/[0.06] dark:border-white/[0.06] space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <CmsField label="Bottom CTA Heading" htmlFor="brand-about-cta-heading">
+                      <input
+                        id="brand-about-cta-heading"
+                        type="text"
+                        value={
+                          draft.brandInfo?.aboutCtaHeading ??
+                          'Ready to create something unforgettable together?'
+                        }
+                        onChange={(e) =>
+                          updateDraft((p) => ({
+                            ...p,
+                            brandInfo: { ...p.brandInfo, aboutCtaHeading: e.target.value }
+                          }))
+                        }
+                        className={CMS_INPUT_CLASS}
+                      />
+                    </CmsField>
+                    <CmsField label="Bottom CTA Button Label" htmlFor="brand-about-cta-btn">
+                      <input
+                        id="brand-about-cta-btn"
+                        type="text"
+                        value={draft.brandInfo?.aboutCtaButton ?? 'Start a Project'}
+                        onChange={(e) =>
+                          updateDraft((p) => ({
+                            ...p,
+                            brandInfo: { ...p.brandInfo, aboutCtaButton: e.target.value }
+                          }))
+                        }
+                        className={CMS_INPUT_CLASS}
+                      />
+                    </CmsField>
+                  </div>
+
+                  <CmsField label="Bottom CTA Supporting Copy" htmlFor="brand-about-cta-body">
+                    <textarea
+                      id="brand-about-cta-body"
+                      rows={2}
+                      value={
+                        draft.brandInfo?.aboutCtaBody ??
+                        "From ground zero to new heights, let's build the online and offline presence that makes a real impact in today's market."
+                      }
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, aboutCtaBody: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                </div>
+              </div>
+
+              {/* GLOBAL AGENCY IDENTITY */}
+              <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
+                <div>
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    Global Agency Profile
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    Agency name, tagline, contact email, and general description used across Home and Footer.
+                  </p>
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <CmsField label="Agency Name" htmlFor="brand-name">
+                    <input
+                      id="brand-name"
+                      type="text"
+                      value={draft.brandInfo?.name || ''}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, name: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                  <CmsField label="Tagline" htmlFor="brand-tagline">
+                    <input
+                      id="brand-tagline"
+                      type="text"
+                      value={draft.brandInfo?.tagline || ''}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, tagline: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                </div>
+
+                <CmsField label="Primary Contact Email" htmlFor="brand-email">
+                  <input
+                    id="brand-email"
+                    type="email"
+                    value={draft.brandInfo?.contactEmail || ''}
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, contactEmail: e.target.value }
+                      }))
+                    }
+                    placeholder="hello@yourdomain.com"
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+
+                <CmsField label="Primary Headline" htmlFor="brand-headline">
+                  <input
+                    id="brand-headline"
+                    type="text"
+                    value={draft.brandInfo?.headline || ''}
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, headline: e.target.value }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+
+                <CmsField
+                  label="Homepage Hero & Agency Description"
+                  htmlFor="brand-description"
+                  hint="Displayed in the footer summary and default brand tokens."
+                >
+                  <textarea
+                    id="brand-description"
+                    rows={3}
+                    value={draft.brandInfo?.description || ''}
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, description: e.target.value }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+              </div>
             </div>
 
-            <CmsField label="Primary Contact Email" htmlFor="brand-email">
-              <input
-                id="brand-email"
-                type="email"
-                value={draft.brandInfo?.contactEmail || ''}
-                onChange={(e) =>
-                  updateDraft((p) => ({
-                    ...p,
-                    brandInfo: { ...p.brandInfo, contactEmail: e.target.value }
-                  }))
-                }
-                placeholder="hello@yourdomain.com"
-                className={CMS_INPUT_CLASS}
-              />
-            </CmsField>
-
-            <CmsField label="Primary Headline" htmlFor="brand-headline">
-              <input
-                id="brand-headline"
-                type="text"
-                value={draft.brandInfo?.headline || ''}
-                onChange={(e) =>
-                  updateDraft((p) => ({
-                    ...p,
-                    brandInfo: { ...p.brandInfo, headline: e.target.value }
-                  }))
-                }
-                className={CMS_INPUT_CLASS}
-              />
-            </CmsField>
-
-            <CmsField
-              label="Homepage Hero & Agency Description"
-              htmlFor="brand-description"
-              hint="Displayed in the homepage hero overlay, footer summary, and About introduction."
-            >
-              <textarea
-                id="brand-description"
-                rows={4}
-                value={draft.brandInfo?.description || ''}
-                onChange={(e) =>
-                  updateDraft((p) => ({
-                    ...p,
-                    brandInfo: { ...p.brandInfo, description: e.target.value }
-                  }))
-                }
-                className={CMS_INPUT_CLASS}
-              />
-            </CmsField>
-
-            <CmsField label="Differentiation Statement" htmlFor="brand-diff">
-              <textarea
-                id="brand-diff"
-                rows={3}
-                value={draft.brandInfo?.differentiation || ''}
-                onChange={(e) =>
-                  updateDraft((p) => ({
-                    ...p,
-                    brandInfo: { ...p.brandInfo, differentiation: e.target.value }
-                  }))
-                }
-                className={CMS_INPUT_CLASS}
-              />
-            </CmsField>
-
-            <CmsField label="What We Do Overview" htmlFor="brand-whatwedo">
-              <textarea
-                id="brand-whatwedo"
-                rows={3}
-                value={draft.brandInfo?.whatWeDo || ''}
-                onChange={(e) =>
-                  updateDraft((p) => ({
-                    ...p,
-                    brandInfo: { ...p.brandInfo, whatWeDo: e.target.value }
-                  }))
-                }
-                className={CMS_INPUT_CLASS}
-              />
-            </CmsField>
-
-            <CmsField label="Collaboration Quote" htmlFor="brand-quote">
-              <input
-                id="brand-quote"
-                type="text"
-                value={draft.brandInfo?.quote || ''}
-                onChange={(e) =>
-                  updateDraft((p) => ({
-                    ...p,
-                    brandInfo: { ...p.brandInfo, quote: e.target.value }
-                  }))
-                }
-                className={CMS_INPUT_CLASS}
-              />
-            </CmsField>
-
-            <CmsField
-              label="Capability Highlights (One Line per Item)"
-              htmlFor="brand-spans"
-            >
-              <textarea
-                id="brand-spans"
-                rows={5}
-                value={(draft.brandInfo?.whatWeDoSpans || []).join('\n')}
-                onChange={(e) =>
-                  updateDraft((p) => ({
-                    ...p,
-                    brandInfo: {
-                      ...p.brandInfo,
-                      whatWeDoSpans: e.target.value
-                        .split('\n')
-                        .map((s) => s.trim())
-                        .filter(Boolean)
+            {/* RIGHT COLUMN: WHAT MAKES US... US. + STATS + CLIENT LOGOS */}
+            <div className="lg:col-span-5 space-y-6">
+              {/* ABOUT US: WHAT MAKES US... US. (CULTURE & VALUES) */}
+              <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                      About Us: “What Makes Us… Us.” ({draft.values?.length || 0})
+                    </h3>
+                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                      Culture and ethos cards displayed in the “What Makes Us… Us.” grid on `/about`.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      updateDraft((p) => ({
+                        ...p,
+                        values: [
+                          ...(p.values || []),
+                          {
+                            name: 'New Principle',
+                            description: 'How this principle guides our work.'
+                          }
+                        ]
+                      }))
                     }
-                  }))
-                }
-                className={CMS_INPUT_CLASS}
-              />
-            </CmsField>
-          </div>
+                    className={CMS_BTN_SECONDARY}
+                  >
+                    <Plus className="w-4 h-4" aria-hidden="true" />
+                    <span>Add Card</span>
+                  </button>
+                </div>
 
-          <div className="lg:col-span-5 space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <CmsField label="Section Eyebrow" htmlFor="brand-values-eyebrow">
+                    <input
+                      id="brand-values-eyebrow"
+                      type="text"
+                      value={draft.brandInfo?.valuesEyebrow ?? 'Our Culture & Ethos'}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, valuesEyebrow: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                  <CmsField label="Section Heading" htmlFor="brand-values-heading">
+                    <input
+                      id="brand-values-heading"
+                      type="text"
+                      value={draft.brandInfo?.valuesHeading ?? 'What Makes Us… Us.'}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, valuesHeading: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                </div>
+
+                <div className="space-y-3 max-h-[540px] overflow-y-auto pr-1">
+                  {(draft.values || []).map((val, idx) => (
+                    <div
+                      key={idx}
+                      className="p-3.5 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-2"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-mono font-semibold text-[#C4007A] dark:text-[#FF55B8] w-6 shrink-0">
+                          {String(idx + 1).padStart(2, '0')}.
+                        </span>
+                        <input
+                          type="text"
+                          aria-label={`What Makes Us card ${idx + 1} title`}
+                          value={val.name || ''}
+                          placeholder="Card title"
+                          onChange={(e) =>
+                            updateDraft((p) => {
+                              const values = [...(p.values || [])];
+                              values[idx] = { ...values[idx], name: e.target.value };
+                              return { ...p, values };
+                            })
+                          }
+                          className={`${CMS_INPUT_CLASS} font-semibold flex-1`}
+                        />
+                        <button
+                          type="button"
+                          disabled={(draft.values || []).length <= 1}
+                          aria-label={`Remove value ${val.name || idx + 1}`}
+                          onClick={() =>
+                            updateDraft((p) => ({
+                              ...p,
+                              values: (p.values || []).filter((_, i) => i !== idx)
+                            }))
+                          }
+                          className="min-w-[38px] min-h-[38px] rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 disabled:opacity-30 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" aria-hidden="true" />
+                        </button>
+                      </div>
+                      <textarea
+                        rows={2}
+                        aria-label={`What Makes Us card ${idx + 1} description`}
+                        value={val.description || ''}
+                        placeholder="Card description"
+                        onChange={(e) =>
+                          updateDraft((p) => {
+                            const values = [...(p.values || [])];
+                            values[idx] = { ...values[idx], description: e.target.value };
+                            return { ...p, values };
+                          })
+                        }
+                        className={CMS_INPUT_CLASS}
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+
             {/* Key Agency Metrics */}
             <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
               <div className="flex items-center justify-between">
@@ -663,6 +998,7 @@ export default function ContentStudioPanel({
                 ))}
               </div>
             </div>
+          </div>
           </div>
         </div>
       )}

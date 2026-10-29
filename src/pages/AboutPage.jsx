@@ -32,11 +32,11 @@ export const AboutPage = ({ onOpenPlanner }) => {
           <div className="lg:col-span-6 space-y-6">
             <div className="inline-flex items-center space-x-2 text-xs font-bold text-rak-magenta uppercase tracking-widest">
               <Award className="w-4 h-4" />
-              <span>What Makes Us Different</span>
+              <span>{brandInfo.diffEyebrow || 'What Makes Us Different'}</span>
             </div>
             
             <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight font-heading">
-              Bold Creativity Meets Tech Magic.
+              {brandInfo.diffHeading || 'Bold Creativity Meets Tech Magic.'}
             </h2>
             
             <p className="text-sm sm:text-base text-slate-600 dark:text-rak-slate-300 leading-relaxed">
@@ -46,7 +46,7 @@ export const AboutPage = ({ onOpenPlanner }) => {
 
           <div className="lg:col-span-6 space-y-4 bg-slate-50 dark:bg-rak-slate-950/80 p-6 sm:p-8 rounded-2xl border border-slate-200 dark:border-rak-slate-800">
             <div className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-widest">
-              What We Do
+              {brandInfo.whatWeDoHeading || 'What We Do'}
             </div>
             
             <p className="text-xs text-slate-600 dark:text-rak-slate-300 leading-relaxed">
@@ -68,8 +68,12 @@ export const AboutPage = ({ onOpenPlanner }) => {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
         <div className="text-center space-y-3 max-w-2xl mx-auto">
-          <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest">Our Culture & Ethos</span>
-          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading">What Makes Us… Us.</h2>
+          <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest">
+            {brandInfo.valuesEyebrow || 'Our Culture & Ethos'}
+          </span>
+          <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading">
+            {brandInfo.valuesHeading || 'What Makes Us… Us.'}
+          </h2>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -89,16 +93,18 @@ export const AboutPage = ({ onOpenPlanner }) => {
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="p-8 sm:p-12 bg-gradient-to-r from-rak-magenta/10 via-white to-slate-50 dark:from-rak-magenta/20 dark:via-rak-slate-900 dark:to-rak-slate-900 border border-rak-magenta/30 rounded-3xl text-center space-y-6 shadow-xl backdrop-blur-xl">
-          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">Ready to create something unforgettable together?</h2>
+          <h2 className="text-3xl font-extrabold text-slate-900 dark:text-white font-heading">
+            {brandInfo.aboutCtaHeading || 'Ready to create something unforgettable together?'}
+          </h2>
           <p className="text-xs sm:text-sm text-slate-600 dark:text-rak-slate-300 max-w-xl mx-auto">
-            From ground zero to new heights, let's build the online and offline presence that makes a real impact in today's market.
+            {brandInfo.aboutCtaBody || "From ground zero to new heights, let's build the online and offline presence that makes a real impact in today's market."}
           </p>
           <button
             type="button"
             onClick={onOpenPlanner}
             className="px-8 py-3.5 bg-rak-magenta hover:bg-rak-magenta-dark text-white text-xs font-bold uppercase tracking-wider rounded-full shadow-magenta-glow inline-flex items-center space-x-2 hover:scale-105 transition-all cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
           >
-            <span>Start a Project</span>
+            <span>{brandInfo.aboutCtaButton || 'Start a Project'}</span>
             <ArrowUpRight className="w-4 h-4" />
           </button>
         </div>
