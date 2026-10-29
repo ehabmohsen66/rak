@@ -5,10 +5,7 @@ deployment:
     - export DEPLOYPATH=/home/$USER/public_html/
     - if [ -d "/home/$USER/rak4creative.com" ]; then export DEPLOYPATH=/home/$USER/rak4creative.com/; elif [ -d "/home/$USER/public_html/rak4creative.com" ]; then export DEPLOYPATH=/home/$USER/public_html/rak4creative.com/; fi
     - export BACKUPPATH=/home/$USER/.rak_cms_backup/
-    # 2. Build Vite bundle on cPanel if npm is available in PATH (otherwise pre-built dist/index.html + dist/assets are used)
-    - export PATH=$PATH:/usr/local/bin:/opt/cpanel/ea-nodejs22/bin:/opt/cpanel/ea-nodejs20/bin:/opt/cpanel/ea-nodejs18/bin:/opt/alt/alt-nodejs22/root/usr/bin:/opt/alt/alt-nodejs20/root/usr/bin:/opt/alt/alt-nodejs18/root/usr/bin
-    - command -v npm >/dev/null 2>&1 && npm install --no-audit --no-fund && npm run build || true
-    # 3. Preserve live CMS storage & uploads across deployments
+    # 2. Preserve live CMS storage & uploads across deployments
     - /bin/mkdir -p $BACKUPPATH/storage $BACKUPPATH/uploads
     - /bin/cp -Rf $DEPLOYPATH/api/storage/*.json $BACKUPPATH/storage/ 2>/dev/null || true
     - /bin/cp -Rf $DEPLOYPATH/uploads/* $BACKUPPATH/uploads/ 2>/dev/null || true
