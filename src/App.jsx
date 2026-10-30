@@ -301,7 +301,14 @@ export function App() {
       seo.metaDescription ||
       'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.';
 
-    let nextOgImage = seo.ogImage || 'https://rak4creative.com/og-logo.png';
+    const toAbsoluteAssetUrl = (rawUrl) => {
+      const val = String(rawUrl || '').trim();
+      if (!val) return `${baseCanonical}/og-logo.png`;
+      if (/^https?:\/\//i.test(val)) return val.replace(/ /g, '%20');
+      return `${baseCanonical}${val.startsWith('/') ? '' : '/'}${val.replace(/ /g, '%20')}`;
+    };
+
+    let nextOgImage = toAbsoluteAssetUrl(seo.ogImage || `${baseCanonical}/og-logo.png`);
     let nextOgType = 'website';
     let routePath = TAB_TO_PATH[activeTab] || '/';
 
@@ -317,9 +324,7 @@ export function App() {
           nextDescription = matchedPost.excerpt || matchedPost.subtitle;
         }
         if (matchedPost.image) {
-          nextOgImage = matchedPost.image.startsWith('http')
-            ? matchedPost.image
-            : `${baseCanonical}${matchedPost.image.startsWith('/') ? '' : '/'}${matchedPost.image}`;
+          nextOgImage = toAbsoluteAssetUrl(matchedPost.image);
         }
       }
     }

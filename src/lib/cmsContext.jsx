@@ -89,6 +89,18 @@ function normalizeContent(raw = {}) {
     brandInfo: {
       ...INITIAL_CMS_CONTENT.brandInfo,
       ...(raw.brandInfo || {}),
+      socials: {
+        ...INITIAL_CMS_CONTENT.brandInfo.socials,
+        ...(raw.brandInfo?.socials || {})
+      },
+      budgetOptions:
+        Array.isArray(raw.brandInfo?.budgetOptions) && raw.brandInfo.budgetOptions.length > 0
+          ? raw.brandInfo.budgetOptions
+          : INITIAL_CMS_CONTENT.brandInfo.budgetOptions,
+      timelineOptions:
+        Array.isArray(raw.brandInfo?.timelineOptions) && raw.brandInfo.timelineOptions.length > 0
+          ? raw.brandInfo.timelineOptions
+          : INITIAL_CMS_CONTENT.brandInfo.timelineOptions,
       whatWeDoSpans: Array.isArray(raw.brandInfo?.whatWeDoSpans)
         ? raw.brandInfo.whatWeDoSpans
         : INITIAL_CMS_CONTENT.brandInfo.whatWeDoSpans,
@@ -99,17 +111,24 @@ function normalizeContent(raw = {}) {
         ? raw.brandInfo.clients
         : INITIAL_CMS_CONTENT.brandInfo.clients
     },
+    homeSections: {
+      ...INITIAL_CMS_CONTENT.homeSections,
+      ...(raw.homeSections || {}),
+      squadVideos: Array.isArray(raw.homeSections?.squadVideos)
+        ? raw.homeSections.squadVideos
+        : INITIAL_CMS_CONTENT.homeSections.squadVideos
+    },
     pillars: Array.isArray(raw.pillars) && raw.pillars.length > 0 ? raw.pillars : INITIAL_CMS_CONTENT.pillars,
-    values: Array.isArray(raw.values) && raw.values.length > 0 ? raw.values : INITIAL_CMS_CONTENT.values,
+    values: Array.isArray(raw.values) ? raw.values : INITIAL_CMS_CONTENT.values,
     careersCopy: {
       ...INITIAL_CMS_CONTENT.careersCopy,
       ...(raw.careersCopy || {})
     },
     openRoles: Array.isArray(raw.openRoles) ? raw.openRoles : INITIAL_CMS_CONTENT.openRoles,
-    projects: Array.isArray(raw.projects) && raw.projects.length > 0 ? raw.projects : INITIAL_CMS_CONTENT.projects,
-    blogPosts: Array.isArray(raw.blogPosts) && raw.blogPosts.length > 0 ? raw.blogPosts : INITIAL_CMS_CONTENT.blogPosts,
-    offices: Array.isArray(raw.offices) && raw.offices.length > 0 ? raw.offices : INITIAL_CMS_CONTENT.offices,
-    testimonials: Array.isArray(raw.testimonials) && raw.testimonials.length > 0 ? raw.testimonials : INITIAL_CMS_CONTENT.testimonials,
+    projects: Array.isArray(raw.projects) ? raw.projects : INITIAL_CMS_CONTENT.projects,
+    blogPosts: Array.isArray(raw.blogPosts) ? raw.blogPosts : INITIAL_CMS_CONTENT.blogPosts,
+    offices: Array.isArray(raw.offices) ? raw.offices : INITIAL_CMS_CONTENT.offices,
+    testimonials: Array.isArray(raw.testimonials) ? raw.testimonials : INITIAL_CMS_CONTENT.testimonials,
     banners: normalizeBanners(raw.banners),
     seo: normalizeSeo(raw.seo || {})
   };
@@ -338,7 +357,7 @@ export function CmsProvider({ children }) {
       method: 'POST',
       body: JSON.stringify(enriched)
     });
-    if (res.ok) {
+    if (res.ok && !enriched.isDiagnostic) {
       trackLeadConversion(pixels, enriched);
     }
     return res;
@@ -431,6 +450,14 @@ export function CmsProvider({ children }) {
     return apiCall('media', { method: 'GET' });
   }, [apiCall]);
 
+  const deleteMediaFile = useCallback(async (url) => {
+    return apiCall('media', {
+      method: 'DELETE',
+      query: { url },
+      body: JSON.stringify({ url })
+    });
+  }, [apiCall]);
+
   const runServerAudit = useCallback(async () => {
     return apiCall('audit', { method: 'GET' });
   }, [apiCall]);
@@ -463,6 +490,7 @@ export function CmsProvider({ children }) {
     sendTestEmail,
     uploadMediaFile,
     fetchMediaLibrary,
+    deleteMediaFile,
     runServerAudit,
     recordPageView
   };

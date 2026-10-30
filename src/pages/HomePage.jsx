@@ -1,41 +1,19 @@
 import React from 'react';
 import { 
   ArrowUpRight, 
-  Sparkles, 
   CheckCircle2, 
-  Compass, 
-  BarChart3,
-  Share2,
-  Code,
-  Search,
-  Target,
-  Video,
-  Radio,
   Star,
   Calendar,
   Clock
 } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
+import { getPillarIcon } from '../lib/pillarIcons';
 import { CinematicHeroScroll } from '../components/CinematicHeroScroll';
 import { TeamVideoShowcase } from '../components/TeamVideoShowcase';
 import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
 import { LebanonTributeSection } from '../components/LebanonTributeSection';
-
-const getPillarIcon = (iconName) => {
-  switch (iconName) {
-    case 'Compass': return Compass;
-    case 'BarChart3': return BarChart3;
-    case 'Share2': return Share2;
-    case 'Code': return Code;
-    case 'Search': return Search;
-    case 'Target': return Target;
-    case 'Video': return Video;
-    case 'Radio': return Radio;
-    default: return Sparkles;
-  }
-};
 
 export const HomePage = ({ 
   setActiveTab = () => {}, 
@@ -44,6 +22,7 @@ export const HomePage = ({
   onOpenPlanner = () => {} 
 }) => {
   const { content } = useCms();
+  const hs = content.homeSections || {};
   const pillars = content.pillars || [];
   const projects = content.projects || [];
   const testimonials = content.testimonials || [];
@@ -59,8 +38,8 @@ export const HomePage = ({
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <MarqueeLogoScroller 
-          title="Trusted by Ambitious Enterprises & Global Innovators"
-          description="Partnering with industry leaders to deliver end-to-end digital excellence."
+          title={hs.marqueeTitle || 'Trusted by Ambitious Enterprises & Global Innovators'}
+          description={hs.marqueeSubtitle || 'Partnering with industry leaders to deliver end-to-end digital excellence.'}
           speed="normal"
         />
       </section>
@@ -69,10 +48,10 @@ export const HomePage = ({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
             <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
-              Our Core Capabilities
+              {hs.capabilitiesEyebrow || 'Our Core Capabilities'}
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              One Stop For Every Stage of The Work.
+              {hs.capabilitiesHeading || 'One Stop For Every Stage of The Work.'}
             </h2>
           </div>
           <a
@@ -128,14 +107,15 @@ export const HomePage = ({
         </div>
       </section>
 
+      {displayProjects.length > 0 && (
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
             <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3.5 py-1.5 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
-              Featured Work
+              {hs.workEyebrow || 'Featured Work'}
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Selected Creations.
+              {hs.workHeading || 'Selected Creations.'}
             </h2>
           </div>
           <a
@@ -202,8 +182,9 @@ export const HomePage = ({
           ))}
         </div>
       </section>
+      )}
 
-      <TeamVideoShowcase />
+      {hs.squadEnabled !== false && <TeamVideoShowcase />}
 
       {testimonials.length > 0 && (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -214,9 +195,9 @@ export const HomePage = ({
           >
             <div className="space-y-2 text-center max-w-2xl mx-auto">
               <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
-                Client Feedback
+                {hs.testimonialsEyebrow || 'Client Feedback'}
               </span>
-              <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">What Partners Say About RAK.</h2>
+              <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{hs.testimonialsHeading || 'What Partners Say About RAK.'}</h2>
             </div>
 
             <InfiniteSlider gap={24} duration={65} durationOnHover={180} className="py-4">
@@ -258,14 +239,15 @@ export const HomePage = ({
         </section>
       )}
 
+      {blogPosts.length > 0 && (
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
           <div className="space-y-3">
             <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3.5 py-1.5 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
-              Strategic Insights
+              {hs.blogEyebrow || 'Strategic Insights'}
             </span>
             <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight">
-              Latest Editorial.
+              {hs.blogHeading || 'Latest Editorial.'}
             </h2>
           </div>
           <a
@@ -346,8 +328,9 @@ export const HomePage = ({
           ))}
         </div>
       </section>
+      )}
 
-      <LebanonTributeSection onOpenPlanner={onOpenPlanner} />
+      {hs.tributeEnabled !== false && <LebanonTributeSection onOpenPlanner={onOpenPlanner} />}
 
     </div>
   );

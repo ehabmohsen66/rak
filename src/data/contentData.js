@@ -22,6 +22,28 @@ export const BRAND_INFO = {
   aboutCtaBody: "From ground zero to new heights, let's build the online and offline presence that makes a real impact in today's market.",
   aboutCtaButton: "Start a Project",
   contactEmail: "hello@rak4creative.com",
+  whatsapp: "",
+  socials: {
+    instagram: "",
+    linkedin: "",
+    tiktok: "",
+    facebook: "",
+    youtube: "",
+    x: "",
+    behance: ""
+  },
+  budgetOptions: [
+    "$25,000 - $50,000",
+    "$50,000 - $100,000",
+    "$100,000 - $250,000",
+    "$250,000+"
+  ],
+  timelineOptions: [
+    "Urgent (< 4 Wks)",
+    "4 - 8 Weeks",
+    "8 - 12 Weeks",
+    "Flexible Scope"
+  ],
   whatWeDoSpans: [
     "Brand strategy, identity, and communications",
     "Content, video, and creative production",
@@ -728,8 +750,100 @@ export const DEFAULT_EMAIL_SETTINGS = {
   deliveryLogs: []
 };
 
+export const HOME_SECTIONS = {
+  marqueeTitle: "Trusted by Ambitious Enterprises & Global Innovators",
+  marqueeSubtitle: "Partnering with industry leaders to deliver end-to-end digital excellence.",
+  capabilitiesEyebrow: "Our Core Capabilities",
+  capabilitiesHeading: "One Stop For Every Stage of The Work.",
+  workEyebrow: "Featured Work",
+  workHeading: "Selected Creations.",
+  testimonialsEyebrow: "Client Feedback",
+  testimonialsHeading: "What Partners Say About RAK.",
+  blogEyebrow: "Strategic Insights",
+  blogHeading: "Latest Editorial.",
+  squadEnabled: true,
+  squadEyebrow: "The RAK Squad & Culture",
+  squadHeading: "We're Not Just a Business.",
+  squadHighlight: "We're a Super Cool Team.",
+  squadDescription: "Step behind the scenes. From crazy 3D experiments and cinematic shoots to pure studio laughter, meet the passionate creators turning bold ideas into iconic work.",
+  squadBadge1: "100% In-House Energy",
+  squadBadge2: "Fearless Experimentation",
+  squadVideos: [
+    {
+      id: "vid-1",
+      src: "/videos/Big%20Giraffe.mp4",
+      title: "Big Wild Ideas in 3D",
+      category: "3D & Motion Lab",
+      vibe: "Fearless Imagination",
+      caption: "When we brainstorm, no idea is too crazy. We turn wildest concepts into hyper-realistic 3D realities.",
+      aspect: "aspect-[9/14]",
+      tagColor: "from-pink-500 to-rose-500"
+    },
+    {
+      id: "vid-2",
+      src: "/videos/Commercial%20Video.mp4",
+      title: "Cinematic High-Impact Films",
+      category: "Commercial Production",
+      vibe: "4K Storytelling",
+      caption: "Directing, lighting, filming, and post-production: pure cinema crafted to make audiences stop scrolling.",
+      aspect: "aspect-[16/10]",
+      tagColor: "from-rak-magenta to-purple-600"
+    },
+    {
+      id: "vid-3",
+      src: "/videos/Option%202.mp4",
+      title: "Late Night Studio Energy",
+      category: "Squad Vibes",
+      vibe: "Pure Passion",
+      caption: "Music blasting, intense focus, laughter, and high-fives. This is what building the future feels like.",
+      aspect: "aspect-[9/15]",
+      tagColor: "from-cyan-500 to-blue-600"
+    },
+    {
+      id: "vid-4",
+      src: "/videos/Hotel%20building.mp4",
+      title: "Architectural & Spatial Vision",
+      category: "Spatial Branding",
+      vibe: "Modern Precision",
+      caption: "Elevating real-world spaces with modern visual architecture and high-end aesthetics.",
+      aspect: "aspect-[4/5]",
+      tagColor: "from-amber-500 to-orange-600"
+    },
+    {
+      id: "vid-5",
+      src: "/videos/Penguin%20Video.mp4",
+      title: "Unconventional Character Magic",
+      category: "Creative Play",
+      vibe: "Playful Brilliance",
+      caption: "Injecting wit, character personality, and playful humor into everything we create.",
+      aspect: "aspect-[1/1]",
+      tagColor: "from-emerald-400 to-teal-600"
+    },
+    {
+      id: "vid-6",
+      src: "/videos/post%2011.mp4",
+      title: "High-Retention Viral Motion",
+      category: "Social First",
+      vibe: "Fast & Electric",
+      caption: "Engineered for social speed and instant visual hook, crafted for modern digital culture.",
+      aspect: "aspect-[9/14]",
+      tagColor: "from-violet-500 to-rak-magenta"
+    }
+  ],
+  tributeEnabled: true,
+  tributeEyebrow: "Roots of Inspiration",
+  tributeLocation: "Beirut, Lebanon",
+  tributeHeadingLine1: "The Land of Cedars.",
+  tributeHeadingLine2: "Courage in Every Idea.",
+  tributeBody: "Born in a city where cultures, languages, and generations meet. RAK4Creative carries Beirut's restless imagination into brands built to move the world.",
+  tributeArabicQuote: "من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ",
+  tributeQuoteSubtext: "An endless pulse. A global vision.",
+  tributeCtaLabel: "Create with RAK"
+};
+
 export const INITIAL_CMS_CONTENT = {
   brandInfo: BRAND_INFO,
+  homeSections: HOME_SECTIONS,
   pillars: PILLARS,
   values: VALUES,
   careersCopy: CAREERS_COPY,

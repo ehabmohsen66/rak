@@ -18,9 +18,11 @@ import {
   MapPin,
   Globe,
   PanelsTopLeft,
+  LayoutTemplate,
   X
 } from 'lucide-react';
 import BannersEditor from './BannersEditor';
+import { PILLAR_ICON_OPTIONS } from '../../lib/pillarIcons';
 import {
   CMS_BTN_PRIMARY,
   CMS_BTN_SECONDARY,
@@ -47,10 +49,16 @@ export const CONTENT_SECTIONS = [
     description: 'Headline, text, buttons and background video or image for the top banner of every page.'
   },
   {
+    id: 'home',
+    label: 'Home Sections',
+    icon: LayoutTemplate,
+    description: 'Homepage section headings, "The RAK Squad & Culture" video grid, and "Roots of Inspiration (Beirut)" tribute.'
+  },
+  {
     id: 'brand',
     label: 'Brand & About Us',
     icon: FileText,
-    description: 'About Us page sections ("What Makes Us Different", "What Makes Us… Us.", team video), agency profile, stats and client logos.'
+    description: 'About Us page sections ("What Makes Us Different", "What Makes Us… Us.", team video), agency profile, socials, form brackets, stats and client logos.'
   },
   {
     id: 'pillars',
@@ -88,21 +96,6 @@ export const CONTENT_SECTIONS = [
     icon: Globe,
     description: 'Search titles, descriptions and social sharing image per page.'
   }
-];
-
-const ICON_OPTIONS = [
-  'Compass',
-  'BarChart3',
-  'Share2',
-  'Video',
-  'Search',
-  'Megaphone',
-  'Code2',
-  'Palette',
-  'Layers',
-  'Globe',
-  'Cpu',
-  'TrendingUp'
 ];
 
 function slugifyText(value = '') {
@@ -307,6 +300,624 @@ export default function ContentStudioPanel({
       {/* 0. PAGE BANNERS */}
       {section === 'banners' && (
         <BannersEditor draft={draft} updateDraft={updateDraft} onUploadFile={onUploadFile} />
+      )}
+
+      {/* 0B. HOME SECTIONS */}
+      {section === 'home' && (
+        <div className="space-y-6">
+          {/* Card 1: Homepage Section Headings */}
+          <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
+            <div>
+              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                Homepage Section Headings
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                Eyebrows and section titles for the Client Marquee, Capabilities, Featured Work, Testimonials, and Latest Editorial blocks on `/`.
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <CmsField label="Client Marquee Heading" htmlFor="hs-marquee-title">
+                <input
+                  id="hs-marquee-title"
+                  type="text"
+                  value={draft.homeSections?.marqueeTitle ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), marqueeTitle: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Client Marquee Subtitle" htmlFor="hs-marquee-sub">
+                <input
+                  id="hs-marquee-sub"
+                  type="text"
+                  value={draft.homeSections?.marqueeSubtitle ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), marqueeSubtitle: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+
+              <CmsField label="Capabilities Eyebrow" htmlFor="hs-cap-eyebrow">
+                <input
+                  id="hs-cap-eyebrow"
+                  type="text"
+                  value={draft.homeSections?.capabilitiesEyebrow ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), capabilitiesEyebrow: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Capabilities Heading" htmlFor="hs-cap-heading">
+                <input
+                  id="hs-cap-heading"
+                  type="text"
+                  value={draft.homeSections?.capabilitiesHeading ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), capabilitiesHeading: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+
+              <CmsField label="Featured Work Eyebrow" htmlFor="hs-work-eyebrow">
+                <input
+                  id="hs-work-eyebrow"
+                  type="text"
+                  value={draft.homeSections?.workEyebrow ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), workEyebrow: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Featured Work Heading" htmlFor="hs-work-heading">
+                <input
+                  id="hs-work-heading"
+                  type="text"
+                  value={draft.homeSections?.workHeading ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), workHeading: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+
+              <CmsField label="Testimonials Eyebrow" htmlFor="hs-test-eyebrow">
+                <input
+                  id="hs-test-eyebrow"
+                  type="text"
+                  value={draft.homeSections?.testimonialsEyebrow ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), testimonialsEyebrow: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Testimonials Heading" htmlFor="hs-test-heading">
+                <input
+                  id="hs-test-heading"
+                  type="text"
+                  value={draft.homeSections?.testimonialsHeading ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), testimonialsHeading: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+
+              <CmsField label="Blog Insights Eyebrow" htmlFor="hs-blog-eyebrow">
+                <input
+                  id="hs-blog-eyebrow"
+                  type="text"
+                  value={draft.homeSections?.blogEyebrow ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), blogEyebrow: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Blog Insights Heading" htmlFor="hs-blog-heading">
+                <input
+                  id="hs-blog-heading"
+                  type="text"
+                  value={draft.homeSections?.blogHeading ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), blogHeading: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+            </div>
+          </div>
+
+          {/* Card 2: The RAK Squad & Culture Video Grid */}
+          <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div>
+                <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                  “The RAK Squad & Culture” Video Grid ({draft.homeSections?.squadVideos?.length || 0})
+                </h3>
+                <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                  Masonry video showcase on the homepage. Upload MP4/WebM/MOV clips or toggle the entire section on or off.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() =>
+                  updateDraft((p) => ({
+                    ...p,
+                    homeSections: {
+                      ...(p.homeSections || {}),
+                      squadVideos: [
+                        ...(p.homeSections?.squadVideos || []),
+                        {
+                          id: `vid-${Date.now()}`,
+                          src: '',
+                          title: 'New Studio Reel',
+                          category: 'Creative Studio',
+                          vibe: 'Bold Energy',
+                          caption: 'Behind-the-scenes look at our latest creative production.',
+                          aspect: 'aspect-[9/14]'
+                        }
+                      ]
+                    }
+                  }))
+                }
+                className={CMS_BTN_PRIMARY}
+              >
+                <Plus className="w-4 h-4" aria-hidden="true" />
+                <span>Add Video</span>
+              </button>
+            </div>
+
+            <CmsToggle
+              id="hs-squad-enabled"
+              label="Display Squad & Culture Video Grid on Homepage"
+              description="Turn off to hide this section from the homepage without deleting your videos."
+              checked={draft.homeSections?.squadEnabled !== false}
+              onChange={(val) =>
+                updateDraft((p) => ({
+                  ...p,
+                  homeSections: { ...(p.homeSections || {}), squadEnabled: val }
+                }))
+              }
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <CmsField label="Eyebrow Badge" htmlFor="hs-squad-eyebrow">
+                <input
+                  id="hs-squad-eyebrow"
+                  type="text"
+                  value={draft.homeSections?.squadEyebrow ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), squadEyebrow: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Main Heading" htmlFor="hs-squad-heading">
+                <input
+                  id="hs-squad-heading"
+                  type="text"
+                  value={draft.homeSections?.squadHeading ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), squadHeading: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Gradient Highlight Phrase" htmlFor="hs-squad-highlight">
+                <input
+                  id="hs-squad-highlight"
+                  type="text"
+                  value={draft.homeSections?.squadHighlight ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), squadHighlight: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+            </div>
+
+            <CmsField label="Section Description" htmlFor="hs-squad-desc">
+              <textarea
+                id="hs-squad-desc"
+                rows={2}
+                value={draft.homeSections?.squadDescription ?? ''}
+                onChange={(e) =>
+                  updateDraft((p) => ({
+                    ...p,
+                    homeSections: { ...(p.homeSections || {}), squadDescription: e.target.value }
+                  }))
+                }
+                className={CMS_INPUT_CLASS}
+              />
+            </CmsField>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <CmsField label="Culture Pill 1" htmlFor="hs-squad-badge1">
+                <input
+                  id="hs-squad-badge1"
+                  type="text"
+                  value={draft.homeSections?.squadBadge1 ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), squadBadge1: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Culture Pill 2" htmlFor="hs-squad-badge2">
+                <input
+                  id="hs-squad-badge2"
+                  type="text"
+                  value={draft.homeSections?.squadBadge2 ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), squadBadge2: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+              {(draft.homeSections?.squadVideos || []).map((vid, idx) => (
+                <div
+                  key={vid.id || idx}
+                  className="p-4 rounded-xl border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-3"
+                >
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-mono font-bold text-[#C4007A] dark:text-[#FF55B8]">
+                      Video #{idx + 1}: {vid.title || 'Untitled'}
+                    </span>
+                    <div className="flex items-center gap-1">
+                      <button
+                        type="button"
+                        disabled={idx === 0}
+                        aria-label={`Move video ${idx + 1} up`}
+                        onClick={() =>
+                          updateDraft((p) => {
+                            const arr = [...(p.homeSections?.squadVideos || [])];
+                            if (idx <= 0) return p;
+                            const tmp = arr[idx];
+                            arr[idx] = arr[idx - 1];
+                            arr[idx - 1] = tmp;
+                            return { ...p, homeSections: { ...(p.homeSections || {}), squadVideos: arr } };
+                          })
+                        }
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
+                      >
+                        <ArrowUp className="w-4 h-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        disabled={idx === (draft.homeSections?.squadVideos?.length || 1) - 1}
+                        aria-label={`Move video ${idx + 1} down`}
+                        onClick={() =>
+                          updateDraft((p) => {
+                            const arr = [...(p.homeSections?.squadVideos || [])];
+                            if (idx >= arr.length - 1) return p;
+                            const tmp = arr[idx];
+                            arr[idx] = arr[idx + 1];
+                            arr[idx + 1] = tmp;
+                            return { ...p, homeSections: { ...(p.homeSections || {}), squadVideos: arr } };
+                          })
+                        }
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
+                      >
+                        <ArrowDown className="w-4 h-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Delete video ${vid.title || idx + 1}`}
+                        onClick={() =>
+                          updateDraft((p) => ({
+                            ...p,
+                            homeSections: {
+                              ...(p.homeSections || {}),
+                              squadVideos: (p.homeSections?.squadVideos || []).filter((_, i) => i !== idx)
+                            }
+                          }))
+                        }
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-rose-600 dark:text-rose-400 hover:bg-rose-50 dark:hover:bg-rose-950/50 cursor-pointer"
+                      >
+                        <Trash2 className="w-4 h-4" aria-hidden="true" />
+                      </button>
+                    </div>
+                  </div>
+
+                  <MediaUploadField
+                    id={`squad-vid-src-${idx}`}
+                    label="Video File (.mp4 / .webm / .mov)"
+                    kind="video"
+                    accept="video/mp4,video/webm,video/quicktime"
+                    uploadLabel="Upload Video"
+                    value={vid.src || ''}
+                    onUploadFile={onUploadFile}
+                    onChange={(url) =>
+                      updateDraft((p) => {
+                        const squadVideos = [...(p.homeSections?.squadVideos || [])];
+                        squadVideos[idx] = { ...squadVideos[idx], src: url };
+                        return { ...p, homeSections: { ...(p.homeSections || {}), squadVideos } };
+                      })
+                    }
+                  />
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <input
+                      type="text"
+                      aria-label={`Video ${idx + 1} title`}
+                      value={vid.title || ''}
+                      placeholder="Card title"
+                      onChange={(e) =>
+                        updateDraft((p) => {
+                          const squadVideos = [...(p.homeSections?.squadVideos || [])];
+                          squadVideos[idx] = { ...squadVideos[idx], title: e.target.value };
+                          return { ...p, homeSections: { ...(p.homeSections || {}), squadVideos } };
+                        })
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                    <input
+                      type="text"
+                      aria-label={`Video ${idx + 1} category`}
+                      value={vid.category || ''}
+                      placeholder="Top category pill"
+                      onChange={(e) =>
+                        updateDraft((p) => {
+                          const squadVideos = [...(p.homeSections?.squadVideos || [])];
+                          squadVideos[idx] = { ...squadVideos[idx], category: e.target.value };
+                          return { ...p, homeSections: { ...(p.homeSections || {}), squadVideos } };
+                        })
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                    <input
+                      type="text"
+                      aria-label={`Video ${idx + 1} vibe tag`}
+                      value={vid.vibe || ''}
+                      placeholder="Vibe tag (e.g. 4K Storytelling)"
+                      onChange={(e) =>
+                        updateDraft((p) => {
+                          const squadVideos = [...(p.homeSections?.squadVideos || [])];
+                          squadVideos[idx] = { ...squadVideos[idx], vibe: e.target.value };
+                          return { ...p, homeSections: { ...(p.homeSections || {}), squadVideos } };
+                        })
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                    <select
+                      aria-label={`Video ${idx + 1} aspect ratio`}
+                      value={vid.aspect || 'aspect-[9/14]'}
+                      onChange={(e) =>
+                        updateDraft((p) => {
+                          const squadVideos = [...(p.homeSections?.squadVideos || [])];
+                          squadVideos[idx] = { ...squadVideos[idx], aspect: e.target.value };
+                          return { ...p, homeSections: { ...(p.homeSections || {}), squadVideos } };
+                        })
+                      }
+                      className={CMS_INPUT_CLASS}
+                    >
+                      <option value="aspect-[9/14]">Portrait Tall (9:14)</option>
+                      <option value="aspect-[9/15]">Vertical Reel (9:15)</option>
+                      <option value="aspect-[4/5]">Social Portrait (4:5)</option>
+                      <option value="aspect-[1/1]">Square (1:1)</option>
+                      <option value="aspect-[16/10]">Widescreen (16:10)</option>
+                    </select>
+                  </div>
+
+                  <textarea
+                    rows={2}
+                    aria-label={`Video ${idx + 1} caption`}
+                    value={vid.caption || ''}
+                    placeholder="Short caption shown on the card and lightbox..."
+                    onChange={(e) =>
+                      updateDraft((p) => {
+                        const squadVideos = [...(p.homeSections?.squadVideos || [])];
+                        squadVideos[idx] = { ...squadVideos[idx], caption: e.target.value };
+                        return { ...p, homeSections: { ...(p.homeSections || {}), squadVideos } };
+                      })
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Card 3: Roots of Inspiration (Beirut, Lebanon) Tribute */}
+          <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
+            <div>
+              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                “Roots of Inspiration” Tribute Section (Beirut, Lebanon)
+              </h3>
+              <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                Origin story and interactive globe tribute block at the bottom of the homepage.
+              </p>
+            </div>
+
+            <CmsToggle
+              id="hs-tribute-enabled"
+              label="Display Roots of Inspiration Tribute on Homepage"
+              description="Turn off to hide the Beirut tribute card from the homepage."
+              checked={draft.homeSections?.tributeEnabled !== false}
+              onChange={(val) =>
+                updateDraft((p) => ({
+                  ...p,
+                  homeSections: { ...(p.homeSections || {}), tributeEnabled: val }
+                }))
+              }
+            />
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <CmsField label="Eyebrow Label" htmlFor="hs-trib-eyebrow">
+                <input
+                  id="hs-trib-eyebrow"
+                  type="text"
+                  value={draft.homeSections?.tributeEyebrow ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), tributeEyebrow: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Origin Location Label" htmlFor="hs-trib-loc">
+                <input
+                  id="hs-trib-loc"
+                  type="text"
+                  value={draft.homeSections?.tributeLocation ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), tributeLocation: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Headline Line 1" htmlFor="hs-trib-h1">
+                <input
+                  id="hs-trib-h1"
+                  type="text"
+                  value={draft.homeSections?.tributeHeadingLine1 ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), tributeHeadingLine1: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Headline Line 2 (Gradient)" htmlFor="hs-trib-h2">
+                <input
+                  id="hs-trib-h2"
+                  type="text"
+                  value={draft.homeSections?.tributeHeadingLine2 ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), tributeHeadingLine2: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+            </div>
+
+            <CmsField label="Editorial Paragraph" htmlFor="hs-trib-body">
+              <textarea
+                id="hs-trib-body"
+                rows={3}
+                value={draft.homeSections?.tributeBody ?? ''}
+                onChange={(e) =>
+                  updateDraft((p) => ({
+                    ...p,
+                    homeSections: { ...(p.homeSections || {}), tributeBody: e.target.value }
+                  }))
+                }
+                className={CMS_INPUT_CLASS}
+              />
+            </CmsField>
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <CmsField label="Arabic Callout Quote" htmlFor="hs-trib-ar">
+                <input
+                  id="hs-trib-ar"
+                  type="text"
+                  dir="rtl"
+                  value={draft.homeSections?.tributeArabicQuote ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), tributeArabicQuote: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="Quote Translation / Subtext" htmlFor="hs-trib-sub">
+                <input
+                  id="hs-trib-sub"
+                  type="text"
+                  value={draft.homeSections?.tributeQuoteSubtext ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), tributeQuoteSubtext: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+              <CmsField label="CTA Button Label" htmlFor="hs-trib-cta">
+                <input
+                  id="hs-trib-cta"
+                  type="text"
+                  value={draft.homeSections?.tributeCtaLabel ?? ''}
+                  onChange={(e) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      homeSections: { ...(p.homeSections || {}), tributeCtaLabel: e.target.value }
+                    }))
+                  }
+                  className={CMS_INPUT_CLASS}
+                />
+              </CmsField>
+            </div>
+          </div>
+        </div>
       )}
 
       {/* 1. BRAND & ABOUT US */}
@@ -644,25 +1255,10 @@ export default function ContentStudioPanel({
                   />
                 </CmsField>
 
-                <CmsField label="Primary Headline" htmlFor="brand-headline">
-                  <input
-                    id="brand-headline"
-                    type="text"
-                    value={draft.brandInfo?.headline || ''}
-                    onChange={(e) =>
-                      updateDraft((p) => ({
-                        ...p,
-                        brandInfo: { ...p.brandInfo, headline: e.target.value }
-                      }))
-                    }
-                    className={CMS_INPUT_CLASS}
-                  />
-                </CmsField>
-
                 <CmsField
-                  label="Homepage Hero & Agency Description"
+                  label="Footer & Agency Summary Description"
                   htmlFor="brand-description"
-                  hint="Displayed in the footer summary and default brand tokens."
+                  hint="Displayed in the website footer summary. Edit the Homepage Hero text under Page Banners -> Home."
                 >
                   <textarea
                     id="brand-description"
@@ -677,6 +1273,202 @@ export default function ContentStudioPanel({
                     className={CMS_INPUT_CLASS}
                   />
                 </CmsField>
+              </div>
+
+              {/* SOCIAL MEDIA PROFILES & WHATSAPP */}
+              <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
+                <div>
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    Social Media Profiles & Direct WhatsApp
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    Displayed in the Footer and Contact page. Any field left blank stays hidden on the public website.
+                  </p>
+                </div>
+
+                <CmsField
+                  label="WhatsApp Number or wa.me Link"
+                  htmlFor="brand-whatsapp"
+                  hint="Enter an international number (e.g. +961 1 380 400) or full https://wa.me/... URL."
+                >
+                  <input
+                    id="brand-whatsapp"
+                    type="text"
+                    value={draft.brandInfo?.whatsapp || ''}
+                    placeholder="+961 1 380 400"
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, whatsapp: e.target.value }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {[
+                    { key: 'instagram', label: 'Instagram URL', placeholder: 'https://instagram.com/rak4creative' },
+                    { key: 'linkedin', label: 'LinkedIn URL', placeholder: 'https://linkedin.com/company/rak4creative' },
+                    { key: 'tiktok', label: 'TikTok URL', placeholder: 'https://tiktok.com/@rak4creative' },
+                    { key: 'facebook', label: 'Facebook URL', placeholder: 'https://facebook.com/rak4creative' },
+                    { key: 'youtube', label: 'YouTube URL', placeholder: 'https://youtube.com/@rak4creative' },
+                    { key: 'x', label: 'X (Twitter) URL', placeholder: 'https://x.com/rak4creative' },
+                    { key: 'behance', label: 'Behance URL', placeholder: 'https://behance.net/rak4creative' }
+                  ].map(({ key, label, placeholder }) => (
+                    <CmsField key={key} label={label} htmlFor={`brand-social-${key}`}>
+                      <input
+                        id={`brand-social-${key}`}
+                        type="url"
+                        value={draft.brandInfo?.socials?.[key] || ''}
+                        placeholder={placeholder}
+                        onChange={(e) =>
+                          updateDraft((p) => ({
+                            ...p,
+                            brandInfo: {
+                              ...p.brandInfo,
+                              socials: {
+                                ...(p.brandInfo?.socials || {}),
+                                [key]: e.target.value
+                              }
+                            }
+                          }))
+                        }
+                        className={CMS_INPUT_CLASS}
+                      />
+                    </CmsField>
+                  ))}
+                </div>
+              </div>
+
+              {/* LEAD FORM BUDGET BRACKETS & TIMELINES */}
+              <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
+                <div>
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    Lead Form Budget Brackets & Timelines
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    Options shown on the Contact inquiry form and Interactive Project Planner modal.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                        Budget Brackets ({draft.brandInfo?.budgetOptions?.length || 0})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateDraft((p) => ({
+                            ...p,
+                            brandInfo: {
+                              ...p.brandInfo,
+                              budgetOptions: [...(p.brandInfo?.budgetOptions || []), 'Custom Scope']
+                            }
+                          }))
+                        }
+                        className={CMS_BTN_SECONDARY}
+                      >
+                        <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>Add</span>
+                      </button>
+                    </div>
+                    {(draft.brandInfo?.budgetOptions || []).map((opt, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          aria-label={`Budget option ${idx + 1}`}
+                          value={opt}
+                          onChange={(e) =>
+                            updateDraft((p) => {
+                              const budgetOptions = [...(p.brandInfo?.budgetOptions || [])];
+                              budgetOptions[idx] = e.target.value;
+                              return { ...p, brandInfo: { ...p.brandInfo, budgetOptions } };
+                            })
+                          }
+                          className={`${CMS_INPUT_CLASS} flex-1`}
+                        />
+                        <button
+                          type="button"
+                          disabled={(draft.brandInfo?.budgetOptions || []).length <= 1}
+                          aria-label={`Remove budget option ${idx + 1}`}
+                          onClick={() =>
+                            updateDraft((p) => ({
+                              ...p,
+                              brandInfo: {
+                                ...p.brandInfo,
+                                budgetOptions: (p.brandInfo?.budgetOptions || []).filter((_, i) => i !== idx)
+                              }
+                            }))
+                          }
+                          className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:text-rose-600 disabled:opacity-30 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" aria-hidden="true" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div className="space-y-2.5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                        Project Timelines ({draft.brandInfo?.timelineOptions?.length || 0})
+                      </span>
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateDraft((p) => ({
+                            ...p,
+                            brandInfo: {
+                              ...p.brandInfo,
+                              timelineOptions: [...(p.brandInfo?.timelineOptions || []), 'Ongoing Retainer']
+                            }
+                          }))
+                        }
+                        className={CMS_BTN_SECONDARY}
+                      >
+                        <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                        <span>Add</span>
+                      </button>
+                    </div>
+                    {(draft.brandInfo?.timelineOptions || []).map((opt, idx) => (
+                      <div key={idx} className="flex items-center gap-2">
+                        <input
+                          type="text"
+                          aria-label={`Timeline option ${idx + 1}`}
+                          value={opt}
+                          onChange={(e) =>
+                            updateDraft((p) => {
+                              const timelineOptions = [...(p.brandInfo?.timelineOptions || [])];
+                              timelineOptions[idx] = e.target.value;
+                              return { ...p, brandInfo: { ...p.brandInfo, timelineOptions } };
+                            })
+                          }
+                          className={`${CMS_INPUT_CLASS} flex-1`}
+                        />
+                        <button
+                          type="button"
+                          disabled={(draft.brandInfo?.timelineOptions || []).length <= 1}
+                          aria-label={`Remove timeline option ${idx + 1}`}
+                          onClick={() =>
+                            updateDraft((p) => ({
+                              ...p,
+                              brandInfo: {
+                                ...p.brandInfo,
+                                timelineOptions: (p.brandInfo?.timelineOptions || []).filter((_, i) => i !== idx)
+                              }
+                            }))
+                          }
+                          className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-500 hover:text-rose-600 disabled:opacity-30 cursor-pointer"
+                        >
+                          <Trash2 className="w-4 h-4" aria-hidden="true" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
               </div>
             </div>
 
@@ -771,7 +1563,6 @@ export default function ContentStudioPanel({
                         />
                         <button
                           type="button"
-                          disabled={(draft.values || []).length <= 1}
                           aria-label={`Remove value ${val.name || idx + 1}`}
                           onClick={() =>
                             updateDraft((p) => ({
@@ -779,7 +1570,7 @@ export default function ContentStudioPanel({
                               values: (p.values || []).filter((_, i) => i !== idx)
                             }))
                           }
-                          className="min-w-[38px] min-h-[38px] rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 disabled:opacity-30 cursor-pointer"
+                          className="min-w-[38px] min-h-[38px] rounded-lg flex items-center justify-center text-slate-500 dark:text-slate-400 hover:text-rose-600 dark:hover:text-rose-400 cursor-pointer"
                         >
                           <Trash2 className="w-4 h-4" aria-hidden="true" />
                         </button>
@@ -1220,7 +2011,7 @@ export default function ContentStudioPanel({
                       }
                       className={CMS_INPUT_CLASS}
                     >
-                      {ICON_OPTIONS.map((ic) => (
+                      {PILLAR_ICON_OPTIONS.map((ic) => (
                         <option key={ic} value={ic}>
                           {ic}
                         </option>
@@ -1360,26 +2151,56 @@ export default function ContentStudioPanel({
               {(draft.projects || []).map((proj, idx) => {
                 const selected = idx === selectedProjectIdx;
                 return (
-                  <button
+                  <div
                     key={proj.id || idx}
-                    type="button"
-                    onClick={() => setSelectedProjectIdx(idx)}
-                    className={`w-full text-left p-3 rounded-lg border transition-colors cursor-pointer ${
+                    className={`flex items-center justify-between gap-2 p-3 rounded-lg border transition-colors ${
                       selected
                         ? 'border-[#D1007C]/50 dark:border-pink-400/40 bg-pink-50/60 dark:bg-pink-500/[0.08]'
                         : 'border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.02]'
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
-                        {proj.title}
-                      </span>
-                      {proj.featured && <CmsStatusBadge tone="brand">Featured</CmsStatusBadge>}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedProjectIdx(idx)}
+                      className="flex-1 text-left min-w-0 cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-bold text-slate-900 dark:text-white truncate">
+                          {proj.title}
+                        </span>
+                        {proj.featured && <CmsStatusBadge tone="brand">Featured</CmsStatusBadge>}
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5 truncate">
+                        {proj.client} · {proj.category} ({proj.year})
+                      </p>
+                    </button>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        aria-label={`Move ${proj.title} up`}
+                        disabled={idx === 0}
+                        onClick={() => {
+                          moveItem('projects', idx, -1);
+                          setSelectedProjectIdx(Math.max(0, idx - 1));
+                        }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
+                      >
+                        <ArrowUp className="w-4 h-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Move ${proj.title} down`}
+                        disabled={idx === (draft.projects?.length || 1) - 1}
+                        onClick={() => {
+                          moveItem('projects', idx, 1);
+                          setSelectedProjectIdx(Math.min((draft.projects?.length || 1) - 1, idx + 1));
+                        }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
+                      >
+                        <ArrowDown className="w-4 h-4" aria-hidden="true" />
+                      </button>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
-                      {proj.client} · {proj.category} ({proj.year})
-                    </p>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -1398,7 +2219,6 @@ export default function ContentStudioPanel({
                   </h3>
                   <button
                     type="button"
-                    disabled={draft.projects.length <= 1}
                     onClick={() => {
                       updateDraft((p) => ({
                         ...p,
@@ -1601,32 +2421,80 @@ export default function ContentStudioPanel({
                   </CmsField>
                 </div>
 
-                <CmsField label="Measured Results (Metric & Outcome Pairs)">
+                <div className="space-y-2.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                      Measured Results (Metric & Outcome Pairs)
+                    </span>
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateDraft((p) => {
+                          const projects = [...p.projects];
+                          const results = [
+                            ...(projects[selectedProjectIdx].results || []),
+                            { metric: '+100%', label: 'Key Business Impact' }
+                          ];
+                          projects[selectedProjectIdx] = {
+                            ...projects[selectedProjectIdx],
+                            results
+                          };
+                          return { ...p, projects };
+                        })
+                      }
+                      className={CMS_BTN_SECONDARY}
+                    >
+                      <Plus className="w-3.5 h-3.5" aria-hidden="true" />
+                      <span>Add Metric</span>
+                    </button>
+                  </div>
                   <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                     {(activeProject.results || []).map((resItem, rIdx) => (
                       <div
                         key={rIdx}
                         className="p-3 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-2"
                       >
-                        <input
-                          type="text"
-                          aria-label={`Result ${rIdx + 1} metric`}
-                          value={resItem.metric || ''}
-                          placeholder="+200%"
-                          onChange={(e) =>
-                            updateDraft((p) => {
-                              const projects = [...p.projects];
-                              const results = [...(projects[selectedProjectIdx].results || [])];
-                              results[rIdx] = { ...results[rIdx], metric: e.target.value };
-                              projects[selectedProjectIdx] = {
-                                ...projects[selectedProjectIdx],
-                                results
-                              };
-                              return { ...p, projects };
-                            })
-                          }
-                          className={CMS_INPUT_CLASS}
-                        />
+                        <div className="flex items-center gap-1.5">
+                          <input
+                            type="text"
+                            aria-label={`Result ${rIdx + 1} metric`}
+                            value={resItem.metric || ''}
+                            placeholder="+200%"
+                            onChange={(e) =>
+                              updateDraft((p) => {
+                                const projects = [...p.projects];
+                                const results = [...(projects[selectedProjectIdx].results || [])];
+                                results[rIdx] = { ...results[rIdx], metric: e.target.value };
+                                projects[selectedProjectIdx] = {
+                                  ...projects[selectedProjectIdx],
+                                  results
+                                };
+                                return { ...p, projects };
+                              })
+                            }
+                            className={`${CMS_INPUT_CLASS} flex-1`}
+                          />
+                          <button
+                            type="button"
+                            aria-label={`Remove metric ${rIdx + 1}`}
+                            onClick={() =>
+                              updateDraft((p) => {
+                                const projects = [...p.projects];
+                                const results = (projects[selectedProjectIdx].results || []).filter(
+                                  (_, i) => i !== rIdx
+                                );
+                                projects[selectedProjectIdx] = {
+                                  ...projects[selectedProjectIdx],
+                                  results
+                                };
+                                return { ...p, projects };
+                              })
+                            }
+                            className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-500 hover:text-rose-600 cursor-pointer shrink-0"
+                          >
+                            <Trash2 className="w-4 h-4" aria-hidden="true" />
+                          </button>
+                        </div>
                         <input
                           type="text"
                           aria-label={`Result ${rIdx + 1} label`}
@@ -1649,7 +2517,7 @@ export default function ContentStudioPanel({
                       </div>
                     ))}
                   </div>
-                </CmsField>
+                </div>
 
                 <CmsField label="Capability Tags (Comma Separated)" htmlFor="proj-tags">
                   <input
@@ -1724,26 +2592,56 @@ export default function ContentStudioPanel({
               {(draft.blogPosts || []).map((post, idx) => {
                 const selected = idx === selectedBlogIdx;
                 return (
-                  <button
+                  <div
                     key={post.id || idx}
-                    type="button"
-                    onClick={() => setSelectedBlogIdx(idx)}
-                    className={`w-full text-left p-3 rounded-lg border transition-colors cursor-pointer ${
+                    className={`flex items-center justify-between gap-2 p-3 rounded-lg border transition-colors ${
                       selected
                         ? 'border-[#D1007C]/50 dark:border-pink-400/40 bg-pink-50/60 dark:bg-pink-500/[0.08]'
                         : 'border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-white/[0.02]'
                     }`}
                   >
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">
-                        {post.title}
-                      </span>
-                      {post.featured && <CmsStatusBadge tone="brand">Lead</CmsStatusBadge>}
+                    <button
+                      type="button"
+                      onClick={() => setSelectedBlogIdx(idx)}
+                      className="flex-1 text-left min-w-0 cursor-pointer"
+                    >
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-sm font-bold text-slate-900 dark:text-white line-clamp-1">
+                          {post.title}
+                        </span>
+                        {post.featured && <CmsStatusBadge tone="brand">Lead</CmsStatusBadge>}
+                      </div>
+                      <p className="text-xs text-slate-600 dark:text-slate-400 mt-1 truncate">
+                        {post.category} · {post.date}
+                      </p>
+                    </button>
+                    <div className="flex items-center gap-1 shrink-0">
+                      <button
+                        type="button"
+                        aria-label={`Move ${post.title} up`}
+                        disabled={idx === 0}
+                        onClick={() => {
+                          moveItem('blogPosts', idx, -1);
+                          setSelectedBlogIdx(Math.max(0, idx - 1));
+                        }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
+                      >
+                        <ArrowUp className="w-4 h-4" aria-hidden="true" />
+                      </button>
+                      <button
+                        type="button"
+                        aria-label={`Move ${post.title} down`}
+                        disabled={idx === (draft.blogPosts?.length || 1) - 1}
+                        onClick={() => {
+                          moveItem('blogPosts', idx, 1);
+                          setSelectedBlogIdx(Math.min((draft.blogPosts?.length || 1) - 1, idx + 1));
+                        }}
+                        className="w-8 h-8 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 disabled:opacity-30 hover:bg-black/[0.05] dark:hover:bg-white/[0.07] cursor-pointer"
+                      >
+                        <ArrowDown className="w-4 h-4" aria-hidden="true" />
+                      </button>
                     </div>
-                    <p className="text-xs text-slate-600 dark:text-slate-400 mt-1">
-                      {post.category} · {post.date}
-                    </p>
-                  </button>
+                  </div>
                 );
               })}
             </div>
@@ -1775,7 +2673,6 @@ export default function ContentStudioPanel({
                     </button>
                     <button
                       type="button"
-                      disabled={draft.blogPosts.length <= 1}
                       onClick={() => {
                         updateDraft((p) => ({
                           ...p,
@@ -2243,6 +3140,21 @@ export default function ContentStudioPanel({
                       />
                     </div>
 
+                    <input
+                      type="text"
+                      aria-label={`Role ${idx + 1} salary or compensation`}
+                      value={role.salary || ''}
+                      placeholder="Compensation (e.g. Competitive + Performance Bonus)"
+                      onChange={(e) =>
+                        updateDraft((p) => {
+                          const openRoles = [...p.openRoles];
+                          openRoles[idx] = { ...openRoles[idx], salary: e.target.value };
+                          return { ...p, openRoles };
+                        })
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+
                     <textarea
                       rows={2}
                       aria-label={`Role ${idx + 1} description`}
@@ -2317,7 +3229,6 @@ export default function ContentStudioPanel({
                     </span>
                     <button
                       type="button"
-                      disabled={draft.offices.length <= 1}
                       aria-label={`Delete office ${office.city}`}
                       onClick={() =>
                         updateDraft((p) => ({
@@ -2325,7 +3236,7 @@ export default function ContentStudioPanel({
                           offices: p.offices.filter((_, i) => i !== idx)
                         }))
                       }
-                      className="w-9 h-9 rounded-lg flex items-center justify-center text-[#BE123C] dark:text-[#FDA4AF] disabled:opacity-30 cursor-pointer"
+                      className="w-9 h-9 rounded-lg flex items-center justify-center text-[#BE123C] dark:text-[#FDA4AF] cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" aria-hidden="true" />
                     </button>
@@ -2479,7 +3390,6 @@ export default function ContentStudioPanel({
                     </span>
                     <button
                       type="button"
-                      disabled={draft.testimonials.length <= 1}
                       aria-label={`Delete testimonial from ${t.author}`}
                       onClick={() =>
                         updateDraft((p) => ({
@@ -2487,7 +3397,7 @@ export default function ContentStudioPanel({
                           testimonials: p.testimonials.filter((_, i) => i !== idx)
                         }))
                       }
-                      className="w-9 h-9 rounded-lg flex items-center justify-center text-[#BE123C] dark:text-[#FDA4AF] disabled:opacity-30 cursor-pointer"
+                      className="w-9 h-9 rounded-lg flex items-center justify-center text-[#BE123C] dark:text-[#FDA4AF] cursor-pointer"
                     >
                       <Trash2 className="w-4 h-4" aria-hidden="true" />
                     </button>
@@ -2505,7 +3415,7 @@ export default function ContentStudioPanel({
                     }
                     className={CMS_INPUT_CLASS}
                   />
-                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div className="grid grid-cols-1 sm:grid-cols-4 gap-2">
                     <input
                       type="text"
                       aria-label="Testimonial author"
@@ -2548,82 +3458,40 @@ export default function ContentStudioPanel({
                       }
                       className={CMS_INPUT_CLASS}
                     />
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Agency Values */}
-          <div className={`${CMS_CARD} p-5 sm:p-6 space-y-4`}>
-            <div className="flex items-center justify-between">
-              <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
-                Agency Core Values ({draft.values?.length || 0})
-              </h3>
-              <button
-                type="button"
-                onClick={() =>
-                  updateDraft((p) => ({
-                    ...p,
-                    values: [
-                      ...(p.values || []),
-                      { name: 'New Principle', description: 'How this principle guides our work.' }
-                    ]
-                  }))
-                }
-                className={CMS_BTN_SECONDARY}
-              >
-                <Plus className="w-4 h-4" aria-hidden="true" />
-                <span>Add Value</span>
-              </button>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-              {(draft.values || []).map((val, idx) => (
-                <div
-                  key={idx}
-                  className="p-3.5 rounded-lg border border-black/[0.06] dark:border-white/[0.06] bg-slate-50/80 dark:bg-white/[0.02] space-y-2"
-                >
-                  <div className="flex items-center gap-2">
-                    <input
-                      type="text"
-                      aria-label={`Value ${idx + 1} title`}
-                      value={val.name || ''}
+                    <select
+                      aria-label="Testimonial star rating"
+                      value={Number(t.rating) || 5}
                       onChange={(e) =>
                         updateDraft((p) => {
-                          const values = [...p.values];
-                          values[idx] = { ...values[idx], name: e.target.value };
-                          return { ...p, values };
+                          const testimonials = [...p.testimonials];
+                          testimonials[idx] = {
+                            ...testimonials[idx],
+                            rating: Number(e.target.value)
+                          };
+                          return { ...p, testimonials };
                         })
                       }
-                      className={`${CMS_INPUT_CLASS} font-bold`}
-                    />
-                    <button
-                      type="button"
-                      disabled={draft.values.length <= 1}
-                      aria-label={`Remove value ${val.name}`}
-                      onClick={() =>
-                        updateDraft((p) => ({
-                          ...p,
-                          values: p.values.filter((_, i) => i !== idx)
-                        }))
-                      }
-                      className="w-9 h-9 rounded-lg flex items-center justify-center text-[#BE123C] dark:text-[#FDA4AF] disabled:opacity-30 cursor-pointer"
+                      className={CMS_INPUT_CLASS}
                     >
-                      <Trash2 className="w-4 h-4" aria-hidden="true" />
-                    </button>
+                      {[5, 4, 3, 2, 1].map((stars) => (
+                        <option key={stars} value={stars}>
+                          {stars} {stars === 1 ? 'Star' : 'Stars'}
+                        </option>
+                      ))}
+                    </select>
                   </div>
-                  <textarea
-                    rows={2}
-                    aria-label={`Value ${idx + 1} description`}
-                    value={val.description || ''}
-                    onChange={(e) =>
+                  <MediaUploadField
+                    id={`testimonial-avatar-${idx}`}
+                    label="Author Photo (Optional, leave blank for initials badge)"
+                    value={t.avatar || ''}
+                    onUploadFile={onUploadFile}
+                    onChange={(url) =>
                       updateDraft((p) => {
-                        const values = [...p.values];
-                        values[idx] = { ...values[idx], description: e.target.value };
-                        return { ...p, values };
+                        const testimonials = [...p.testimonials];
+                        testimonials[idx] = { ...testimonials[idx], avatar: url };
+                        return { ...p, testimonials };
                       })
                     }
-                    className={CMS_INPUT_CLASS}
                   />
                 </div>
               ))}
@@ -2722,7 +3590,7 @@ export default function ContentStudioPanel({
               {Object.entries(draft.seo?.pageTitles || {}).map(([routeKey, routeTitle]) => (
                 <div key={routeKey} className="p-3.5 rounded-lg border border-slate-200 dark:border-white/[0.07] bg-slate-50/70 dark:bg-white/[0.02] space-y-2.5">
                   <CmsField
-                    label={`/${routeKey === 'home' ? '' : routeKey} — Page Title`}
+                    label={`/${routeKey === 'home' ? '' : routeKey}: Page Title`}
                     htmlFor={`seo-route-${routeKey}`}
                   >
                     <input
@@ -2745,7 +3613,7 @@ export default function ContentStudioPanel({
                     />
                   </CmsField>
                   <CmsField
-                    label={`/${routeKey === 'home' ? '' : routeKey} — Meta Description`}
+                    label={`/${routeKey === 'home' ? '' : routeKey}: Meta Description`}
                     htmlFor={`seo-desc-${routeKey}`}
                   >
                     <textarea

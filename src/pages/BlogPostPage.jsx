@@ -10,7 +10,7 @@ export const BlogPostPage = ({
 }) => {
   const { content } = useCms();
   const blogPosts = content.blogPosts || [];
-  const article = blogPosts.find(p => p.id === slug) || blogPosts[0];
+  const article = blogPosts.find((p) => p.id === slug);
   const [copied, setCopied] = useState(false);
 
   useEffect(() => {
@@ -35,6 +35,19 @@ export const BlogPostPage = ({
 
   const relatedArticles = blogPosts.filter(p => p.id !== article.id).slice(0, 3);
 
+  const escapeHtml = (str) =>
+    String(str || '')
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+  const formatInlineMarkdown = (text) =>
+    escapeHtml(text)
+      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 dark:text-white font-bold">$1</strong>')
+      .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-rak-slate-800 text-rak-magenta font-mono text-xs">$1</code>');
+
   const renderFormattedContent = (rawContent) => {
     if (!rawContent) return null;
     const lines = rawContent.split('\n\n');
@@ -53,7 +66,11 @@ export const BlogPostPage = ({
           <ul key={index} className="space-y-2.5 my-4 pl-4 list-disc">
             {items.map((item, i) => (
               <li key={i} className="text-slate-700 dark:text-rak-slate-300 text-sm leading-relaxed">
-                <span dangerouslySetInnerHTML={{ __html: item.replace(/^- \*\*(.*?)\*\*:/, '<strong class="text-slate-900 dark:text-white font-bold">$1:</strong>').replace(/^- /, '') }} />
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: formatInlineMarkdown(item.replace(/^- /, ''))
+                  }}
+                />
               </li>
             ))}
           </ul>
@@ -61,11 +78,7 @@ export const BlogPostPage = ({
       }
       return (
         <p key={index} className="text-slate-700 dark:text-rak-slate-300 text-sm sm:text-base leading-relaxed mb-4">
-          <span dangerouslySetInnerHTML={{ 
-            __html: trimmed
-              .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 dark:text-white font-bold">$1</strong>')
-              .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-rak-slate-800 text-rak-magenta font-mono text-xs">$1</code>')
-          }} />
+          <span dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(trimmed) }} />
         </p>
       );
     });

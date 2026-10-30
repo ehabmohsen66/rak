@@ -15,68 +15,24 @@ import {
 } from 'lucide-react';
 import { MasonryGrid } from './ui/MasonryGrid';
 import { GradientShimmer } from './ui/GradientShimmer';
+import { useCms } from '../lib/cmsContext';
 
-const TEAM_VIDEOS = [
-  {
-    id: 'vid-1',
-    src: '/videos/Big Giraffe.mp4',
-    title: 'Big Wild Ideas in 3D',
-    category: '3D & Motion Lab',
-    vibe: 'Fearless Imagination',
-    caption: 'When we brainstorm, no idea is too crazy. We turn wildest concepts into hyper-realistic 3D realities.',
-    aspect: 'aspect-[9/14]',
-    tagColor: 'from-pink-500 to-rose-500'
-  },
-  {
-    id: 'vid-2',
-    src: '/videos/Commercial Video.mp4',
-    title: 'Cinematic High-Impact Films',
-    category: 'Commercial Production',
-    vibe: '4K Storytelling',
-    caption: 'Directing, lighting, filming, and post-production: pure cinema crafted to make audiences stop scrolling.',
-    aspect: 'aspect-[16/10]',
-    tagColor: 'from-rak-magenta to-purple-600'
-  },
-  {
-    id: 'vid-3',
-    src: '/videos/Option 2.mp4',
-    title: 'Late Night Studio Energy',
-    category: 'Squad Vibes',
-    vibe: 'Pure Passion',
-    caption: 'Music blasting, intense focus, laughter, and high-fives. This is what building the future feels like.',
-    aspect: 'aspect-[9/15]',
-    tagColor: 'from-cyan-500 to-blue-600'
-  },
-  {
-    id: 'vid-4',
-    src: '/videos/Hotel building.mp4',
-    title: 'Architectural & Spatial Vision',
-    category: 'Spatial Branding',
-    vibe: 'Modern Precision',
-    caption: 'Elevating real-world spaces with modern visual architecture and high-end aesthetics.',
-    aspect: 'aspect-[4/5]',
-    tagColor: 'from-amber-500 to-orange-600'
-  },
-  {
-    id: 'vid-5',
-    src: '/videos/Penguin Video.mp4',
-    title: 'Unconventional Character Magic',
-    category: 'Creative Play',
-    vibe: 'Playful Brilliance',
-    caption: 'Injecting wit, character personality, and playful humor into everything we create.',
-    aspect: 'aspect-[1/1]',
-    tagColor: 'from-emerald-400 to-teal-600'
-  },
-  {
-    id: 'vid-6',
-    src: '/videos/post 11.mp4',
-    title: 'High-Retention Viral Motion',
-    category: 'Social First',
-    vibe: 'Fast & Electric',
-    caption: 'Engineered for social speed and instant visual hook, crafted for modern digital culture.',
-    aspect: 'aspect-[9/14]',
-    tagColor: 'from-violet-500 to-rak-magenta'
-  }
+const DEFAULT_ASPECTS = [
+  'aspect-[9/14]',
+  'aspect-[16/10]',
+  'aspect-[9/15]',
+  'aspect-[4/5]',
+  'aspect-[1/1]',
+  'aspect-[9/14]'
+];
+
+const DEFAULT_TAG_COLORS = [
+  'from-pink-500 to-rose-500',
+  'from-rak-magenta to-purple-600',
+  'from-cyan-500 to-blue-600',
+  'from-amber-500 to-orange-600',
+  'from-emerald-400 to-teal-600',
+  'from-violet-500 to-rak-magenta'
 ];
 
 const VideoCard = ({ item, onOpenModal }) => {
@@ -219,8 +175,21 @@ const VideoCard = ({ item, onOpenModal }) => {
 };
 
 export const TeamVideoShowcase = () => {
+  const { content } = useCms();
+  const hs = content.homeSections || {};
   const [selectedVideo, setSelectedVideo] = useState(null);
   const modalVideoRef = useRef(null);
+
+  const videos = (hs.squadVideos || [])
+    .filter((v) => v && v.src)
+    .map((v, idx) => ({
+      ...v,
+      id: v.id || `vid-${idx + 1}`,
+      aspect: v.aspect || DEFAULT_ASPECTS[idx % DEFAULT_ASPECTS.length],
+      tagColor: v.tagColor || DEFAULT_TAG_COLORS[idx % DEFAULT_TAG_COLORS.length]
+    }));
+
+  if (videos.length === 0) return null;
 
   return (
     <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-10 sm:space-y-12">
@@ -228,41 +197,53 @@ export const TeamVideoShowcase = () => {
       {/* Section Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-3 max-w-3xl">
-          <div className="inline-flex items-center space-x-2 text-xs font-bold text-rak-magenta uppercase tracking-widest px-3.5 py-1.5 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
-            <Sparkles className="w-3.5 h-3.5 text-rak-magenta" />
-            <span>The RAK Squad & Culture</span>
-          </div>
+          {hs.squadEyebrow !== '' && (
+            <div className="inline-flex items-center space-x-2 text-xs font-bold text-rak-magenta uppercase tracking-widest px-3.5 py-1.5 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
+              <Sparkles className="w-3.5 h-3.5 text-rak-magenta" />
+              <span>{hs.squadEyebrow || 'The RAK Squad & Culture'}</span>
+            </div>
+          )}
           
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-[1.15]">
-            We're Not Just a Business.{' '}
-            <span className="inline-block">
-              <GradientShimmer gradient="sunrise" duration={5}>
-                We're a Super Cool Team.
-              </GradientShimmer>
-            </span>
+            {hs.squadHeading || "We're Not Just a Business."}{' '}
+            {(hs.squadHighlight ?? "We're a Super Cool Team.") && (
+              <span className="inline-block">
+                <GradientShimmer gradient="sunrise" duration={5}>
+                  {hs.squadHighlight ?? "We're a Super Cool Team."}
+                </GradientShimmer>
+              </span>
+            )}
           </h2>
 
-          <p className="text-sm sm:text-base text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal pt-1">
-            Step behind the scenes. From crazy 3D experiments and cinematic shoots to pure studio laughter, meet the passionate creators turning bold ideas into iconic work.
-          </p>
+          {(hs.squadDescription ?? "Step behind the scenes. From crazy 3D experiments and cinematic shoots to pure studio laughter, meet the passionate creators turning bold ideas into iconic work.") && (
+            <p className="text-sm sm:text-base text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal pt-1">
+              {hs.squadDescription ?? "Step behind the scenes. From crazy 3D experiments and cinematic shoots to pure studio laughter, meet the passionate creators turning bold ideas into iconic work."}
+            </p>
+          )}
         </div>
 
         {/* Culture Badges */}
-        <div className="flex flex-wrap md:flex-col gap-2.5 shrink-0">
-          <div className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-2xl bg-white dark:bg-rak-slate-900 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-sm">
-            <Flame className="w-4 h-4 text-rak-magenta shrink-0" />
-            <span>100% In-House Energy</span>
+        {((hs.squadBadge1 ?? '100% In-House Energy') || (hs.squadBadge2 ?? 'Fearless Experimentation')) && (
+          <div className="flex flex-wrap md:flex-col gap-2.5 shrink-0">
+            {(hs.squadBadge1 ?? '100% In-House Energy') && (
+              <div className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-2xl bg-white dark:bg-rak-slate-900 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-sm">
+                <Flame className="w-4 h-4 text-rak-magenta shrink-0" />
+                <span>{hs.squadBadge1 ?? '100% In-House Energy'}</span>
+              </div>
+            )}
+            {(hs.squadBadge2 ?? 'Fearless Experimentation') && (
+              <div className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-2xl bg-white dark:bg-rak-slate-900 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-sm">
+                <Zap className="w-4 h-4 text-rak-cyan shrink-0" />
+                <span>{hs.squadBadge2 ?? 'Fearless Experimentation'}</span>
+              </div>
+            )}
           </div>
-          <div className="inline-flex items-center space-x-2 px-3.5 py-2 rounded-2xl bg-white dark:bg-rak-slate-900 border border-slate-200 dark:border-white/10 text-xs font-bold text-slate-800 dark:text-slate-200 shadow-sm">
-            <Zap className="w-4 h-4 text-rak-cyan shrink-0" />
-            <span>Fearless Experimentation</span>
-          </div>
-        </div>
+        )}
       </div>
 
       {/* Masonry Video Grid */}
       <MasonryGrid gap={5} className="w-full">
-        {TEAM_VIDEOS.map((item) => (
+        {videos.map((item) => (
           <VideoCard 
             key={item.id} 
             item={item} 

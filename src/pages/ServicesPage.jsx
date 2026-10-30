@@ -1,7 +1,8 @@
 import React, { useState, useMemo } from 'react';
-import { Sparkles, CheckCircle2, ArrowUpRight, Compass, BarChart3, Share2, Code, Search, Target, Video } from 'lucide-react';
+import { Sparkles, CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { GLSLHills } from '../components/GLSLHills';
 import { useCms } from '../lib/cmsContext';
+import { getPillarIcon } from '../lib/pillarIcons';
 import { useBanner, RichTitle, BannerMedia, BannerOverlay } from '../components/BannerKit';
 import { followBannerLink } from '../lib/banners';
 
@@ -19,19 +20,6 @@ export const ServicesPage = ({ onOpenPlanner }) => {
   const filteredPillars = activeCategory === 'All' 
     ? pillars 
     : pillars.filter(p => p.category === activeCategory);
-
-  const getPillarIcon = (iconName) => {
-    switch(iconName) {
-      case 'Compass': return Compass;
-      case 'BarChart3': return BarChart3;
-      case 'Share2': return Share2;
-      case 'Code': return Code;
-      case 'Search': return Search;
-      case 'Target': return Target;
-      case 'Video': return Video;
-      default: return Sparkles;
-    }
-  };
 
   return (
     <div className="pb-16 space-y-16 sm:space-y-24 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">

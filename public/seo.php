@@ -90,9 +90,22 @@ if ($baseUrl === '') {
     $baseUrl = 'https://rak4creative.com';
 }
 
+function rakAbsoluteUrl(string $url, string $baseUrl): string {
+    $trimmed = trim($url);
+    if ($trimmed === '') {
+        return $baseUrl . '/og-logo.png';
+    }
+    if (preg_match('#^https?://#i', $trimmed)) {
+        return str_replace(' ', '%20', $trimmed);
+    }
+    return $baseUrl . '/' . str_replace(' ', '%20', ltrim($trimmed, '/'));
+}
+
 $ogImage = (string)($seo['ogImage'] ?? ($baseUrl . '/og-logo.png'));
 if ($ogImage === '' || strpos($ogImage, 'photo-1618005182384-a83a8bd57fbe') !== false) {
     $ogImage = $baseUrl . '/og-logo.png';
+} else {
+    $ogImage = rakAbsoluteUrl($ogImage, $baseUrl);
 }
 
 $keywords = (string)($seo['metaKeywords'] ?? '');
@@ -182,8 +195,7 @@ if ($tab === 'blog-post' && $matchedPost !== null) {
         $pageDesc = (string)$matchedPost['subtitle'];
     }
     if (!empty($matchedPost['image'])) {
-        $img = (string)$matchedPost['image'];
-        $ogImage = (strpos($img, 'http') === 0) ? $img : ($baseUrl . '/' . ltrim($img, '/'));
+        $ogImage = rakAbsoluteUrl((string)$matchedPost['image'], $baseUrl);
     }
 }
 
@@ -354,14 +366,15 @@ if ($tab !== 'admin' && !$isNotFound) {
     $ns .= "<nav><a href=\"{$baseUrl}/\">Home</a> | <a href=\"{$baseUrl}/about\">About</a> | <a href=\"{$baseUrl}/services\">Services</a> | <a href=\"{$baseUrl}/work\">Portfolio</a> | <a href=\"{$baseUrl}/case-studies\">Case Studies</a> | <a href=\"{$baseUrl}/careers\">Careers</a> | <a href=\"{$baseUrl}/blog\">Blog</a> | <a href=\"{$baseUrl}/contact\">Contact</a></nav>";
 
     if ($tab === 'home') {
-        $ns .= '<h1>' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . ' — ' . rakEsc((string)($brand['tagline'] ?? 'Your One-Stop Agency')) . '</h1>';
-        $ns .= '<p>' . rakEsc((string)($brand['headline'] ?? '')) . '</p>';
+        $homeHeroTitle = (string)($content['banners']['home']['title'] ?? $brand['headline'] ?? '');
+        $ns .= '<h1>' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . ': ' . rakEsc((string)($brand['tagline'] ?? 'Your One-Stop Agency')) . '</h1>';
+        $ns .= '<p>' . rakEsc(str_replace('*', '', $homeHeroTitle)) . '</p>';
         $ns .= '<p>' . rakEsc((string)($brand['description'] ?? '')) . '</p>';
         foreach ($pillars as $pl) {
             $ns .= '<section><h2>' . rakEsc((string)($pl['title'] ?? '')) . '</h2><p>' . rakEsc((string)($pl['description'] ?? '')) . '</p></section>';
         }
     } elseif ($tab === 'services') {
-        $ns .= '<h1>' . count($pillars) . ' Core Pillars — ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
+        $ns .= '<h1>' . count($pillars) . ' Core Pillars: ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
         $ns .= '<p>' . rakEsc((string)($brand['whatWeDo'] ?? '')) . '</p>';
         foreach ($pillars as $pl) {
             $ns .= '<section><h2>' . rakEsc((string)($pl['title'] ?? '')) . '</h2><p>' . rakEsc((string)($pl['description'] ?? '')) . '</p>';
@@ -414,7 +427,7 @@ if ($tab !== 'admin' && !$isNotFound) {
     } elseif ($tab === 'contact') {
         $ns .= '<h1>Contact ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
         foreach ($offices as $of) {
-            $ns .= '<address><strong>' . rakEsc((string)($of['city'] ?? '') . ', ' . (string)($of['country'] ?? '')) . '</strong> — ' . rakEsc((string)($of['address'] ?? '')) . ' • ' . rakEsc((string)($of['phone'] ?? '')) . ' • ' . rakEsc((string)($of['email'] ?? '')) . '</address>';
+            $ns .= '<address><strong>' . rakEsc((string)($of['city'] ?? '') . ', ' . (string)($of['country'] ?? '')) . '</strong>: ' . rakEsc((string)($of['address'] ?? '')) . ' • ' . rakEsc((string)($of['phone'] ?? '')) . ' • ' . rakEsc((string)($of['email'] ?? '')) . '</address>';
         }
     }
 

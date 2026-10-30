@@ -2,7 +2,6 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowUpRight, Volume2, VolumeX } from 'lucide-react';
 import { GradientShimmer } from './ui/GradientShimmer';
-import { useCms } from '../lib/cmsContext';
 import { useBanner, RichTitle, BannerMedia, BannerOverlay } from './BannerKit';
 import { followBannerLink } from '../lib/banners';
 
@@ -100,10 +99,9 @@ const VideoBackground = React.memo(({ videoRef, banner }) => {
 });
 
 export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = () => {} }) => {
-  const { content } = useCms();
   const banner = useBanner('home');
   const heroPhrases = banner.rotatingWords.filter((w) => w.trim() !== '');
-  const heroDescription = banner.subtitle || content?.brandInfo?.description || chapter.description;
+  const heroDescription = banner.subtitle;
   const [phraseIndex, setPhraseIndex] = useState(0);
   const [soundEnabled, setSoundEnabled] = useState(false);
   const videoRef = useRef(null);

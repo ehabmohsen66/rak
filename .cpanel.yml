@@ -5,10 +5,10 @@ deployment:
     - export DEPLOYPATH=/home/$USER/public_html/
     - if [ -d "/home/$USER/rak4creative.com" ]; then export DEPLOYPATH=/home/$USER/rak4creative.com/; elif [ -d "/home/$USER/public_html/rak4creative.com" ]; then export DEPLOYPATH=/home/$USER/public_html/rak4creative.com/; fi
     - export BACKUPPATH=/home/$USER/.rak_cms_backup/
-    # 2. Preserve live CMS storage & uploads across deployments
-    - /bin/mkdir -p $BACKUPPATH/storage $BACKUPPATH/uploads
-    - /bin/cp -Rf $DEPLOYPATH/api/storage/*.json $BACKUPPATH/storage/ 2>/dev/null || true
-    - /bin/cp -Rf $DEPLOYPATH/uploads/* $BACKUPPATH/uploads/ 2>/dev/null || true
+    # 2. Mirror current live CMS storage & uploads so deleted files do not reappear
+    - /bin/mkdir -p $BACKUPPATH
+    - if [ -d "$DEPLOYPATH/api/storage" ]; then /bin/rm -rf $BACKUPPATH/storage && /bin/mkdir -p $BACKUPPATH/storage && /bin/cp -Rf $DEPLOYPATH/api/storage/*.json $BACKUPPATH/storage/ 2>/dev/null || true; fi
+    - if [ -d "$DEPLOYPATH/uploads" ]; then /bin/rm -rf $BACKUPPATH/uploads && /bin/mkdir -p $BACKUPPATH/uploads && /bin/cp -Rf $DEPLOYPATH/uploads/. $BACKUPPATH/uploads/ 2>/dev/null || true; fi
     # 4. Deploy all built production files and .htaccess into Document Root
     - /bin/mkdir -p $DEPLOYPATH/api/storage $DEPLOYPATH/uploads/media $DEPLOYPATH/uploads/resumes
     - /bin/cp -Rf public/* $DEPLOYPATH 2>/dev/null || true
@@ -20,6 +20,6 @@ deployment:
     - /bin/cp -f public/uploads/.htaccess $DEPLOYPATH/uploads/ 2>/dev/null || true
     # 5. Restore live CMS data & ensure writable permissions for PHP on cPanel
     - /bin/cp -Rf $BACKUPPATH/storage/*.json $DEPLOYPATH/api/storage/ 2>/dev/null || true
-    - /bin/cp -Rn $BACKUPPATH/uploads/* $DEPLOYPATH/uploads/ 2>/dev/null || true
+    - /bin/cp -Rn $BACKUPPATH/uploads/. $DEPLOYPATH/uploads/ 2>/dev/null || true
     - /bin/chmod -R 755 $DEPLOYPATH/api $DEPLOYPATH/uploads
     - /bin/chmod -R 775 $DEPLOYPATH/api/storage $DEPLOYPATH/uploads

@@ -9,7 +9,16 @@ Options -Indexes -ExecCGI
 <IfModule mod_php8.c>
   php_flag engine off
 </IfModule>
-<FilesMatch "\.(php|php[0-9]|phtml|phar|pl|py|cgi|sh|htaccess)$">
+<IfModule mod_headers.c>
+  Header set X-Content-Type-Options "nosniff"
+  <FilesMatch "\.(svg|svgz|html|htm|xhtml|xml)$">
+    Header set Content-Security-Policy "default-src 'none'; style-src 'unsafe-inline'; img-src data:; sandbox"
+  </FilesMatch>
+  <FilesMatch "\.(doc|docx)$">
+    Header set Content-Disposition "attachment"
+  </FilesMatch>
+</IfModule>
+<FilesMatch "\.(php|php[0-9]|phtml|phar|pl|py|cgi|sh|shtml|htaccess)$">
   <IfModule mod_authz_core.c>
     Require all denied
   </IfModule>

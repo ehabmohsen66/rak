@@ -5,17 +5,26 @@ import { useCms } from '../lib/cmsContext';
 export const ProjectEstimatorModal = ({ onClose }) => {
   const { content, submitLead } = useCms();
   const services = content.pillars || [];
+  const budgetOptions =
+    Array.isArray(content.brandInfo?.budgetOptions) && content.brandInfo.budgetOptions.length > 0
+      ? content.brandInfo.budgetOptions
+      : ['$25,000 - $50,000', '$50,000 - $100,000', '$100,000 - $250,000', '$250,000+'];
+  const timelineOptions =
+    Array.isArray(content.brandInfo?.timelineOptions) && content.brandInfo.timelineOptions.length > 0
+      ? content.brandInfo.timelineOptions
+      : ['Urgent (< 4 Wks)', '4 - 8 Weeks', '8 - 12 Weeks', 'Flexible Scope'];
 
   const [step, setStep] = useState(1);
   const [selectedServices, setSelectedServices] = useState([]);
-  const [budget, setBudget] = useState('$50,000 - $100,000');
-  const [timeline, setTimeline] = useState('4 - 8 Weeks');
+  const [budget, setBudget] = useState(() => budgetOptions[1] || budgetOptions[0] || '$50,000 - $100,000');
+  const [timeline, setTimeline] = useState(() => timelineOptions[1] || timelineOptions[0] || '4 - 8 Weeks');
   const [contact, setContact] = useState({
     name: '',
     company: '',
     email: '',
     phone: '',
-    brief: ''
+    brief: '',
+    website_url_hp: ''
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -64,7 +73,8 @@ export const ProjectEstimatorModal = ({ onClose }) => {
       selectedServices,
       budget,
       timeline,
-      message: contact.brief
+      message: contact.brief,
+      website_url_hp: contact.website_url_hp
     });
 
     setSubmitting(false);
@@ -197,7 +207,7 @@ export const ProjectEstimatorModal = ({ onClose }) => {
                       Target Budget Allocation
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {['$25,000 - $50,000', '$50,000 - $100,000', '$100,000 - $250,000', '$250,000+'].map((b) => (
+                      {budgetOptions.map((b) => (
                         <button
                           type="button"
                           key={b}
@@ -219,7 +229,7 @@ export const ProjectEstimatorModal = ({ onClose }) => {
                       Desired Timeline
                     </label>
                     <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                      {['Urgent (< 4 Wks)', '4 - 8 Weeks', '8 - 12 Weeks', 'Flexible Scope'].map((t) => (
+                      {timelineOptions.map((t) => (
                         <button
                           type="button"
                           key={t}
@@ -310,6 +320,19 @@ export const ProjectEstimatorModal = ({ onClose }) => {
                       onChange={(e) => setContact({ ...contact, brief: e.target.value })}
                       placeholder="Briefly describe your objectives, key challenges, or target deliverables..."
                       className="w-full px-3.5 py-2.5 text-xs bg-slate-50 dark:bg-rak-slate-950 border border-slate-300 dark:border-rak-slate-700 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-rak-slate-500 focus:outline-none focus:border-rak-magenta focus:ring-2 focus:ring-rak-magenta"
+                    />
+                  </div>
+
+                  <div className="sr-only" aria-hidden="true">
+                    <label htmlFor="planner-website-hp">Company Website</label>
+                    <input
+                      id="planner-website-hp"
+                      type="text"
+                      name="website_url_hp"
+                      tabIndex={-1}
+                      autoComplete="off"
+                      value={contact.website_url_hp}
+                      onChange={(e) => setContact({ ...contact, website_url_hp: e.target.value })}
                     />
                   </div>
 

@@ -11,7 +11,8 @@ import {
   FolderOpen,
   FileText,
   RefreshCw,
-  Search
+  Search,
+  Trash2
 } from 'lucide-react';
 import { useCms } from '../../lib/cmsContext';
 
@@ -248,9 +249,10 @@ function detectMediaKind(url = '') {
 }
 
 export function MediaLibraryDialog({ open, onClose, onSelect, kind = 'all' }) {
-  const { fetchMediaLibrary } = useCms();
+  const { fetchMediaLibrary, deleteMediaFile } = useCms();
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [deletingUrl, setDeletingUrl] = useState('');
   const [error, setError] = useState('');
   const [query, setQuery] = useState('');
   const [filter, setFilter] = useState(kind === 'all' ? 'all' : kind);
@@ -278,6 +280,25 @@ export function MediaLibraryDialog({ open, onClose, onSelect, kind = 'all' }) {
       load();
     }
   }, [open, kind, load]);
+
+  const handleDelete = async (e, item) => {
+    e.stopPropagation();
+    if (!item?.deletable || deletingUrl) return;
+    setDeletingUrl(item.url);
+    setError('');
+    try {
+      const res = await deleteMediaFile(item.url);
+      if (res?.ok) {
+        setItems((prev) => prev.filter((x) => x.url !== item.url));
+      } else {
+        setError(res?.error || 'Could not delete media file.');
+      }
+    } catch {
+      setError('Network error while deleting media file.');
+    } finally {
+      setDeletingUrl('');
+    }
+  };
 
   const visible = items.filter((item) => {
     if (filter !== 'all' && item.type !== filter) return false;
@@ -367,14 +388,14 @@ export function MediaLibraryDialog({ open, onClose, onSelect, kind = 'all' }) {
         ) : (
           <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
             {visible.map((item) => (
-              <li key={item.url}>
+              <li key={item.url} className="relative group">
                 <button
                   type="button"
                   onClick={() => {
                     onSelect(item.url, item);
                     onClose();
                   }}
-                  className="group w-full text-left rounded-lg border border-black/[0.08] dark:border-white/[0.08] overflow-hidden hover:border-[#D1007C] dark:hover:border-[#FF4FB0] transition-colors cursor-pointer"
+                  className="w-full text-left rounded-lg border border-black/[0.08] dark:border-white/[0.08] overflow-hidden hover:border-[#D1007C] dark:hover:border-[#FF4FB0] transition-colors cursor-pointer"
                 >
                   <div className="relative aspect-video bg-slate-100 dark:bg-black/40 flex items-center justify-center overflow-hidden">
                     {item.type === 'image' && (
@@ -404,6 +425,22 @@ export function MediaLibraryDialog({ open, onClose, onSelect, kind = 'all' }) {
                     </p>
                   </div>
                 </button>
+                {item.deletable && (
+                  <button
+                    type="button"
+                    disabled={deletingUrl === item.url}
+                    onClick={(e) => handleDelete(e, item)}
+                    aria-label={`Delete uploaded file ${item.name}`}
+                    title="Delete uploaded file"
+                    className="absolute top-2 right-2 w-8 h-8 rounded-md bg-black/75 hover:bg-rose-600 text-white flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover:opacity-100 focus-visible:opacity-100 transition-opacity cursor-pointer"
+                  >
+                    {deletingUrl === item.url ? (
+                      <Loader2 className="w-3.5 h-3.5 animate-spin" aria-hidden="true" />
+                    ) : (
+                      <Trash2 className="w-3.5 h-3.5" aria-hidden="true" />
+                    )}
+                  </button>
+                )}
               </li>
             ))}
           </ul>
@@ -419,7 +456,7 @@ export function MediaUploadField({
   onChange,
   onUploadFile,
   placeholder = '/uploads/media/file.jpg or https://…',
-  accept = 'image/*,video/mp4,video/webm,application/pdf',
+  accept = 'image/*,video/mp4,video/webm,video/quicktime,application/pdf',
   hint,
   kind = 'all',
   id

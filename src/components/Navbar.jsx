@@ -57,13 +57,15 @@ export const Navbar = ({
     };
   }, [mobileMenuOpen]);
 
+  const hasActiveRoles = (content?.openRoles || []).some((r) => r.active !== false);
+
   const navItems = [
     { id: 'home', label: 'Home', icon: Compass },
     { id: 'about', label: 'About', icon: Users },
     { id: 'services', label: 'Pillars', icon: Layers, hasDropdown: true },
     { id: 'work', label: 'RAK4 Creations', icon: Briefcase },
     { id: 'case-studies', label: 'Case Studies', icon: Sparkles },
-    { id: 'careers', label: 'Careers', icon: Users, badge: "WE'RE HIRING" },
+    { id: 'careers', label: 'Careers', icon: Users, ...(hasActiveRoles ? { badge: "WE'RE HIRING" } : {}) },
     { id: 'blog', label: 'Blog', icon: BookOpen },
     { id: 'contact', label: 'Contact', icon: MessageSquare }
   ];

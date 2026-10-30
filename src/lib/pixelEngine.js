@@ -162,7 +162,7 @@ export function applyPixelsToDocument(pixels = {}) {
       window.__RAK_TIKTOK_ID__ = ttId;
       window.TiktokAnalyticsObject = 'ttq';
       const ttq = (window.ttq = window.ttq || []);
-      ttq.methods = ['page', 'track', 'identify', 'instances', 'debug', 'on', 'off', 'once', 'ready', 'alias', 'group', 'enableCookie', 'disableCookie'];
+      ttq.methods = ['page', 'track', 'identify', 'instances', 'debug', 'on', 'off', 'once', 'ready', 'alias', 'group', 'enableCookie', 'disableCookie', 'holdConsent', 'revokeConsent', 'grantConsent'];
       ttq.setAndDefer = function (t, e) {
         t[e] = function () {
           t.push([e].concat(Array.prototype.slice.call(arguments, 0)));
@@ -171,10 +171,34 @@ export function applyPixelsToDocument(pixels = {}) {
       for (let i = 0; i < ttq.methods.length; i++) {
         ttq.setAndDefer(ttq, ttq.methods[i]);
       }
+      ttq.instance = function (t) {
+        const e = ttq._i[t] || [];
+        for (let n = 0; n < ttq.methods.length; n++) {
+          ttq.setAndDefer(e, ttq.methods[n]);
+        }
+        return e;
+      };
+      ttq.load = function (e, n) {
+        const r = 'https://analytics.tiktok.com/i18n/pixel/events.js';
+        ttq._i = ttq._i || {};
+        ttq._i[e] = [];
+        ttq._i[e]._u = r;
+        ttq._t = ttq._t || {};
+        ttq._t[e] = +new Date();
+        ttq._o = ttq._o || {};
+        ttq._o[e] = n || {};
+        const s = document.createElement('script');
+        s.type = 'text/javascript';
+        s.async = true;
+        s.src = `${r}?sdkid=${encodeURIComponent(e)}&lib=ttq`;
+        s.setAttribute('data-rak-pixel', 'tiktok');
+        document.head.appendChild(s);
+      };
+      ttq.load(ttId);
       if (pixels.trackPageViews !== false && typeof ttq.page === 'function') {
         ttq.page();
       }
-      appendPixelEventLog({ provider: 'TikTok Pixel', event: 'Initialized', targetId: ttId });
+      appendPixelEventLog({ provider: 'TikTok Pixel', event: 'SDK Loaded & Initialized', targetId: ttId });
     }
   }
 
@@ -188,11 +212,13 @@ export function applyPixelsToDocument(pixels = {}) {
       if (!window._linkedin_data_partner_ids.includes(liId)) {
         window._linkedin_data_partner_ids.push(liId);
       }
-      const s = document.createElement('script');
-      s.async = true;
-      s.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
-      s.setAttribute('data-rak-pixel', 'linkedin');
-      document.head.appendChild(s);
+      if (!document.querySelector('script[data-rak-pixel="linkedin"]')) {
+        const s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://snap.licdn.com/li.lms-analytics/insight.min.js';
+        s.setAttribute('data-rak-pixel', 'linkedin');
+        document.head.appendChild(s);
+      }
       appendPixelEventLog({ provider: 'LinkedIn Insight', event: 'Partner Tag Loaded', targetId: liId });
     }
   }
@@ -204,14 +230,23 @@ export function applyPixelsToDocument(pixels = {}) {
       window.__RAK_SNAP_LOADED__ = true;
       window.__RAK_SNAP_ID__ = snapId;
       window.snaptr = window.snaptr || function () {
-        (window.snaptr.handleRequest ? window.snaptr.handleRequest.apply(window.snaptr, arguments) : window.snaptr.queue.push(arguments));
+        window.snaptr.handleRequest
+          ? window.snaptr.handleRequest.apply(window.snaptr, arguments)
+          : window.snaptr.queue.push(arguments);
       };
       window.snaptr.queue = window.snaptr.queue || [];
+      if (!document.querySelector('script[data-rak-pixel="snap"]')) {
+        const s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://sc-static.net/scevent.min.js';
+        s.setAttribute('data-rak-pixel', 'snap');
+        document.head.appendChild(s);
+      }
       window.snaptr('init', snapId);
       if (pixels.trackPageViews !== false) {
         window.snaptr('track', 'PAGE_VIEW');
       }
-      appendPixelEventLog({ provider: 'Snap Pixel', event: 'Init & PAGE_VIEW', targetId: snapId });
+      appendPixelEventLog({ provider: 'Snap Pixel', event: 'SDK Loaded & PAGE_VIEW', targetId: snapId });
     }
   }
 
@@ -226,8 +261,18 @@ export function applyPixelsToDocument(pixels = {}) {
       };
       window.twq.version = '1.1';
       window.twq.queue = window.twq.queue || [];
-      window.twq('config', twId);
-      appendPixelEventLog({ provider: 'X (Twitter) Pixel', event: 'Config Initialized', targetId: twId });
+      if (!document.querySelector('script[data-rak-pixel="twitter"]')) {
+        const s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://static.ads-twitter.com/uwt.js';
+        s.setAttribute('data-rak-pixel', 'twitter');
+        document.head.appendChild(s);
+      }
+      window.twq('init', twId);
+      if (pixels.trackPageViews !== false) {
+        window.twq('track', 'PageView');
+      }
+      appendPixelEventLog({ provider: 'X (Twitter) Pixel', event: 'SDK Loaded & Initialized', targetId: twId });
     }
   }
 
@@ -269,6 +314,10 @@ export function trackPageView(pixels = {}, path = '/', title = '') {
   if (pixels.snapPixelEnabled && pixels.snapPixelId && typeof window.snaptr === 'function') {
     window.snaptr('track', 'PAGE_VIEW');
     fired.push('Snap');
+  }
+  if (pixels.twitterPixelEnabled && pixels.twitterPixelId && typeof window.twq === 'function') {
+    window.twq('track', 'PageView');
+    fired.push('X');
   }
 
   if (fired.length > 0) {
@@ -330,7 +379,7 @@ export function trackLeadConversion(pixels = {}, lead = {}) {
   }
 
   if (pixels.twitterPixelEnabled && pixels.twitterPixelId && typeof window.twq === 'function') {
-    window.twq('event', pixels.twitterPixelId, { status: 'lead', content_name: source });
+    window.twq('track', 'Lead', { content_name: source, content_category: category });
     fired.push(`X (${pixels.twitterPixelId})`);
   }
 

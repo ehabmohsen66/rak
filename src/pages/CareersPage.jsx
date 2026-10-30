@@ -7,6 +7,7 @@ export const CareersPage = ({ onApplyJob }) => {
   const { content } = useCms();
   const careersCopy = content.careersCopy || {};
   const openRoles = (content.openRoles || []).filter((r) => r.active !== false);
+  const contactEmail = content.brandInfo?.contactEmail || 'hello@rak4creative.com';
   const rolesRef = useRef(null);
 
   const handleScrollToRoles = () => {
@@ -47,7 +48,10 @@ export const CareersPage = ({ onApplyJob }) => {
           <div className="p-10 text-center rounded-3xl bg-white dark:bg-rak-slate-900/80 border border-slate-200 dark:border-rak-slate-800 space-y-2">
             <h3 className="text-lg font-bold text-slate-900 dark:text-white">No open positions listed right now</h3>
             <p className="text-xs text-slate-600 dark:text-rak-slate-300">
-              Check back soon or send a spontaneous portfolio introduction to hello@rak4creative.com.
+              Check back soon or send a spontaneous portfolio introduction to{' '}
+              <a href={`mailto:${contactEmail}`} className="text-rak-magenta font-semibold hover:underline">
+                {contactEmail}
+              </a>.
             </p>
           </div>
         ) : (

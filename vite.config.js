@@ -75,14 +75,36 @@ function rakCmsDevServerPlugin() {
     }
   }
 
-  const VIDEO_EXTS = ['mp4', 'webm']
-  const ALLOWED_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg', 'gif', 'mp4', 'webm', 'pdf', 'doc', 'docx']
+  const VIDEO_EXTS = ['mp4', 'webm', 'mov']
+  const ALLOWED_MEDIA_EXTS = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg', 'gif', 'ico', 'mp4', 'webm', 'mov', 'mp3', 'wav', 'ogg', 'pdf', 'doc', 'docx']
+  const ALLOWED_RESUME_EXTS = ['pdf', 'doc', 'docx']
+  const SECRET_MASK = '••••••••••••'
+
+  const maskEmailSettings = (s = {}) => ({
+    ...s,
+    smtpPass: s.smtpPass ? SECRET_MASK : '',
+    resendApiKey: s.resendApiKey ? SECRET_MASK : ''
+  })
+
+  const unmaskEmailSettings = (incoming = {}, existing = {}) => ({
+    ...incoming,
+    smtpPass: incoming.smtpPass === SECRET_MASK ? (existing.smtpPass || '') : incoming.smtpPass,
+    resendApiKey: incoming.resendApiKey === SECRET_MASK ? (existing.resendApiKey || '') : incoming.resendApiKey
+  })
+
   const maxBytesFor = (ext, subDir) =>
     subDir === 'media' && VIDEO_EXTS.includes(ext) ? 64 * 1024 * 1024 : 12 * 1024 * 1024
 
   const saveBufferUpload = (fileName, buf, subDir = '') => {
     const ext = path.extname(fileName || '').toLowerCase().replace('.', '')
-    if (!ALLOWED_EXTS.includes(ext)) return { ok: false, error: `Unsupported file extension .${ext}` }
+    const allowed = subDir === 'resumes' ? ALLOWED_RESUME_EXTS : ALLOWED_MEDIA_EXTS
+    if (!allowed.includes(ext)) return { ok: false, error: `Unsupported file extension .${ext}` }
+    if (ext === 'svg' && /(<script\b|javascript:|vbscript:|\bon[a-z]+\s*=|<foreignobject\b|<iframe\b)/i.test(buf.toString('utf8'))) {
+      return { ok: false, error: 'SVG files containing scripts or event handlers are not allowed.' }
+    }
+    if (subDir === 'resumes' && /<(svg|html|script|iframe)/i.test(buf.slice(0, 2048).toString('utf8'))) {
+      return { ok: false, error: 'Invalid resume document format.' }
+    }
     const maxBytes = maxBytesFor(ext, subDir)
     if (buf.length > maxBytes) return { ok: false, error: `File exceeds ${Math.round(maxBytes / 1048576)}MB limit.` }
     const base = path.basename(fileName, path.extname(fileName)).replace(/[^a-zA-Z0-9_-]/g, '-').slice(0, 48) || 'asset'
@@ -128,10 +150,11 @@ function rakCmsDevServerPlugin() {
   }
 
   const listMediaLibrary = () => {
-    const imageExts = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg', 'gif']
+    const imageExts = ['jpg', 'jpeg', 'png', 'webp', 'avif', 'svg', 'gif', 'ico']
     const sources = [
-      { dir: path.join(uploadsDir, 'media'), url: '/uploads/media', source: 'upload' },
-      { dir: path.join(publicDir, 'videos'), url: '/videos', source: 'site' }
+      { dir: path.join(uploadsDir, 'media'), url: '/uploads/media', source: 'upload', deletable: true },
+      { dir: path.join(publicDir, 'videos'), url: '/videos', source: 'site', deletable: false },
+      { dir: path.join(publicDir, 'client-logos'), url: '/client-logos', source: 'site', deletable: false }
     ]
     const items = []
     for (const src of sources) {
@@ -144,11 +167,12 @@ function rakCmsDevServerPlugin() {
         const ext = path.extname(name).toLowerCase().replace('.', '')
         items.push({
           name,
-          url: `${src.url}/${name}`,
+          url: `${src.url}/${encodeURIComponent(name)}`,
           type: imageExts.includes(ext) ? 'image' : VIDEO_EXTS.includes(ext) ? 'video' : 'file',
           size: stat.size,
           modified: stat.mtime.toISOString(),
-          source: src.source
+          source: src.source,
+          deletable: src.deletable
         })
       }
     }
@@ -236,6 +260,7 @@ function rakCmsDevServerPlugin() {
           auth.username = String(body.newUsername).trim()
         }
         auth.hash = hashPass(String(body.newPassword), auth.salt)
+        auth.secret = crypto.randomBytes(32).toString('hex')
         auth.updatedAt = new Date().toISOString()
         writeJson('auth.dev.json', auth)
         const session = issueToken(auth.username, auth.secret)
@@ -243,6 +268,7 @@ function rakCmsDevServerPlugin() {
           ok: true,
           message: 'Admin credentials updated.',
           token: session.token,
+          expiresAt: session.expiresAt,
           user: { username: auth.username, email: auth.email }
         })
       }
@@ -275,6 +301,14 @@ function rakCmsDevServerPlugin() {
 
       if (route === 'leads') {
         if (req.method === 'POST') {
+          if (body.website_url_hp) {
+            return send(200, {
+              ok: true,
+              lead: { id: 'lead-filtered' },
+              emailDelivery: { adminSent: false, autoResponderSent: false }
+            })
+          }
+          const isDiagnostic = Boolean(body.isDiagnostic && verifyToken(req))
           const name = String(body.name || body.fullName || '').trim()
           const email = String(body.email || '').trim()
           if (!name || !email || !email.includes('@')) {
@@ -283,7 +317,8 @@ function rakCmsDevServerPlugin() {
           let resumeInfo = null
           if (body.resumeDataUrl && body.resumeName) {
             const up = saveBase64Upload(body.resumeName, body.resumeDataUrl, 'resumes')
-            if (up.ok) resumeInfo = up
+            if (!up.ok) return send(400, up)
+            resumeInfo = up
           }
           const source = ['contact', 'planner', 'career'].includes(String(body.source || '').toLowerCase())
             ? String(body.source).toLowerCase()
@@ -315,48 +350,57 @@ function rakCmsDevServerPlugin() {
             updatedAt: new Date().toISOString()
           }
 
-          const emailSettings = readJson('email_settings.json', {})
-          const logs = Array.isArray(emailSettings.deliveryLogs) ? emailSettings.deliveryLogs : []
-          const prefix = emailSettings.subjectPrefix || '[RAK4Creative Lead]'
-          if (emailSettings.enableAdminNotification !== false) {
-            const rawNotify = emailSettings.notifyEmails || 'Farah Younes <farah@rak4cloud.com>, ehab.m@rak4digital.com'
-            const targets = String(rawNotify)
-              .split(/[,;]+/)
-              .map((s) => s.trim())
-              .filter((s) => s.includes('@'))
-            targets.forEach((rcpt, idx) => {
+          if (isDiagnostic) {
+            lead.emailDelivery = {
+              adminSent: false,
+              autoResponderSent: false,
+              skipped: true,
+              note: 'Diagnostic self-test (outbound emails suppressed).'
+            }
+          } else {
+            const emailSettings = readJson('email_settings.json', {})
+            const logs = Array.isArray(emailSettings.deliveryLogs) ? emailSettings.deliveryLogs : []
+            const prefix = emailSettings.subjectPrefix || '[RAK4Creative Lead]'
+            if (emailSettings.enableAdminNotification !== false) {
+              const rawNotify = emailSettings.notifyEmails || 'Farah Younes <farah@rak4cloud.com>, ehab.m@rak4digital.com'
+              const targets = String(rawNotify)
+                .split(/[,;]+/)
+                .map((s) => s.trim())
+                .filter((s) => s.includes('@'))
+              targets.forEach((rcpt, idx) => {
+                logs.unshift({
+                  id: `log-${Date.now()}-admin-${idx}`,
+                  type: 'admin_notification',
+                  leadId: lead.id,
+                  recipient: rcpt,
+                  subject: `${prefix} New ${source.toUpperCase()} Submission from ${lead.name}`,
+                  driver: emailSettings.driver || 'mail',
+                  ok: true,
+                  message: 'Queued & verified (cPanel PHP mail/SMTP ready on production host).',
+                  timestamp: new Date().toISOString()
+                })
+              })
+            }
+            if (emailSettings.enableAutoResponder !== false) {
               logs.unshift({
-                id: `log-${Date.now()}-admin-${idx}`,
-                type: 'admin_notification',
+                id: `log-${Date.now()}-auto`,
+                type: 'auto_responder',
                 leadId: lead.id,
-                recipient: rcpt,
-                subject: `${prefix} New ${source.toUpperCase()} Submission from ${lead.name}`,
+                recipient: lead.email,
+                subject: emailSettings.autoResponderSubject || 'We received your inquiry | RAK 4 CREATIVE',
                 driver: emailSettings.driver || 'mail',
                 ok: true,
-                message: 'Queued & verified (cPanel PHP mail/SMTP ready on production host).',
+                message: 'Auto-responder dispatched.',
                 timestamp: new Date().toISOString()
               })
-            })
-          }
-          if (emailSettings.enableAutoResponder !== false) {
-            logs.unshift({
-              id: `log-${Date.now()}-auto`,
-              type: 'auto_responder',
-              leadId: lead.id,
-              recipient: lead.email,
-              subject: emailSettings.autoResponderSubject || 'We received your inquiry | RAK 4 CREATIVE',
-              driver: emailSettings.driver || 'mail',
-              ok: true,
-              message: 'Auto-responder dispatched.',
-              timestamp: new Date().toISOString()
-            })
-          }
-          emailSettings.deliveryLogs = logs.slice(0, 50)
-          writeJson('email_settings.json', emailSettings)
+            }
+            emailSettings.deliveryLogs = logs.slice(0, 50)
+            writeJson('email_settings.json', emailSettings)
 
-          lead.emailDelivery = {
-            adminSent: emailSettings.enableAdminNotification !== false,
-            autoResponderSent: emailSettings.enableAutoResponder !== false
+            lead.emailDelivery = {
+              adminSent: emailSettings.enableAdminNotification !== false,
+              autoResponderSent: emailSettings.enableAutoResponder !== false
+            }
           }
 
           const leads = readJson('leads.json', [])
@@ -399,23 +443,25 @@ function rakCmsDevServerPlugin() {
       if (route === 'email-settings') {
         if (!verifyToken(req)) return send(401, { ok: false, error: 'Unauthorized.' })
         if (req.method === 'GET') {
-          return send(200, { ok: true, emailSettings: readJson('email_settings.json', {}) })
+          return send(200, { ok: true, emailSettings: maskEmailSettings(readJson('email_settings.json', {})) })
         }
         if (req.method === 'PUT' || req.method === 'POST') {
           const incoming = body.emailSettings || body
           const existing = readJson('email_settings.json', {})
-          const merged = { ...existing, ...incoming }
+          const unmasked = unmaskEmailSettings(incoming, existing)
+          const merged = { ...existing, ...unmasked }
           if (!incoming.deliveryLogs && existing.deliveryLogs) {
             merged.deliveryLogs = existing.deliveryLogs
           }
           writeJson('email_settings.json', merged)
-          return send(200, { ok: true, updatedAt: new Date().toISOString(), emailSettings: merged })
+          return send(200, { ok: true, updatedAt: new Date().toISOString(), emailSettings: maskEmailSettings(merged) })
         }
       }
 
       if (route === 'test-email' && req.method === 'POST') {
         if (!verifyToken(req)) return send(401, { ok: false, error: 'Unauthorized.' })
-        const settings = body.emailSettings || readJson('email_settings.json', {})
+        const existing = readJson('email_settings.json', {})
+        const settings = unmaskEmailSettings(body.emailSettings || existing, existing)
         const rawRecipients = String(body.recipient || body.to || settings.notifyEmails || settings.fromEmail || '').trim()
         const targets = rawRecipients
           .split(/[,;]+/)
@@ -468,13 +514,33 @@ function rakCmsDevServerPlugin() {
         return send(400, { ok: false, error: 'Provide fileName and dataUrl.' })
       }
 
-      if (route === 'media' && req.method === 'GET') {
+      if (route === 'media') {
         if (!verifyToken(req)) return send(401, { ok: false, error: 'Unauthorized.' })
-        return send(200, {
-          ok: true,
-          items: listMediaLibrary(),
-          limits: { imageMB: 12, videoMB: 64, serverUploadMax: 'dev', serverPostMax: 'dev' }
-        })
+        if (req.method === 'GET') {
+          return send(200, {
+            ok: true,
+            items: listMediaLibrary(),
+            limits: { imageMB: 12, videoMB: 64, serverUploadMax: 'dev', serverPostMax: 'dev' }
+          })
+        }
+        if (req.method === 'DELETE') {
+          const targetUrl = String(parsedUrl.searchParams.get('url') || body.url || '').trim()
+          const decodedPath = decodeURIComponent(targetUrl.split('?')[0])
+          if (!decodedPath.startsWith('/uploads/media/')) {
+            return send(403, { ok: false, error: 'Only files uploaded to /uploads/media/ can be deleted.' })
+          }
+          const fileName = path.basename(decodedPath)
+          if (!fileName || fileName.startsWith('.') || decodedPath !== `/uploads/media/${fileName}`) {
+            return send(400, { ok: false, error: 'Invalid media filename.' })
+          }
+          const mediaDir = path.join(uploadsDir, 'media')
+          const fullTarget = path.resolve(mediaDir, fileName)
+          if (!fullTarget.startsWith(mediaDir + path.sep) || !fs.existsSync(fullTarget)) {
+            return send(404, { ok: false, error: 'Uploaded media file not found.' })
+          }
+          fs.unlinkSync(fullTarget)
+          return send(200, { ok: true, deleted: targetUrl })
+        }
       }
 
       if (route === 'audit' && req.method === 'GET') {
@@ -495,6 +561,8 @@ function rakCmsDevServerPlugin() {
         if (pixels.ga4Enabled && pixels.ga4Id) activePixels.push(`GA4 (${pixels.ga4Id})`)
         if (pixels.tiktokPixelEnabled && pixels.tiktokPixelId) activePixels.push(`TikTok (${pixels.tiktokPixelId})`)
         if (pixels.linkedinEnabled && pixels.linkedinPartnerId) activePixels.push(`LinkedIn (${pixels.linkedinPartnerId})`)
+        if (pixels.snapPixelEnabled && pixels.snapPixelId) activePixels.push(`Snap (${pixels.snapPixelId})`)
+        if (pixels.twitterPixelEnabled && pixels.twitterPixelId) activePixels.push(`X (${pixels.twitterPixelId})`)
 
         const checks = [
           {

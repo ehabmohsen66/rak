@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { ArrowUpRight } from 'lucide-react';
+import { useCms } from '../lib/cmsContext';
 
 /* ──────────────────────────────────────────────────────────────
    Palette sampled directly from the RAK4Creative homepage hero.
@@ -170,6 +171,8 @@ const PILLARS = [
 ];
 
 export const LebanonTributeSection = ({ onOpenPlanner }) => {
+  const { content } = useCms();
+  const hs = content.homeSections || {};
   const [likesCount, setLikesCount] = useState(() => {
     try {
       const saved = localStorage.getItem('rak_beirut_love_count');
@@ -264,11 +267,11 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
             >
               <LebanonFlag className="w-7 h-[18px]" />
               <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.24em] uppercase" style={{ color: C.body }}>
-                Roots of Inspiration
+                {hs.tributeEyebrow || 'Roots of Inspiration'}
               </span>
               <span className="h-3 w-px" style={{ backgroundColor: C.border }} />
               <span className="font-mono text-[10px] sm:text-[11px] tracking-[0.24em] uppercase font-bold" style={{ color: C.magenta }}>
-                Beirut, Lebanon
+                {hs.tributeLocation || 'Beirut, Lebanon'}
               </span>
             </div>
 
@@ -277,33 +280,36 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
               className="font-heading font-bold uppercase text-2xl leading-[1.1] sm:text-4xl lg:text-5xl"
               style={{ color: C.navy }}
             >
-              The Land of Cedars.
+              {hs.tributeHeadingLine1 || 'The Land of Cedars.'}
               <span
                 className="block mt-2 bg-clip-text text-transparent"
                 style={{ backgroundImage: `linear-gradient(90deg, ${C.magenta}, ${C.coral}, ${C.pink}, ${C.violet})` }}
               >
-                Courage in Every Idea.
+                {hs.tributeHeadingLine2 || 'Courage in Every Idea.'}
               </span>
             </h2>
 
             <p className="text-[15px] sm:text-base leading-relaxed max-w-xl" style={{ color: C.body }}>
-              Born in a city where cultures, languages, and generations meet. RAK4Creative
-              carries Beirut&rsquo;s restless imagination into brands built to move the world.
+              {hs.tributeBody || "Born in a city where cultures, languages, and generations meet. RAK4Creative carries Beirut's restless imagination into brands built to move the world."}
             </p>
 
             {/* Arabic pulse line: Janna Font */}
-            <div className="pl-5 py-1 border-l-2" style={{ borderColor: C.magenta }}>
-              <p
-                className="text-lg sm:text-2xl font-janna font-bold leading-relaxed"
-                dir="rtl"
-                style={{ color: C.navy, fontFamily: "'Janna LT', 'Janna', sans-serif" }}
-              >
-                &ldquo;من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ&rdquo;
-              </p>
-              <p className="mt-1.5 font-mono text-[10px] tracking-[0.22em] uppercase" style={{ color: C.muted }}>
-                An endless pulse. A global vision.
-              </p>
-            </div>
+            {(hs.tributeArabicQuote ?? 'من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ') && (
+              <div className="pl-5 py-1 border-l-2" style={{ borderColor: C.magenta }}>
+                <p
+                  className="text-lg sm:text-2xl font-janna font-bold leading-relaxed"
+                  dir="rtl"
+                  style={{ color: C.navy, fontFamily: "'Janna LT', 'Janna', sans-serif" }}
+                >
+                  &ldquo;{hs.tributeArabicQuote ?? 'من بيروت إلى العالم.. نبضٌ وإبداعٌ لا ينطفئ'}&rdquo;
+                </p>
+                {(hs.tributeQuoteSubtext ?? 'An endless pulse. A global vision.') && (
+                  <p className="mt-1.5 font-mono text-[10px] tracking-[0.22em] uppercase" style={{ color: C.muted }}>
+                    {hs.tributeQuoteSubtext ?? 'An endless pulse. A global vision.'}
+                  </p>
+                )}
+              </div>
+            )}
 
             {/* Actions */}
             <div className="flex flex-wrap items-center gap-3">
@@ -314,7 +320,7 @@ export const LebanonTributeSection = ({ onOpenPlanner }) => {
                 onMouseEnter={(e) => { e.currentTarget.style.backgroundColor = C.magentaD; }}
                 onMouseLeave={(e) => { e.currentTarget.style.backgroundColor = C.magenta; }}
               >
-                Create with RAK
+                {hs.tributeCtaLabel || 'Create with RAK'}
                 <ArrowUpRight className="w-4 h-4 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:-translate-y-0.5" />
               </button>
 

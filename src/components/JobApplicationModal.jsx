@@ -13,7 +13,8 @@ export const JobApplicationModal = ({ job, onClose }) => {
     portfolio: '',
     coverNote: '',
     resumeName: '',
-    resumeDataUrl: ''
+    resumeDataUrl: '',
+    website_url_hp: ''
   });
   const [submitting, setSubmitting] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -69,7 +70,8 @@ export const JobApplicationModal = ({ job, onClose }) => {
       portfolio: formData.portfolio,
       message: formData.coverNote,
       resumeName: formData.resumeName,
-      resumeDataUrl: formData.resumeDataUrl
+      resumeDataUrl: formData.resumeDataUrl,
+      website_url_hp: formData.website_url_hp
     });
 
     setSubmitting(false);
@@ -228,6 +230,19 @@ export const JobApplicationModal = ({ job, onClose }) => {
                   onChange={(e) => setFormData({ ...formData, coverNote: e.target.value })}
                   placeholder="Share relevant experience, projects, or availability..."
                   className="w-full px-3.5 py-2.5 text-xs bg-slate-50 dark:bg-rak-slate-950 border border-slate-300 dark:border-rak-slate-700 rounded-xl text-slate-900 dark:text-white placeholder:text-slate-400 dark:placeholder:text-rak-slate-500 focus:outline-none focus:border-rak-magenta focus:ring-2 focus:ring-rak-magenta"
+                />
+              </div>
+
+              <div className="sr-only" aria-hidden="true">
+                <label htmlFor="job-website-hp">Personal Website</label>
+                <input
+                  id="job-website-hp"
+                  type="text"
+                  name="website_url_hp"
+                  tabIndex={-1}
+                  autoComplete="off"
+                  value={formData.website_url_hp}
+                  onChange={(e) => setFormData({ ...formData, website_url_hp: e.target.value })}
                 />
               </div>
 

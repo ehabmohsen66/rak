@@ -2,11 +2,20 @@ import React, { useState, useRef } from 'react';
 import { Sparkles, MapPin, Mail, Phone, Send, CheckCircle2, AlertCircle, Loader2 } from 'lucide-react';
 import { PrismaHero } from '../components/PrismaHero';
 import { useCms } from '../lib/cmsContext';
+import { formatWhatsAppHref, getActiveSocialLinks, WhatsAppIcon } from '../lib/socialLinks';
 
 export const ContactPage = ({ onOpenPlanner }) => {
   const { content, submitLead } = useCms();
   const offices = content.offices || [];
   const pillars = content.pillars || [];
+  const brandInfo = content.brandInfo || {};
+  const budgetOptions =
+    Array.isArray(brandInfo.budgetOptions) && brandInfo.budgetOptions.length > 0
+      ? brandInfo.budgetOptions
+      : ['$25,000 - $50,000', '$50,000 - $100,000', '$100,000 - $250,000', '$250,000+'];
+  const defaultBudget = budgetOptions[1] || budgetOptions[0] || '$50,000 - $100,000';
+  const whatsappHref = formatWhatsAppHref(brandInfo.whatsapp);
+  const socialLinks = getActiveSocialLinks(brandInfo);
 
   const formRef = useRef(null);
   const [formData, setFormData] = useState({
@@ -15,8 +24,9 @@ export const ContactPage = ({ onOpenPlanner }) => {
     phone: '',
     company: '',
     service: pillars[0]?.title || 'Digital Consultancy',
-    budget: '$50,000 - $100,000',
-    message: ''
+    budget: defaultBudget,
+    message: '',
+    website_url_hp: ''
   });
   const [submitting, setSubmitting] = useState(false);
   const [submittedLead, setSubmittedLead] = useState(null);
@@ -35,7 +45,8 @@ export const ContactPage = ({ onOpenPlanner }) => {
       company: formData.company,
       service: formData.service,
       budget: formData.budget,
-      message: formData.message
+      message: formData.message,
+      website_url_hp: formData.website_url_hp
     });
 
     setSubmitting(false);
@@ -57,8 +68,9 @@ export const ContactPage = ({ onOpenPlanner }) => {
       phone: '',
       company: '',
       service: pillars[0]?.title || 'Digital Consultancy',
-      budget: '$50,000 - $100,000',
-      message: ''
+      budget: defaultBudget,
+      message: '',
+      website_url_hp: ''
     });
   };
 
@@ -185,12 +197,24 @@ export const ContactPage = ({ onOpenPlanner }) => {
                       onChange={(e) => setFormData({ ...formData, budget: e.target.value })}
                       className="w-full px-4 py-3 text-xs bg-slate-50 dark:bg-rak-slate-950 border border-slate-300 dark:border-rak-slate-700 rounded-xl text-slate-900 dark:text-white focus:outline-none focus:border-rak-magenta focus:ring-2 focus:ring-rak-magenta transition-colors cursor-pointer"
                     >
-                      <option>$25,000 - $50,000</option>
-                      <option>$50,000 - $100,000</option>
-                      <option>$100,000 - $250,000</option>
-                      <option>$250,000+</option>
+                      {budgetOptions.map((opt) => (
+                        <option key={opt} value={opt}>{opt}</option>
+                      ))}
                     </select>
                   </div>
+                </div>
+
+                <div className="sr-only" aria-hidden="true">
+                  <label htmlFor="contact-website-hp">Company Website</label>
+                  <input
+                    id="contact-website-hp"
+                    type="text"
+                    name="website_url_hp"
+                    tabIndex={-1}
+                    autoComplete="off"
+                    value={formData.website_url_hp}
+                    onChange={(e) => setFormData({ ...formData, website_url_hp: e.target.value })}
+                  />
                 </div>
 
                 <div>
@@ -249,6 +273,43 @@ export const ContactPage = ({ onOpenPlanner }) => {
                 <span>Launch Interactive Planner</span>
               </button>
             </div>
+
+            {(whatsappHref || socialLinks.length > 0) && (
+              <div className="p-6 bg-white dark:bg-rak-slate-900/70 border border-slate-200 dark:border-rak-slate-800 rounded-2xl space-y-4 shadow-sm">
+                <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-widest font-mono">
+                  Direct Channels & Socials
+                </h3>
+                {whatsappHref && (
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-full py-3 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider flex items-center justify-center space-x-2 transition-colors shadow-sm"
+                  >
+                    <WhatsAppIcon className="w-4 h-4" />
+                    <span>Message Us on WhatsApp</span>
+                  </a>
+                )}
+                {socialLinks.length > 0 && (
+                  <div className="flex flex-wrap items-center gap-2">
+                    {socialLinks.map(({ id, label, href, Icon }) => (
+                      <a
+                        key={id}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        aria-label={label}
+                        title={label}
+                        className="inline-flex items-center space-x-2 px-3 py-2 rounded-xl bg-slate-50 dark:bg-rak-slate-950 border border-slate-200 dark:border-rak-slate-800 hover:border-rak-magenta text-xs font-semibold text-slate-700 dark:text-slate-200 hover:text-rak-magenta transition-colors"
+                      >
+                        <Icon className="w-3.5 h-3.5" />
+                        <span>{label}</span>
+                      </a>
+                    ))}
+                  </div>
+                )}
+              </div>
+            )}
 
             <div className="space-y-4">
               <h3 className="text-xs font-bold text-slate-900 dark:text-white uppercase tracking-widest pl-2 font-mono">Global Headquarters</h3>

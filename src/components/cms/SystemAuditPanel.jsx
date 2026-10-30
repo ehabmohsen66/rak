@@ -76,10 +76,11 @@ export default function SystemAuditPanel({
         detail: 'Hydrated CMS content schema and pixel configuration.'
       });
 
-      // Step 2: Create Diagnostic Lead
+      // Step 2: Create Diagnostic Lead (outbound emails & ad pixel conversions suppressed)
       const t2 = performance.now();
       const createRes = await onSubmitLead({
         source: 'planner',
+        isDiagnostic: true,
         name: 'CMS Pre-Launch Self-Test',
         email: 'diagnostic-audit@rak4creative.com',
         company: 'RAK4Creative Internal Audit',
@@ -97,7 +98,7 @@ export default function SystemAuditPanel({
         ok: step2Ok,
         ms: Math.round(performance.now() - t2),
         detail: step2Ok
-          ? `Created test lead ${createdLeadId} and triggered pixel conversion hook.`
+          ? `Created diagnostic lead ${createdLeadId} (live emails & ad pixels suppressed).`
           : createRes?.error || 'Lead creation failed.'
       });
 

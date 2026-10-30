@@ -2,6 +2,7 @@ import React from 'react';
 import { BrandLogo } from './BrandLogo';
 import { ArrowUp, Mail, MapPin, Shield } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
+import { formatWhatsAppHref, getActiveSocialLinks, WhatsAppIcon } from '../lib/socialLinks';
 
 export const Footer = ({ 
   setActiveTab = () => {}, 
@@ -11,6 +12,8 @@ export const Footer = ({
   const { content } = useCms();
   const offices = content.offices || [];
   const brandInfo = content.brandInfo || {};
+  const whatsappHref = formatWhatsAppHref(brandInfo.whatsapp);
+  const socialLinks = getActiveSocialLinks(brandInfo);
 
   return (
     <footer className="bg-rak-slate-950 border-t border-white/10 text-slate-300 relative overflow-hidden transition-colors duration-300">
@@ -34,12 +37,44 @@ export const Footer = ({
             <p className="text-xs sm:text-sm text-slate-300 leading-relaxed max-w-sm">
               {brandInfo.description || 'RAK 4 CREATIVE is a full-service global brand identity and digital product engineering agency.'}
             </p>
-            <div className="flex items-center space-x-2 text-xs font-bold text-rak-magenta pt-1">
-              <Mail className="w-4 h-4" />
-              <a href={`mailto:${brandInfo.contactEmail || 'hello@rak4creative.com'}`} className="hover:underline">
-                {brandInfo.contactEmail || 'hello@rak4creative.com'}
-              </a>
+            <div className="space-y-2 pt-1">
+              <div className="flex items-center space-x-2 text-xs font-bold text-rak-magenta">
+                <Mail className="w-4 h-4 shrink-0" />
+                <a href={`mailto:${brandInfo.contactEmail || 'hello@rak4creative.com'}`} className="hover:underline">
+                  {brandInfo.contactEmail || 'hello@rak4creative.com'}
+                </a>
+              </div>
+              {whatsappHref && (
+                <div className="flex items-center space-x-2 text-xs font-bold text-emerald-400">
+                  <WhatsAppIcon className="w-4 h-4 shrink-0" />
+                  <a
+                    href={whatsappHref}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hover:underline"
+                  >
+                    Chat on WhatsApp
+                  </a>
+                </div>
+              )}
             </div>
+            {socialLinks.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 pt-2">
+                {socialLinks.map(({ id, label, href, Icon }) => (
+                  <a
+                    key={id}
+                    href={href}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label={label}
+                    title={label}
+                    className="w-9 h-9 rounded-xl bg-white/5 hover:bg-rak-magenta border border-white/10 hover:border-rak-magenta text-slate-300 hover:text-white flex items-center justify-center transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rak-magenta"
+                  >
+                    <Icon className="w-4 h-4" />
+                  </a>
+                ))}
+              </div>
+            )}
           </div>
 
           {/* Column 2: Navigation */}
