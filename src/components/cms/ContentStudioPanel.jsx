@@ -1055,6 +1055,93 @@ export default function ContentStudioPanel({
                 </CmsField>
               </div>
 
+              {/* ABOUT US: MEET OUR CEO */}
+              <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
+                <div>
+                  <h3 className="text-[15px] font-semibold text-slate-900 dark:text-white">
+                    About Us: Meet Our CEO
+                  </h3>
+                  <p className="text-xs text-slate-600 dark:text-slate-400 mt-0.5">
+                    Leadership spotlight section displayed right below “What Makes Us… Us.” on `/about`.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                  <CmsField label="Eyebrow" htmlFor="brand-ceo-eyebrow">
+                    <input
+                      id="brand-ceo-eyebrow"
+                      type="text"
+                      value={draft.brandInfo?.ceoEyebrow ?? 'BEHIND RAK4CREATIVE'}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, ceoEyebrow: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                  <CmsField label="Heading" htmlFor="brand-ceo-heading">
+                    <input
+                      id="brand-ceo-heading"
+                      type="text"
+                      value={draft.brandInfo?.ceoHeading ?? 'Meet Our CEO'}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, ceoHeading: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                  <CmsField label="CEO Name" htmlFor="brand-ceo-name">
+                    <input
+                      id="brand-ceo-name"
+                      type="text"
+                      value={draft.brandInfo?.ceoName ?? 'FARAH YOUNES'}
+                      onChange={(e) =>
+                        updateDraft((p) => ({
+                          ...p,
+                          brandInfo: { ...p.brandInfo, ceoName: e.target.value }
+                        }))
+                      }
+                      className={CMS_INPUT_CLASS}
+                    />
+                  </CmsField>
+                </div>
+
+                <MediaUploadField
+                  id="brand-ceo-image"
+                  label="CEO Portrait Image"
+                  value={draft.brandInfo?.ceoImage ?? '/ceo-farah-younes.webp'}
+                  accept="image/*"
+                  uploadLabel="Upload Portrait"
+                  onUploadFile={onUploadFile}
+                  onChange={(url) =>
+                    updateDraft((p) => ({
+                      ...p,
+                      brandInfo: { ...p.brandInfo, ceoImage: url }
+                    }))
+                  }
+                />
+
+                <CmsField label="CEO Bio Paragraphs (separate paragraphs with a blank line)" htmlFor="brand-ceo-bio">
+                  <textarea
+                    id="brand-ceo-bio"
+                    rows={7}
+                    value={draft.brandInfo?.ceoBio ?? ''}
+                    onChange={(e) =>
+                      updateDraft((p) => ({
+                        ...p,
+                        brandInfo: { ...p.brandInfo, ceoBio: e.target.value }
+                      }))
+                    }
+                    className={CMS_INPUT_CLASS}
+                  />
+                </CmsField>
+              </div>
+
               {/* ABOUT US: TEAM VIDEO & BOTTOM CTA */}
               <div className={`${CMS_CARD} p-5 sm:p-6 space-y-5`}>
                 <div>

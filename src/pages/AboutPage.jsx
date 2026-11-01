@@ -2,6 +2,7 @@ import React from 'react';
 import { Award, CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
 import { AboutHero } from '../components/AboutHero';
+import { CeoSection } from '../components/CeoSection';
 import { TeamMarqueeSection } from '../components/TeamMarqueeSection';
 
 export const AboutPage = ({ onOpenPlanner }) => {
@@ -96,6 +97,8 @@ export const AboutPage = ({ onOpenPlanner }) => {
           ))}
         </div>
       </section>
+
+      <CeoSection />
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <TeamMarqueeSection />
