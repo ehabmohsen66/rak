@@ -1,0 +1,34 @@
+# RAK 4 CREATIVE
+
+> Full-service digital marketing and creative agency in Lebanon (Beirut HQ) and Toronto, serving MENA, GCC, Europe, Africa, and global brands across social media marketing, Meta & Google paid ads, SEO, branding, web development, media production, and out-of-home advertising.
+
+RAK 4 CREATIVE (part of RAK Group, led by General Manager & CEO Farah Younes) is a one-stop agency uniting brand strategy, creative production, enterprise web engineering, and performance marketing under one roof—from market research and ideation to 360° execution, monitoring, and ROI evaluation.
+
+- Headquarters: Badaro Executive Tower, Level 6, Beirut, Lebanon (+961-1-380-400 | lebanon@rak4creative.com)
+- North America Hub: 100 King Street West, Suite 5600, Toronto, ON, Canada (+1-416-800-4820 | canada@rak4creative.com)
+- General Inquiries: hello@rak4creative.com
+
+## Core Pages
+
+- [Home](https://rak4creative.com/): Agency overview, core digital marketing capabilities, featured client creations, and verified partner reviews.
+- [Services & 8 Core Pillars](https://rak4creative.com/services): Social media marketing, paid media & PPC, SEO/SEM, web & e-commerce, branding & OOH, content production, consultancy, and analytics.
+- [About Us](https://rak4creative.com/about): Agency story, leadership spotlight on CEO Farah Younes, core values, and interdisciplinary creative & tech team.
+- [Selected Portfolio Work](https://rak4creative.com/work): Showcases across brand identity, 3D WebGL experiences, e-commerce platforms, and omnichannel paid media campaigns.
+- [Enterprise Case Studies & ROI](https://rak4creative.com/case-studies): Deep-dive business challenges, strategic solutions, and measurable conversion & revenue outcomes.
+- [Editorial Blog & Insights](https://rak4creative.com/blog): Articles on AI workflows, paid media scaling, high-conversion web architecture, and consumer intelligence.
+- [Careers & Open Roles](https://rak4creative.com/careers): Open positions in brand strategy, paid media buying, UI/UX design systems, and full-stack creative engineering.
+- [Contact & Project Planner](https://rak4creative.com/contact): Beirut and Toronto office details and executive project inquiry form.
+
+## Editorial & Strategic Insights
+
+- [The Practical AI Tier List for Agencies and Enterprises](https://rak4creative.com/blog/ultimate-ai-tier-list): Practical evaluation of major enterprise AI platforms for creative, strategy, and marketing workflows.
+- [Why 84% of Enterprise Design Systems Fail (And How to Build One That Scales)](https://rak4creative.com/blog/design-systems-scale-2026): Token architecture, component ownership, and cross-platform design governance.
+- [The Science of High-Conversion Web Architecture](https://rak4creative.com/blog/cro-performance-engineering): End-to-end CRO uniting DOM speed, edge caching, and behavioral UX design.
+- [3D & Realtime WebGL in Enterprise Marketing: Hype vs ROI](https://rak4creative.com/blog/3d-webgl-brand-experiences): Technical blueprint for frame-budgeted 3D web experiences that lift engagement and conversion.
+- [The 360° Omnichannel Product Launch Playbook](https://rak4creative.com/blog/omnichannel-brand-launch): Unified campaign execution across digital, social, paid media, and physical OOH channels.
+- [Demystifying Consumer Intelligence & Predictive Listening](https://rak4creative.com/blog/data-driven-consumer-profiling): Real-time analytics listening and behavioral modeling for proactive brand strategy.
+
+## Optional
+
+- [Full Agency Context for LLMs](https://rak4creative.com/llms-full.txt): Complete plain-text reference of RAK 4 CREATIVE services, leadership, case studies, and contact details.
+- [XML Sitemap](https://rak4creative.com/sitemap.xml): Complete machine-readable index of public URLs on rak4creative.com.

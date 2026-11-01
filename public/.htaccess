@@ -23,8 +23,9 @@ DirectoryIndex seo.php index.html
   # Block direct web access to /api/storage
   RewriteRule ^api/storage(/.*)?$ - [F,L]
 
-  # Dynamic XML Sitemap for Google, Bing & AI Search Crawlers
+  # Dynamic XML Sitemap & llms.txt for Google, Bing, Semrush & AI Search Crawlers
   RewriteRule ^sitemap\.xml$ sitemap.php [L]
+  RewriteRule ^llms\.txt$ llms.php [L]
 
   # Root homepage routes through server-side PHP SEO pre-renderer
   RewriteRule ^$ seo.php [L]
