@@ -168,7 +168,7 @@ function readCmsContent(): array {
 
     $defaultSeo = [
         'siteTitle' => 'Digital Marketing Agency in Lebanon | RAK 4 CREATIVE',
-        'metaDescription' => 'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.',
+        'metaDescription' => 'Full-service digital marketing agency in Lebanon serving Beirut, MENA, GCC & global brands. Social media marketing, Meta & Google ads, SEO, branding & web.',
         'metaKeywords' => 'Digital Marketing Agency Lebanon, Digital Marketing Agency in Beirut, Social Media Marketing Lebanon, Paid Media Agency Lebanon, Meta Ads Agency Beirut, Google Ads PPC Lebanon, SEO Agency Lebanon, Creative Agency Beirut, Branding & Web Development Lebanon, RAK 4 Creative',
         'ogImage' => 'https://rak4creative.com/og-logo.png',
         'canonicalUrl' => 'https://rak4creative.com',
@@ -185,7 +185,7 @@ function readCmsContent(): array {
             'admin' => 'CMS Operations Portal | RAK 4 CREATIVE'
         ],
         'pageDescriptions' => [
-            'home' => 'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.',
+            'home' => 'Full-service digital marketing agency in Lebanon serving Beirut, MENA, GCC & global brands. Social media marketing, Meta & Google ads, SEO, branding & web.',
             'about' => 'Meet RAK 4 CREATIVE, your one-stop digital marketing and creative agency in Beirut, Lebanon and Toronto, uniting brand strategy, social media, paid ads & tech.',
             'services' => "Explore RAK 4 CREATIVE's 8 agency pillars in Lebanon: social media marketing, Meta & Google PPC paid ads, SEO, web development, branding, OOH & video production.",
             'work' => 'Browse selected creations by RAK 4 CREATIVE: paid media scaling, social media campaigns, brand identity, 3D web platforms & e-commerce across MENA & global markets.',
@@ -224,7 +224,8 @@ function readCmsContent(): array {
             $seo['siteTitle'] = $defaultSeo['siteTitle'];
             $changed = true;
         }
-        if (empty($seo['metaDescription']) || strpos((string)$seo['metaDescription'], 'RAK 4 CREATIVE transforms ambitious enterprises into market leaders') === 0) {
+        $legacyHomeDesc = 'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.';
+        if (empty($seo['metaDescription']) || strpos((string)$seo['metaDescription'], 'RAK 4 CREATIVE transforms ambitious enterprises into market leaders') === 0 || $seo['metaDescription'] === $legacyHomeDesc) {
             $seo['metaDescription'] = $defaultSeo['metaDescription'];
             $changed = true;
         }
@@ -249,7 +250,8 @@ function readCmsContent(): array {
             $changed = true;
         } else {
             foreach ($defaultSeo['pageDescriptions'] as $k => $defVal) {
-                if (empty($seo['pageDescriptions'][$k])) {
+                $curDesc = $seo['pageDescriptions'][$k] ?? '';
+                if (empty($curDesc) || ($k === 'home' && $curDesc === $legacyHomeDesc)) {
                     $seo['pageDescriptions'][$k] = $defVal;
                     $changed = true;
                 }

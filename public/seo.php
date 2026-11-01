@@ -60,7 +60,7 @@ $defaultTitles = [
 ];
 
 $defaultDescriptions = [
-    'home'         => 'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.',
+    'home'         => 'Full-service digital marketing agency in Lebanon serving Beirut, MENA, GCC & global brands. Social media marketing, Meta & Google ads, SEO, branding & web.',
     'about'        => 'Meet RAK 4 CREATIVE, your one-stop digital marketing and creative agency in Beirut, Lebanon and Toronto, uniting brand strategy, social media, paid ads & tech.',
     'services'     => "Explore RAK 4 CREATIVE's 8 agency pillars in Lebanon: social media marketing, Meta & Google PPC paid ads, SEO, web development, branding, OOH & video production.",
     'work'         => 'Browse selected creations by RAK 4 CREATIVE: paid media scaling, social media campaigns, brand identity, 3D web platforms & e-commerce across MENA & global markets.',
@@ -176,8 +176,9 @@ if ($savedTitle === '' || (isset($legacyTitles[$tab]) && $savedTitle === $legacy
     $pageTitle = $savedTitle;
 }
 
+$legacyHomeDesc = 'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.';
 $savedDesc = (string)($seo['pageDescriptions'][$tab] ?? '');
-if ($savedDesc === '') {
+if ($savedDesc === '' || ($tab === 'home' && $savedDesc === $legacyHomeDesc)) {
     $pageDesc = $defaultDescriptions[$tab] ?? $defaultDescriptions['home'];
 } else {
     $pageDesc = $savedDesc;

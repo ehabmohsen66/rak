@@ -676,7 +676,7 @@ export const TESTIMONIALS = [
 
 export const SEO_SETTINGS = {
   siteTitle: "Digital Marketing Agency in Lebanon | RAK 4 CREATIVE",
-  metaDescription: "Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.",
+  metaDescription: "Full-service digital marketing agency in Lebanon serving Beirut, MENA, GCC & global brands. Social media marketing, Meta & Google ads, SEO, branding & web.",
   metaKeywords: "Digital Marketing Agency Lebanon, Digital Marketing Agency in Beirut, Social Media Marketing Lebanon, Paid Media Agency Lebanon, Meta Ads Agency Beirut, Google Ads PPC Lebanon, SEO Agency Lebanon, Creative Agency Beirut, Branding & Web Development Lebanon, RAK 4 Creative",
   ogImage: "https://rak4creative.com/og-logo.png",
   canonicalUrl: "https://rak4creative.com",
@@ -693,7 +693,7 @@ export const SEO_SETTINGS = {
     admin: "CMS Operations Portal | RAK 4 CREATIVE"
   },
   pageDescriptions: {
-    home: "Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.",
+    home: "Full-service digital marketing agency in Lebanon serving Beirut, MENA, GCC & global brands. Social media marketing, Meta & Google ads, SEO, branding & web.",
     about: "Meet RAK 4 CREATIVE, your one-stop digital marketing and creative agency in Beirut, Lebanon and Toronto, uniting brand strategy, social media, paid ads & tech.",
     services: "Explore RAK 4 CREATIVE's 8 agency pillars in Lebanon: social media marketing, Meta & Google PPC paid ads, SEO, web development, branding, OOH & video production.",
     work: "Browse selected creations by RAK 4 CREATIVE: paid media scaling, social media campaigns, brand identity, 3D web platforms & e-commerce across MENA & global markets.",

@@ -299,7 +299,7 @@ export function App() {
     let nextDescription =
       pageDescriptions[activeTab] ||
       seo.metaDescription ||
-      'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.';
+      'Full-service digital marketing agency in Lebanon serving Beirut, MENA, GCC & global brands. Social media marketing, Meta & Google ads, SEO, branding & web.';
 
     const toAbsoluteAssetUrl = (rawUrl) => {
       const val = String(rawUrl || '').trim();

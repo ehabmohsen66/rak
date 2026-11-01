@@ -22,7 +22,8 @@ const LEGACY_SITE_TITLES = [
   'RAK 4 CREATIVE | Global Digital & Brand Innovation Agency'
 ];
 const LEGACY_DESCRIPTIONS = [
-  'RAK 4 CREATIVE transforms ambitious enterprises into market leaders through brand identity, digital product design, web architecture, and growth strategy.'
+  'RAK 4 CREATIVE transforms ambitious enterprises into market leaders through brand identity, digital product design, web architecture, and growth strategy.',
+  'Full-service digital marketing agency in Beirut, Lebanon serving MENA, GCC & global brands. Social media marketing, Meta & Google paid ads, SEO, branding & web.'
 ];
 const LEGACY_KEYWORDS = [
   'RAK 4 Creative, Brand Strategy, UI/UX Design, Web Development, CRO, Digital Transformation, Enterprise Agency'
@@ -67,10 +68,14 @@ function normalizeSeo(rawSeo = {}) {
     }
   }
 
-  const pageDescriptions = {
-    ...(defaultSeo.pageDescriptions || {}),
-    ...(rawSeo.pageDescriptions || {})
-  };
+  const pageDescriptions = { ...(defaultSeo.pageDescriptions || {}) };
+  if (rawSeo.pageDescriptions && typeof rawSeo.pageDescriptions === 'object') {
+    for (const [k, v] of Object.entries(rawSeo.pageDescriptions)) {
+      if (v && !(k === 'home' && LEGACY_DESCRIPTIONS.includes(v))) {
+        pageDescriptions[k] = v;
+      }
+    }
+  }
 
   return {
     ...defaultSeo,
