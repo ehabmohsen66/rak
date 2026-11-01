@@ -271,12 +271,70 @@ if ($tab !== 'admin' && !$isNotFound) {
         'itemListElement' => $breadcrumbs
     ];
 
+    // Sync dynamic CMS testimonials into #agency AggregateRating & Review JSON-LD
+    $testimonials = isset($content['testimonials']) && is_array($content['testimonials']) ? $content['testimonials'] : [];
+    if (!empty($testimonials)) {
+        $totalRating = 0.0;
+        $validReviews = [];
+        foreach ($testimonials as $tm) {
+            if (!is_array($tm) || empty($tm['quote'])) continue;
+            $rVal = isset($tm['rating']) && is_numeric($tm['rating']) ? max(1, min(5, (float)$tm['rating'])) : 5.0;
+            $totalRating += $rVal;
+            $authorObj = [
+                '@type' => 'Person',
+                'name' => (string)($tm['author'] ?? 'Client Partner')
+            ];
+            if (!empty($tm['role'])) {
+                $authorObj['jobTitle'] = (string)$tm['role'];
+            }
+            $validReviews[] = [
+                '@type' => 'Review',
+                'author' => $authorObj,
+                'reviewRating' => [
+                    '@type' => 'Rating',
+                    'ratingValue' => (string)(int)round($rVal),
+                    'bestRating' => '5',
+                    'worstRating' => '1'
+                ],
+                'reviewBody' => (string)$tm['quote']
+            ];
+        }
+        $revCount = count($validReviews);
+        if ($revCount > 0) {
+            $avgRatingStr = number_format($totalRating / $revCount, 1, '.', '');
+            $html = preg_replace_callback(
+                '/<script\s+id="rak-jsonld"\s+type="application\/ld\+json">\s*(.*?)\s*<\/script>/is',
+                function ($matches) use ($avgRatingStr, $revCount, $validReviews) {
+                    $baseSchema = json_decode($matches[1], true);
+                    if (!is_array($baseSchema) || empty($baseSchema['@graph'][0])) {
+                        return $matches[0];
+                    }
+                    $baseSchema['@graph'][0]['aggregateRating'] = [
+                        '@type' => 'AggregateRating',
+                        'ratingValue' => $avgRatingStr,
+                        'bestRating' => '5',
+                        'worstRating' => '1',
+                        'ratingCount' => $revCount,
+                        'reviewCount' => $revCount
+                    ];
+                    $baseSchema['@graph'][0]['review'] = $validReviews;
+                    $encoded = json_encode($baseSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+                    return $encoded !== false
+                        ? '<script id="rak-jsonld" type="application/ld+json">' . $encoded . '</script>'
+                        : $matches[0];
+                },
+                $html,
+                1
+            ) ?? $html;
+        }
+    }
+
     $pageSchemaType = 'WebPage';
     if ($tab === 'about') $pageSchemaType = 'AboutPage';
     elseif ($tab === 'contact') $pageSchemaType = 'ContactPage';
     elseif ($tab === 'work' || $tab === 'case-studies' || $tab === 'blog' || $tab === 'services') $pageSchemaType = 'CollectionPage';
 
-    $routeGraph[] = [
+    $webPageNode = [
         '@type' => $pageSchemaType,
         '@id' => $fullCanonical . '#webpage',
         'url' => $fullCanonical,
@@ -284,8 +342,10 @@ if ($tab !== 'admin' && !$isNotFound) {
         'description' => $pageDesc,
         'isPartOf' => ['@id' => $baseUrl . '/#website'],
         'about' => ['@id' => $baseUrl . '/#agency'],
+        'mainEntity' => ['@id' => $baseUrl . '/#agency'],
         'inLanguage' => 'en'
     ];
+    $routeGraph[] = $webPageNode;
 
     if ($tab === 'blog-post' && $matchedPost !== null) {
         $routeGraph[] = [

@@ -186,18 +186,34 @@ export const HomePage = ({
 
       {hs.squadEnabled !== false && <TeamVideoShowcase />}
 
-      {testimonials.length > 0 && (
+      {testimonials.length > 0 && (() => {
+        const reviewCount = testimonials.length;
+        const avgRating = (
+          testimonials.reduce((sum, item) => sum + (Number(item.rating) || 5), 0) / reviewCount
+        ).toFixed(1);
+
+        return (
         <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <SpotlightCard 
             spotlightColor="rgba(236, 0, 140, 0.1)"
             borderColor="rgba(226, 232, 240, 0.8)"
             className="bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-white/10 rounded-3xl p-8 sm:p-12 space-y-8 relative overflow-hidden backdrop-blur-xl shadow-sm"
           >
-            <div className="space-y-2 text-center max-w-2xl mx-auto">
+            <div className="space-y-3 text-center max-w-2xl mx-auto">
               <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest px-3 py-1 bg-rak-magenta/10 border border-rak-magenta/30 rounded-full">
                 {hs.testimonialsEyebrow || 'Client Feedback'}
               </span>
               <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white tracking-tight">{hs.testimonialsHeading || 'What Partners Say About RAK.'}</h2>
+              <div className="inline-flex items-center gap-2 pt-1 text-xs font-semibold text-slate-700 dark:text-rak-slate-300">
+                <span className="flex items-center text-amber-400 space-x-0.5" aria-hidden="true">
+                  {[...Array(5)].map((_, idx) => (
+                    <Star key={idx} className="w-3.5 h-3.5 fill-amber-400 text-amber-400" />
+                  ))}
+                </span>
+                <span className="font-bold text-slate-900 dark:text-white">{avgRating} / 5</span>
+                <span className="text-slate-400 dark:text-rak-slate-500">•</span>
+                <span>Based on {reviewCount} client reviews</span>
+              </div>
             </div>
 
             <InfiniteSlider gap={24} duration={65} durationOnHover={180} className="py-4">
@@ -237,7 +253,8 @@ export const HomePage = ({
             </InfiniteSlider>
           </SpotlightCard>
         </section>
-      )}
+        );
+      })()}
 
       {blogPosts.length > 0 && (
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-10">
