@@ -1,6 +1,8 @@
 // Branded Showcase Hubs (Link-in-Bio & Industry/Client Pitch Microsites)
 // Managed in /admin -> Showcase Hubs and rendered standalone at /showcase/:slug
 
+import { REAL_ESTATE_CASE_STUDIES } from '../data/realEstateCaseStudies';
+
 export const DEFAULT_SHOWCASES = [
   {
     id: 'real-estate',
@@ -28,25 +30,27 @@ export const DEFAULT_SHOWCASES = [
     items: [
       {
         id: 're-portfolio',
-        type: 'link', // 'link' | 'pdf' | 'gallery' | 'header'
+        type: 'pdf', // 'link' | 'pdf' | 'case-study' | 'gallery' | 'header'
         active: true,
         title: 'PORTFOLIO',
         subtitle: '',
         badge: '',
         thumbnail: '',
-        url: 'https://drive.google.com/file/d/1RFwVvQ1EFenpT_NDvAlSLNhqdVZXJ6rC/view?usp=sharing',
-        mediaItems: []
+        url: '/showcase-media/rak-real-estate-portfolio.pdf',
+        mediaItems: [],
+        projects: []
       },
       {
         id: 're-case-study',
-        type: 'link',
+        type: 'case-study',
         active: true,
         title: 'CASE STUDY - BRANDING CONCEPT',
         subtitle: '',
         badge: '',
         thumbnail: '',
-        url: 'https://drive.google.com/drive/folders/1I9h1gtfe-zEfY0Kw4ileov-kboffcskE?usp=sharing',
-        mediaItems: []
+        url: '',
+        mediaItems: [],
+        projects: REAL_ESTATE_CASE_STUDIES
       },
       {
         id: 're-renders-videos',
@@ -57,7 +61,8 @@ export const DEFAULT_SHOWCASES = [
         badge: '',
         thumbnail: '',
         url: 'https://claude.ai/artifact/VZfJWV4DuGx1aY4MWYuAe1',
-        mediaItems: []
+        mediaItems: [],
+        projects: []
       }
     ]
   }
@@ -74,19 +79,80 @@ export function slugifyShowcaseId(raw = '') {
   );
 }
 
+function detectAssetMediaType(rawType, rawUrl = '') {
+  if (rawType === 'pdf' || /\.pdf(\?|$)/i.test(String(rawUrl))) return 'pdf';
+  if (rawType === 'video' || /\.(mp4|webm|mov)(\?|$)/i.test(String(rawUrl))) return 'video';
+  return 'image';
+}
+
+export function normalizeCaseStudyProject(proj = {}, pIdx = 0) {
+  const sections = Array.isArray(proj?.sections)
+    ? proj.sections.map((sec, sIdx) => ({
+        id: String(sec?.id || `sec-${pIdx}-${sIdx}`),
+        title: String(sec?.title || `Section ${sIdx + 1}`),
+        items: Array.isArray(sec?.items)
+          ? sec.items
+              .filter((it) => it && typeof it === 'object' && it.url)
+              .map((it, iIdx) => ({
+                id: String(it.id || `cs-asset-${pIdx}-${sIdx}-${iIdx}`),
+                mediaType: detectAssetMediaType(it.mediaType, it.url),
+                title: String(it.title || ''),
+                subtitle: String(it.subtitle || ''),
+                url: String(it.url || '')
+              }))
+          : []
+      }))
+    : [];
+
+  return {
+    id: String(proj?.id || `project-${pIdx + 1}`),
+    name: String(proj?.name || `Case Study ${pIdx + 1}`),
+    client: String(proj?.client || ''),
+    tagline: String(proj?.tagline || ''),
+    logoUrl: String(proj?.logoUrl || ''),
+    coverUrl: String(proj?.coverUrl || ''),
+    sections
+  };
+}
+
 export function normalizeShowcaseItem(item = {}, idx = 0) {
-  const validTypes = ['link', 'pdf', 'gallery', 'header'];
-  const type = validTypes.includes(item?.type) ? item.type : 'link';
+  const validTypes = ['link', 'pdf', 'case-study', 'gallery', 'header'];
+  let rawUrl = String(item?.url ?? '');
+  let type = validTypes.includes(item?.type) ? item.type : 'link';
+
+  // Auto-upgrade legacy Google Drive links from initial seed to hosted native assets
+  if (rawUrl.includes('1RFwVvQ1EFenpT_NDvAlSLNhqdVZXJ6rC')) {
+    type = 'pdf';
+    rawUrl = '/showcase-media/rak-real-estate-portfolio.pdf';
+  } else if (rawUrl.includes('1I9h1gtfe-zEfY0Kw4ileov-kboffcskE')) {
+    type = 'case-study';
+    rawUrl = '';
+  }
+
   const mediaItems = Array.isArray(item?.mediaItems)
     ? item.mediaItems
         .filter((m) => m && typeof m === 'object' && m.url)
         .map((m, mIdx) => ({
           id: String(m.id || `media-${idx}-${mIdx}`),
-          mediaType: m.mediaType === 'video' || /\.(mp4|webm|mov)(\?|$)/i.test(String(m.url)) ? 'video' : 'image',
+          mediaType:
+            m.mediaType === 'video' || /\.(mp4|webm|mov)(\?|$)/i.test(String(m.url))
+              ? 'video'
+              : 'image',
           url: String(m.url || ''),
-          title: String(m.title || '')
+          title: String(m.title || ''),
+          subtitle: String(m.subtitle || '')
         }))
     : [];
+
+  let projects = [];
+  if (Array.isArray(item?.projects) && item.projects.length > 0) {
+    projects = item.projects.map((p, pIdx) => normalizeCaseStudyProject(p, pIdx));
+  } else if (
+    type === 'case-study' &&
+    (item?.id === 're-case-study' || /branding concept/i.test(String(item?.title || '')))
+  ) {
+    projects = REAL_ESTATE_CASE_STUDIES.map((p, pIdx) => normalizeCaseStudyProject(p, pIdx));
+  }
 
   return {
     id: String(item?.id || `item-${idx}-${Date.now()}`),
@@ -96,8 +162,9 @@ export function normalizeShowcaseItem(item = {}, idx = 0) {
     subtitle: String(item?.subtitle ?? ''),
     badge: String(item?.badge ?? ''),
     thumbnail: String(item?.thumbnail ?? ''),
-    url: String(item?.url ?? ''),
-    mediaItems
+    url: rawUrl,
+    mediaItems,
+    projects
   };
 }
 

@@ -15,7 +15,12 @@ import {
   Mail,
   MessageCircle,
   Sparkles,
-  Layers
+  Layers,
+  FolderKanban,
+  Play,
+  Download,
+  ZoomIn,
+  ZoomOut
 } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
 import { normalizeShowcases, toEmbedDocumentUrl } from '../lib/showcases';
@@ -59,11 +64,15 @@ export const ShowcasePage = ({
   const [pinError, setPinError] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
 
-  // Modals: Share, PDF Viewer, Gallery Lightbox
+  // Modals: Share, Case Study Vault, PDF Viewer, Gallery Lightbox
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [activeCaseStudy, setActiveCaseStudy] = useState(null);
+  const [csProjectIdx, setCsProjectIdx] = useState(0);
+  const [csSectionId, setCsSectionId] = useState('all');
   const [activePdfItem, setActivePdfItem] = useState(null);
   const [activeGallery, setActiveGallery] = useState(null); // { item, index }
+  const [galleryZoomed, setGalleryZoomed] = useState(false);
 
   useEffect(() => {
     if (!hub) return;
@@ -79,21 +88,41 @@ export const ShowcasePage = ({
     }
   }, [hub]);
 
-  // Keyboard navigation for modals
+  // Lock background page scroll when an overlay modal is open
+  useEffect(() => {
+    const anyModal = Boolean(activeCaseStudy || activePdfItem || activeGallery || shareOpen);
+    if (!anyModal) return undefined;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => {
+      document.body.style.overflow = prev;
+    };
+  }, [activeCaseStudy, activePdfItem, activeGallery, shareOpen]);
+
+  // Layered keyboard navigation for modals
   useEffect(() => {
     const onKeyDown = (e) => {
       if (e.key === 'Escape') {
-        setShareOpen(false);
-        setActivePdfItem(null);
-        setActiveGallery(null);
+        if (activePdfItem) {
+          setActivePdfItem(null);
+        } else if (activeGallery) {
+          setActiveGallery(null);
+          setGalleryZoomed(false);
+        } else if (activeCaseStudy) {
+          setActiveCaseStudy(null);
+        } else if (shareOpen) {
+          setShareOpen(false);
+        }
       } else if (activeGallery && activeGallery.item.mediaItems.length > 1) {
         if (e.key === 'ArrowRight') {
+          setGalleryZoomed(false);
           setActiveGallery((prev) =>
             prev
               ? { ...prev, index: (prev.index + 1) % prev.item.mediaItems.length }
               : null
           );
         } else if (e.key === 'ArrowLeft') {
+          setGalleryZoomed(false);
           setActiveGallery((prev) =>
             prev
               ? {
@@ -109,7 +138,7 @@ export const ShowcasePage = ({
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [activeGallery]);
+  }, [activeGallery, activePdfItem, activeCaseStudy, shareOpen]);
 
   // 1. Directory View (/showcase)
   if (!slug) {
@@ -120,10 +149,9 @@ export const ShowcasePage = ({
           className="pointer-events-none absolute inset-0 opacity-40"
           style={{
             background:
-              'radial-gradient(ellipse at 25% 20%, rgba(236,0,140,0.28), transparent 55%), radial-gradient(ellipse at 80% 80%, rgba(33,57,103,0.35), transparent 55%)'
+              'radial-gradient(circle at 20% 15%, rgba(236,0,140,0.28), transparent 50%), radial-gradient(circle at 80% 80%, rgba(33,57,103,0.45), transparent 55%)'
           }}
         />
-
         <div className="relative z-10 max-w-3xl w-full mx-auto space-y-10">
           <div className="flex items-center justify-between">
             <a
@@ -132,21 +160,30 @@ export const ShowcasePage = ({
                 e.preventDefault();
                 onNavigateSite('home', '/');
               }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-semibold tracking-wider uppercase backdrop-blur-md transition-colors"
+              className="inline-flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-slate-300 hover:text-white transition-colors"
             >
-              <img src="/RAK4CREATIVE-LOGO-WHITE.png" alt="RAK 4 CREATIVE" className="h-4 w-auto" />
-              <span>Main Site</span>
+              <img src="/RAK4CREATIVE-LOGO-WHITE.png" alt="RAK 4 CREATIVE" className="h-7 w-auto" />
+            </a>
+            <a
+              href="/"
+              onClick={(e) => {
+                e.preventDefault();
+                onNavigateSite('home', '/');
+              }}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-white/10 hover:bg-white/15 border border-white/15 text-xs font-semibold text-white transition-colors"
+            >
+              <span>Main Website</span>
               <ArrowUpRight className="w-3.5 h-3.5" />
             </a>
           </div>
 
-          <div className="text-center space-y-3 pt-4">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rak-magenta/15 border border-rak-magenta/35 text-[11px] font-bold uppercase tracking-[0.2em] text-rak-magenta-light">
+          <div className="space-y-3 text-center pt-4">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rak-magenta/20 border border-rak-magenta/40 text-[11px] font-bold uppercase tracking-widest text-rak-magenta-light">
               <Layers className="w-3.5 h-3.5" />
-              Industry & Client Hubs
+              Industry & Client Showcases
             </span>
             <h1 className="text-3xl sm:text-5xl font-bold font-heading tracking-tight">
-              RAK Showcase Hubs
+              RAK4Creative Showcase Hubs
             </h1>
             <p className="text-sm text-slate-300 max-w-lg mx-auto">
               Curated portfolios, branding concepts, 3D architectural renders, and performance case studies tailored by sector.
@@ -306,8 +343,22 @@ export const ShowcasePage = ({
       return;
     }
 
+    if (item.type === 'case-study') {
+      if (Array.isArray(item.projects) && item.projects.length > 0) {
+        setCsProjectIdx(0);
+        setCsSectionId('all');
+        setActiveCaseStudy(item);
+        return;
+      }
+      if (item.url) {
+        window.open(item.url, '_blank', 'noopener,noreferrer');
+      }
+      return;
+    }
+
     if (item.type === 'gallery') {
       if (item.mediaItems && item.mediaItems.length > 0) {
+        setGalleryZoomed(false);
         setActiveGallery({ item, index: 0 });
         return;
       }
@@ -353,6 +404,29 @@ export const ShowcasePage = ({
   };
 
   const btnAppearance = getButtonAppearance();
+
+  // Case study derived view data
+  const csProjects = activeCaseStudy?.projects || [];
+  const activeCsProject = csProjects[Math.min(csProjectIdx, Math.max(0, csProjects.length - 1))] || null;
+  const activeCsSections = activeCsProject?.sections || [];
+  const displayedCsSections =
+    csSectionId === 'all'
+      ? activeCsSections
+      : activeCsSections.filter((sec) => sec.id === csSectionId);
+
+  const openCsMediaInLightbox = (sectionTitle, sectionItems, clickedItem) => {
+    const mediaOnly = sectionItems.filter((it) => it.mediaType !== 'pdf');
+    const foundIdx = mediaOnly.findIndex((it) => it.id === clickedItem.id);
+    if (foundIdx === -1) return;
+    setGalleryZoomed(false);
+    setActiveGallery({
+      item: {
+        title: `${activeCsProject?.name || 'Case Study'} — ${sectionTitle}`,
+        mediaItems: mediaOnly
+      },
+      index: foundIdx
+    });
+  };
 
   return (
     <div
@@ -547,6 +621,8 @@ export const ShowcasePage = ({
                 const RightIcon =
                   item.type === 'pdf'
                     ? FileText
+                    : item.type === 'case-study'
+                    ? FolderKanban
                     : item.type === 'gallery'
                     ? Images
                     : ExternalLink;
@@ -753,7 +829,327 @@ export const ShowcasePage = ({
         )}
       </AnimatePresence>
 
-      {/* Inline PDF / Document Viewer Modal */}
+      {/* Interactive Case Study Vault Modal (z-50) */}
+      <AnimatePresence>
+        {activeCaseStudy && activeCsProject && (
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 18 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-50 bg-[#070A12]/96 backdrop-blur-2xl flex flex-col overflow-hidden"
+          >
+            {/* Top Sticky Header */}
+            <div className="border-b border-white/10 bg-[#0B101D]/90 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setActiveCaseStudy(null)}
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/18 border border-white/15 text-xs font-semibold text-white cursor-pointer transition-colors shrink-0"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Back</span>
+                </button>
+                <div className="min-w-0">
+                  <div className="text-xs sm:text-sm font-extrabold tracking-wide uppercase text-white truncate">
+                    {activeCaseStudy.title}
+                  </div>
+                  <div className="text-[11px] text-slate-400 truncate">
+                    {hub.title} • {csProjects.length} Flagship Branding Projects
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => setActiveCaseStudy(null)}
+                aria-label="Close Case Studies"
+                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white cursor-pointer shrink-0"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Scrollable Case Study Explorer Body */}
+            <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 sm:py-8">
+              <div className="max-w-6xl mx-auto space-y-7 pb-10">
+                {/* Project Switcher Cards */}
+                {csProjects.length > 1 && (
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    {csProjects.map((proj, pIdx) => {
+                      const isSelected = pIdx === csProjectIdx;
+                      const totalDeliverables = (proj.sections || []).reduce(
+                        (acc, s) => acc + (s.items?.length || 0),
+                        0
+                      );
+                      return (
+                        <button
+                          key={proj.id || pIdx}
+                          type="button"
+                          onClick={() => {
+                            setCsProjectIdx(pIdx);
+                            setCsSectionId('all');
+                          }}
+                          className={`group relative rounded-2xl overflow-hidden text-left p-5 transition-all cursor-pointer border ${
+                            isSelected
+                              ? 'border-rak-magenta bg-gradient-to-br from-[#1C2C50] to-[#0E1526] shadow-[0_14px_40px_rgba(236,0,140,0.22)] ring-1 ring-rak-magenta/60'
+                              : 'border-white/12 bg-white/[0.03] hover:bg-white/[0.06] hover:border-white/25'
+                          }`}
+                        >
+                          {proj.coverUrl && (
+                            <img
+                              src={proj.coverUrl}
+                              alt=""
+                              aria-hidden="true"
+                              className={`absolute inset-0 w-full h-full object-cover transition-opacity duration-300 ${
+                                isSelected ? 'opacity-22' : 'opacity-12 group-hover:opacity-20'
+                              }`}
+                            />
+                          )}
+                          <div className="absolute inset-0 bg-gradient-to-r from-[#090D18]/90 via-[#090D18]/75 to-[#090D18]/55" />
+
+                          <div className="relative z-10 flex items-start justify-between gap-4">
+                            <div className="space-y-1.5 min-w-0">
+                              <div className="inline-flex items-center gap-2">
+                                <span
+                                  className={`px-2.5 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-widest ${
+                                    isSelected
+                                      ? 'bg-rak-magenta text-white'
+                                      : 'bg-white/10 text-slate-300'
+                                  }`}
+                                >
+                                  Case Study 0{pIdx + 1}
+                                </span>
+                                {proj.client && (
+                                  <span className="text-[11px] font-semibold text-slate-300">
+                                    {proj.client}
+                                  </span>
+                                )}
+                              </div>
+                              <h2 className="text-lg sm:text-xl font-extrabold font-heading text-white">
+                                {proj.name}
+                              </h2>
+                              {proj.tagline && (
+                                <p className="text-xs text-slate-300 line-clamp-2 leading-relaxed">
+                                  {proj.tagline}
+                                </p>
+                              )}
+                              <div className="pt-1 text-[11px] font-semibold text-rak-magenta-light">
+                                {proj.sections?.length || 0} Chapters • {totalDeliverables} Deliverables
+                              </div>
+                            </div>
+
+                            {proj.logoUrl && (
+                              <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-xl bg-white/95 p-2 flex items-center justify-center shrink-0 shadow-lg">
+                                <img
+                                  src={proj.logoUrl}
+                                  alt={proj.name}
+                                  className="max-w-full max-h-full object-contain"
+                                />
+                              </div>
+                            )}
+                          </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {/* Chapter / Category Filter Bar */}
+                <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+                  <button
+                    type="button"
+                    onClick={() => setCsSectionId('all')}
+                    className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer border ${
+                      csSectionId === 'all'
+                        ? 'bg-white text-slate-950 border-white'
+                        : 'bg-white/[0.05] text-slate-300 border-white/12 hover:bg-white/10 hover:text-white'
+                    }`}
+                  >
+                    All Chapters (
+                    {activeCsSections.reduce((acc, s) => acc + (s.items?.length || 0), 0)})
+                  </button>
+                  {activeCsSections.map((sec) => (
+                    <button
+                      key={sec.id}
+                      type="button"
+                      onClick={() => setCsSectionId(sec.id)}
+                      className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer border ${
+                        csSectionId === sec.id
+                          ? 'bg-rak-magenta text-white border-rak-magenta'
+                          : 'bg-white/[0.05] text-slate-300 border-white/12 hover:bg-white/10 hover:text-white'
+                      }`}
+                    >
+                      {sec.title} ({sec.items?.length || 0})
+                    </button>
+                  ))}
+                </div>
+
+                {/* Deliverables Sections */}
+                <div className="space-y-10">
+                  {displayedCsSections.map((sec) => {
+                    const secItems = sec.items || [];
+                    if (secItems.length === 0) return null;
+                    return (
+                      <section key={sec.id} className="space-y-4">
+                        <div className="flex items-center justify-between border-b border-white/10 pb-2.5">
+                          <h3 className="text-sm sm:text-base font-extrabold tracking-wide uppercase text-white">
+                            {sec.title}
+                          </h3>
+                          <span className="text-xs text-slate-400 font-medium">
+                            {secItems.length} {secItems.length === 1 ? 'item' : 'items'}
+                          </span>
+                        </div>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                          {secItems.map((asset) => {
+                            if (asset.mediaType === 'pdf') {
+                              return (
+                                <div
+                                  key={asset.id}
+                                  onClick={() => {
+                                    trackShowcaseEvent('showcase_item_click', {
+                                      showcase_slug: hub.id,
+                                      item_title: `${activeCsProject.name} - ${asset.title}`,
+                                      item_type: 'case-study-pdf',
+                                      destination_url: asset.url
+                                    });
+                                    setActivePdfItem(asset);
+                                  }}
+                                  className="group rounded-2xl border border-white/12 bg-gradient-to-b from-white/[0.07] to-white/[0.03] hover:border-rak-magenta/60 p-4 flex flex-col justify-between gap-4 cursor-pointer transition-all hover:-translate-y-0.5"
+                                >
+                                  <div className="flex items-start justify-between gap-3">
+                                    <div className="w-11 h-11 rounded-xl bg-[#213967]/80 border border-white/15 flex items-center justify-center shrink-0">
+                                      <FileText className="w-5 h-5 text-white" />
+                                    </div>
+                                    <span className="px-2 py-0.5 rounded-md bg-rak-magenta/25 border border-rak-magenta/40 text-[10px] font-extrabold uppercase tracking-wider text-rak-magenta-light">
+                                      PDF Deck
+                                    </span>
+                                  </div>
+
+                                  <div className="space-y-1">
+                                    <div className="text-xs sm:text-[13px] font-bold text-white group-hover:text-rak-magenta-light transition-colors line-clamp-2">
+                                      {asset.title}
+                                    </div>
+                                    {asset.subtitle && (
+                                      <div className="text-[11px] text-slate-400">
+                                        {asset.subtitle}
+                                      </div>
+                                    )}
+                                  </div>
+
+                                  <div className="pt-2 border-t border-white/10 flex items-center justify-between text-[11px] font-semibold text-slate-300 group-hover:text-white">
+                                    <span>Open Presentation</span>
+                                    <ArrowUpRight className="w-3.5 h-3.5" />
+                                  </div>
+                                </div>
+                              );
+                            }
+
+                            if (asset.mediaType === 'video') {
+                              return (
+                                <button
+                                  key={asset.id}
+                                  type="button"
+                                  onClick={() => {
+                                    trackShowcaseEvent('showcase_item_click', {
+                                      showcase_slug: hub.id,
+                                      item_title: `${activeCsProject.name} - ${asset.title}`,
+                                      item_type: 'case-study-video',
+                                      destination_url: asset.url
+                                    });
+                                    openCsMediaInLightbox(sec.title, secItems, asset);
+                                  }}
+                                  className="group rounded-2xl border border-white/12 bg-white/[0.03] hover:border-rak-magenta/60 overflow-hidden text-left flex flex-col cursor-pointer transition-all hover:-translate-y-0.5"
+                                >
+                                  <div className="relative aspect-[4/3] w-full bg-black overflow-hidden">
+                                    <video
+                                      src={`${asset.url}#t=0.6`}
+                                      muted
+                                      playsInline
+                                      preload="metadata"
+                                      className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"
+                                    />
+                                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+                                    <div className="absolute inset-0 flex items-center justify-center">
+                                      <span className="w-11 h-11 rounded-full bg-rak-magenta/90 group-hover:bg-rak-magenta text-white flex items-center justify-center shadow-xl transition-transform group-hover:scale-110">
+                                        <Play className="w-4 h-4 fill-current ml-0.5" />
+                                      </span>
+                                    </div>
+                                    <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-bold uppercase tracking-wider text-white">
+                                      Video
+                                    </span>
+                                  </div>
+                                  <div className="p-3.5 space-y-0.5">
+                                    <div className="text-xs sm:text-[13px] font-bold text-white truncate">
+                                      {asset.title}
+                                    </div>
+                                    {asset.subtitle && (
+                                      <div className="text-[11px] text-slate-400 truncate">
+                                        {asset.subtitle}
+                                      </div>
+                                    )}
+                                  </div>
+                                </button>
+                              );
+                            }
+
+                            // Image / Render / Logo / Carousel / Landing Page
+                            const isLogoCard = /logo/i.test(asset.title);
+                            return (
+                              <button
+                                key={asset.id}
+                                type="button"
+                                onClick={() => {
+                                  trackShowcaseEvent('showcase_item_click', {
+                                    showcase_slug: hub.id,
+                                    item_title: `${activeCsProject.name} - ${asset.title}`,
+                                    item_type: 'case-study-image',
+                                    destination_url: asset.url
+                                  });
+                                  openCsMediaInLightbox(sec.title, secItems, asset);
+                                }}
+                                className="group rounded-2xl border border-white/12 bg-white/[0.03] hover:border-rak-magenta/60 overflow-hidden text-left flex flex-col cursor-pointer transition-all hover:-translate-y-0.5"
+                              >
+                                <div
+                                  className={`relative aspect-[4/3] w-full overflow-hidden flex items-center justify-center ${
+                                    isLogoCard ? 'bg-white p-6' : 'bg-slate-950'
+                                  }`}
+                                >
+                                  <img
+                                    src={asset.url}
+                                    alt={asset.title}
+                                    loading="lazy"
+                                    className={`w-full h-full transition-transform duration-300 group-hover:scale-105 ${
+                                      isLogoCard ? 'object-contain' : 'object-cover object-top'
+                                    }`}
+                                  />
+                                </div>
+                                <div className="p-3.5 space-y-0.5">
+                                  <div className="text-xs sm:text-[13px] font-bold text-white truncate">
+                                    {asset.title}
+                                  </div>
+                                  {asset.subtitle && (
+                                    <div className="text-[11px] text-slate-400 truncate">
+                                      {asset.subtitle}
+                                    </div>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          })}
+                        </div>
+                      </section>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Inline PDF / Document Viewer Modal (z-[60], layers above Case Study Vault) */}
       <AnimatePresence>
         {activePdfItem && (
           <motion.div
@@ -761,7 +1157,7 @@ export const ShowcasePage = ({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={() => setActivePdfItem(null)}
-            className="fixed inset-0 z-50 bg-black/85 backdrop-blur-md flex flex-col p-3 sm:p-6"
+            className="fixed inset-0 z-[60] bg-black/88 backdrop-blur-md flex flex-col p-2.5 sm:p-6"
           >
             <div
               onClick={(e) => e.stopPropagation()}
@@ -777,22 +1173,45 @@ export const ShowcasePage = ({
                 <div className="flex items-center gap-2 shrink-0">
                   <a
                     href={activePdfItem.url}
+                    download
+                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-semibold transition-colors"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>Download</span>
+                  </a>
+                  <a
+                    href={activePdfItem.url}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-semibold transition-colors"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rak-magenta hover:bg-rak-magenta-dark text-[11px] font-bold text-white transition-colors"
                   >
-                    <span>Open Original</span>
+                    <span>Open Full PDF</span>
                     <ArrowUpRight className="w-3.5 h-3.5" />
                   </a>
                   <button
                     type="button"
                     onClick={() => setActivePdfItem(null)}
+                    aria-label="Close PDF reader"
                     className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 cursor-pointer"
                   >
                     <X className="w-4 h-4" />
                   </button>
                 </div>
               </div>
+
+              {/* Mobile multi-page PDF helper banner (iOS Safari renders multi-page PDFs best in native tab) */}
+              <div className="sm:hidden px-4 py-2 bg-[#162038] border-b border-white/10 flex items-center justify-between gap-2 text-[11px] text-slate-200">
+                <span>Pinch-zoom &amp; swipe all pages in fullscreen:</span>
+                <a
+                  href={activePdfItem.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-bold text-rak-magenta-light underline shrink-0"
+                >
+                  Open Fullscreen ↗
+                </a>
+              </div>
+
               <iframe
                 src={toEmbedDocumentUrl(activePdfItem.url)}
                 title={activePdfItem.title}
@@ -804,100 +1223,160 @@ export const ShowcasePage = ({
         )}
       </AnimatePresence>
 
-      {/* Inline Renders & Video Lightbox Modal */}
+      {/* Inline Renders & Video Lightbox Modal (z-[60], layers above Case Study Vault) */}
       <AnimatePresence>
         {activeGallery && activeGallery.item.mediaItems.length > 0 && (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setActiveGallery(null)}
-            className="fixed inset-0 z-50 bg-black/90 backdrop-blur-lg flex flex-col justify-between p-4 sm:p-6"
+            onClick={() => {
+              setActiveGallery(null);
+              setGalleryZoomed(false);
+            }}
+            className="fixed inset-0 z-[60] bg-black/92 backdrop-blur-lg flex flex-col justify-between p-3 sm:p-6"
           >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-6xl mx-auto flex items-center justify-between gap-4"
-            >
-              <div>
-                <h2 className="text-sm sm:text-base font-bold">{activeGallery.item.title}</h2>
-                <p className="text-[11px] text-slate-400">
-                  {activeGallery.index + 1} of {activeGallery.item.mediaItems.length}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setActiveGallery(null)}
-                className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white cursor-pointer"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+            {(() => {
+              const currentMedia = activeGallery.item.mediaItems[activeGallery.index];
+              const isImage = currentMedia && currentMedia.mediaType !== 'video';
 
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="relative w-full max-w-5xl mx-auto flex-1 my-4 flex items-center justify-center min-h-0"
-            >
-              {(() => {
-                const currentMedia = activeGallery.item.mediaItems[activeGallery.index];
-                if (!currentMedia) return null;
-                return currentMedia.mediaType === 'video' ? (
-                  <video
-                    key={currentMedia.url}
-                    src={currentMedia.url}
-                    controls
-                    autoPlay
-                    playsInline
-                    className="max-h-[72vh] max-w-full rounded-2xl shadow-2xl bg-black"
-                  />
-                ) : (
-                  <img
-                    key={currentMedia.url}
-                    src={currentMedia.url}
-                    alt={currentMedia.title || activeGallery.item.title}
-                    className="max-h-[72vh] max-w-full object-contain rounded-2xl shadow-2xl"
-                  />
-                );
-              })()}
-
-              {activeGallery.item.mediaItems.length > 1 && (
+              return (
                 <>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setActiveGallery((p) => ({
-                        ...p,
-                        index:
-                          (p.index - 1 + p.item.mediaItems.length) % p.item.mediaItems.length
-                      }))
-                    }
-                    className="absolute left-2 sm:left-4 p-2.5 rounded-full bg-black/65 hover:bg-rak-magenta border border-white/20 text-white cursor-pointer transition-colors"
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full max-w-6xl mx-auto flex items-center justify-between gap-3 shrink-0"
                   >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() =>
-                      setActiveGallery((p) => ({
-                        ...p,
-                        index: (p.index + 1) % p.item.mediaItems.length
-                      }))
-                    }
-                    className="absolute right-2 sm:right-4 p-2.5 rounded-full bg-black/65 hover:bg-rak-magenta border border-white/20 text-white cursor-pointer transition-colors"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                </>
-              )}
-            </div>
+                    <div className="min-w-0">
+                      <h2 className="text-xs sm:text-base font-bold truncate">
+                        {currentMedia?.title || activeGallery.item.title}
+                      </h2>
+                      <p className="text-[11px] text-slate-400 truncate">
+                        {activeGallery.index + 1} of {activeGallery.item.mediaItems.length}
+                        {currentMedia?.subtitle ? ` • ${currentMedia.subtitle}` : ''}
+                      </p>
+                    </div>
+                    <div className="flex items-center gap-2 shrink-0">
+                      {isImage && (
+                        <button
+                          type="button"
+                          onClick={() => setGalleryZoomed((z) => !z)}
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 text-[11px] font-semibold text-white cursor-pointer"
+                        >
+                          {galleryZoomed ? (
+                            <>
+                              <ZoomOut className="w-3.5 h-3.5" />
+                              <span className="hidden xs:inline">Fit Screen</span>
+                            </>
+                          ) : (
+                            <>
+                              <ZoomIn className="w-3.5 h-3.5" />
+                              <span className="hidden xs:inline">Full Width</span>
+                            </>
+                          )}
+                        </button>
+                      )}
+                      {currentMedia?.url && (
+                        <a
+                          href={currentMedia.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white"
+                          title="Open original file"
+                        >
+                          <ArrowUpRight className="w-4 h-4" />
+                        </a>
+                      )}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveGallery(null);
+                          setGalleryZoomed(false);
+                        }}
+                        className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+                      >
+                        <X className="w-5 h-5" />
+                      </button>
+                    </div>
+                  </div>
 
-            {activeGallery.item.mediaItems[activeGallery.index]?.title && (
-              <div
-                onClick={(e) => e.stopPropagation()}
-                className="text-center text-xs sm:text-sm text-slate-200 pb-2"
-              >
-                {activeGallery.item.mediaItems[activeGallery.index].title}
-              </div>
-            )}
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className={`relative w-full max-w-5xl mx-auto flex-1 my-3 flex min-h-0 ${
+                      galleryZoomed && isImage
+                        ? 'overflow-y-auto items-start justify-center rounded-2xl bg-slate-950/80 p-2'
+                        : 'items-center justify-center'
+                    }`}
+                  >
+                    {currentMedia ? (
+                      currentMedia.mediaType === 'video' ? (
+                        <video
+                          key={currentMedia.url}
+                          src={currentMedia.url}
+                          controls
+                          autoPlay
+                          playsInline
+                          className="max-h-[76vh] max-w-full rounded-2xl shadow-2xl bg-black"
+                        />
+                      ) : (
+                        <img
+                          key={currentMedia.url}
+                          src={currentMedia.url}
+                          alt={currentMedia.title || activeGallery.item.title}
+                          onDoubleClick={() => setGalleryZoomed((z) => !z)}
+                          className={
+                            galleryZoomed
+                              ? 'w-full max-w-4xl h-auto rounded-xl shadow-2xl'
+                              : `max-h-[76vh] max-w-full object-contain rounded-2xl shadow-2xl ${
+                                  /logo/i.test(currentMedia.title || '') ? 'bg-white p-6' : ''
+                                }`
+                          }
+                        />
+                      )
+                    ) : null}
+
+                    {activeGallery.item.mediaItems.length > 1 && (
+                      <>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setGalleryZoomed(false);
+                            setActiveGallery((p) => ({
+                              ...p,
+                              index:
+                                (p.index - 1 + p.item.mediaItems.length) %
+                                p.item.mediaItems.length
+                            }));
+                          }}
+                          className="fixed sm:absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/70 hover:bg-rak-magenta border border-white/20 text-white cursor-pointer transition-colors z-10"
+                        >
+                          <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() => {
+                            setGalleryZoomed(false);
+                            setActiveGallery((p) => ({
+                              ...p,
+                              index: (p.index + 1) % p.item.mediaItems.length
+                            }));
+                          }}
+                          className="fixed sm:absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 p-2.5 rounded-full bg-black/70 hover:bg-rak-magenta border border-white/20 text-white cursor-pointer transition-colors z-10"
+                        >
+                          <ChevronRight className="w-5 h-5" />
+                        </button>
+                      </>
+                    )}
+                  </div>
+
+                  <div
+                    onClick={(e) => e.stopPropagation()}
+                    className="text-center text-xs text-slate-300 pb-1 shrink-0"
+                  >
+                    {activeGallery.item.title}
+                  </div>
+                </>
+              );
+            })()}
           </motion.div>
         )}
       </AnimatePresence>

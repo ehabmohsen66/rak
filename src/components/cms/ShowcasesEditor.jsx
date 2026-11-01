@@ -19,6 +19,7 @@ import {
   Eye,
   EyeOff,
   Files,
+  FolderKanban,
   Sparkles,
   Share2,
   ArrowUpRight
@@ -59,6 +60,7 @@ const COLOR_PRESETS = [
 const ITEM_TYPE_META = {
   link: { label: 'External Link', icon: Link2, badgeTone: 'neutral' },
   pdf: { label: 'Inline PDF / Deck', icon: FileText, badgeTone: 'brand' },
+  'case-study': { label: 'Case Study Vault', icon: FolderKanban, badgeTone: 'brand' },
   gallery: { label: 'Renders & Video Gallery', icon: Images, badgeTone: 'success' },
   header: { label: 'Section Header', icon: Type, badgeTone: 'warning' }
 };
@@ -133,6 +135,7 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
     const defaultsByType = {
       link: { title: 'NEW SHOWCASE LINK', url: 'https://' },
       pdf: { title: 'PORTFOLIO DECK (PDF)', badge: 'PDF', url: '' },
+      'case-study': { title: 'CASE STUDY - BRANDING CONCEPT', badge: '', url: '' },
       gallery: { title: 'RENDERS & VIDEOS', badge: 'GALLERY', url: '' },
       header: { title: 'FEATURED WORK', url: '' }
     };
@@ -802,6 +805,7 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
                             >
                               <option value="link">Switch to: External Link</option>
                               <option value="pdf">Switch to: Inline PDF / Deck</option>
+                              <option value="case-study">Switch to: Case Study Vault</option>
                               <option value="gallery">Switch to: Renders &amp; Video Gallery</option>
                               <option value="header">Switch to: Section Header</option>
                             </select>
@@ -937,6 +941,67 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
                                 onUploadFile={onUploadFile}
                                 onChange={(url) => updateHubItem(itemIdx, { url })}
                               />
+                            )}
+
+                            {/* Case Study Vault Summary & Project Titles for 'case-study' */}
+                            {item.type === 'case-study' && (
+                              <div className="space-y-3 pt-1">
+                                <div className="rounded-lg border border-black/[0.08] dark:border-white/[0.08] bg-white dark:bg-[#141418] p-3.5 space-y-3">
+                                  <div className="flex items-center justify-between gap-2">
+                                    <span className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                                      Interactive Case Study Vault ({item.projects?.length || 0} Projects)
+                                    </span>
+                                  </div>
+                                  {(item.projects || []).map((proj, pIdx) => {
+                                    const count = (proj.sections || []).reduce(
+                                      (acc, s) => acc + (s.items?.length || 0),
+                                      0
+                                    );
+                                    return (
+                                      <div
+                                        key={proj.id || pIdx}
+                                        className="grid grid-cols-1 sm:grid-cols-12 gap-2.5 items-center pt-2 border-t border-black/[0.06] dark:border-white/[0.06]"
+                                      >
+                                        <div className="sm:col-span-4">
+                                          <input
+                                            type="text"
+                                            value={proj.name || ''}
+                                            onChange={(e) => {
+                                              const nextProjects = [...(item.projects || [])];
+                                              nextProjects[pIdx] = {
+                                                ...nextProjects[pIdx],
+                                                name: e.target.value
+                                              };
+                                              updateHubItem(itemIdx, { projects: nextProjects });
+                                            }}
+                                            placeholder="Project Name"
+                                            className={CMS_INPUT_CLASS}
+                                          />
+                                        </div>
+                                        <div className="sm:col-span-5">
+                                          <input
+                                            type="text"
+                                            value={proj.tagline || ''}
+                                            onChange={(e) => {
+                                              const nextProjects = [...(item.projects || [])];
+                                              nextProjects[pIdx] = {
+                                                ...nextProjects[pIdx],
+                                                tagline: e.target.value
+                                              };
+                                              updateHubItem(itemIdx, { projects: nextProjects });
+                                            }}
+                                            placeholder="Project Tagline"
+                                            className={CMS_INPUT_CLASS}
+                                          />
+                                        </div>
+                                        <div className="sm:col-span-3 text-right text-xs text-slate-500 dark:text-slate-400">
+                                          {proj.sections?.length || 0} chapters · {count} files
+                                        </div>
+                                      </div>
+                                    );
+                                  })}
+                                </div>
+                              </div>
                             )}
 
                             {/* Gallery Media Manager for 'gallery' */}

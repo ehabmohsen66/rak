@@ -287,24 +287,24 @@ function readCmsContent(): array {
                 'items' => [
                     [
                         'id' => 're-portfolio',
-                        'type' => 'link',
+                        'type' => 'pdf',
                         'active' => true,
                         'title' => 'PORTFOLIO',
                         'subtitle' => '',
                         'badge' => '',
                         'thumbnail' => '',
-                        'url' => 'https://drive.google.com/file/d/1RFwVvQ1EFenpT_NDvAlSLNhqdVZXJ6rC/view?usp=sharing',
+                        'url' => '/showcase-media/rak-real-estate-portfolio.pdf',
                         'mediaItems' => []
                     ],
                     [
                         'id' => 're-case-study',
-                        'type' => 'link',
+                        'type' => 'case-study',
                         'active' => true,
                         'title' => 'CASE STUDY - BRANDING CONCEPT',
                         'subtitle' => '',
                         'badge' => '',
                         'thumbnail' => '',
-                        'url' => 'https://drive.google.com/drive/folders/1I9h1gtfe-zEfY0Kw4ileov-kboffcskE?usp=sharing',
+                        'url' => '',
                         'mediaItems' => []
                     ],
                     [
@@ -322,6 +322,25 @@ function readCmsContent(): array {
             ]
         ];
         $changed = true;
+    } else {
+        foreach ($content['showcases'] as &$scEntry) {
+            if (!is_array($scEntry) || empty($scEntry['items']) || !is_array($scEntry['items'])) continue;
+            foreach ($scEntry['items'] as &$scIt) {
+                if (!is_array($scIt)) continue;
+                $u = (string)($scIt['url'] ?? '');
+                if (strpos($u, '1RFwVvQ1EFenpT_NDvAlSLNhqdVZXJ6rC') !== false) {
+                    $scIt['type'] = 'pdf';
+                    $scIt['url'] = '/showcase-media/rak-real-estate-portfolio.pdf';
+                    $changed = true;
+                } elseif (strpos($u, '1I9h1gtfe-zEfY0Kw4ileov-kboffcskE') !== false) {
+                    $scIt['type'] = 'case-study';
+                    $scIt['url'] = '';
+                    $changed = true;
+                }
+            }
+            unset($scIt);
+        }
+        unset($scEntry);
     }
 
     if ($changed) {

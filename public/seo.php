@@ -149,8 +149,8 @@ $defaultShowcases = [
         'ogImageUrl' => '/showcase-media/real-estate-bg.webp',
         'backgroundUrl' => '/showcase-media/real-estate-bg.webp',
         'items' => [
-            ['active' => true, 'type' => 'link', 'title' => 'PORTFOLIO', 'url' => 'https://drive.google.com/file/d/1RFwVvQ1EFenpT_NDvAlSLNhqdVZXJ6rC/view?usp=sharing'],
-            ['active' => true, 'type' => 'link', 'title' => 'CASE STUDY - BRANDING CONCEPT', 'url' => 'https://drive.google.com/drive/folders/1I9h1gtfe-zEfY0Kw4ileov-kboffcskE?usp=sharing'],
+            ['active' => true, 'type' => 'pdf', 'title' => 'PORTFOLIO', 'url' => '/showcase-media/rak-real-estate-portfolio.pdf'],
+            ['active' => true, 'type' => 'case-study', 'title' => 'CASE STUDY - BRANDING CONCEPT', 'url' => ''],
             ['active' => true, 'type' => 'link', 'title' => 'RENDERS & VIDEOS', 'url' => 'https://claude.ai/artifact/VZfJWV4DuGx1aY4MWYuAe1']
         ]
     ]
