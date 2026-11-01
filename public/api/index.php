@@ -268,7 +268,7 @@ function readCmsContent(): array {
                 'listedInDirectory' => true,
                 'pinCode' => '',
                 'title' => '@RAKSHOWCASE_REALESTATE',
-                'subtitle' => 'Real Estate Branding, 3D Architectural Visualization & Performance Campaigns',
+                'subtitle' => '',
                 'avatarUrl' => '/showcase-media/real-estate-avatar.webp',
                 'ogImageUrl' => '/showcase-media/real-estate-bg.webp',
                 'backgroundType' => 'image',
