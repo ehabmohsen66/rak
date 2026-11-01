@@ -64,4 +64,23 @@ foreach ($blogPosts as $post) {
     echo "  </url>\n";
 }
 
+$showcases = isset($content['showcases']) && is_array($content['showcases']) ? $content['showcases'] : [];
+foreach ($showcases as $sc) {
+    if (!is_array($sc)) continue;
+    $isActive = ($sc['active'] ?? true) !== false;
+    $isIndexable = ($sc['noindex'] ?? true) === false;
+    $hasPin = !empty($sc['pinCode']);
+    $scSlug = trim((string)($sc['id'] ?? ''));
+    if (!$isActive || !$isIndexable || $hasPin || $scSlug === '') {
+        continue;
+    }
+    $loc = htmlspecialchars($baseUrl . '/showcase/' . rawurlencode($scSlug), ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    echo "  <url>\n";
+    echo "    <loc>{$loc}</loc>\n";
+    echo "    <lastmod>{$lastmod}</lastmod>\n";
+    echo "    <changefreq>monthly</changefreq>\n";
+    echo "    <priority>0.70</priority>\n";
+    echo "  </url>\n";
+}
+
 echo "</urlset>\n";

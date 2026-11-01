@@ -259,6 +259,71 @@ function readCmsContent(): array {
         }
     }
 
+    if (!isset($content['showcases']) || !is_array($content['showcases'])) {
+        $content['showcases'] = [
+            [
+                'id' => 'real-estate',
+                'active' => true,
+                'noindex' => true,
+                'listedInDirectory' => true,
+                'pinCode' => '',
+                'title' => '@RAKSHOWCASE_REALESTATE',
+                'subtitle' => 'Real Estate Branding, 3D Architectural Visualization & Performance Campaigns',
+                'avatarUrl' => '/showcase-media/real-estate-avatar.webp',
+                'ogImageUrl' => '/showcase-media/real-estate-bg.webp',
+                'backgroundType' => 'image',
+                'backgroundUrl' => '/showcase-media/real-estate-bg.webp',
+                'backgroundColor' => '#101829',
+                'backgroundFit' => 'ambient',
+                'overlayOpacity' => 25,
+                'buttonStyle' => 'solid',
+                'buttonColor' => '#213967',
+                'buttonTextColor' => '#FFFFFF',
+                'buttonRadius' => 'pill',
+                'showFooterCta' => true,
+                'footerCtaLabel' => 'Request Real Estate Proposal',
+                'whatsapp' => '',
+                'contactEmail' => '',
+                'items' => [
+                    [
+                        'id' => 're-portfolio',
+                        'type' => 'link',
+                        'active' => true,
+                        'title' => 'PORTFOLIO',
+                        'subtitle' => '',
+                        'badge' => '',
+                        'thumbnail' => '',
+                        'url' => 'https://drive.google.com/file/d/1RFwVvQ1EFenpT_NDvAlSLNhqdVZXJ6rC/view?usp=sharing',
+                        'mediaItems' => []
+                    ],
+                    [
+                        'id' => 're-case-study',
+                        'type' => 'link',
+                        'active' => true,
+                        'title' => 'CASE STUDY - BRANDING CONCEPT',
+                        'subtitle' => '',
+                        'badge' => '',
+                        'thumbnail' => '',
+                        'url' => 'https://drive.google.com/drive/folders/1I9h1gtfe-zEfY0Kw4ileov-kboffcskE?usp=sharing',
+                        'mediaItems' => []
+                    ],
+                    [
+                        'id' => 're-renders-videos',
+                        'type' => 'link',
+                        'active' => true,
+                        'title' => 'RENDERS & VIDEOS',
+                        'subtitle' => '',
+                        'badge' => '',
+                        'thumbnail' => '',
+                        'url' => 'https://claude.ai/artifact/VZfJWV4DuGx1aY4MWYuAe1',
+                        'mediaItems' => []
+                    ]
+                ]
+            ]
+        ];
+        $changed = true;
+    }
+
     if ($changed) {
         writeJsonFile('cms_data.json', $content);
     }
@@ -376,7 +441,7 @@ define('ALLOWED_RESUME_EXTS', ['pdf', 'doc', 'docx']);
 define('SECRET_MASK', '••••••••••••');
 
 function maxBytesForExtension(string $ext): int {
-    return in_array($ext, ['mp4', 'webm', 'mov'], true) ? MAX_VIDEO_UPLOAD_BYTES : MAX_UPLOAD_BYTES;
+    return in_array($ext, ['mp4', 'webm', 'mov', 'pdf'], true) ? MAX_VIDEO_UPLOAD_BYTES : MAX_UPLOAD_BYTES;
 }
 
 function maskEmailSettings(array $settings): array {

@@ -56,6 +56,7 @@ $defaultTitles = [
     'blog'         => 'Digital Marketing, Paid Media & AI Strategy Insights | RAK 4 CREATIVE Blog',
     'blog-post'    => 'Digital Marketing Insight | RAK 4 CREATIVE',
     'contact'      => 'Contact Our Digital Marketing Agency in Beirut, Lebanon | RAK 4 CREATIVE',
+    'showcase'     => 'Showcase Hubs & Industry Portfolios | RAK 4 CREATIVE',
     'admin'        => 'CMS Operations Portal | RAK 4 CREATIVE',
 ];
 
@@ -69,6 +70,7 @@ $defaultDescriptions = [
     'blog'         => "Insights from RAK 4 CREATIVE's strategy team in Lebanon on digital marketing, paid media ROI, AI workflows, high-conversion web architecture & omnichannel growth.",
     'blog-post'    => 'Executive insights on digital marketing, social media, paid ads, brand strategy, and web performance by RAK 4 CREATIVE.',
     'contact'      => 'Partner with RAK 4 CREATIVE in Beirut, Lebanon (Badaro) or Toronto. Request a proposal for social media marketing, Meta & Google paid ads, SEO, branding & web.',
+    'showcase'     => 'Curated industry portfolios, branding concepts, 3D architectural visualization, and performance case studies by RAK 4 CREATIVE.',
     'admin'        => 'Internal CMS Operations Portal for RAK 4 CREATIVE.',
 ];
 
@@ -129,14 +131,40 @@ $routeMap = [
     '/careers'      => ['tab' => 'careers',      'canonical' => '/careers',      'label' => 'Careers'],
     '/blog'         => ['tab' => 'blog',         'canonical' => '/blog',         'label' => 'Blog'],
     '/contact'      => ['tab' => 'contact',      'canonical' => '/contact',      'label' => 'Contact'],
+    '/showcase'     => ['tab' => 'showcase',     'canonical' => '/showcase',     'label' => 'Showcase Hubs'],
     '/admin'        => ['tab' => 'admin',        'canonical' => '/admin',        'label' => 'Admin'],
     '/cms'          => ['tab' => 'admin',        'canonical' => '/admin',        'label' => 'Admin'],
 ];
+
+$defaultShowcases = [
+    [
+        'id' => 'real-estate',
+        'active' => true,
+        'noindex' => true,
+        'listedInDirectory' => true,
+        'pinCode' => '',
+        'title' => '@RAKSHOWCASE_REALESTATE',
+        'subtitle' => 'Real Estate Branding, 3D Architectural Visualization & Performance Campaigns',
+        'avatarUrl' => '/showcase-media/real-estate-avatar.webp',
+        'ogImageUrl' => '/showcase-media/real-estate-bg.webp',
+        'backgroundUrl' => '/showcase-media/real-estate-bg.webp',
+        'items' => [
+            ['active' => true, 'type' => 'link', 'title' => 'PORTFOLIO', 'url' => 'https://drive.google.com/file/d/1RFwVvQ1EFenpT_NDvAlSLNhqdVZXJ6rC/view?usp=sharing'],
+            ['active' => true, 'type' => 'link', 'title' => 'CASE STUDY - BRANDING CONCEPT', 'url' => 'https://drive.google.com/drive/folders/1I9h1gtfe-zEfY0Kw4ileov-kboffcskE?usp=sharing'],
+            ['active' => true, 'type' => 'link', 'title' => 'RENDERS & VIDEOS', 'url' => 'https://claude.ai/artifact/VZfJWV4DuGx1aY4MWYuAe1']
+        ]
+    ]
+];
+
+$showcases = (isset($content['showcases']) && is_array($content['showcases']))
+    ? $content['showcases']
+    : $defaultShowcases;
 
 $tab = 'home';
 $canonicalPath = '/';
 $breadcrumbLabel = 'Home';
 $matchedPost = null;
+$matchedShowcase = null;
 $isNotFound = false;
 
 if (isset($routeMap[$lowerPath])) {
@@ -156,6 +184,25 @@ if (isset($routeMap[$lowerPath])) {
         $tab = 'blog-post';
         $canonicalPath = '/blog/' . $matchedPost['id'];
         $breadcrumbLabel = (string)($matchedPost['title'] ?? 'Article');
+    } else {
+        $isNotFound = true;
+    }
+} elseif (strpos($lowerPath, '/showcase/') === 0 && strlen($cleanPath) > 10) {
+    $scSlug = rawurldecode(substr($cleanPath, 10));
+    if (strpos($scSlug, '/') === false) {
+        foreach ($showcases as $sc) {
+            if (!is_array($sc)) continue;
+            if (($sc['active'] ?? true) === false) continue;
+            if (isset($sc['id']) && strcasecmp((string)$sc['id'], $scSlug) === 0) {
+                $matchedShowcase = $sc;
+                break;
+            }
+        }
+    }
+    if ($matchedShowcase !== null) {
+        $tab = 'showcase-hub';
+        $canonicalPath = '/showcase/' . $matchedShowcase['id'];
+        $breadcrumbLabel = (string)($matchedShowcase['title'] ?? 'Showcase');
     } else {
         $isNotFound = true;
     }
@@ -198,10 +245,34 @@ if ($tab === 'blog-post' && $matchedPost !== null) {
     if (!empty($matchedPost['image'])) {
         $ogImage = rakAbsoluteUrl((string)$matchedPost['image'], $baseUrl);
     }
+} elseif ($tab === 'showcase-hub' && $matchedShowcase !== null) {
+    $scTitle = trim((string)($matchedShowcase['title'] ?? ''));
+    $pageTitle = ($scTitle !== '' ? $scTitle : 'Showcase') . ' | RAK 4 CREATIVE';
+    $scSub = trim((string)($matchedShowcase['subtitle'] ?? ''));
+    $pageDesc = $scSub !== '' ? $scSub : $defaultDescriptions['showcase'];
+    $scImg = trim((string)($matchedShowcase['ogImageUrl'] ?? $matchedShowcase['backgroundUrl'] ?? $matchedShowcase['avatarUrl'] ?? ''));
+    if ($scImg !== '') {
+        $ogImage = rakAbsoluteUrl($scImg, $baseUrl);
+    }
+}
+
+$isShowcaseNoindex = false;
+if ($tab === 'showcase-hub' && $matchedShowcase !== null) {
+    $isShowcaseNoindex = (($matchedShowcase['noindex'] ?? true) !== false) || !empty($matchedShowcase['pinCode']);
+} elseif ($tab === 'showcase') {
+    $hasPublicIndexedHub = false;
+    foreach ($showcases as $sc) {
+        if (!is_array($sc)) continue;
+        if (($sc['active'] ?? true) !== false && ($sc['noindex'] ?? true) === false && empty($sc['pinCode'])) {
+            $hasPublicIndexedHub = true;
+            break;
+        }
+    }
+    $isShowcaseNoindex = !$hasPublicIndexedHub;
 }
 
 $fullCanonical = ($canonicalPath === '/') ? ($baseUrl . '/') : ($baseUrl . $canonicalPath);
-$robotsDirective = ($tab === 'admin' || $isNotFound)
+$robotsDirective = ($tab === 'admin' || $isNotFound || $isShowcaseNoindex)
     ? 'noindex, nofollow'
     : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 
@@ -489,6 +560,36 @@ if ($tab !== 'admin' && !$isNotFound) {
         $ns .= '<h1>Contact ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
         foreach ($offices as $of) {
             $ns .= '<address><strong>' . rakEsc((string)($of['city'] ?? '') . ', ' . (string)($of['country'] ?? '')) . '</strong>: ' . rakEsc((string)($of['address'] ?? '')) . ' • ' . rakEsc((string)($of['phone'] ?? '')) . ' • ' . rakEsc((string)($of['email'] ?? '')) . '</address>';
+        }
+    } elseif ($tab === 'showcase') {
+        $ns .= '<h1>Showcase Hubs: ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
+        foreach ($showcases as $sc) {
+            if (!is_array($sc) || ($sc['active'] ?? true) === false || ($sc['listedInDirectory'] ?? true) === false) continue;
+            $scId = rakEsc((string)($sc['id'] ?? ''));
+            $ns .= '<section><h2><a href="' . $baseUrl . '/showcase/' . $scId . '">' . rakEsc((string)($sc['title'] ?? $scId)) . '</a></h2>';
+            if (!empty($sc['subtitle'])) {
+                $ns .= '<p>' . rakEsc((string)$sc['subtitle']) . '</p>';
+            }
+            $ns .= '</section>';
+        }
+    } elseif ($tab === 'showcase-hub' && $matchedShowcase !== null) {
+        $ns .= '<h1>' . rakEsc((string)($matchedShowcase['title'] ?? 'Showcase')) . '</h1>';
+        if (!empty($matchedShowcase['subtitle'])) {
+            $ns .= '<p>' . rakEsc((string)$matchedShowcase['subtitle']) . '</p>';
+        }
+        if (empty($matchedShowcase['pinCode']) && !empty($matchedShowcase['items']) && is_array($matchedShowcase['items'])) {
+            $ns .= '<ul>';
+            foreach ($matchedShowcase['items'] as $it) {
+                if (!is_array($it) || ($it['active'] ?? true) === false) continue;
+                $itTitle = rakEsc((string)($it['title'] ?? ''));
+                $itUrl = trim((string)($it['url'] ?? ''));
+                if ($itUrl !== '' && ($it['type'] ?? 'link') !== 'header') {
+                    $ns .= '<li><a href="' . rakEsc($itUrl) . '">' . $itTitle . '</a></li>';
+                } elseif ($itTitle !== '') {
+                    $ns .= '<li>' . $itTitle . '</li>';
+                }
+            }
+            $ns .= '</ul>';
         }
     }
 

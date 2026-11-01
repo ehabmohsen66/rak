@@ -1,4 +1,5 @@
 import { DEFAULT_BANNERS } from '../lib/banners';
+import { DEFAULT_SHOWCASES } from '../lib/showcases';
 
 export const BRAND_INFO = {
   name: "RAK4Creative",
@@ -858,5 +859,6 @@ export const INITIAL_CMS_CONTENT = {
   offices: OFFICES,
   testimonials: TESTIMONIALS,
   banners: DEFAULT_BANNERS,
+  showcases: DEFAULT_SHOWCASES,
   seo: SEO_SETTINGS
 };

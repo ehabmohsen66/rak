@@ -309,7 +309,8 @@ export function MediaLibraryDialog({ open, onClose, onSelect, kind = 'all' }) {
   const filters = [
     { id: 'all', label: 'All' },
     { id: 'image', label: 'Images' },
-    { id: 'video', label: 'Videos' }
+    { id: 'video', label: 'Videos' },
+    { id: 'file', label: 'Documents' }
   ];
 
   return (

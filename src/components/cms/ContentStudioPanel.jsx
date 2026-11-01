@@ -19,9 +19,11 @@ import {
   Globe,
   PanelsTopLeft,
   LayoutTemplate,
+  Smartphone,
   X
 } from 'lucide-react';
 import BannersEditor from './BannersEditor';
+import ShowcasesEditor from './ShowcasesEditor';
 import { PILLAR_ICON_OPTIONS } from '../../lib/pillarIcons';
 import {
   CMS_BTN_PRIMARY,
@@ -71,6 +73,12 @@ export const CONTENT_SECTIONS = [
     label: 'Portfolio',
     icon: Briefcase,
     description: 'Projects listed on Work and Case Studies, including featured picks for Home.'
+  },
+  {
+    id: 'showcases',
+    label: 'Showcase Hubs',
+    icon: Smartphone,
+    description: 'Linktree-style industry & client pitch microsites at /showcase/:slug (seeded with @RAKSHOWCASE_REALESTATE).'
   },
   {
     id: 'blog',
@@ -300,6 +308,11 @@ export default function ContentStudioPanel({
       {/* 0. PAGE BANNERS */}
       {section === 'banners' && (
         <BannersEditor draft={draft} updateDraft={updateDraft} onUploadFile={onUploadFile} />
+      )}
+
+      {/* 0A. SHOWCASE HUBS (LINK-IN-BIO & CLIENT MICROSITES) */}
+      {section === 'showcases' && (
+        <ShowcasesEditor draft={draft} updateDraft={updateDraft} onUploadFile={onUploadFile} />
       )}
 
       {/* 0B. HOME SECTIONS */}

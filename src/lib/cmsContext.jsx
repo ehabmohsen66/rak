@@ -10,6 +10,7 @@ import {
   trackLeadConversion
 } from './pixelEngine';
 import { normalizeBanners } from './banners';
+import { normalizeShowcases } from './showcases';
 
 const CONTENT_STORAGE_KEY = 'rak_cms_content_v1';
 const PIXELS_STORAGE_KEY = 'rak_cms_pixels_v1';
@@ -135,6 +136,7 @@ function normalizeContent(raw = {}) {
     offices: Array.isArray(raw.offices) ? raw.offices : INITIAL_CMS_CONTENT.offices,
     testimonials: Array.isArray(raw.testimonials) ? raw.testimonials : INITIAL_CMS_CONTENT.testimonials,
     banners: normalizeBanners(raw.banners),
+    showcases: normalizeShowcases(raw.showcases),
     seo: normalizeSeo(raw.seo || {})
   };
 }

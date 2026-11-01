@@ -792,5 +792,66 @@
       "contact": "Partner with RAK 4 CREATIVE in Beirut, Lebanon (Badaro) or Toronto. Request a proposal for social media marketing, Meta & Google paid ads, SEO, branding & web.",
       "admin": "Internal CMS Operations Portal for RAK 4 CREATIVE."
     }
-  }
+  },
+  "showcases": [
+    {
+      "id": "real-estate",
+      "active": true,
+      "noindex": true,
+      "listedInDirectory": true,
+      "pinCode": "",
+      "title": "@RAKSHOWCASE_REALESTATE",
+      "subtitle": "Real Estate Branding, 3D Architectural Visualization & Performance Campaigns",
+      "avatarUrl": "/showcase-media/real-estate-avatar.webp",
+      "ogImageUrl": "/showcase-media/real-estate-bg.webp",
+      "backgroundType": "image",
+      "backgroundUrl": "/showcase-media/real-estate-bg.webp",
+      "backgroundColor": "#101829",
+      "backgroundFit": "ambient",
+      "overlayOpacity": 25,
+      "buttonStyle": "solid",
+      "buttonColor": "#213967",
+      "buttonTextColor": "#FFFFFF",
+      "buttonRadius": "pill",
+      "showFooterCta": true,
+      "footerCtaLabel": "Request Real Estate Proposal",
+      "whatsapp": "",
+      "contactEmail": "",
+      "items": [
+        {
+          "id": "re-portfolio",
+          "type": "link",
+          "active": true,
+          "title": "PORTFOLIO",
+          "subtitle": "",
+          "badge": "",
+          "thumbnail": "",
+          "url": "https://drive.google.com/file/d/1RFwVvQ1EFenpT_NDvAlSLNhqdVZXJ6rC/view?usp=sharing",
+          "mediaItems": []
+        },
+        {
+          "id": "re-case-study",
+          "type": "link",
+          "active": true,
+          "title": "CASE STUDY - BRANDING CONCEPT",
+          "subtitle": "",
+          "badge": "",
+          "thumbnail": "",
+          "url": "https://drive.google.com/drive/folders/1I9h1gtfe-zEfY0Kw4ileov-kboffcskE?usp=sharing",
+          "mediaItems": []
+        },
+        {
+          "id": "re-renders-videos",
+          "type": "link",
+          "active": true,
+          "title": "RENDERS & VIDEOS",
+          "subtitle": "",
+          "badge": "",
+          "thumbnail": "",
+          "url": "https://claude.ai/artifact/VZfJWV4DuGx1aY4MWYuAe1",
+          "mediaItems": []
+        }
+      ]
+    }
+  ]
 }

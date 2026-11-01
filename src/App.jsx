@@ -55,6 +55,7 @@ const BlogPage = lazyWithRetry(() => import('./pages/BlogPage'), 'blog');
 const BlogPostPage = lazyWithRetry(() => import('./pages/BlogPostPage'), 'blog-post');
 const ContactPage = lazyWithRetry(() => import('./pages/ContactPage'), 'contact');
 const AdminCmsPage = lazyWithRetry(() => import('./pages/AdminCmsPage'), 'admin');
+const ShowcasePage = lazyWithRetry(() => import('./pages/ShowcasePage'), 'showcase');
 
 const TAB_TO_PATH = {
   home: '/',
@@ -65,6 +66,7 @@ const TAB_TO_PATH = {
   careers: '/careers',
   blog: '/blog',
   contact: '/contact',
+  showcase: '/showcase',
   admin: '/admin'
 };
 
@@ -78,6 +80,7 @@ const PATH_TO_TAB = {
   '/careers': 'careers',
   '/blog': 'blog',
   '/contact': 'contact',
+  '/showcase': 'showcase',
   '/admin': 'admin',
   '/cms': 'admin'
 };
@@ -90,6 +93,10 @@ const getTabFromLocation = () => {
     return 'blog-post';
   }
 
+  if (cleanPath === '/showcase' || (cleanPath.startsWith('/showcase/') && cleanPath.length > 10)) {
+    return 'showcase';
+  }
+
   return PATH_TO_TAB[cleanPath] || 'home';
 };
 
@@ -97,6 +104,12 @@ const getBlogPostSlugFromLocation = () => {
   const pathname = window.location.pathname.replace(/\/$/, '') || '';
   const match = pathname.match(/^\/blog\/(.+)$/i);
   return match ? match[1] : null;
+};
+
+const getShowcaseSlugFromLocation = () => {
+  const pathname = window.location.pathname.replace(/\/$/, '') || '';
+  const match = pathname.match(/^\/showcase\/([^/]+)$/i);
+  return match ? decodeURIComponent(match[1]) : null;
 };
 
 function setMetaContent(selector, value) {
@@ -122,6 +135,7 @@ export function App() {
   const { content, recordPageView } = useCms();
   const [activeTab, setActiveTabState] = useState(() => getTabFromLocation());
   const [blogSlug, setBlogSlug] = useState(() => getBlogPostSlugFromLocation());
+  const [showcaseSlug, setShowcaseSlug] = useState(() => getShowcaseSlugFromLocation());
   const [darkMode, setDarkMode] = useState(false);
 
   const setActiveTab = (tabId, pathOverride = null, replace = false) => {
@@ -131,6 +145,15 @@ export function App() {
     if (tabId === 'blog-post' && pathOverride) {
       const slugMatch = pathOverride.match(/^\/blog\/(.+)$/i);
       setBlogSlug(slugMatch ? slugMatch[1] : null);
+    }
+
+    if (tabId === 'showcase') {
+      if (pathOverride) {
+        const scMatch = pathOverride.replace(/\/$/, '').match(/^\/showcase\/([^/]+)$/i);
+        setShowcaseSlug(scMatch ? decodeURIComponent(scMatch[1]) : null);
+      } else {
+        setShowcaseSlug(null);
+      }
     }
 
     if (currentPath !== targetPath) {
@@ -151,6 +174,8 @@ export function App() {
       setActiveTabState(tab);
       if (tab === 'blog-post') {
         setBlogSlug(getBlogPostSlugFromLocation());
+      } else if (tab === 'showcase') {
+        setShowcaseSlug(getShowcaseSlugFromLocation());
       }
     };
 
@@ -163,6 +188,8 @@ export function App() {
     const initialTab = getTabFromLocation();
     if (initialTab === 'blog-post') {
       setBlogSlug(getBlogPostSlugFromLocation());
+    } else if (initialTab === 'showcase') {
+      setShowcaseSlug(getShowcaseSlugFromLocation());
     } else {
       const targetPath = TAB_TO_PATH[initialTab] || '/';
       if (
@@ -311,6 +338,7 @@ export function App() {
     let nextOgImage = toAbsoluteAssetUrl(seo.ogImage || `${baseCanonical}/og-logo.png`);
     let nextOgType = 'website';
     let routePath = TAB_TO_PATH[activeTab] || '/';
+    let isShowcaseNoindex = false;
 
     if (activeTab === 'blog-post' && blogSlug) {
       routePath = `/blog/${blogSlug}`;
@@ -327,11 +355,46 @@ export function App() {
           nextOgImage = toAbsoluteAssetUrl(matchedPost.image);
         }
       }
+    } else if (activeTab === 'showcase') {
+      const showcaseList = Array.isArray(content?.showcases) ? content.showcases : [];
+      if (showcaseSlug) {
+        const cleanSlug = showcaseSlug.toLowerCase();
+        const matchedShowcase = showcaseList.find(
+          (s) => s && s.active !== false && String(s.id || '').toLowerCase() === cleanSlug
+        );
+        routePath = `/showcase/${matchedShowcase?.id || showcaseSlug}`;
+        if (matchedShowcase) {
+          nextTitle = `${matchedShowcase.title || 'Showcase'} | RAK 4 CREATIVE`;
+          if (matchedShowcase.subtitle) {
+            nextDescription = matchedShowcase.subtitle;
+          }
+          const scImg =
+            matchedShowcase.ogImageUrl ||
+            matchedShowcase.backgroundUrl ||
+            matchedShowcase.avatarUrl;
+          if (scImg) {
+            nextOgImage = toAbsoluteAssetUrl(scImg);
+          }
+          isShowcaseNoindex = matchedShowcase.noindex !== false || Boolean(matchedShowcase.pinCode);
+        } else {
+          nextTitle = 'Showcase Not Found | RAK 4 CREATIVE';
+          isShowcaseNoindex = true;
+        }
+      } else {
+        routePath = '/showcase';
+        nextTitle = 'Showcase Hubs & Industry Portfolios | RAK 4 CREATIVE';
+        nextDescription =
+          'Curated industry portfolios, branding concepts, 3D architectural visualization, and performance case studies by RAK 4 CREATIVE.';
+        const hasPublicIndexedHub = showcaseList.some(
+          (s) => s && s.active !== false && s.noindex === false && !s.pinCode
+        );
+        isShowcaseNoindex = !hasPublicIndexedHub;
+      }
     }
 
     const fullCanonicalUrl = routePath === '/' ? `${baseCanonical}/` : `${baseCanonical}${routePath}`;
     const robotsDirective =
-      activeTab === 'admin'
+      activeTab === 'admin' || isShowcaseNoindex
         ? 'noindex, nofollow'
         : 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1';
 
@@ -350,14 +413,14 @@ export function App() {
     setMetaContent('meta[name="keywords"]', seo.metaKeywords);
     setMetaContent('meta[property="og:image"]', nextOgImage);
     setMetaContent('meta[property="twitter:image"]', nextOgImage);
-  }, [activeTab, blogSlug, content?.seo, content?.blogPosts]);
+  }, [activeTab, blogSlug, showcaseSlug, content?.seo, content?.blogPosts, content?.showcases]);
 
   // Dispatch SPA PageView pixel events on public route transitions
   useEffect(() => {
     if (activeTab !== 'admin') {
       recordPageView(window.location.pathname, document.title);
     }
-  }, [activeTab, blogSlug, recordPageView]);
+  }, [activeTab, blogSlug, showcaseSlug, recordPageView]);
 
   if (activeTab === 'admin') {
     return (
@@ -379,6 +442,34 @@ export function App() {
           onNavigateSite={(tab, path) => setActiveTab(tab, path)}
         />
       </React.Suspense>
+    );
+  }
+
+  if (activeTab === 'showcase') {
+    return (
+      <>
+        <React.Suspense
+          fallback={
+            <div className="min-h-screen flex items-center justify-center bg-[#07080B]">
+              <div className="flex flex-col items-center gap-3">
+                <div className="w-9 h-9 border-[3px] border-white/15 border-t-[#EC008C] rounded-full animate-spin" />
+                <span className="text-xs font-bold tracking-widest uppercase text-white/70">
+                  Loading Showcase
+                </span>
+              </div>
+            </div>
+          }
+        >
+          <ShowcasePage
+            slug={showcaseSlug}
+            onNavigateSite={(tab, path) => setActiveTab(tab, path)}
+            onOpenPlanner={() => setPlannerOpen(true)}
+          />
+        </React.Suspense>
+        {plannerOpen && (
+          <ProjectEstimatorModal onClose={() => setPlannerOpen(false)} />
+        )}
+      </>
     );
   }
 

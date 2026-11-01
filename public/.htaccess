@@ -44,7 +44,7 @@ DirectoryIndex seo.php index.html
   RewriteCond %{REQUEST_URI} ^/assets/
   RewriteRule ^ - [R=404,L]
 
-  # All SPA routes (/services, /about, /work, /case-studies, /careers, /blog/*, /contact, /admin) route through seo.php
+  # All SPA routes (/services, /about, /work, /case-studies, /careers, /blog/*, /showcase/*, /contact, /admin) route through seo.php
   RewriteRule ^ seo.php [L]
 </IfModule>
 
@@ -57,6 +57,7 @@ DirectoryIndex seo.php index.html
   AddType image/svg+xml                   svg svgz
   AddType image/webp                      webp
   AddType video/mp4                       mp4
+  AddType application/pdf                 pdf
   AddType font/woff2                      woff2
   AddType font/woff                       woff
   AddType font/ttf                        ttf
