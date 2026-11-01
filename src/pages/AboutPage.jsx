@@ -1,5 +1,5 @@
 import React from 'react';
-import { Award, CheckCircle2, ArrowUpRight, Quote } from 'lucide-react';
+import { Award, CheckCircle2, ArrowUpRight } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
 import { AboutHero } from '../components/AboutHero';
 import { TeamMarqueeSection } from '../components/TeamMarqueeSection';
@@ -13,18 +13,6 @@ export const AboutPage = ({ onOpenPlanner }) => {
     <div className="pb-16 space-y-20 sm:space-y-28 bg-slate-50 dark:bg-rak-slate-950 text-slate-900 dark:text-white transition-colors duration-300">
       
       <AboutHero onOpenPlanner={onOpenPlanner} />
-
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="relative rounded-3xl p-8 sm:p-12 bg-gradient-to-r from-rak-magenta/10 via-white to-slate-50 dark:from-rak-magenta/20 dark:via-rak-slate-900 dark:to-rak-slate-900 border border-rak-magenta/30 dark:border-rak-magenta/40 text-center space-y-4 shadow-xl overflow-hidden backdrop-blur-xl">
-          <Quote className="w-12 h-12 text-rak-magenta/40 mx-auto" />
-          <blockquote className="text-xl sm:text-3xl lg:text-4xl font-bold text-slate-900 dark:text-white max-w-3xl mx-auto leading-snug not-italic font-heading">
-            “{brandInfo.quote || "Your vision + our expertise = something amazing. Let's create something unforgettable together."}”
-          </blockquote>
-          <div className="text-xs font-mono text-rak-magenta uppercase tracking-widest font-bold pt-2">
-            The {brandInfo.name || 'RAK4Creative'} Promise
-          </div>
-        </div>
-      </section>
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center bg-white dark:bg-rak-slate-900/80 border border-slate-200 dark:border-rak-slate-800 rounded-3xl p-8 sm:p-12 shadow-sm backdrop-blur-xl">
@@ -63,6 +51,28 @@ export const AboutPage = ({ onOpenPlanner }) => {
             </ul>
           </div>
 
+        </div>
+
+        {/* Feature Showcase Banner */}
+        <div className="mt-8 rounded-3xl overflow-hidden border border-slate-200 dark:border-rak-slate-800 shadow-xl bg-slate-950 group">
+          <div className="relative w-full aspect-[2200/940] max-h-[70vh] overflow-hidden flex items-center justify-center">
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              poster="/videos/big-ideas-poster.jpg"
+              className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.01]"
+            >
+              <source src="/videos/big-ideas-banner.mp4" type="video/mp4" />
+              <img
+                src="/videos/big-ideas-banner.gif"
+                alt="Big Ideas - Bigger Business Profit"
+                className="w-full h-full object-cover"
+              />
+            </video>
+          </div>
         </div>
       </section>
 

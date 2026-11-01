@@ -5,7 +5,7 @@ export const BRAND_INFO = {
   tagline: "Your One-Stop Agency",
   headline: "We create big ideas from ground zero and take them to new heights.",
   description: "RAK4Creative is a full-service agency, providing market research, social media content creation, media production, brand identity & web development, digital marketing, and out-of-home advertising. One stop for every stage of the work, from ideation and strategy to execution, monitoring, and evaluation.",
-  quote: "Your vision + our expertise = something amazing. Let's create something unforgettable together.",
+  quote: "",
   diffEyebrow: "What Makes Us Different",
   diffHeading: "Bold Creativity Meets Tech Magic.",
   differentiation: "With the ever-evolving creative market, how do you choose the agency that perfectly aligns with your goals? We create big ideas from ground zero and take them to new heights. With bold creativity and a bit of tech magic, we build the online and offline presence that makes a real impact in today's market.",
