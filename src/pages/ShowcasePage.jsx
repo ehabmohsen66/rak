@@ -499,21 +499,7 @@ export const ShowcasePage = ({
       </div>
 
       {/* Top Floating Bar */}
-      <header className="relative z-20 w-full max-w-[560px] mx-auto px-4 pt-5 sm:pt-7 flex items-center justify-between">
-        <a
-          href="/"
-          onClick={(e) => {
-            e.preventDefault();
-            onNavigateSite('home', '/');
-          }}
-          title="Visit RAK 4 CREATIVE Main Website"
-          className="inline-flex items-center gap-2 px-3.5 py-2 rounded-full bg-black/40 hover:bg-black/60 border border-white/20 backdrop-blur-md text-[11px] font-semibold tracking-wider uppercase text-white/95 transition-all"
-        >
-          <img src="/RAK4CREATIVE-LOGO-WHITE.png" alt="RAK 4 CREATIVE" className="h-3.5 w-auto" />
-          <span className="hidden xs:inline">rak4creative.com</span>
-          <ArrowUpRight className="w-3.5 h-3.5 text-white/80" />
-        </a>
-
+      <header className="relative z-20 w-full max-w-[560px] mx-auto px-4 pt-5 sm:pt-7 flex items-center justify-end">
         <button
           type="button"
           onClick={() => setShareOpen(true)}
