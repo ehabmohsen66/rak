@@ -740,20 +740,6 @@ export const ShowcasePage = ({
         )}
       </main>
 
-      {/* Subtle Branded Footer */}
-      <footer className="relative z-10 w-full max-w-[540px] mx-auto px-4 pb-6 pt-2 text-center">
-        <a
-          href="/"
-          onClick={(e) => {
-            e.preventDefault();
-            onNavigateSite('home', '/');
-          }}
-          className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-black/40 hover:bg-black/60 border border-white/15 backdrop-blur-md text-[10px] font-semibold uppercase tracking-[0.18em] text-white/80 hover:text-white transition-colors"
-        >
-          <span>Curated by RAK 4 CREATIVE</span>
-        </a>
-      </footer>
-
       {/* Share Sheet Modal */}
       <AnimatePresence>
         {shareOpen && (
