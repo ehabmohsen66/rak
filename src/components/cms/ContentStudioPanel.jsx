@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Save,
   RotateCcw,
@@ -20,16 +20,22 @@ import {
   PanelsTopLeft,
   LayoutTemplate,
   Smartphone,
+  Upload,
+  FolderOpen,
+  Images,
+  Code,
   X
 } from 'lucide-react';
 import BannersEditor from './BannersEditor';
 import ShowcasesEditor from './ShowcasesEditor';
+import BlogContentRenderer, { isLikelyHtmlContent } from '../BlogContentRenderer';
 import { PILLAR_ICON_OPTIONS } from '../../lib/pillarIcons';
 import {
   CMS_BTN_PRIMARY,
   CMS_BTN_SECONDARY,
   CMS_BTN_DANGER,
   CMS_BTN_GHOST,
+  CMS_ICON_BTN,
   CMS_CARD,
   CMS_SECTION_TITLE,
   CMS_SUBTLE_PANEL,
@@ -40,6 +46,7 @@ import {
   CmsStatusBadge,
   CmsBanner,
   MediaUploadField,
+  MediaLibraryDialog,
   ConfirmDialog
 } from './cmsTheme';
 
@@ -132,6 +139,13 @@ export default function ContentStudioPanel({
   const [selectedProjectIdx, setSelectedProjectIdx] = useState(0);
   const [selectedBlogIdx, setSelectedBlogIdx] = useState(0);
   const [blogPreviewMode, setBlogPreviewMode] = useState(false);
+  const [blogLibraryOpen, setBlogLibraryOpen] = useState(false);
+  const blogHtmlFileRef = useRef(null);
+
+  const [projectUploading, setProjectUploading] = useState(false);
+  const [projectUploadStatus, setProjectUploadStatus] = useState('');
+  const [projectLibraryOpen, setProjectLibraryOpen] = useState(false);
+  const projectMultiFileRef = useRef(null);
 
   useEffect(() => {
     if (!isDirty) {
@@ -262,6 +276,60 @@ export default function ContentStudioPanel({
   const activeProject = draft.projects?.[selectedProjectIdx] || draft.projects?.[0] || null;
   const activeBlog = draft.blogPosts?.[selectedBlogIdx] || draft.blogPosts?.[0] || null;
   const activeSection = CONTENT_SECTIONS.find((s) => s.id === section) || CONTENT_SECTIONS[0];
+
+  const getRawProjectSlides = (proj) => {
+    if (!proj) return [''];
+    if (Array.isArray(proj.images) && proj.images.length > 0) {
+      return proj.images.map((item) => (typeof item === 'string' ? item : String(item?.url || '')));
+    }
+    if (typeof proj.image === 'string' && proj.image.trim() !== '') {
+      return [proj.image.trim()];
+    }
+    return [''];
+  };
+
+  const updateProjectSlides = (nextSlidesRaw) => {
+    const nextSlides = nextSlidesRaw.map((item) =>
+      typeof item === 'string' ? item : String(item?.url || '')
+    );
+    const nonEmpty = nextSlides.map((u) => u.trim()).filter(Boolean);
+    updateDraft((p) => {
+      const projects = [...(p.projects || [])];
+      if (!projects[selectedProjectIdx]) return p;
+      projects[selectedProjectIdx] = {
+        ...projects[selectedProjectIdx],
+        image: nonEmpty[0] || '',
+        images: nextSlides.length > 0 ? nextSlides : ['']
+      };
+      return { ...p, projects };
+    });
+  };
+
+  const handleProjectMultiUpload = async (e) => {
+    const files = Array.from(e.target.files || []);
+    if (!files.length || !onUploadFile || !activeProject) return;
+
+    setProjectUploading(true);
+    const uploadedUrls = [];
+    try {
+      for (let i = 0; i < files.length; i += 1) {
+        const file = files[i];
+        setProjectUploadStatus(`Uploading ${i + 1} of ${files.length}: ${file.name}`);
+        const res = await onUploadFile(file, () => {});
+        if (res && res.ok && res.url) {
+          uploadedUrls.push(res.url);
+        }
+      }
+      if (uploadedUrls.length > 0) {
+        const current = getRawProjectSlides(activeProject).filter((u) => u.trim() !== '');
+        updateProjectSlides([...current, ...uploadedUrls]);
+      }
+    } finally {
+      setProjectUploading(false);
+      setProjectUploadStatus('');
+      if (projectMultiFileRef.current) projectMultiFileRef.current.value = '';
+    }
+  };
 
   return (
     <div className="space-y-6 pb-4">
@@ -2233,6 +2301,9 @@ export default function ContentStudioPanel({
                     ],
                     image:
                       'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&fm=webp&auto=format&fit=crop',
+                    images: [
+                      'https://images.unsplash.com/photo-1522071820081-009f0129c71c?q=80&w=800&fm=webp&auto=format&fit=crop'
+                    ],
                     tags: ['Brand Strategy', 'Web Architecture'],
                     featured: true
                   };
@@ -2446,22 +2517,184 @@ export default function ContentStudioPanel({
                   }
                 />
 
-                <MediaUploadField
-                  id="proj-image"
-                  label="Cover Visual"
-                  value={activeProject.image || ''}
-                  onUploadFile={onUploadFile}
-                  onChange={(url) =>
-                    updateDraft((p) => {
-                      const projects = [...p.projects];
-                      projects[selectedProjectIdx] = {
-                        ...projects[selectedProjectIdx],
-                        image: url
-                      };
-                      return { ...p, projects };
-                    })
-                  }
-                />
+                <div className={`${CMS_SUBTLE_PANEL} p-4 space-y-4`}>
+                  <input
+                    ref={projectMultiFileRef}
+                    type="file"
+                    multiple
+                    accept="image/*"
+                    onChange={handleProjectMultiUpload}
+                    className="hidden"
+                  />
+
+                  <div className="flex flex-wrap items-start justify-between gap-3">
+                    <div className="space-y-0.5">
+                      <div className="flex items-center gap-2">
+                        <span className="text-[13px] font-semibold text-slate-900 dark:text-white">
+                          Case Study Carousel Images
+                        </span>
+                        <CmsStatusBadge tone="brand">
+                          <Images className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>
+                            {getRawProjectSlides(activeProject).filter((u) => u.trim() !== '').length}{' '}
+                            {getRawProjectSlides(activeProject).filter((u) => u.trim() !== '').length === 1
+                              ? 'image'
+                              : 'images'}
+                          </span>
+                        </CmsStatusBadge>
+                      </div>
+                      <p className="text-xs text-slate-500 dark:text-slate-400">
+                        Upload multiple images to display an interactive carousel in the Case Study modal. Slide #1 is used as the primary cover thumbnail.
+                      </p>
+                    </div>
+
+                    <div className="flex flex-wrap items-center gap-2">
+                      <button
+                        type="button"
+                        disabled={projectUploading}
+                        onClick={() => projectMultiFileRef.current?.click()}
+                        className={CMS_BTN_PRIMARY}
+                      >
+                        {projectUploading ? (
+                          <Loader2 className="w-4 h-4 animate-spin" aria-hidden="true" />
+                        ) : (
+                          <Upload className="w-4 h-4" aria-hidden="true" />
+                        )}
+                        <span>{projectUploading ? 'Uploading…' : 'Upload Carousel Images'}</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setProjectLibraryOpen(true)}
+                        className={CMS_BTN_SECONDARY}
+                      >
+                        <FolderOpen className="w-4 h-4" aria-hidden="true" />
+                        <span>Add from Library</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const current = getRawProjectSlides(activeProject);
+                          updateProjectSlides([...current, '']);
+                        }}
+                        className={CMS_BTN_GHOST}
+                      >
+                        <Plus className="w-4 h-4" aria-hidden="true" />
+                        <span>Add Slide</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {projectUploading && projectUploadStatus && (
+                    <p className="text-xs font-medium text-[#D1007C] dark:text-pink-300">
+                      {projectUploadStatus}
+                    </p>
+                  )}
+
+                  <div className="space-y-3">
+                    {getRawProjectSlides(activeProject).map((slideUrl, sIdx, allSlides) => (
+                      <div
+                        key={sIdx}
+                        className="p-3 rounded-lg border border-black/[0.07] dark:border-white/[0.08] bg-white dark:bg-[#141418] space-y-2.5"
+                      >
+                        <div className="flex items-center justify-between gap-2">
+                          <div className="flex items-center gap-2">
+                            <span className="text-xs font-mono font-bold text-slate-700 dark:text-slate-300">
+                              Slide #{sIdx + 1}
+                            </span>
+                            {sIdx === 0 && (
+                              <CmsStatusBadge tone="brand">Primary Cover</CmsStatusBadge>
+                            )}
+                          </div>
+
+                          <div className="flex items-center gap-1">
+                            {sIdx > 0 && (
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  const next = [...allSlides];
+                                  const [picked] = next.splice(sIdx, 1);
+                                  next.unshift(picked);
+                                  updateProjectSlides(next);
+                                }}
+                                className="h-7 px-2 rounded-md text-[11px] font-medium text-[#D1007C] dark:text-pink-300 hover:bg-pink-50 dark:hover:bg-pink-500/10 cursor-pointer"
+                              >
+                                Set as Cover
+                              </button>
+                            )}
+                            <button
+                              type="button"
+                              disabled={sIdx === 0}
+                              aria-label={`Move slide ${sIdx + 1} up`}
+                              onClick={() => {
+                                const next = [...allSlides];
+                                const tmp = next[sIdx];
+                                next[sIdx] = next[sIdx - 1];
+                                next[sIdx - 1] = tmp;
+                                updateProjectSlides(next);
+                              }}
+                              className={CMS_ICON_BTN}
+                            >
+                              <ArrowUp className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                            <button
+                              type="button"
+                              disabled={sIdx === allSlides.length - 1}
+                              aria-label={`Move slide ${sIdx + 1} down`}
+                              onClick={() => {
+                                const next = [...allSlides];
+                                const tmp = next[sIdx];
+                                next[sIdx] = next[sIdx + 1];
+                                next[sIdx + 1] = tmp;
+                                updateProjectSlides(next);
+                              }}
+                              className={CMS_ICON_BTN}
+                            >
+                              <ArrowDown className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                            <button
+                              type="button"
+                              aria-label={`Remove slide ${sIdx + 1}`}
+                              onClick={() => {
+                                if (allSlides.length <= 1) {
+                                  updateProjectSlides(['']);
+                                } else {
+                                  updateProjectSlides(allSlides.filter((_, i) => i !== sIdx));
+                                }
+                              }}
+                              className={`${CMS_ICON_BTN} text-rose-600 dark:text-rose-400 hover:text-rose-700`}
+                            >
+                              <Trash2 className="w-4 h-4" aria-hidden="true" />
+                            </button>
+                          </div>
+                        </div>
+
+                        <MediaUploadField
+                          id={`proj-slide-${sIdx}`}
+                          kind="image"
+                          accept="image/*"
+                          value={slideUrl}
+                          onUploadFile={onUploadFile}
+                          onChange={(url) => {
+                            const next = [...allSlides];
+                            next[sIdx] = url;
+                            updateProjectSlides(next);
+                          }}
+                          placeholder="/uploads/media/case-study-slide.jpg or https://…"
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  <MediaLibraryDialog
+                    open={projectLibraryOpen}
+                    onClose={() => setProjectLibraryOpen(false)}
+                    kind="image"
+                    onSelect={(url) => {
+                      const current = getRawProjectSlides(activeProject).filter((u) => u.trim() !== '');
+                      updateProjectSlides([...current, url]);
+                    }}
+                  />
+                </div>
 
                 <CmsField label="Executive Summary" htmlFor="proj-summary">
                   <textarea
@@ -2671,9 +2904,10 @@ export default function ContentStudioPanel({
                     image:
                       'https://images.unsplash.com/photo-1677442136019-21780ecad995?q=80&w=1000&fm=webp&auto=format&fit=crop',
                     featured: false,
+                    contentFormat: 'html',
                     excerpt: 'Concise summary displayed on blog cards and article previews.',
                     content:
-                      'Write your editorial insight here.\n\n### Section Heading\n- **Key Point**: Concrete analysis and practical takeaway.'
+                      '<h2>Section Heading</h2>\n<p>Write or paste your HTML or editorial insight here.</p>\n<ul>\n  <li><strong>Key Point:</strong> Concrete analysis and practical takeaway.</li>\n</ul>'
                   };
                   updateDraft((p) => ({
                     ...p,
@@ -2789,8 +3023,16 @@ export default function ContentStudioPanel({
                 </div>
 
                 {blogPreviewMode ? (
-                  <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-white/[0.07] bg-slate-50 dark:bg-[#0E0E11] space-y-4">
-                    <CmsStatusBadge tone="brand">{activeBlog.category}</CmsStatusBadge>
+                  <div className="p-5 sm:p-6 rounded-2xl border border-slate-200 dark:border-white/[0.07] bg-white dark:bg-[#0E0E11] space-y-4">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <CmsStatusBadge tone="brand">{activeBlog.category}</CmsStatusBadge>
+                      {isLikelyHtmlContent(activeBlog.content, activeBlog.contentFormat) && (
+                        <CmsStatusBadge tone="success">
+                          <Code className="w-3.5 h-3.5" aria-hidden="true" />
+                          <span>HTML Rendered</span>
+                        </CmsStatusBadge>
+                      )}
+                    </div>
                     <h4 className="text-xl font-semibold text-slate-900 dark:text-white">
                       {activeBlog.title}
                     </h4>
@@ -2803,8 +3045,11 @@ export default function ContentStudioPanel({
                       By {activeBlog.author} · {activeBlog.date} · {activeBlog.readTime} · URL:{' '}
                       <code className="font-mono">/blog/{activeBlog.id}</code>
                     </p>
-                    <div className="border-t border-slate-200 dark:border-white/[0.07] pt-4 space-y-3 text-sm text-slate-800 dark:text-slate-200 leading-relaxed whitespace-pre-line">
-                      {activeBlog.content}
+                    <div className="border-t border-slate-200 dark:border-white/[0.07] pt-4">
+                      <BlogContentRenderer
+                        content={activeBlog.content}
+                        contentFormat={activeBlog.contentFormat}
+                      />
                     </div>
                   </div>
                 ) : (
@@ -2995,14 +3240,196 @@ export default function ContentStudioPanel({
                       />
                     </CmsField>
 
-                    <CmsField
-                      label="Article Body (Supports ### Headings, - Bullet Lists, and **Bold** Text)"
-                      htmlFor="blog-body"
-                    >
+                    <div className={`${CMS_SUBTLE_PANEL} p-4 space-y-3.5`}>
+                      <input
+                        ref={blogHtmlFileRef}
+                        type="file"
+                        accept=".html,.htm,text/html"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (!file) return;
+                          const reader = new FileReader();
+                          reader.onload = () => {
+                            const htmlText = String(reader.result || '');
+                            updateDraft((p) => {
+                              const blogPosts = [...p.blogPosts];
+                              const current = blogPosts[selectedBlogIdx] || {};
+                              let nextTitle = current.title;
+                              if (!nextTitle || nextTitle === 'New Editorial Article') {
+                                const h1Match = htmlText.match(/<h1\b[^>]*>([\s\S]*?)<\/h1>/i);
+                                const titleMatch = htmlText.match(/<title\b[^>]*>([\s\S]*?)<\/title>/i);
+                                const extracted = (h1Match?.[1] || titleMatch?.[1] || '')
+                                  .replace(/<[^>]+>/g, '')
+                                  .trim();
+                                if (extracted) nextTitle = extracted;
+                              }
+                              blogPosts[selectedBlogIdx] = {
+                                ...current,
+                                title: nextTitle,
+                                contentFormat: 'html',
+                                content: htmlText
+                              };
+                              return { ...p, blogPosts };
+                            });
+                          };
+                          reader.readAsText(file);
+                          e.target.value = '';
+                        }}
+                      />
+
+                      <div className="flex flex-wrap items-center justify-between gap-3">
+                        <div className="space-y-0.5">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <label
+                              htmlFor="blog-body"
+                              className="text-[13px] font-semibold text-slate-900 dark:text-white"
+                            >
+                              Article Body (HTML &amp; Markdown Supported)
+                            </label>
+                            <CmsStatusBadge
+                              tone={
+                                isLikelyHtmlContent(activeBlog.content, activeBlog.contentFormat)
+                                  ? 'brand'
+                                  : 'neutral'
+                              }
+                            >
+                              <Code className="w-3.5 h-3.5" aria-hidden="true" />
+                              <span>
+                                {isLikelyHtmlContent(activeBlog.content, activeBlog.contentFormat)
+                                  ? 'HTML Mode Active'
+                                  : 'Markdown / Text Mode'}
+                              </span>
+                            </CmsStatusBadge>
+                          </div>
+                          <p className="text-xs text-slate-500 dark:text-slate-400">
+                            Paste raw HTML code (fragments or full <code className="font-mono">&lt;!DOCTYPE html&gt;</code> documents with <code className="font-mono">&lt;style&gt;</code>), upload an <code className="font-mono">.html</code> file, or write Markdown.
+                          </p>
+                        </div>
+
+                        <div className="flex flex-wrap items-center gap-2">
+                          <div
+                            role="group"
+                            aria-label="Article content format"
+                            className="inline-flex p-0.5 rounded-lg border border-black/[0.08] dark:border-white/[0.1] bg-white dark:bg-[#141418]"
+                          >
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateDraft((p) => {
+                                  const blogPosts = [...p.blogPosts];
+                                  blogPosts[selectedBlogIdx] = {
+                                    ...blogPosts[selectedBlogIdx],
+                                    contentFormat: 'html'
+                                  };
+                                  return { ...p, blogPosts };
+                                })
+                              }
+                              className={`h-8 px-3 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
+                                (activeBlog.contentFormat ||
+                                  (isLikelyHtmlContent(activeBlog.content) ? 'html' : 'markdown')) ===
+                                'html'
+                                  ? 'bg-[#D1007C] text-white'
+                                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                              }`}
+                            >
+                              HTML Code
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() =>
+                                updateDraft((p) => {
+                                  const blogPosts = [...p.blogPosts];
+                                  blogPosts[selectedBlogIdx] = {
+                                    ...blogPosts[selectedBlogIdx],
+                                    contentFormat: 'markdown'
+                                  };
+                                  return { ...p, blogPosts };
+                                })
+                              }
+                              className={`h-8 px-3 rounded-md text-xs font-semibold transition-colors cursor-pointer ${
+                                activeBlog.contentFormat === 'markdown' &&
+                                !isLikelyHtmlContent(activeBlog.content)
+                                  ? 'bg-[#D1007C] text-white'
+                                  : 'text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white'
+                              }`}
+                            >
+                              Markdown
+                            </button>
+                          </div>
+
+                          <button
+                            type="button"
+                            onClick={() => blogHtmlFileRef.current?.click()}
+                            className={CMS_BTN_SECONDARY}
+                          >
+                            <Upload className="w-4 h-4" aria-hidden="true" />
+                            <span>Import .HTML File</span>
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => setBlogLibraryOpen(true)}
+                            className={CMS_BTN_SECONDARY}
+                          >
+                            <FolderOpen className="w-4 h-4" aria-hidden="true" />
+                            <span>Insert Image</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Quick HTML Tag Insertion Bar */}
+                      <div className="flex flex-wrap items-center gap-1.5 pt-1">
+                        {[
+                          { label: '<h2>', snippet: '\n<h2>Section Heading</h2>\n' },
+                          { label: '<h3>', snippet: '\n<h3>Subheading</h3>\n' },
+                          { label: '<p>', snippet: '\n<p>Paragraph text goes here.</p>\n' },
+                          { label: '<strong>', snippet: '<strong>Bold text</strong>' },
+                          {
+                            label: '<ul> List',
+                            snippet: '\n<ul>\n  <li>First point</li>\n  <li>Second point</li>\n</ul>\n'
+                          },
+                          {
+                            label: '<a> Link',
+                            snippet: '<a href="https://rak4creative.com" target="_blank" rel="noopener noreferrer">Link text</a>'
+                          },
+                          {
+                            label: '<blockquote>',
+                            snippet: '\n<blockquote>Key takeaway or executive quote.</blockquote>\n'
+                          },
+                          {
+                            label: '<table>',
+                            snippet:
+                              '\n<table>\n  <thead>\n    <tr><th>Platform</th><th>Best For</th></tr>\n  </thead>\n  <tbody>\n    <tr><td>Example</td><td>Strategic execution</td></tr>\n  </tbody>\n</table>\n'
+                          }
+                        ].map((tag) => (
+                          <button
+                            key={tag.label}
+                            type="button"
+                            onClick={() =>
+                              updateDraft((p) => {
+                                const blogPosts = [...p.blogPosts];
+                                const cur = blogPosts[selectedBlogIdx]?.content || '';
+                                blogPosts[selectedBlogIdx] = {
+                                  ...blogPosts[selectedBlogIdx],
+                                  contentFormat: 'html',
+                                  content: `${cur}${tag.snippet}`
+                                };
+                                return { ...p, blogPosts };
+                              })
+                            }
+                            className="h-7 px-2.5 rounded-md border border-black/[0.08] dark:border-white/[0.1] bg-white dark:bg-[#141418] text-[11px] font-mono font-medium text-slate-700 dark:text-slate-300 hover:border-[#D1007C] hover:text-[#D1007C] dark:hover:text-pink-300 transition-colors cursor-pointer"
+                          >
+                            + {tag.label}
+                          </button>
+                        ))}
+                      </div>
+
                       <textarea
                         id="blog-body"
-                        rows={14}
+                        rows={16}
                         value={activeBlog.content || ''}
+                        placeholder="Paste HTML code (<h2>, <p>, <div>, <table>, <!DOCTYPE html>...) or write your article..."
                         onChange={(e) =>
                           updateDraft((p) => {
                             const blogPosts = [...p.blogPosts];
@@ -3015,7 +3442,26 @@ export default function ContentStudioPanel({
                         }
                         className={`${CMS_INPUT_CLASS} font-mono leading-relaxed`}
                       />
-                    </CmsField>
+
+                      <MediaLibraryDialog
+                        open={blogLibraryOpen}
+                        onClose={() => setBlogLibraryOpen(false)}
+                        kind="image"
+                        onSelect={(url, item) => {
+                          const alt = (item?.name || 'Article image').replace(/\.[^.]+$/, '');
+                          updateDraft((p) => {
+                            const blogPosts = [...p.blogPosts];
+                            const cur = blogPosts[selectedBlogIdx]?.content || '';
+                            blogPosts[selectedBlogIdx] = {
+                              ...blogPosts[selectedBlogIdx],
+                              contentFormat: 'html',
+                              content: `${cur}\n<img src="${url}" alt="${alt}" />\n`
+                            };
+                            return { ...p, blogPosts };
+                          });
+                        }}
+                      />
+                    </div>
                   </>
                 )}
               </>

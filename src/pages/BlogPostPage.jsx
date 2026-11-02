@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Clock, Calendar, ArrowLeft, ArrowUpRight, Share2, Check } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
 import SpotlightCard from '../components/SpotlightCard';
+import BlogContentRenderer from '../components/BlogContentRenderer';
 
 export const BlogPostPage = ({ 
   slug, 
@@ -34,55 +35,6 @@ export const BlogPostPage = ({
   }
 
   const relatedArticles = blogPosts.filter(p => p.id !== article.id).slice(0, 3);
-
-  const escapeHtml = (str) =>
-    String(str || '')
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#39;');
-
-  const formatInlineMarkdown = (text) =>
-    escapeHtml(text)
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="text-slate-900 dark:text-white font-bold">$1</strong>')
-      .replace(/`([^`]+)`/g, '<code class="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-rak-slate-800 text-rak-magenta font-mono text-xs">$1</code>');
-
-  const renderFormattedContent = (rawContent) => {
-    if (!rawContent) return null;
-    const lines = rawContent.split('\n\n');
-    return lines.map((paragraph, index) => {
-      const trimmed = paragraph.trim();
-      if (trimmed.startsWith('### ')) {
-        return (
-          <h3 key={index} className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white mt-8 mb-4 tracking-tight">
-            {trimmed.replace('### ', '')}
-          </h3>
-        );
-      }
-      if (trimmed.startsWith('- ')) {
-        const items = trimmed.split('\n').filter(l => l.trim().startsWith('- '));
-        return (
-          <ul key={index} className="space-y-2.5 my-4 pl-4 list-disc">
-            {items.map((item, i) => (
-              <li key={i} className="text-slate-700 dark:text-rak-slate-300 text-sm leading-relaxed">
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: formatInlineMarkdown(item.replace(/^- /, ''))
-                  }}
-                />
-              </li>
-            ))}
-          </ul>
-        );
-      }
-      return (
-        <p key={index} className="text-slate-700 dark:text-rak-slate-300 text-sm sm:text-base leading-relaxed mb-4">
-          <span dangerouslySetInnerHTML={{ __html: formatInlineMarkdown(trimmed) }} />
-        </p>
-      );
-    });
-  };
 
   const handleShare = async () => {
     if (navigator.share) {
@@ -183,9 +135,10 @@ export const BlogPostPage = ({
           {article.excerpt}
         </div>
 
-        <div className="prose dark:prose-invert max-w-none text-slate-800 dark:text-rak-slate-200">
-          {renderFormattedContent(article.content)}
-        </div>
+        <BlogContentRenderer
+          content={article.content}
+          contentFormat={article.contentFormat}
+        />
 
         <div className="p-8 sm:p-10 rounded-3xl bg-slate-900 dark:bg-rak-slate-900 border border-white/10 text-white shadow-xl flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 my-12">
           <div className="space-y-2 max-w-md">

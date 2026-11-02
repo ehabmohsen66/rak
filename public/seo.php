@@ -555,7 +555,14 @@ if ($tab !== 'admin' && !$isNotFound) {
         if (!empty($matchedPost['subtitle'])) {
             $ns .= '<p>' . rakEsc((string)$matchedPost['subtitle']) . '</p>';
         }
-        $ns .= '<div>' . nl2br(rakEsc((string)($matchedPost['content'] ?? ''))) . '</div></article>';
+        $rawPostBody = (string)($matchedPost['content'] ?? '');
+        $allowedTags = '<h1><h2><h3><h4><h5><h6><p><br><hr><ul><ol><li><strong><b><em><i><u><blockquote><table><thead><tbody><tr><th><td><a><img><div><section><article><span><code><pre>';
+        if (preg_match('/<\/?[a-z][a-z0-9-]*\b[^>]*>/i', $rawPostBody)) {
+            $cleanBody = preg_replace('/<(?:script|style|head)\b[^>]*>[\s\S]*?<\/(?:script|style|head)>/i', '', $rawPostBody);
+            $ns .= '<div>' . strip_tags((string)$cleanBody, $allowedTags) . '</div></article>';
+        } else {
+            $ns .= '<div>' . nl2br(rakEsc($rawPostBody)) . '</div></article>';
+        }
     } elseif ($tab === 'contact') {
         $ns .= '<h1>Contact ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
         foreach ($offices as $of) {

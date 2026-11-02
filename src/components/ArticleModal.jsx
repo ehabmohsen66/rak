@@ -1,5 +1,6 @@
 import React, { useEffect } from 'react';
-import { X, Clock, Calendar, User, Share2, ArrowLeft } from 'lucide-react';
+import { X, Clock, ArrowLeft } from 'lucide-react';
+import BlogContentRenderer from './BlogContentRenderer';
 
 export const ArticleModal = ({ article, onClose }) => {
   useEffect(() => {
@@ -56,11 +57,14 @@ export const ArticleModal = ({ article, onClose }) => {
             <img src={article.image} alt={article.title} className="w-full h-full object-cover" />
           </div>
 
-          <div className="prose dark:prose-invert max-w-none text-xs sm:text-sm text-slate-700 dark:text-rak-slate-300 space-y-4 leading-relaxed">
+          <div className="max-w-none text-xs sm:text-sm text-slate-700 dark:text-rak-slate-300 space-y-4 leading-relaxed">
             <p className="text-base text-slate-800 dark:text-rak-slate-200 font-medium italic border-l-2 border-rak-magenta pl-4 py-1">
               {article.excerpt}
             </p>
-            <div dangerouslySetInnerHTML={{ __html: typeof article.content === 'string' ? article.content.replace(/\n/g, '<br/>') : '' }} />
+            <BlogContentRenderer
+              content={article.content}
+              contentFormat={article.contentFormat}
+            />
           </div>
 
           <div className="pt-6 border-t border-slate-200 dark:border-white/10 flex items-center justify-between">

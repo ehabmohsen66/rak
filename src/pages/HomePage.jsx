@@ -8,6 +8,7 @@ import {
 } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
 import { getPillarIcon } from '../lib/pillarIcons';
+import { getProjectImages } from '../lib/utils';
 import { CinematicHeroScroll } from '../components/CinematicHeroScroll';
 import { TeamVideoShowcase } from '../components/TeamVideoShowcase';
 import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
@@ -140,7 +141,7 @@ export const HomePage = ({
               <div className="space-y-4">
                 <div className="relative h-48 w-full overflow-hidden bg-slate-100 dark:bg-rak-slate-950">
                   <img 
-                    src={p.image} 
+                    src={getProjectImages(p)[0] || p.image} 
                     alt={p.title} 
                     loading="lazy"
                     decoding="async"

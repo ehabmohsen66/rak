@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
-import { Sparkles, ArrowUpRight } from 'lucide-react';
+import { Sparkles, ArrowUpRight, Images } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
+import { getProjectImages } from '../lib/utils';
 import { useBanner, RichTitle, BannerMedia, BannerOverlay } from '../components/BannerKit';
 import { WebGLShader } from '../components/WebGLShader';
 import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
@@ -151,7 +152,7 @@ export const WorkPage = ({ onSelectProject }) => {
               >
                 <div className="relative h-80 sm:h-96 rounded-2xl overflow-hidden bg-slate-100 dark:bg-rak-slate-950">
                   <img 
-                    src={project.image} 
+                    src={getProjectImages(project)[0] || project.image} 
                     alt={project.title} 
                     loading="lazy"
                     decoding="async"
@@ -162,6 +163,13 @@ export const WorkPage = ({ onSelectProject }) => {
                   {project.results?.[0] && (
                     <div className="absolute top-4 left-4 px-3 py-1 bg-slate-900/90 backdrop-blur-md border border-white/10 rounded-full text-xs font-mono text-rak-magenta">
                       {project.results[0].metric} {project.results[0].label}
+                    </div>
+                  )}
+
+                  {getProjectImages(project).length > 1 && (
+                    <div className="absolute bottom-4 right-4 inline-flex items-center gap-1.5 px-2.5 py-1 bg-slate-900/85 backdrop-blur-md border border-white/15 rounded-full text-[11px] font-mono text-white">
+                      <Images className="w-3.5 h-3.5 text-rak-magenta" aria-hidden="true" />
+                      <span>{getProjectImages(project).length}</span>
                     </div>
                   )}
 

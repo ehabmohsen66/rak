@@ -11,6 +11,7 @@ import {
 } from './pixelEngine';
 import { normalizeBanners } from './banners';
 import { normalizeShowcases } from './showcases';
+import { getProjectImages } from './utils';
 
 const CONTENT_STORAGE_KEY = 'rak_cms_content_v1';
 const PIXELS_STORAGE_KEY = 'rak_cms_pixels_v1';
@@ -90,7 +91,17 @@ function normalizeSeo(rawSeo = {}) {
   };
 }
 
+function normalizeProjectItem(proj = {}) {
+  const images = getProjectImages(proj);
+  return {
+    ...proj,
+    image: images[0] || (typeof proj.image === 'string' ? proj.image.trim() : ''),
+    images
+  };
+}
+
 function normalizeContent(raw = {}) {
+  const rawProjects = Array.isArray(raw.projects) ? raw.projects : INITIAL_CMS_CONTENT.projects;
   return {
     brandInfo: {
       ...INITIAL_CMS_CONTENT.brandInfo,
@@ -131,7 +142,7 @@ function normalizeContent(raw = {}) {
       ...(raw.careersCopy || {})
     },
     openRoles: Array.isArray(raw.openRoles) ? raw.openRoles : INITIAL_CMS_CONTENT.openRoles,
-    projects: Array.isArray(raw.projects) ? raw.projects : INITIAL_CMS_CONTENT.projects,
+    projects: rawProjects.map((p) => normalizeProjectItem(p)),
     blogPosts: Array.isArray(raw.blogPosts) ? raw.blogPosts : INITIAL_CMS_CONTENT.blogPosts,
     offices: Array.isArray(raw.offices) ? raw.offices : INITIAL_CMS_CONTENT.offices,
     testimonials: Array.isArray(raw.testimonials) ? raw.testimonials : INITIAL_CMS_CONTENT.testimonials,
