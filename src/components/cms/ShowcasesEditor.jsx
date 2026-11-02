@@ -49,6 +49,7 @@ import {
 } from './cmsTheme';
 
 const COLOR_PRESETS = [
+  { hex: '#2D3139', label: 'Dark Grey' },
   { hex: '#213967', label: 'Executive Navy' },
   { hex: '#D1007C', label: 'RAK Magenta' },
   { hex: '#0F172A', label: 'Obsidian' },
@@ -168,14 +169,19 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
     const newHub = normalizeShowcase({
       ...DEFAULT_SHOWCASES[0],
       id: candidateSlug,
-      title: `@RAKSHOWCASE_${candidateSlug.toUpperCase().replace(/-/g, '_')}`,
-      subtitle: 'Curated Portfolio, Case Studies & Creative Production',
+      schemaVersion: 2,
+      title: `Showcase ${baseNum}`,
+      subtitle: '',
+      showHeaderText: false,
+      backgroundFit: 'cover',
+      buttonColor: '#2D3139',
       pinCode: '',
+      showFooterCta: false,
       footerCtaLabel: 'Request Proposal',
       items: [
         {
           id: `item-${Date.now()}-1`,
-          type: 'link',
+          type: 'pdf',
           active: true,
           title: 'PORTFOLIO',
           url: ''
@@ -516,6 +522,13 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
               </div>
 
               <div className={`${CMS_SUBTLE_PANEL} px-4 py-2 divide-y divide-black/[0.06] dark:divide-white/[0.06]`}>
+                <CmsToggle
+                  id="sc-show-header-text"
+                  label="Show Title & Subtext Beneath Logo"
+                  description="Keep OFF to display only the logo emblem cleanly above the buttons."
+                  checked={Boolean(activeHub.showHeaderText)}
+                  onChange={(val) => updateActiveHub({ showHeaderText: val })}
+                />
                 <CmsToggle
                   id="sc-active"
                   label="Showcase Active (Live)"
@@ -1388,7 +1401,7 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
                         </span>
                       </div>
 
-                      {/* Avatar + Title */}
+                      {/* Avatar + Optional Header Text */}
                       <div className="text-center mb-5">
                         {activeHub.avatarUrl && (
                           <div className="w-20 h-20 mx-auto mb-3 rounded-full overflow-hidden ring-2 ring-white/30 shadow-xl bg-black/30">
@@ -1399,19 +1412,23 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
                             />
                           </div>
                         )}
-                        <h4
-                          className="text-sm font-extrabold tracking-tight text-white break-words px-1"
-                          style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
-                        >
-                          {activeHub.title || '@RAKSHOWCASE'}
-                        </h4>
-                        {activeHub.subtitle && (
-                          <p
-                            className="mt-1 text-[11px] text-white/85 leading-snug px-2"
-                            style={{ textShadow: '0 1px 6px rgba(0,0,0,0.55)' }}
-                          >
-                            {activeHub.subtitle}
-                          </p>
+                        {activeHub.showHeaderText && (
+                          <>
+                            <h4
+                              className="text-sm font-extrabold tracking-tight text-white break-words px-1"
+                              style={{ textShadow: '0 2px 10px rgba(0,0,0,0.5)' }}
+                            >
+                              {activeHub.title || 'Showcase'}
+                            </h4>
+                            {activeHub.subtitle && (
+                              <p
+                                className="mt-1 text-[11px] text-white/85 leading-snug px-2"
+                                style={{ textShadow: '0 1px 6px rgba(0,0,0,0.55)' }}
+                              >
+                                {activeHub.subtitle}
+                              </p>
+                            )}
+                          </>
                         )}
                       </div>
 
@@ -1448,7 +1465,7 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
                                     border: `1.5px solid ${activeHub.buttonColor || '#FFFFFF'}`
                                   }
                                 : {
-                                    backgroundColor: activeHub.buttonColor || '#213967',
+                                    backgroundColor: activeHub.buttonColor || '#2D3139',
                                     color: activeHub.buttonTextColor || '#FFFFFF',
                                     border: '1px solid rgba(255,255,255,0.12)'
                                   };
@@ -1490,12 +1507,18 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
                       </div>
                     </div>
 
-                    {/* Footer CTA Preview */}
+                    {/* Footer CTA & WhatsApp Preview */}
                     <div className="mt-6 pt-3 flex flex-col items-center gap-2">
                       {activeHub.showFooterCta !== false && (
                         <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/15 backdrop-blur-md border border-white/25 text-[10px] font-bold text-white">
                           <Sparkles className="w-3 h-3 text-[#FF4FB0]" />
                           <span>{activeHub.footerCtaLabel || 'Request Proposal'}</span>
+                        </div>
+                      )}
+                      {activeHub.whatsapp && (
+                        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#2D3139]/90 border border-white/20 text-[10px] font-bold text-white shadow">
+                          <span className="w-2 h-2 rounded-full bg-[#25D366]" />
+                          <span>Chat on WhatsApp</span>
                         </div>
                       )}
                       <span className="text-[9px] text-white/60 tracking-wider uppercase">

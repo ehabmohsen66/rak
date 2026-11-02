@@ -63,15 +63,28 @@ export const ShowcasePage = ({
   const [pinError, setPinError] = useState(false);
   const [unlocked, setUnlocked] = useState(false);
 
-  // Modals: Share, Case Study Vault, PDF Viewer, Gallery Lightbox
+  // Modals: Share, Case Study Vault, Gallery Vault, PDF Viewer, Gallery Lightbox
   const [shareOpen, setShareOpen] = useState(false);
   const [copied, setCopied] = useState(false);
   const [activeCaseStudy, setActiveCaseStudy] = useState(null);
   const [csProjectIdx, setCsProjectIdx] = useState(0);
   const [csSectionId, setCsSectionId] = useState('all');
+  const [activeGalleryVault, setActiveGalleryVault] = useState(null);
+  const [galleryVaultFilter, setGalleryVaultFilter] = useState('all');
   const [activePdfItem, setActivePdfItem] = useState(null);
   const [activeGallery, setActiveGallery] = useState(null); // { item, index }
   const [galleryZoomed, setGalleryZoomed] = useState(false);
+
+  const openModalWithHistory = (setter, value) => {
+    try {
+      if (typeof window !== 'undefined' && window.history?.pushState) {
+        window.history.pushState({ showcaseOverlay: true }, '');
+      }
+    } catch {
+      // Ignore history API restrictions
+    }
+    setter(value);
+  };
 
   useEffect(() => {
     if (!hub) return;
@@ -87,16 +100,38 @@ export const ShowcasePage = ({
     }
   }, [hub]);
 
+  // Browser / Mobile Back button support so users can always return to the landing page
+  useEffect(() => {
+    const onPopState = () => {
+      if (activePdfItem) {
+        setActivePdfItem(null);
+      } else if (activeGallery) {
+        setActiveGallery(null);
+        setGalleryZoomed(false);
+      } else if (activeGalleryVault) {
+        setActiveGalleryVault(null);
+      } else if (activeCaseStudy) {
+        setActiveCaseStudy(null);
+      } else if (shareOpen) {
+        setShareOpen(false);
+      }
+    };
+    window.addEventListener('popstate', onPopState);
+    return () => window.removeEventListener('popstate', onPopState);
+  }, [activePdfItem, activeGallery, activeGalleryVault, activeCaseStudy, shareOpen]);
+
   // Lock background page scroll when an overlay modal is open
   useEffect(() => {
-    const anyModal = Boolean(activeCaseStudy || activePdfItem || activeGallery || shareOpen);
+    const anyModal = Boolean(
+      activeCaseStudy || activeGalleryVault || activePdfItem || activeGallery || shareOpen
+    );
     if (!anyModal) return undefined;
     const prev = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = prev;
     };
-  }, [activeCaseStudy, activePdfItem, activeGallery, shareOpen]);
+  }, [activeCaseStudy, activeGalleryVault, activePdfItem, activeGallery, shareOpen]);
 
   // Layered keyboard navigation for modals
   useEffect(() => {
@@ -107,6 +142,8 @@ export const ShowcasePage = ({
         } else if (activeGallery) {
           setActiveGallery(null);
           setGalleryZoomed(false);
+        } else if (activeGalleryVault) {
+          setActiveGalleryVault(null);
         } else if (activeCaseStudy) {
           setActiveCaseStudy(null);
         } else if (shareOpen) {
@@ -137,7 +174,7 @@ export const ShowcasePage = ({
     };
     window.addEventListener('keydown', onKeyDown);
     return () => window.removeEventListener('keydown', onKeyDown);
-  }, [activeGallery, activePdfItem, activeCaseStudy, shareOpen]);
+  }, [activeGallery, activeGalleryVault, activePdfItem, activeCaseStudy, shareOpen]);
 
   // 1. Directory View (/showcase)
   if (!slug) {
@@ -330,15 +367,20 @@ export const ShowcasePage = ({
   };
 
   const handleItemAction = (item) => {
+    const url = String(item.url || '').trim();
     trackShowcaseEvent('showcase_item_click', {
       showcase_slug: hub.id,
       item_title: item.title,
       item_type: item.type,
-      destination_url: item.url || ''
+      destination_url: url
     });
 
-    if (item.type === 'pdf' && item.url) {
-      setActivePdfItem(item);
+    if (
+      (item.type === 'pdf' && url) ||
+      /\.pdf(\?|#|$)/i.test(url) ||
+      /drive\.google\.com\/file\/d\//i.test(url)
+    ) {
+      openModalWithHistory(setActivePdfItem, item);
       return;
     }
 
@@ -346,29 +388,49 @@ export const ShowcasePage = ({
       if (Array.isArray(item.projects) && item.projects.length > 0) {
         setCsProjectIdx(0);
         setCsSectionId('all');
-        setActiveCaseStudy(item);
+        openModalWithHistory(setActiveCaseStudy, item);
         return;
       }
-      if (item.url) {
-        window.open(item.url, '_blank', 'noopener,noreferrer');
+      if (url) {
+        window.open(url, '_blank', 'noopener,noreferrer');
       }
       return;
     }
 
-    if (item.type === 'gallery') {
+    if (item.type === 'gallery' || (Array.isArray(item.mediaItems) && item.mediaItems.length > 0)) {
       if (item.mediaItems && item.mediaItems.length > 0) {
-        setGalleryZoomed(false);
-        setActiveGallery({ item, index: 0 });
+        setGalleryVaultFilter('all');
+        openModalWithHistory(setActiveGalleryVault, item);
         return;
       }
-      if (item.url) {
-        window.open(item.url, '_blank', 'noopener,noreferrer');
+      if (url) {
+        window.open(url, '_blank', 'noopener,noreferrer');
       }
       return;
     }
 
-    const url = String(item.url || '').trim();
     if (!url) return;
+
+    if (/\.(mp4|webm|mov|webp|jpg|jpeg|png)(\?|#|$)/i.test(url)) {
+      setGalleryZoomed(false);
+      openModalWithHistory(setActiveGallery, {
+        item: {
+          title: item.title,
+          mediaItems: [
+            {
+              id: item.id,
+              mediaType: /\.(mp4|webm|mov)(\?|#|$)/i.test(url) ? 'video' : 'image',
+              url,
+              title: item.title,
+              subtitle: item.subtitle || ''
+            }
+          ]
+        },
+        index: 0
+      });
+      return;
+    }
+
     if (url.startsWith('/') && !url.startsWith('//')) {
       onNavigateSite('home', url);
     } else {
@@ -394,9 +456,9 @@ export const ShowcasePage = ({
       };
     }
     return {
-      className: `${radiusClass} border border-white/15 shadow-[0_12px_28px_rgba(0,0,0,0.42)]`,
+      className: `${radiusClass} border border-white/15 hover:brightness-110 shadow-[0_12px_28px_rgba(0,0,0,0.42)]`,
       style: {
-        backgroundColor: hub.buttonColor || '#213967',
+        backgroundColor: hub.buttonColor || '#2D3139',
         color: hub.buttonTextColor || '#FFFFFF'
       }
     };
@@ -418,7 +480,7 @@ export const ShowcasePage = ({
     const foundIdx = mediaOnly.findIndex((it) => it.id === clickedItem.id);
     if (foundIdx === -1) return;
     setGalleryZoomed(false);
-    setActiveGallery({
+    openModalWithHistory(setActiveGallery, {
       item: {
         title: `${activeCsProject?.name || 'Case Study'} — ${sectionTitle}`,
         mediaItems: mediaOnly
@@ -429,11 +491,11 @@ export const ShowcasePage = ({
 
   return (
     <div
-      className="relative min-h-screen w-full text-white flex flex-col justify-between overflow-x-hidden selection:bg-rak-magenta selection:text-white"
+      className="relative min-h-[100dvh] w-full text-white flex flex-col justify-between overflow-x-hidden selection:bg-rak-magenta selection:text-white"
       style={{ backgroundColor: hub.backgroundColor || '#101829' }}
     >
-      {/* Background Media Layer */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
+      {/* Background Media Layer — Full-Screen Responsive on Desktop & Mobile */}
+      <div className="fixed inset-0 w-full h-full pointer-events-none overflow-hidden z-0">
         {hub.backgroundType === 'image' && hub.backgroundUrl && (
           <>
             {hub.backgroundFit === 'ambient' ? (
@@ -460,7 +522,7 @@ export const ShowcasePage = ({
                 src={hub.backgroundUrl}
                 alt=""
                 aria-hidden="true"
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover object-center"
               />
             )}
           </>
@@ -474,7 +536,7 @@ export const ShowcasePage = ({
             muted
             loop
             playsInline
-            className="w-full h-full object-cover"
+            className="w-full h-full object-cover object-center"
           />
         )}
 
@@ -483,7 +545,7 @@ export const ShowcasePage = ({
             className="w-full h-full"
             style={{
               background: `radial-gradient(ellipse at 30% 20%, rgba(236,0,140,0.32), transparent 60%), radial-gradient(ellipse at 75% 85%, ${
-                hub.buttonColor || '#213967'
+                hub.buttonColor || '#2D3139'
               }, transparent 65%), ${hub.backgroundColor || '#0B1020'}`
             }}
           />
@@ -501,7 +563,7 @@ export const ShowcasePage = ({
       <header className="relative z-20 w-full max-w-[560px] mx-auto px-4 pt-5 sm:pt-7 flex items-center justify-end">
         <button
           type="button"
-          onClick={() => setShareOpen(true)}
+          onClick={() => openModalWithHistory(setShareOpen, true)}
           aria-label="Share showcase"
           className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full bg-black/40 hover:bg-black/60 border border-white/20 backdrop-blur-md text-[11px] font-semibold tracking-wider uppercase text-white/95 transition-all cursor-pointer"
         >
@@ -511,7 +573,7 @@ export const ShowcasePage = ({
       </header>
 
       {/* Main Centered Hub Stack */}
-      <main className="relative z-10 w-full max-w-[540px] mx-auto px-4 py-8 sm:py-10 flex-1 flex flex-col items-center">
+      <main className="relative z-10 w-full max-w-[540px] mx-auto px-4 py-8 sm:py-10 flex-1 flex flex-col items-center justify-center">
         {!unlocked && hub.pinCode ? (
           /* PIN Gate Card */
           <motion.div
@@ -555,7 +617,7 @@ export const ShowcasePage = ({
           </motion.div>
         ) : (
           <>
-            {/* Profile Avatar & Title */}
+            {/* Profile Avatar & Optional Header Text */}
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
@@ -566,22 +628,26 @@ export const ShowcasePage = ({
                 <div className="relative">
                   <img
                     src={hub.avatarUrl}
-                    alt={hub.title}
-                    className="w-24 h-24 sm:w-[104px] sm:h-[104px] rounded-full object-cover border-2 border-white/35 shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
+                    alt={hub.title || 'RAK 4 CREATIVE'}
+                    className="w-24 h-24 sm:w-[108px] sm:h-[108px] rounded-full object-cover border-2 border-white/35 shadow-[0_12px_32px_rgba(0,0,0,0.45)]"
                   />
                 </div>
               )}
 
-              <div className="space-y-1.5 px-2">
-                <h1 className="text-lg sm:text-xl font-extrabold tracking-wide text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] break-words">
-                  {hub.title}
-                </h1>
-                {hub.subtitle && (
-                  <p className="text-xs sm:text-[13px] text-white/85 max-w-md mx-auto leading-relaxed drop-shadow-[0_1px_6px_rgba(0,0,0,0.75)]">
-                    {hub.subtitle}
-                  </p>
-                )}
-              </div>
+              {hub.showHeaderText ? (
+                <div className="space-y-1.5 px-2">
+                  <h1 className="text-lg sm:text-xl font-extrabold tracking-wide text-white drop-shadow-[0_2px_10px_rgba(0,0,0,0.65)] break-words">
+                    {hub.title}
+                  </h1>
+                  {hub.subtitle && (
+                    <p className="text-xs sm:text-[13px] text-white/85 max-w-md mx-auto leading-relaxed drop-shadow-[0_1px_6px_rgba(0,0,0,0.75)]">
+                      {hub.subtitle}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <h1 className="sr-only">{hub.title}</h1>
+              )}
             </motion.div>
 
             {/* Buttons & Sections Stack */}
@@ -664,7 +730,7 @@ export const ShowcasePage = ({
               })}
             </div>
 
-            {/* Bottom Contact & Executive Proposal Actions */}
+            {/* Bottom Contact & WhatsApp Link */}
             {(hub.showFooterCta || whatsappDigits || contactEmail) && (
               <motion.div
                 initial={{ opacity: 0 }}
@@ -691,15 +757,21 @@ export const ShowcasePage = ({
                 {whatsappDigits && (
                   <a
                     href={`https://wa.me/${whatsappDigits}?text=${encodeURIComponent(
-                      `Hello RAK 4 CREATIVE, I just viewed ${hub.title} and would love to discuss a project.`
+                      `Hello RAK 4 CREATIVE, I just viewed your ${hub.title} and would like to connect.`
                     )}`}
                     target="_blank"
                     rel="noopener noreferrer"
+                    onClick={() =>
+                      trackShowcaseEvent('showcase_whatsapp_click', {
+                        showcase_slug: hub.id,
+                        whatsapp: whatsappDigits
+                      })
+                    }
                     aria-label="Chat on WhatsApp"
-                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-black/45 hover:bg-black/65 border border-white/20 backdrop-blur-md text-xs font-semibold text-white/90 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#2D3139]/90 hover:bg-[#25D366] border border-white/20 hover:border-[#25D366] backdrop-blur-xl text-xs sm:text-[13px] font-bold tracking-wide text-white shadow-[0_10px_28px_rgba(0,0,0,0.45)] transition-all"
                   >
-                    <MessageCircle className="w-3.5 h-3.5 text-emerald-400" />
-                    <span>WhatsApp</span>
+                    <MessageCircle className="w-4 h-4 text-[#25D366] group-hover:text-white shrink-0" />
+                    <span>Chat on WhatsApp</span>
                   </a>
                 )}
 
@@ -1116,81 +1188,271 @@ export const ShowcasePage = ({
         )}
       </AnimatePresence>
 
-      {/* Inline PDF / Document Viewer Modal (z-[60], layers above Case Study Vault) */}
+      {/* Interactive Renders & Videos Gallery Vault Modal (z-50) */}
       <AnimatePresence>
-        {activePdfItem && (
+        {activeGalleryVault && Array.isArray(activeGalleryVault.mediaItems) && (
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            onClick={() => setActivePdfItem(null)}
-            className="fixed inset-0 z-[60] bg-black/88 backdrop-blur-md flex flex-col p-2.5 sm:p-6"
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 18 }}
+            transition={{ duration: 0.25 }}
+            className="fixed inset-0 z-50 bg-[#070A12]/96 backdrop-blur-2xl flex flex-col overflow-hidden"
           >
-            <div
-              onClick={(e) => e.stopPropagation()}
-              className="w-full max-w-5xl mx-auto flex-1 flex flex-col rounded-2xl sm:rounded-3xl bg-[#0D111C] border border-white/15 overflow-hidden shadow-2xl"
-            >
-              <div className="px-4 sm:px-6 py-3.5 border-b border-white/10 flex items-center justify-between gap-3">
-                <div className="flex items-center gap-2.5 min-w-0">
-                  <FileText className="w-4 h-4 text-rak-magenta-light shrink-0" />
-                  <span className="text-xs sm:text-sm font-bold truncate">
-                    {activePdfItem.title}
-                  </span>
-                </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <a
-                    href={activePdfItem.url}
-                    download
-                    className="hidden sm:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 text-[11px] font-semibold transition-colors"
-                  >
-                    <Download className="w-3.5 h-3.5" />
-                    <span>Download</span>
-                  </a>
-                  <a
-                    href={activePdfItem.url}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-rak-magenta hover:bg-rak-magenta-dark text-[11px] font-bold text-white transition-colors"
-                  >
-                    <span>Open Full PDF</span>
-                    <ArrowUpRight className="w-3.5 h-3.5" />
-                  </a>
-                  <button
-                    type="button"
-                    onClick={() => setActivePdfItem(null)}
-                    aria-label="Close PDF reader"
-                    className="p-1.5 rounded-lg bg-white/10 hover:bg-white/20 cursor-pointer"
-                  >
-                    <X className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
+            {(() => {
+              const allItems = activeGalleryVault.mediaItems || [];
+              const imageItems = allItems.filter((m) => m.mediaType !== 'video');
+              const videoItems = allItems.filter((m) => m.mediaType === 'video');
+              const filteredItems =
+                galleryVaultFilter === 'renders'
+                  ? imageItems
+                  : galleryVaultFilter === 'videos'
+                  ? videoItems
+                  : allItems;
 
-              {/* Mobile multi-page PDF helper banner (iOS Safari renders multi-page PDFs best in native tab) */}
-              <div className="sm:hidden px-4 py-2 bg-[#162038] border-b border-white/10 flex items-center justify-between gap-2 text-[11px] text-slate-200">
-                <span>Pinch-zoom &amp; swipe all pages in fullscreen:</span>
-                <a
-                  href={activePdfItem.url}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="font-bold text-rak-magenta-light underline shrink-0"
-                >
-                  Open Fullscreen ↗
-                </a>
-              </div>
+              return (
+                <>
+                  {/* Top Sticky Header with Back Button */}
+                  <div className="border-b border-white/10 bg-[#0B101D]/90 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3 shrink-0">
+                    <div className="flex items-center gap-3 min-w-0">
+                      <button
+                        type="button"
+                        onClick={() => setActiveGalleryVault(null)}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white cursor-pointer transition-colors shrink-0"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back</span>
+                      </button>
+                      <div className="min-w-0">
+                        <div className="text-xs sm:text-sm font-extrabold tracking-wide uppercase text-white truncate">
+                          {activeGalleryVault.title}
+                        </div>
+                        <div className="text-[11px] text-slate-400 truncate">
+                          {imageItems.length} 3D Renders • {videoItems.length} Videos &amp; Walkthroughs
+                        </div>
+                      </div>
+                    </div>
 
-              <iframe
-                src={toEmbedDocumentUrl(activePdfItem.url)}
-                title={activePdfItem.title}
-                className="w-full flex-1 bg-slate-950 border-0"
-                allow="autoplay"
-              />
-            </div>
+                    <button
+                      type="button"
+                      onClick={() => setActiveGalleryVault(null)}
+                      aria-label="Close Gallery"
+                      className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white cursor-pointer shrink-0"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+
+                  {/* Scrollable Gallery Grid */}
+                  <div className="flex-1 overflow-y-auto px-4 sm:px-8 py-6 sm:py-8">
+                    <div className="max-w-6xl mx-auto space-y-6 pb-10">
+                      {/* Filter Bar */}
+                      <div className="flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar">
+                        <button
+                          type="button"
+                          onClick={() => setGalleryVaultFilter('all')}
+                          className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer border ${
+                            galleryVaultFilter === 'all'
+                              ? 'bg-white text-slate-950 border-white'
+                              : 'bg-white/[0.05] text-slate-300 border-white/12 hover:bg-white/10 hover:text-white'
+                          }`}
+                        >
+                          All ({allItems.length})
+                        </button>
+                        {imageItems.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setGalleryVaultFilter('renders')}
+                            className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer border ${
+                              galleryVaultFilter === 'renders'
+                                ? 'bg-rak-magenta text-white border-rak-magenta'
+                                : 'bg-white/[0.05] text-slate-300 border-white/12 hover:bg-white/10 hover:text-white'
+                            }`}
+                          >
+                            3D Renders ({imageItems.length})
+                          </button>
+                        )}
+                        {videoItems.length > 0 && (
+                          <button
+                            type="button"
+                            onClick={() => setGalleryVaultFilter('videos')}
+                            className={`px-4 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-colors cursor-pointer border ${
+                              galleryVaultFilter === 'videos'
+                                ? 'bg-rak-magenta text-white border-rak-magenta'
+                                : 'bg-white/[0.05] text-slate-300 border-white/12 hover:bg-white/10 hover:text-white'
+                            }`}
+                          >
+                            Videos &amp; Walkthroughs ({videoItems.length})
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Grid */}
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                        {filteredItems.map((asset, idx) => {
+                          const masterIndex = allItems.findIndex((m) => m.id === asset.id);
+                          const openIndex = masterIndex >= 0 ? masterIndex : idx;
+
+                          if (asset.mediaType === 'video') {
+                            return (
+                              <button
+                                key={asset.id || idx}
+                                type="button"
+                                onClick={() => {
+                                  setGalleryZoomed(false);
+                                  openModalWithHistory(setActiveGallery, {
+                                    item: activeGalleryVault,
+                                    index: openIndex
+                                  });
+                                }}
+                                className="group rounded-2xl border border-white/12 bg-white/[0.03] hover:border-rak-magenta/60 overflow-hidden text-left flex flex-col cursor-pointer transition-all hover:-translate-y-0.5"
+                              >
+                                <div className="relative aspect-[16/10] w-full bg-black overflow-hidden">
+                                  <video
+                                    src={`${asset.url}#t=0.6`}
+                                    muted
+                                    playsInline
+                                    preload="metadata"
+                                    className="w-full h-full object-cover opacity-85 group-hover:opacity-100 group-hover:scale-105 transition-all duration-300"
+                                  />
+                                  <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/15 to-transparent" />
+                                  <div className="absolute inset-0 flex items-center justify-center">
+                                    <span className="w-11 h-11 rounded-full bg-rak-magenta/90 group-hover:bg-rak-magenta text-white flex items-center justify-center shadow-xl transition-transform group-hover:scale-110">
+                                      <Play className="w-4 h-4 fill-current ml-0.5" />
+                                    </span>
+                                  </div>
+                                  <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/70 backdrop-blur-md border border-white/15 text-[10px] font-bold uppercase tracking-wider text-white">
+                                    Video
+                                  </span>
+                                </div>
+                                <div className="p-3.5 space-y-0.5">
+                                  <div className="text-xs sm:text-[13px] font-bold text-white truncate">
+                                    {asset.title || `Video ${idx + 1}`}
+                                  </div>
+                                  {asset.subtitle && (
+                                    <div className="text-[11px] text-slate-400 truncate">
+                                      {asset.subtitle}
+                                    </div>
+                                  )}
+                                </div>
+                              </button>
+                            );
+                          }
+
+                          return (
+                            <button
+                              key={asset.id || idx}
+                              type="button"
+                              onClick={() => {
+                                setGalleryZoomed(false);
+                                openModalWithHistory(setActiveGallery, {
+                                  item: activeGalleryVault,
+                                  index: openIndex
+                                });
+                              }}
+                              className="group rounded-2xl border border-white/12 bg-white/[0.03] hover:border-rak-magenta/60 overflow-hidden text-left flex flex-col cursor-pointer transition-all hover:-translate-y-0.5"
+                            >
+                              <div className="relative aspect-[16/10] w-full bg-slate-950 overflow-hidden">
+                                <img
+                                  src={asset.url}
+                                  alt={asset.title || `Render ${idx + 1}`}
+                                  loading="lazy"
+                                  className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                />
+                                <span className="absolute top-2.5 right-2.5 px-2 py-0.5 rounded-md bg-black/65 backdrop-blur-md border border-white/15 text-[10px] font-bold uppercase tracking-wider text-white">
+                                  3D Render
+                                </span>
+                              </div>
+                              <div className="p-3.5 space-y-0.5">
+                                <div className="text-xs sm:text-[13px] font-bold text-white truncate">
+                                  {asset.title || `Render ${idx + 1}`}
+                                </div>
+                                {asset.subtitle && (
+                                  <div className="text-[11px] text-slate-400 truncate">
+                                    {asset.subtitle}
+                                  </div>
+                                )}
+                              </div>
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              );
+            })()}
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Inline Renders & Video Lightbox Modal (z-[60], layers above Case Study Vault) */}
+      {/* Full-Screen PDF / Document Viewer Modal (z-[60], layers above Case Study Vault) */}
+      <AnimatePresence>
+        {activePdfItem && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 12 }}
+            transition={{ duration: 0.22 }}
+            className="fixed inset-0 z-[60] bg-[#070A12]/96 backdrop-blur-2xl flex flex-col overflow-hidden"
+          >
+            <div className="border-b border-white/10 bg-[#0B101D]/95 backdrop-blur-xl px-4 sm:px-8 py-3.5 flex items-center justify-between gap-3 shrink-0">
+              <div className="flex items-center gap-3 min-w-0">
+                <button
+                  type="button"
+                  onClick={() => setActivePdfItem(null)}
+                  className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white cursor-pointer transition-colors shrink-0"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>{activeCaseStudy ? 'Back to Case Study' : 'Back'}</span>
+                </button>
+                <div className="flex items-center gap-2 min-w-0">
+                  <FileText className="w-4 h-4 text-rak-magenta-light shrink-0 hidden xs:inline" />
+                  <span className="text-xs sm:text-sm font-bold text-white truncate">
+                    {activePdfItem.title}
+                  </span>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2 shrink-0">
+                <a
+                  href={activePdfItem.url}
+                  download
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-[11px] font-semibold text-white transition-colors"
+                >
+                  <Download className="w-3.5 h-3.5" />
+                  <span className="hidden sm:inline">Download PDF</span>
+                </a>
+                <a
+                  href={activePdfItem.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-rak-magenta hover:bg-rak-magenta-dark text-[11px] font-bold text-white transition-colors"
+                >
+                  <span>Full Tab</span>
+                  <ArrowUpRight className="w-3.5 h-3.5" />
+                </a>
+                <button
+                  type="button"
+                  onClick={() => setActivePdfItem(null)}
+                  aria-label="Close PDF reader"
+                  className="p-2 rounded-full bg-white/10 hover:bg-white/20 text-white cursor-pointer"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              </div>
+            </div>
+
+            <iframe
+              src={toEmbedDocumentUrl(activePdfItem.url)}
+              title={activePdfItem.title}
+              className="w-full flex-1 bg-slate-950 border-0"
+              allow="autoplay"
+            />
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Inline Renders & Video Lightbox Modal (z-[60], layers above Case Study & Gallery Vaults) */}
       <AnimatePresence>
         {activeGallery && activeGallery.item.mediaItems.length > 0 && (
           <motion.div
@@ -1201,7 +1463,7 @@ export const ShowcasePage = ({
               setActiveGallery(null);
               setGalleryZoomed(false);
             }}
-            className="fixed inset-0 z-[60] bg-black/92 backdrop-blur-lg flex flex-col justify-between p-3 sm:p-6"
+            className="fixed inset-0 z-[60] bg-black/94 backdrop-blur-lg flex flex-col justify-between p-3 sm:p-6"
           >
             {(() => {
               const currentMedia = activeGallery.item.mediaItems[activeGallery.index];
@@ -1213,14 +1475,27 @@ export const ShowcasePage = ({
                     onClick={(e) => e.stopPropagation()}
                     className="w-full max-w-6xl mx-auto flex items-center justify-between gap-3 shrink-0"
                   >
-                    <div className="min-w-0">
-                      <h2 className="text-xs sm:text-base font-bold truncate">
-                        {currentMedia?.title || activeGallery.item.title}
-                      </h2>
-                      <p className="text-[11px] text-slate-400 truncate">
-                        {activeGallery.index + 1} of {activeGallery.item.mediaItems.length}
-                        {currentMedia?.subtitle ? ` • ${currentMedia.subtitle}` : ''}
-                      </p>
+                    <div className="flex items-center gap-3 min-w-0">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setActiveGallery(null);
+                          setGalleryZoomed(false);
+                        }}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/15 text-xs font-semibold text-white cursor-pointer transition-colors shrink-0"
+                      >
+                        <ChevronLeft className="w-4 h-4" />
+                        <span>Back</span>
+                      </button>
+                      <div className="min-w-0">
+                        <h2 className="text-xs sm:text-base font-bold truncate">
+                          {currentMedia?.title || activeGallery.item.title}
+                        </h2>
+                        <p className="text-[11px] text-slate-400 truncate">
+                          {activeGallery.index + 1} of {activeGallery.item.mediaItems.length}
+                          {currentMedia?.subtitle ? ` • ${currentMedia.subtitle}` : ''}
+                        </p>
+                      </div>
                     </div>
                     <div className="flex items-center gap-2 shrink-0">
                       {isImage && (

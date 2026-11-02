@@ -263,26 +263,28 @@ function readCmsContent(): array {
         $content['showcases'] = [
             [
                 'id' => 'real-estate',
+                'schemaVersion' => 2,
                 'active' => true,
                 'noindex' => true,
                 'listedInDirectory' => true,
                 'pinCode' => '',
-                'title' => '@RAKSHOWCASE_REALESTATE',
+                'title' => 'Real Estate Showcase',
                 'subtitle' => '',
+                'showHeaderText' => false,
                 'avatarUrl' => '/showcase-media/real-estate-avatar.webp',
                 'ogImageUrl' => '/showcase-media/real-estate-bg.webp',
                 'backgroundType' => 'image',
                 'backgroundUrl' => '/showcase-media/real-estate-bg.webp',
                 'backgroundColor' => '#101829',
-                'backgroundFit' => 'ambient',
+                'backgroundFit' => 'cover',
                 'overlayOpacity' => 25,
                 'buttonStyle' => 'solid',
-                'buttonColor' => '#213967',
+                'buttonColor' => '#2D3139',
                 'buttonTextColor' => '#FFFFFF',
                 'buttonRadius' => 'pill',
-                'showFooterCta' => true,
+                'showFooterCta' => false,
                 'footerCtaLabel' => 'Request Real Estate Proposal',
-                'whatsapp' => '',
+                'whatsapp' => '+961 81 998 851',
                 'contactEmail' => '',
                 'items' => [
                     [
@@ -309,7 +311,7 @@ function readCmsContent(): array {
                     ],
                     [
                         'id' => 're-renders-videos',
-                        'type' => 'link',
+                        'type' => 'gallery',
                         'active' => true,
                         'title' => 'RENDERS & VIDEOS',
                         'subtitle' => '',
@@ -324,7 +326,21 @@ function readCmsContent(): array {
         $changed = true;
     } else {
         foreach ($content['showcases'] as &$scEntry) {
-            if (!is_array($scEntry) || empty($scEntry['items']) || !is_array($scEntry['items'])) continue;
+            if (!is_array($scEntry)) continue;
+            $scId = strtolower(trim((string)($scEntry['id'] ?? '')));
+            $scVersion = (int)($scEntry['schemaVersion'] ?? 1);
+            if ($scId === 'real-estate' && $scVersion < 2) {
+                $scEntry['schemaVersion'] = 2;
+                $scEntry['title'] = 'Real Estate Showcase';
+                $scEntry['subtitle'] = '';
+                $scEntry['showHeaderText'] = false;
+                $scEntry['backgroundFit'] = 'cover';
+                $scEntry['buttonColor'] = '#2D3139';
+                $scEntry['showFooterCta'] = false;
+                $scEntry['whatsapp'] = '+961 81 998 851';
+                $changed = true;
+            }
+            if (empty($scEntry['items']) || !is_array($scEntry['items'])) continue;
             foreach ($scEntry['items'] as &$scIt) {
                 if (!is_array($scIt)) continue;
                 $u = (string)($scIt['url'] ?? '');
@@ -335,6 +351,9 @@ function readCmsContent(): array {
                 } elseif (strpos($u, '1I9h1gtfe-zEfY0Kw4ileov-kboffcskE') !== false) {
                     $scIt['type'] = 'case-study';
                     $scIt['url'] = '';
+                    $changed = true;
+                } elseif (($scIt['id'] ?? '') === 're-renders-videos' && ($scIt['type'] ?? '') === 'link' && empty($scIt['mediaItems'])) {
+                    $scIt['type'] = 'gallery';
                     $changed = true;
                 }
             }
@@ -352,14 +371,41 @@ function readCmsContent(): array {
 
 function getAuthConfig(): array {
     $auth = readJsonFile('auth.json', []);
+    $changed = false;
     if (empty($auth['passwordHash']) || empty($auth['secret'])) {
         $auth = [
             'username' => 'admin',
             'email' => 'hello@rak4creative.com',
             'passwordHash' => password_hash('RAK4Creative!2026', PASSWORD_DEFAULT),
             'secret' => bin2hex(random_bytes(32)),
+            'updatedAt' => gmdate('c'),
+            'users' => []
+        ];
+        $changed = true;
+    }
+    if (!isset($auth['users']) || !is_array($auth['users'])) {
+        $auth['users'] = [];
+        $changed = true;
+    }
+    $hasMajd = false;
+    foreach ($auth['users'] as $u) {
+        if (is_array($u) && strcasecmp((string)($u['username'] ?? ''), 'majd') === 0) {
+            $hasMajd = true;
+            break;
+        }
+    }
+    if (!$hasMajd) {
+        $auth['users'][] = [
+            'username' => 'majd',
+            'email' => 'majd@rak4creative.com',
+            'name' => 'Majd',
+            'role' => 'Showcase & Content Manager',
+            'passwordHash' => password_hash('Majd@RAK2026!', PASSWORD_DEFAULT),
             'updatedAt' => gmdate('c')
         ];
+        $changed = true;
+    }
+    if ($changed) {
         writeJsonFile('auth.json', $auth);
     }
     return $auth;
@@ -1018,56 +1064,107 @@ if ($route === 'login' && $method === 'POST') {
     $password = (string)($body['password'] ?? '');
     $auth = getAuthConfig();
 
-    $userMatch = (strcasecmp($username, $auth['username']) === 0) || (strcasecmp($username, $auth['email'] ?? '') === 0);
-    if (!$userMatch || !password_verify($password, $auth['passwordHash'])) {
+    $matchedUser = null;
+    $primaryMatch = (strcasecmp($username, $auth['username']) === 0) || (strcasecmp($username, $auth['email'] ?? '') === 0);
+    if ($primaryMatch && password_verify($password, $auth['passwordHash'])) {
+        $matchedUser = [
+            'username' => $auth['username'],
+            'email' => $auth['email'] ?? 'hello@rak4creative.com',
+            'name' => 'Admin'
+        ];
+    } elseif (!empty($auth['users']) && is_array($auth['users'])) {
+        foreach ($auth['users'] as $u) {
+            if (!is_array($u)) continue;
+            $uMatch = (strcasecmp($username, (string)($u['username'] ?? '')) === 0)
+                || (strcasecmp($username, (string)($u['email'] ?? '')) === 0);
+            if ($uMatch && !empty($u['passwordHash']) && password_verify($password, $u['passwordHash'])) {
+                $matchedUser = [
+                    'username' => $u['username'],
+                    'email' => $u['email'] ?? '',
+                    'name' => $u['name'] ?? $u['username'],
+                    'role' => $u['role'] ?? 'Editor'
+                ];
+                break;
+            }
+        }
+    }
+
+    if (!$matchedUser) {
         respond(['ok' => false, 'error' => 'Invalid username or password.'], 401);
     }
 
     clearRateLimit($loginBucket);
-    $session = issueToken($auth['username'], $auth['secret']);
+    $session = issueToken($matchedUser['username'], $auth['secret']);
     respond([
         'ok' => true,
         'token' => $session['token'],
         'expiresAt' => $session['expiresAt'],
-        'user' => [
-            'username' => $auth['username'],
-            'email' => $auth['email'] ?? 'hello@rak4creative.com'
-        ]
+        'user' => $matchedUser
     ]);
 }
 
 // 3. CHANGE ADMIN PASSWORD
 if ($route === 'change-password' && $method === 'POST') {
-    requireAdminAuth();
+    $tokenPayload = requireAdminAuth();
+    $activeSub = (string)($tokenPayload['sub'] ?? '');
     $body = getJsonBody();
     $currentPassword = (string)($body['currentPassword'] ?? '');
     $newUsername = trim((string)($body['newUsername'] ?? ''));
     $newPassword = (string)($body['newPassword'] ?? '');
 
-    $auth = getAuthConfig();
-    if (!password_verify($currentPassword, $auth['passwordHash'])) {
-        respond(['ok' => false, 'error' => 'Current password is incorrect.'], 400);
-    }
     if (strlen($newPassword) < 8) {
         respond(['ok' => false, 'error' => 'New password must be at least 8 characters.'], 400);
     }
 
-    if ($newUsername !== '') {
-        $auth['username'] = $newUsername;
+    $auth = getAuthConfig();
+    $updatedUser = null;
+
+    if ($activeSub === '' || strcasecmp($activeSub, $auth['username']) === 0) {
+        if (!password_verify($currentPassword, $auth['passwordHash'])) {
+            respond(['ok' => false, 'error' => 'Current password is incorrect.'], 400);
+        }
+        if ($newUsername !== '') {
+            $auth['username'] = $newUsername;
+        }
+        $auth['passwordHash'] = password_hash($newPassword, PASSWORD_DEFAULT);
+        $updatedUser = ['username' => $auth['username'], 'email' => $auth['email'] ?? ''];
+    } elseif (!empty($auth['users']) && is_array($auth['users'])) {
+        foreach ($auth['users'] as &$u) {
+            if (!is_array($u) || strcasecmp((string)($u['username'] ?? ''), $activeSub) !== 0) continue;
+            if (empty($u['passwordHash']) || !password_verify($currentPassword, $u['passwordHash'])) {
+                respond(['ok' => false, 'error' => 'Current password is incorrect.'], 400);
+            }
+            if ($newUsername !== '') {
+                $u['username'] = $newUsername;
+            }
+            $u['passwordHash'] = password_hash($newPassword, PASSWORD_DEFAULT);
+            $u['updatedAt'] = gmdate('c');
+            $updatedUser = [
+                'username' => $u['username'],
+                'email' => $u['email'] ?? '',
+                'name' => $u['name'] ?? $u['username']
+            ];
+            break;
+        }
+        unset($u);
     }
-    $auth['passwordHash'] = password_hash($newPassword, PASSWORD_DEFAULT);
+
+    if (!$updatedUser) {
+        respond(['ok' => false, 'error' => 'Account not found.'], 404);
+    }
+
     // Rotate signing secret so previously issued tokens are revoked immediately.
     $auth['secret'] = bin2hex(random_bytes(32));
     $auth['updatedAt'] = gmdate('c');
     writeJsonFile('auth.json', $auth);
 
-    $session = issueToken($auth['username'], $auth['secret']);
+    $session = issueToken($updatedUser['username'], $auth['secret']);
     respond([
         'ok' => true,
-        'message' => 'Admin credentials updated.',
+        'message' => 'Credentials updated.',
         'token' => $session['token'],
         'expiresAt' => $session['expiresAt'],
-        'user' => ['username' => $auth['username'], 'email' => $auth['email'] ?? '']
+        'user' => $updatedUser
     ]);
 }
 

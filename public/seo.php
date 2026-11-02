@@ -143,7 +143,7 @@ $defaultShowcases = [
         'noindex' => true,
         'listedInDirectory' => true,
         'pinCode' => '',
-        'title' => '@RAKSHOWCASE_REALESTATE',
+        'title' => 'Real Estate Showcase',
         'subtitle' => '',
         'avatarUrl' => '/showcase-media/real-estate-avatar.webp',
         'ogImageUrl' => '/showcase-media/real-estate-bg.webp',
@@ -151,7 +151,7 @@ $defaultShowcases = [
         'items' => [
             ['active' => true, 'type' => 'pdf', 'title' => 'PORTFOLIO', 'url' => '/showcase-media/rak-real-estate-portfolio.pdf'],
             ['active' => true, 'type' => 'case-study', 'title' => 'CASE STUDY - BRANDING CONCEPT', 'url' => ''],
-            ['active' => true, 'type' => 'link', 'title' => 'RENDERS & VIDEOS', 'url' => 'https://claude.ai/artifact/VZfJWV4DuGx1aY4MWYuAe1']
+            ['active' => true, 'type' => 'gallery', 'title' => 'RENDERS & VIDEOS', 'url' => '']
         ]
     ]
 ];
@@ -247,6 +247,9 @@ if ($tab === 'blog-post' && $matchedPost !== null) {
     }
 } elseif ($tab === 'showcase-hub' && $matchedShowcase !== null) {
     $scTitle = trim((string)($matchedShowcase['title'] ?? ''));
+    if (strcasecmp($scTitle, '@RAKSHOWCASE_REALESTATE') === 0) {
+        $scTitle = 'Real Estate Showcase';
+    }
     $pageTitle = ($scTitle !== '' ? $scTitle : 'Showcase') . ' | RAK 4 CREATIVE';
     $scSub = trim((string)($matchedShowcase['subtitle'] ?? ''));
     $pageDesc = $scSub !== '' ? $scSub : $defaultDescriptions['showcase'];

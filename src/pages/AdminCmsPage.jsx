@@ -99,9 +99,26 @@ export default function AdminCmsPage({
   } = useCms();
 
   const [activeModule, setActiveModule] = useState('content');
-  const [contentSection, setContentSection] = useState('banners');
+  const [contentSection, setContentSection] = useState(() => {
+    try {
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        if (params.get('section')) return params.get('section');
+      }
+    } catch {
+      // ignore
+    }
+    return 'banners';
+  });
   const [contentDirty, setContentDirty] = useState(false);
   const [navOpen, setNavOpen] = useState(false);
+
+  useEffect(() => {
+    if (adminUser?.username && String(adminUser.username).toLowerCase() === 'majd') {
+      setActiveModule('content');
+      setContentSection('showcases');
+    }
+  }, [adminUser?.username]);
 
   // Sign-In state
   const [loginUsername, setLoginUsername] = useState('');
