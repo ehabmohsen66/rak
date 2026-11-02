@@ -510,20 +510,29 @@ export const ShowcasePage = ({
                 {/* Crisp portrait stage centered on desktop, edge-to-edge on mobile */}
                 <div className="relative w-full sm:max-w-[560px] h-full mx-auto shadow-[0_0_90px_rgba(0,0,0,0.75)]">
                   <img
-                    src={hub.backgroundUrl}
+                    src={hub.mobileBackgroundUrl || hub.backgroundUrl}
                     alt=""
                     aria-hidden="true"
-                    className="w-full h-full object-cover"
+                    fetchPriority="high"
+                    decoding="async"
+                    className="w-full h-full object-cover object-top"
                   />
                 </div>
               </>
             ) : (
-              <img
-                src={hub.backgroundUrl}
-                alt=""
-                aria-hidden="true"
-                className="w-full h-full object-cover object-center"
-              />
+              <picture className="block w-full h-full">
+                {hub.mobileBackgroundUrl && (
+                  <source media="(max-width: 767px)" srcSet={hub.mobileBackgroundUrl} />
+                )}
+                <img
+                  src={hub.backgroundUrl}
+                  alt=""
+                  aria-hidden="true"
+                  fetchPriority="high"
+                  decoding="async"
+                  className="w-full h-full object-cover object-top"
+                />
+              </picture>
             )}
           </>
         )}
@@ -554,9 +563,9 @@ export const ShowcasePage = ({
         {/* Configurable Dark Tint + Subtle Vignette for Text Legibility */}
         <div
           className="absolute inset-0 bg-black transition-opacity duration-300"
-          style={{ opacity: (hub.overlayOpacity ?? 25) / 100 }}
+          style={{ opacity: (hub.overlayOpacity ?? 15) / 100 }}
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/35 via-transparent to-black/65" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/15 via-transparent to-black/45" />
       </div>
 
       {/* Top Floating Bar */}

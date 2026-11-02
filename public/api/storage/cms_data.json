@@ -796,7 +796,7 @@
   "showcases": [
     {
       "id": "real-estate",
-      "schemaVersion": 2,
+      "schemaVersion": 3,
       "active": true,
       "noindex": true,
       "listedInDirectory": true,
@@ -804,13 +804,13 @@
       "title": "Real Estate Showcase",
       "subtitle": "",
       "showHeaderText": false,
-      "avatarUrl": "/showcase-media/real-estate-avatar.webp",
-      "ogImageUrl": "/showcase-media/real-estate-bg.webp",
+      "avatarUrl": "/showcase-media/real-estate-avatar.webp?v=2",
+      "ogImageUrl": "/showcase-media/real-estate-bg.webp?v=2",
       "backgroundType": "image",
-      "backgroundUrl": "/showcase-media/real-estate-bg.webp",
+      "backgroundUrl": "/showcase-media/real-estate-bg.webp?v=2",
       "backgroundColor": "#101829",
       "backgroundFit": "cover",
-      "overlayOpacity": 25,
+      "overlayOpacity": 15,
       "buttonStyle": "solid",
       "buttonColor": "#2D3139",
       "buttonTextColor": "#FFFFFF",
@@ -853,7 +853,8 @@
           "url": "https://claude.ai/artifact/VZfJWV4DuGx1aY4MWYuAe1",
           "mediaItems": []
         }
-      ]
+      ],
+      "mobileBackgroundUrl": "/showcase-media/real-estate-bg-mobile.webp?v=2"
     }
   ]
 }

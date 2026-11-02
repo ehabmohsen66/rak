@@ -107,7 +107,7 @@ export const REAL_ESTATE_RENDERS_MEDIA = [
 export const DEFAULT_SHOWCASES = [
   {
     id: 'real-estate',
-    schemaVersion: 2,
+    schemaVersion: 3,
     active: true,
     noindex: true,
     listedInDirectory: true,
@@ -115,13 +115,14 @@ export const DEFAULT_SHOWCASES = [
     title: 'Real Estate Showcase',
     subtitle: '',
     showHeaderText: false,
-    avatarUrl: '/showcase-media/real-estate-avatar.webp',
-    ogImageUrl: '/showcase-media/real-estate-bg.webp',
+    avatarUrl: '/showcase-media/real-estate-avatar.webp?v=2',
+    ogImageUrl: '/showcase-media/real-estate-bg.webp?v=2',
     backgroundType: 'image', // 'image' | 'video' | 'gradient'
-    backgroundUrl: '/showcase-media/real-estate-bg.webp',
+    backgroundUrl: '/showcase-media/real-estate-bg.webp?v=2',
+    mobileBackgroundUrl: '/showcase-media/real-estate-bg-mobile.webp?v=2',
     backgroundColor: '#101829',
     backgroundFit: 'cover', // 'cover' | 'ambient'
-    overlayOpacity: 25,
+    overlayOpacity: 15,
     buttonStyle: 'solid', // 'solid' | 'glass' | 'outline'
     buttonColor: '#2D3139',
     buttonTextColor: '#FFFFFF',
@@ -289,6 +290,7 @@ export function normalizeShowcase(raw = {}, idx = 0) {
   const id = slugifyShowcaseId(raw?.id || `showcase-${idx + 1}`);
   const isRealEstate = id === 'real-estate';
   const isLegacySchema = !raw?.schemaVersion || Number(raw.schemaVersion) < 2;
+  const isPreHdSchema = !raw?.schemaVersion || Number(raw.schemaVersion) < 3;
   const overlayNum = Number(raw?.overlayOpacity);
 
   const rawTitle = String(raw?.title ?? base.title);
@@ -322,9 +324,35 @@ export function normalizeShowcase(raw = {}, idx = 0) {
   const normalizedShowFooterCta =
     isLegacySchema && isRealEstate ? false : Boolean(raw?.showFooterCta);
 
+  const rawAvatarUrl = String(raw?.avatarUrl ?? base.avatarUrl).trim();
+  const normalizedAvatarUrl =
+    rawAvatarUrl === '/showcase-media/real-estate-avatar.webp'
+      ? '/showcase-media/real-estate-avatar.webp?v=2'
+      : rawAvatarUrl;
+
+  const rawBgUrl = String(raw?.backgroundUrl ?? '').trim();
+  const normalizedBgUrl =
+    rawBgUrl === '/showcase-media/real-estate-bg.webp'
+      ? '/showcase-media/real-estate-bg.webp?v=2'
+      : rawBgUrl;
+
+  const rawMobileBgUrl = String(raw?.mobileBackgroundUrl ?? '').trim();
+  const normalizedMobileBgUrl =
+    rawMobileBgUrl ||
+    (normalizedBgUrl.startsWith('/showcase-media/real-estate-bg.webp')
+      ? '/showcase-media/real-estate-bg-mobile.webp?v=2'
+      : '');
+
+  const normalizedOverlayOpacity =
+    isRealEstate && isPreHdSchema && (!Number.isFinite(overlayNum) || overlayNum === 25)
+      ? 15
+      : Number.isFinite(overlayNum)
+      ? Math.max(0, Math.min(90, Math.round(overlayNum)))
+      : 15;
+
   return {
     id,
-    schemaVersion: 2,
+    schemaVersion: 3,
     active: raw?.active !== false,
     noindex: raw?.noindex !== false,
     listedInDirectory: raw?.listedInDirectory !== false,
@@ -332,17 +360,16 @@ export function normalizeShowcase(raw = {}, idx = 0) {
     title: normalizedTitle,
     subtitle: normalizedSubtitle,
     showHeaderText: Boolean(raw?.showHeaderText),
-    avatarUrl: String(raw?.avatarUrl ?? base.avatarUrl),
-    ogImageUrl: String(raw?.ogImageUrl ?? raw?.backgroundUrl ?? base.ogImageUrl),
+    avatarUrl: normalizedAvatarUrl,
+    ogImageUrl: String(raw?.ogImageUrl ?? (normalizedBgUrl || base.ogImageUrl)),
     backgroundType: ['image', 'video', 'gradient'].includes(raw?.backgroundType)
       ? raw.backgroundType
       : 'image',
-    backgroundUrl: String(raw?.backgroundUrl ?? ''),
+    backgroundUrl: normalizedBgUrl,
+    mobileBackgroundUrl: normalizedMobileBgUrl,
     backgroundColor: String(raw?.backgroundColor || '#101829'),
     backgroundFit: normalizedBgFit,
-    overlayOpacity: Number.isFinite(overlayNum)
-      ? Math.max(0, Math.min(90, Math.round(overlayNum)))
-      : 25,
+    overlayOpacity: normalizedOverlayOpacity,
     buttonStyle: ['solid', 'glass', 'outline'].includes(raw?.buttonStyle)
       ? raw.buttonStyle
       : 'solid',

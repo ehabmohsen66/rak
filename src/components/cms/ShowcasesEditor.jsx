@@ -607,28 +607,43 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
               </div>
 
               {activeHub.backgroundType !== 'gradient' && (
-                <MediaUploadField
-                  id="sc-bg-url"
-                  label={
-                    activeHub.backgroundType === 'video'
-                      ? 'Background Video (.mp4 / .webm)'
-                      : 'Background Artwork / Render'
-                  }
-                  kind={activeHub.backgroundType === 'video' ? 'video' : 'image'}
-                  accept={
-                    activeHub.backgroundType === 'video'
-                      ? 'video/mp4,video/webm,video/quicktime'
-                      : 'image/*'
-                  }
-                  value={activeHub.backgroundUrl}
-                  onUploadFile={onUploadFile}
-                  onChange={(url) => updateActiveHub({ backgroundUrl: url })}
-                  hint={
-                    activeHub.backgroundFit === 'ambient'
-                      ? 'Vertical 9:16 renders stay uncropped on both mobile and desktop.'
-                      : 'Landscape 16:9 image or video fills the entire desktop viewport.'
-                  }
-                />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <MediaUploadField
+                    id="sc-bg-url"
+                    label={
+                      activeHub.backgroundType === 'video'
+                        ? 'Background Video (.mp4 / .webm)'
+                        : 'Desktop Background Artwork (16:9)'
+                    }
+                    kind={activeHub.backgroundType === 'video' ? 'video' : 'image'}
+                    accept={
+                      activeHub.backgroundType === 'video'
+                        ? 'video/mp4,video/webm,video/quicktime'
+                        : 'image/*'
+                    }
+                    value={activeHub.backgroundUrl}
+                    onUploadFile={onUploadFile}
+                    onChange={(url) => updateActiveHub({ backgroundUrl: url })}
+                    hint={
+                      activeHub.backgroundFit === 'ambient'
+                        ? 'Vertical 9:16 renders stay uncropped on both mobile and desktop.'
+                        : 'High-resolution 16:9 widescreen image (e.g. 2560×1440) for desktop.'
+                    }
+                  />
+
+                  {activeHub.backgroundType === 'image' && (
+                    <MediaUploadField
+                      id="sc-mobile-bg-url"
+                      label="Mobile Portrait Background (9:16 Optional)"
+                      kind="image"
+                      accept="image/*"
+                      value={activeHub.mobileBackgroundUrl || ''}
+                      onUploadFile={onUploadFile}
+                      onChange={(url) => updateActiveHub({ mobileBackgroundUrl: url })}
+                      hint="High-resolution 9:16 portrait image served on phones (<768px)."
+                    />
+                  )}
+                </div>
               )}
 
               <CmsField
@@ -1354,10 +1369,10 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
                       playsInline
                       className="absolute inset-0 w-full h-full object-cover"
                     />
-                  ) : activeHub.backgroundType === 'image' && activeHub.backgroundUrl ? (
+                  ) : activeHub.backgroundType === 'image' && (activeHub.mobileBackgroundUrl || activeHub.backgroundUrl) ? (
                     <img
-                      key={activeHub.backgroundUrl}
-                      src={activeHub.backgroundUrl}
+                      key={activeHub.mobileBackgroundUrl || activeHub.backgroundUrl}
+                      src={activeHub.mobileBackgroundUrl || activeHub.backgroundUrl}
                       alt=""
                       className="absolute inset-0 w-full h-full object-cover object-top"
                     />
