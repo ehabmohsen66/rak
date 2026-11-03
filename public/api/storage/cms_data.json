@@ -855,6 +855,46 @@
         }
       ],
       "mobileBackgroundUrl": "/showcase-media/real-estate-bg-mobile.webp?v=2"
+    },
+    {
+      "id": "events",
+      "schemaVersion": 3,
+      "active": true,
+      "noindex": true,
+      "listedInDirectory": true,
+      "pinCode": "",
+      "title": "Events Showcase",
+      "subtitle": "",
+      "showHeaderText": false,
+      "avatarUrl": "/showcase-media/real-estate-avatar.webp?v=2",
+      "ogImageUrl": "/showcase-media/events-bg.webp",
+      "backgroundType": "image",
+      "backgroundUrl": "/showcase-media/events-bg.webp",
+      "mobileBackgroundUrl": "",
+      "backgroundColor": "#101829",
+      "backgroundFit": "cover",
+      "overlayOpacity": 15,
+      "buttonStyle": "solid",
+      "buttonColor": "#2D3139",
+      "buttonTextColor": "#FFFFFF",
+      "buttonRadius": "pill",
+      "showFooterCta": false,
+      "footerCtaLabel": "Request Events Proposal",
+      "whatsapp": "+961 81 998 851",
+      "contactEmail": "hello@rak4creative.com",
+      "items": [
+        {
+          "id": "ev-portfolio",
+          "type": "link",
+          "active": true,
+          "title": "PORTFOLIO",
+          "subtitle": "",
+          "badge": "",
+          "thumbnail": "",
+          "url": "https://claude.ai/artifact/LSMcW8X2GvDsCTSSXV4eFk",
+          "mediaItems": []
+        }
+      ]
     }
   ]
 }

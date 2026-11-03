@@ -145,13 +145,28 @@ $defaultShowcases = [
         'pinCode' => '',
         'title' => 'Real Estate Showcase',
         'subtitle' => '',
-        'avatarUrl' => '/showcase-media/real-estate-avatar.webp',
-        'ogImageUrl' => '/showcase-media/real-estate-bg.webp',
-        'backgroundUrl' => '/showcase-media/real-estate-bg.webp',
+        'avatarUrl' => '/showcase-media/real-estate-avatar.webp?v=2',
+        'ogImageUrl' => '/showcase-media/real-estate-bg.webp?v=2',
+        'backgroundUrl' => '/showcase-media/real-estate-bg.webp?v=2',
         'items' => [
             ['active' => true, 'type' => 'pdf', 'title' => 'PORTFOLIO', 'url' => '/showcase-media/rak-real-estate-portfolio.pdf'],
             ['active' => true, 'type' => 'case-study', 'title' => 'CASE STUDY - BRANDING CONCEPT', 'url' => ''],
             ['active' => true, 'type' => 'gallery', 'title' => 'RENDERS & VIDEOS', 'url' => '']
+        ]
+    ],
+    [
+        'id' => 'events',
+        'active' => true,
+        'noindex' => true,
+        'listedInDirectory' => true,
+        'pinCode' => '',
+        'title' => 'Events Showcase',
+        'subtitle' => '',
+        'avatarUrl' => '/showcase-media/real-estate-avatar.webp?v=2',
+        'ogImageUrl' => '/showcase-media/events-bg.webp',
+        'backgroundUrl' => '/showcase-media/events-bg.webp',
+        'items' => [
+            ['active' => true, 'type' => 'link', 'title' => 'PORTFOLIO', 'url' => 'https://claude.ai/artifact/LSMcW8X2GvDsCTSSXV4eFk']
         ]
     ]
 ];
@@ -159,6 +174,19 @@ $defaultShowcases = [
 $showcases = (isset($content['showcases']) && is_array($content['showcases']))
     ? $content['showcases']
     : $defaultShowcases;
+
+$existingShowcaseIds = [];
+foreach ($showcases as $scItem) {
+    if (is_array($scItem) && !empty($scItem['id'])) {
+        $existingShowcaseIds[strtolower((string)$scItem['id'])] = true;
+    }
+}
+foreach ($defaultShowcases as $defSc) {
+    $defId = strtolower((string)$defSc['id']);
+    if (!isset($existingShowcaseIds[$defId])) {
+        $showcases[] = $defSc;
+    }
+}
 
 $tab = 'home';
 $canonicalPath = '/';

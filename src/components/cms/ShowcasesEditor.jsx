@@ -1530,12 +1530,18 @@ export default function ShowcasesEditor({ draft, updateDraft, onUploadFile }) {
                           <span>{activeHub.footerCtaLabel || 'Request Proposal'}</span>
                         </div>
                       )}
-                      {activeHub.whatsapp && (
-                        <div className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-[#2D3139]/90 border border-white/20 text-[10px] font-bold text-white shadow">
-                          <span className="w-2 h-2 rounded-full bg-[#25D366]" />
-                          <span>Chat on WhatsApp</span>
+                      <div className="flex flex-wrap items-center justify-center gap-1.5">
+                        {activeHub.whatsapp && (
+                          <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#2D3139]/90 border border-white/20 text-[10px] font-bold text-white shadow">
+                            <span className="w-2 h-2 rounded-full bg-[#25D366]" />
+                            <span>Chat on WhatsApp</span>
+                          </div>
+                        )}
+                        <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-[#2D3139]/90 border border-white/20 text-[10px] font-bold text-white shadow">
+                          <span className="w-2 h-2 rounded-full bg-[#FF4FB0]" />
+                          <span>Email Us</span>
                         </div>
-                      )}
+                      </div>
                       <span className="text-[9px] text-white/60 tracking-wider uppercase">
                         rak4creative.com
                       </span>

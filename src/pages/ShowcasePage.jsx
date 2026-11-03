@@ -790,9 +790,9 @@ export const ShowcasePage = ({
                       `Inquiry via ${hub.title}`
                     )}`}
                     aria-label="Send Email"
-                    className="inline-flex items-center justify-center gap-1.5 px-4 py-2.5 rounded-full bg-black/45 hover:bg-black/65 border border-white/20 backdrop-blur-md text-xs font-semibold text-white/90 transition-colors"
+                    className="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-full bg-[#2D3139]/90 hover:bg-rak-magenta border border-white/20 hover:border-rak-magenta backdrop-blur-xl text-xs sm:text-[13px] font-bold tracking-wide text-white shadow-[0_10px_28px_rgba(0,0,0,0.45)] transition-all"
                   >
-                    <Mail className="w-3.5 h-3.5 text-rak-magenta-light" />
+                    <Mail className="w-4 h-4 text-rak-magenta-light shrink-0" />
                     <span>Email Us</span>
                   </a>
                 )}

@@ -169,6 +169,47 @@ export const DEFAULT_SHOWCASES = [
         projects: []
       }
     ]
+  },
+  {
+    id: 'events',
+    schemaVersion: 3,
+    active: true,
+    noindex: true,
+    listedInDirectory: true,
+    pinCode: '',
+    title: 'Events Showcase',
+    subtitle: '',
+    showHeaderText: false,
+    avatarUrl: '/showcase-media/real-estate-avatar.webp?v=2',
+    ogImageUrl: '/showcase-media/events-bg.webp',
+    backgroundType: 'image',
+    backgroundUrl: '/showcase-media/events-bg.webp',
+    mobileBackgroundUrl: '',
+    backgroundColor: '#101829',
+    backgroundFit: 'cover',
+    overlayOpacity: 15,
+    buttonStyle: 'solid',
+    buttonColor: '#2D3139',
+    buttonTextColor: '#FFFFFF',
+    buttonRadius: 'pill',
+    showFooterCta: false,
+    footerCtaLabel: 'Request Events Proposal',
+    whatsapp: '+961 81 998 851',
+    contactEmail: 'hello@rak4creative.com',
+    items: [
+      {
+        id: 'ev-portfolio',
+        type: 'link',
+        active: true,
+        title: 'PORTFOLIO',
+        subtitle: '',
+        badge: '',
+        thumbnail: '',
+        url: 'https://claude.ai/artifact/LSMcW8X2GvDsCTSSXV4eFk',
+        mediaItems: [],
+        projects: []
+      }
+    ]
   }
 ];
 
@@ -319,7 +360,7 @@ export function normalizeShowcase(raw = {}, idx = 0) {
       : 'cover';
 
   const normalizedWhatsapp =
-    String(raw?.whatsapp || '').trim() || (isRealEstate ? '+961 81 998 851' : '');
+    String(raw?.whatsapp || '').trim() || '+961 81 998 851';
 
   const normalizedShowFooterCta =
     isLegacySchema && isRealEstate ? false : Boolean(raw?.showFooterCta);
@@ -387,10 +428,17 @@ export function normalizeShowcase(raw = {}, idx = 0) {
 }
 
 export function normalizeShowcases(rawList) {
-  if (!Array.isArray(rawList)) {
+  if (!Array.isArray(rawList) || rawList.length === 0) {
     return DEFAULT_SHOWCASES.map((s, i) => normalizeShowcase(s, i));
   }
-  return rawList.map((s, i) => normalizeShowcase(s, i));
+  const normalized = rawList.map((s, i) => normalizeShowcase(s, i));
+  const existingIds = new Set(normalized.map((s) => s.id.toLowerCase()));
+  for (const def of DEFAULT_SHOWCASES) {
+    if (!existingIds.has(def.id.toLowerCase())) {
+      normalized.push(normalizeShowcase(def, normalized.length));
+    }
+  }
+  return normalized;
 }
 
 // Converts Google Drive /file/d/<id>/view URLs into embeddable /preview URLs for inline PDF viewing

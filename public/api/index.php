@@ -321,13 +321,57 @@ function readCmsContent(): array {
                         'mediaItems' => []
                     ]
                 ]
+            ],
+            [
+                'id' => 'events',
+                'schemaVersion' => 3,
+                'active' => true,
+                'noindex' => true,
+                'listedInDirectory' => true,
+                'pinCode' => '',
+                'title' => 'Events Showcase',
+                'subtitle' => '',
+                'showHeaderText' => false,
+                'avatarUrl' => '/showcase-media/real-estate-avatar.webp?v=2',
+                'ogImageUrl' => '/showcase-media/events-bg.webp',
+                'backgroundType' => 'image',
+                'backgroundUrl' => '/showcase-media/events-bg.webp',
+                'mobileBackgroundUrl' => '',
+                'backgroundColor' => '#101829',
+                'backgroundFit' => 'cover',
+                'overlayOpacity' => 15,
+                'buttonStyle' => 'solid',
+                'buttonColor' => '#2D3139',
+                'buttonTextColor' => '#FFFFFF',
+                'buttonRadius' => 'pill',
+                'showFooterCta' => false,
+                'footerCtaLabel' => 'Request Events Proposal',
+                'whatsapp' => '+961 81 998 851',
+                'contactEmail' => 'hello@rak4creative.com',
+                'items' => [
+                    [
+                        'id' => 'ev-portfolio',
+                        'type' => 'link',
+                        'active' => true,
+                        'title' => 'PORTFOLIO',
+                        'subtitle' => '',
+                        'badge' => '',
+                        'thumbnail' => '',
+                        'url' => 'https://claude.ai/artifact/LSMcW8X2GvDsCTSSXV4eFk',
+                        'mediaItems' => []
+                    ]
+                ]
             ]
         ];
         $changed = true;
     } else {
+        $hasEventsShowcase = false;
         foreach ($content['showcases'] as &$scEntry) {
             if (!is_array($scEntry)) continue;
             $scId = strtolower(trim((string)($scEntry['id'] ?? '')));
+            if ($scId === 'events') {
+                $hasEventsShowcase = true;
+            }
             $scVersion = (int)($scEntry['schemaVersion'] ?? 1);
             if ($scId === 'real-estate' && $scVersion < 2) {
                 $scEntry['schemaVersion'] = 2;
@@ -360,6 +404,50 @@ function readCmsContent(): array {
             unset($scIt);
         }
         unset($scEntry);
+
+        if (!$hasEventsShowcase) {
+            $content['showcases'][] = [
+                'id' => 'events',
+                'schemaVersion' => 3,
+                'active' => true,
+                'noindex' => true,
+                'listedInDirectory' => true,
+                'pinCode' => '',
+                'title' => 'Events Showcase',
+                'subtitle' => '',
+                'showHeaderText' => false,
+                'avatarUrl' => '/showcase-media/real-estate-avatar.webp?v=2',
+                'ogImageUrl' => '/showcase-media/events-bg.webp',
+                'backgroundType' => 'image',
+                'backgroundUrl' => '/showcase-media/events-bg.webp',
+                'mobileBackgroundUrl' => '',
+                'backgroundColor' => '#101829',
+                'backgroundFit' => 'cover',
+                'overlayOpacity' => 15,
+                'buttonStyle' => 'solid',
+                'buttonColor' => '#2D3139',
+                'buttonTextColor' => '#FFFFFF',
+                'buttonRadius' => 'pill',
+                'showFooterCta' => false,
+                'footerCtaLabel' => 'Request Events Proposal',
+                'whatsapp' => '+961 81 998 851',
+                'contactEmail' => 'hello@rak4creative.com',
+                'items' => [
+                    [
+                        'id' => 'ev-portfolio',
+                        'type' => 'link',
+                        'active' => true,
+                        'title' => 'PORTFOLIO',
+                        'subtitle' => '',
+                        'badge' => '',
+                        'thumbnail' => '',
+                        'url' => 'https://claude.ai/artifact/LSMcW8X2GvDsCTSSXV4eFk',
+                        'mediaItems' => []
+                    ]
+                ]
+            ];
+            $changed = true;
+        }
     }
 
     if ($changed) {
