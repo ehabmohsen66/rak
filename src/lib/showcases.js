@@ -195,7 +195,7 @@ export const DEFAULT_SHOWCASES = [
     showFooterCta: false,
     footerCtaLabel: 'Request Events Proposal',
     whatsapp: '+961 81 998 851',
-    contactEmail: 'hello@rak4creative.com',
+    contactEmail: 'farah@rak4cloud.com',
     items: [
       {
         id: 'ev-portfolio',
