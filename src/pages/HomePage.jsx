@@ -16,6 +16,7 @@ import { SpotlightCard } from '../components/SpotlightCard';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
 import { LebanonTributeSection } from '../components/LebanonTributeSection';
 import { LebanonDigitalMarketingFaqSection } from '../components/LebanonDigitalMarketingFaqSection';
+import { getLebanonServiceByPillarId } from '../data/lebanonServicePages';
 
 export const HomePage = ({ 
   setActiveTab = () => {}, 
@@ -69,12 +70,22 @@ export const HomePage = ({
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {pillars.slice(0, 6).map((s) => {
             const IconComp = getPillarIcon(s.icon);
+            const lebanonPage = getLebanonServiceByPillarId(s.id);
+            const targetHref = lebanonPage ? `/services/${lebanonPage.slug}` : '/services';
+            const handleCardNav = (e) => {
+              e.preventDefault();
+              if (lebanonPage) {
+                setActiveTab('service-detail', `/services/${lebanonPage.slug}`);
+              } else {
+                setActiveTab('services', '/services');
+              }
+            };
             return (
               <SpotlightCard
                 key={s.id}
                 spotlightColor="rgba(236, 0, 140, 0.1)"
                 borderColor="rgba(226, 232, 240, 0.8)"
-                onClick={(e) => { e.preventDefault(); setActiveTab('services'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
+                onClick={handleCardNav}
                 className="group relative p-7 sm:p-8 rounded-3xl bg-white dark:bg-rak-slate-900/60 border border-slate-200 dark:border-white/10 cursor-pointer overflow-hidden flex flex-col justify-between shadow-sm hover:shadow-md hover:border-rak-magenta/40 transition-all duration-300"
               >
                 <div className="space-y-5 relative z-10">
@@ -87,7 +98,15 @@ export const HomePage = ({
                   
                   <div className="space-y-2 pt-2">
                     <h3 className="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white group-hover:text-rak-magenta transition-colors tracking-tight">
-                      {s.title}
+                      <a
+                        href={targetHref}
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleCardNav(e);
+                        }}
+                      >
+                        {s.title}
+                      </a>
                     </h3>
                     <p className="text-xs sm:text-sm text-slate-600 dark:text-rak-slate-300 leading-relaxed font-normal">
                       {s.description}

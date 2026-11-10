@@ -55,6 +55,21 @@ foreach ($staticRoutes as $route) {
     echo "  </url>\n";
 }
 
+$lebanonServicePages = function_exists('rakGetLebanonServicePages') ? rakGetLebanonServicePages() : [];
+foreach ($lebanonServicePages as $srvPage) {
+    $srvSlug = trim((string)($srvPage['slug'] ?? ''));
+    if ($srvSlug === '') {
+        continue;
+    }
+    $loc = htmlspecialchars($baseUrl . '/services/' . rawurlencode($srvSlug), ENT_XML1 | ENT_QUOTES, 'UTF-8');
+    echo "  <url>\n";
+    echo "    <loc>{$loc}</loc>\n";
+    echo "    <lastmod>{$lastmod}</lastmod>\n";
+    echo "    <changefreq>weekly</changefreq>\n";
+    echo "    <priority>0.92</priority>\n";
+    echo "  </url>\n";
+}
+
 $blogPosts = isset($content['blogPosts']) && is_array($content['blogPosts']) ? $content['blogPosts'] : [];
 foreach ($blogPosts as $post) {
     $slug = trim((string)($post['id'] ?? ''));

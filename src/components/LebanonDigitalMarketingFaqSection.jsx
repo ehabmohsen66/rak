@@ -42,12 +42,30 @@ export const DEFAULT_LEBANON_FAQS = [
 ];
 
 const CORE_HIGHLIGHTS = [
-  'Social Media Management, Content Creation & Community Growth',
-  'Meta Ads, Google Ads PPC, TikTok & LinkedIn Performance Scaling',
-  'Technical SEO, Local Beirut Search & Arabic/English SEM',
-  'Custom Web Architecture, UI/UX Systems & E-Commerce Platforms',
-  'Brand Identity Makeovers, Corporate Guidelines & OOH Billboards',
-  '4K Commercial Video Production, Photography & 3D Motion Art'
+  {
+    label: 'Social Media Management, Content Creation & Community Growth',
+    href: '/services/social-media-marketing-lebanon'
+  },
+  {
+    label: 'Meta Ads, Google Ads PPC, TikTok & LinkedIn Performance Scaling',
+    href: '/services/paid-media-google-meta-ads-lebanon'
+  },
+  {
+    label: 'Technical SEO, Local Beirut Search & Arabic/English SEM',
+    href: '/services/seo-agency-lebanon'
+  },
+  {
+    label: 'Custom Web Architecture, UI/UX Systems & E-Commerce Platforms',
+    href: '/services/web-design-ecommerce-lebanon'
+  },
+  {
+    label: 'Brand Identity Makeovers, Corporate Guidelines & OOH Billboards',
+    href: '/services/branding-agency-lebanon'
+  },
+  {
+    label: '4K Commercial Video Production, Photography & 3D Motion Art',
+    href: '/services/video-production-ooh-lebanon'
+  }
 ];
 
 export const LebanonDigitalMarketingFaqSection = ({
@@ -98,13 +116,19 @@ export const LebanonDigitalMarketingFaqSection = ({
 
             {!compact && (
               <ul className="space-y-2.5 pt-1">
-                {CORE_HIGHLIGHTS.map((item, idx) => (
+                {CORE_HIGHLIGHTS.map((item) => (
                   <li
-                    key={idx}
+                    key={item.href}
                     className="flex items-start space-x-2.5 text-xs text-slate-700 dark:text-rak-slate-200 font-medium"
                   >
                     <CheckCircle2 className="w-4 h-4 text-rak-magenta shrink-0 mt-0.5" />
-                    <span>{item}</span>
+                    <a
+                      href={item.href}
+                      onClick={(e) => handleNavigate('service-detail', item.href, e)}
+                      className="hover:text-rak-magenta transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rak-magenta rounded"
+                    >
+                      {item.label}
+                    </a>
                   </li>
                 ))}
               </ul>

@@ -214,13 +214,32 @@ $tab = 'home';
 $canonicalPath = '/';
 $breadcrumbLabel = 'Home';
 $matchedPost = null;
+$matchedService = null;
 $matchedShowcase = null;
 $isNotFound = false;
+$lebanonServices = function_exists('rakGetLebanonServicePages') ? rakGetLebanonServicePages() : [];
 
 if (isset($routeMap[$lowerPath])) {
     $tab = $routeMap[$lowerPath]['tab'];
     $canonicalPath = $routeMap[$lowerPath]['canonical'];
     $breadcrumbLabel = $routeMap[$lowerPath]['label'];
+} elseif (strpos($lowerPath, '/services/') === 0 && strlen($cleanPath) > 10) {
+    $srvSlug = rawurldecode(substr($cleanPath, 10));
+    if (strpos($srvSlug, '/') === false) {
+        foreach ($lebanonServices as $srvItem) {
+            if (isset($srvItem['slug']) && strcasecmp((string)$srvItem['slug'], $srvSlug) === 0) {
+                $matchedService = $srvItem;
+                break;
+            }
+        }
+    }
+    if ($matchedService !== null) {
+        $tab = 'service-detail';
+        $canonicalPath = '/services/' . $matchedService['slug'];
+        $breadcrumbLabel = (string)($matchedService['shortLabel'] ?? 'Service');
+    } else {
+        $isNotFound = true;
+    }
 } elseif (strpos($lowerPath, '/blog/') === 0 && strlen($cleanPath) > 6) {
     $slug = rawurldecode(substr($cleanPath, 6));
     $blogPosts = isset($content['blogPosts']) && is_array($content['blogPosts']) ? $content['blogPosts'] : [];
@@ -294,6 +313,12 @@ if ($tab === 'blog-post' && $matchedPost !== null) {
     }
     if (!empty($matchedPost['image'])) {
         $ogImage = rakAbsoluteUrl((string)$matchedPost['image'], $baseUrl);
+    }
+} elseif ($tab === 'service-detail' && $matchedService !== null) {
+    $pageTitle = (string)($matchedService['metaTitle'] ?? $defaultTitles['services']);
+    $pageDesc = (string)($matchedService['metaDescription'] ?? $defaultDescriptions['services']);
+    if (!empty($matchedService['heroImage'])) {
+        $ogImage = rakAbsoluteUrl((string)$matchedService['heroImage'], $baseUrl);
     }
 } elseif ($tab === 'showcase-hub' && $matchedShowcase !== null) {
     $scTitle = trim((string)($matchedShowcase['title'] ?? ''));
@@ -374,6 +399,19 @@ if ($tab !== 'admin' && !$isNotFound) {
             'position' => 2,
             'name' => 'Blog',
             'item' => $baseUrl . '/blog'
+        ];
+        $breadcrumbs[] = [
+            '@type' => 'ListItem',
+            'position' => 3,
+            'name' => $breadcrumbLabel,
+            'item' => $fullCanonical
+        ];
+    } elseif ($tab === 'service-detail' && $matchedService !== null) {
+        $breadcrumbs[] = [
+            '@type' => 'ListItem',
+            'position' => 2,
+            'name' => 'Services',
+            'item' => $baseUrl . '/services'
         ];
         $breadcrumbs[] = [
             '@type' => 'ListItem',
@@ -466,6 +504,48 @@ if ($tab !== 'admin' && !$isNotFound) {
                 '@type' => 'FAQPage',
                 '@id' => $fullCanonical . '#faq',
                 'mainEntity' => $faqEntities
+            ];
+        }
+    }
+
+    if ($tab === 'service-detail' && $matchedService !== null) {
+        $routeGraph[] = [
+            '@type' => 'Service',
+            '@id' => $fullCanonical . '#service',
+            'name' => (string)($matchedService['h1'] ?? ''),
+            'serviceType' => (string)($matchedService['shortLabel'] ?? ''),
+            'description' => (string)($matchedService['heroLead'] ?? $pageDesc),
+            'url' => $fullCanonical,
+            'provider' => [
+                '@id' => $baseUrl . '/#agency'
+            ],
+            'areaServed' => [
+                ['@type' => 'Country', 'name' => 'Lebanon'],
+                ['@type' => 'City', 'name' => 'Beirut'],
+                ['@type' => 'Country', 'name' => 'United Arab Emirates'],
+                ['@type' => 'Country', 'name' => 'Saudi Arabia'],
+                ['@type' => 'Country', 'name' => 'Qatar'],
+                ['@type' => 'Country', 'name' => 'Canada']
+            ]
+        ];
+
+        $srvFaqEntities = [];
+        foreach (($matchedService['faqs'] ?? []) as $sfq) {
+            if (!is_array($sfq) || empty($sfq['question']) || empty($sfq['answer'])) continue;
+            $srvFaqEntities[] = [
+                '@type' => 'Question',
+                'name' => (string)$sfq['question'],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => (string)$sfq['answer']
+                ]
+            ];
+        }
+        if (!empty($srvFaqEntities)) {
+            $routeGraph[] = [
+                '@type' => 'FAQPage',
+                '@id' => $fullCanonical . '#faq',
+                'mainEntity' => $srvFaqEntities
             ];
         }
     }
@@ -572,6 +652,14 @@ if ($tab !== 'admin' && !$isNotFound) {
         }
         $sem .= '<section><h2>Your Full-Service Digital Marketing Agency in Lebanon</h2>';
         $sem .= '<p>Headquartered in Badaro, Beirut with a North American hub in Toronto, RAK 4 CREATIVE (part of RAK Group) is a one-stop digital marketing and creative agency in Lebanon engineered for brands that demand measurable commercial growth across social media marketing, Meta and Google Ads PPC, technical SEO, branding, web and e-commerce development, video production, and out-of-home advertising.</p>';
+        if (!empty($lebanonServices)) {
+            $sem .= '<h3>Dedicated Digital Marketing Services in Lebanon</h3><ul>';
+            foreach ($lebanonServices as $ls) {
+                $lsSlug = rakEsc((string)($ls['slug'] ?? ''));
+                $sem .= '<li><a href="' . $baseUrl . '/services/' . $lsSlug . '">' . rakEsc((string)($ls['h1'] ?? $ls['shortLabel'] ?? '')) . '</a></li>';
+            }
+            $sem .= '</ul>';
+        }
         if (!empty($activeFaqs)) {
             $sem .= '<h3>Frequently Asked Questions</h3>';
             foreach ($activeFaqs as $fq) {
@@ -591,6 +679,14 @@ if ($tab !== 'admin' && !$isNotFound) {
     } elseif ($tab === 'services') {
         $sem .= '<h1>Digital Marketing &amp; Creative Agency Services in Lebanon: ' . count($pillars) . ' Core Pillars</h1>';
         $sem .= '<p>' . rakEsc((string)($brand['whatWeDo'] ?? '')) . '</p>';
+        if (!empty($lebanonServices)) {
+            $sem .= '<section><h2>Specialized Commercial Service Pages in Beirut, Lebanon</h2><ul>';
+            foreach ($lebanonServices as $ls) {
+                $lsSlug = rakEsc((string)($ls['slug'] ?? ''));
+                $sem .= '<li><a href="' . $baseUrl . '/services/' . $lsSlug . '">' . rakEsc((string)($ls['h1'] ?? '')) . '</a></li>';
+            }
+            $sem .= '</ul></section>';
+        }
         foreach ($pillars as $pl) {
             $sem .= '<section><h2>' . rakEsc((string)($pl['title'] ?? '')) . '</h2><p>' . rakEsc((string)($pl['description'] ?? '')) . '</p>';
             if (!empty($pl['items']) && is_array($pl['items'])) {
@@ -610,6 +706,50 @@ if ($tab !== 'admin' && !$isNotFound) {
             }
             $sem .= '</section>';
         }
+    } elseif ($tab === 'service-detail' && $matchedService !== null) {
+        $sem .= '<article><h1>' . rakEsc((string)($matchedService['h1'] ?? '')) . '</h1>';
+        $sem .= '<p>' . rakEsc((string)($matchedService['heroLead'] ?? '')) . '</p>';
+        if (!empty($matchedService['overviewHeading'])) {
+            $sem .= '<section><h2>' . rakEsc((string)$matchedService['overviewHeading']) . '</h2>';
+            foreach (($matchedService['overviewParagraphs'] ?? []) as $pIdx => $ovPara) {
+                $escapedPara = rakEsc((string)$ovPara);
+                if ($pIdx === 1) {
+                    $escapedPara = preg_replace(
+                        '/digital marketing agency in Lebanon/i',
+                        '<a href="' . $baseUrl . '/">digital marketing agency in Lebanon</a>',
+                        $escapedPara,
+                        1
+                    ) ?? $escapedPara;
+                }
+                $sem .= '<p>' . $escapedPara . '</p>';
+            }
+            $sem .= '</section>';
+        }
+        if (!empty($matchedService['deliverables'])) {
+            $sem .= '<section><h2>Core ' . rakEsc((string)($matchedService['shortLabel'] ?? '')) . ' Capabilities in Lebanon</h2><ul>';
+            foreach ($matchedService['deliverables'] as $deliv) {
+                $sem .= '<li>' . rakEsc((string)$deliv) . '</li>';
+            }
+            $sem .= '</ul></section>';
+        }
+        if (!empty($matchedService['faqs'])) {
+            $sem .= '<section><h2>Frequently Asked Questions</h2>';
+            foreach ($matchedService['faqs'] as $sfq) {
+                if (!is_array($sfq) || empty($sfq['question']) || empty($sfq['answer'])) continue;
+                $sem .= '<article><h3>' . rakEsc((string)$sfq['question']) . '</h3><p>' . rakEsc((string)$sfq['answer']) . '</p></article>';
+            }
+            $sem .= '</section>';
+        }
+        if (!empty($lebanonServices)) {
+            $sem .= '<section><h2>Explore Related Digital Marketing Services in Lebanon</h2><ul>';
+            foreach ($lebanonServices as $ls) {
+                if (($ls['slug'] ?? '') === $matchedService['slug']) continue;
+                $lsSlug = rakEsc((string)($ls['slug'] ?? ''));
+                $sem .= '<li><a href="' . $baseUrl . '/services/' . $lsSlug . '">' . rakEsc((string)($ls['h1'] ?? '')) . '</a></li>';
+            }
+            $sem .= '</ul></section>';
+        }
+        $sem .= '</article>';
     } elseif ($tab === 'about') {
         $sem .= '<h1>About ' . rakEsc((string)($brand['name'] ?? 'RAK 4 CREATIVE')) . ': Full-Service Creative and Digital Marketing Agency in Beirut, Lebanon and Toronto</h1>';
         $sem .= '<p>' . rakEsc((string)($brand['differentiation'] ?? '')) . '</p>';

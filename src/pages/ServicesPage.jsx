@@ -6,8 +6,9 @@ import { getPillarIcon } from '../lib/pillarIcons';
 import { useBanner, RichTitle, BannerMedia, BannerOverlay } from '../components/BannerKit';
 import { followBannerLink } from '../lib/banners';
 import { LebanonDigitalMarketingFaqSection } from '../components/LebanonDigitalMarketingFaqSection';
+import { getLebanonServiceByPillarId } from '../data/lebanonServicePages';
 
-export const ServicesPage = ({ onOpenPlanner }) => {
+export const ServicesPage = ({ setActiveTab = () => {}, onOpenPlanner }) => {
   const { content } = useCms();
   const pillars = content.pillars || [];
   const [activeCategory, setActiveCategory] = useState('All');
@@ -127,6 +128,7 @@ export const ServicesPage = ({ onOpenPlanner }) => {
         ) : (
           filteredPillars.map((pillar, index) => {
             const IconComp = getPillarIcon(pillar.icon);
+            const lebanonPage = getLebanonServiceByPillarId(pillar.id);
             return (
               <div 
                 key={pillar.id}
@@ -167,7 +169,22 @@ export const ServicesPage = ({ onOpenPlanner }) => {
                   <div className="lg:col-span-7 space-y-6">
                     <div className="space-y-2">
                       <span className="text-xs font-bold text-rak-magenta uppercase tracking-widest font-mono">{pillar.category}</span>
-                      <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading">{pillar.title}</h2>
+                      <h2 className="text-2xl sm:text-4xl font-extrabold text-slate-900 dark:text-white font-heading">
+                        {lebanonPage ? (
+                          <a
+                            href={`/services/${lebanonPage.slug}`}
+                            onClick={(e) => {
+                              e.preventDefault();
+                              setActiveTab('service-detail', `/services/${lebanonPage.slug}`);
+                            }}
+                            className="hover:text-rak-magenta transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rak-magenta rounded"
+                          >
+                            {pillar.title}
+                          </a>
+                        ) : (
+                          pillar.title
+                        )}
+                      </h2>
                       <p className="text-xs sm:text-sm text-slate-600 dark:text-rak-slate-300 leading-relaxed">{pillar.description}</p>
                     </div>
 
@@ -187,7 +204,7 @@ export const ServicesPage = ({ onOpenPlanner }) => {
                       </div>
                     </div>
 
-                    <div className="pt-2">
+                    <div className="pt-2 flex flex-wrap items-center gap-3">
                       <button
                         type="button"
                         onClick={onOpenPlanner}
@@ -196,6 +213,20 @@ export const ServicesPage = ({ onOpenPlanner }) => {
                         <span>Inquire About This Pillar</span>
                         <ArrowUpRight className="w-4 h-4" />
                       </button>
+
+                      {lebanonPage && (
+                        <a
+                          href={`/services/${lebanonPage.slug}`}
+                          onClick={(e) => {
+                            e.preventDefault();
+                            setActiveTab('service-detail', `/services/${lebanonPage.slug}`);
+                          }}
+                          className="inline-flex items-center space-x-2 px-5 py-3 bg-slate-100 dark:bg-rak-slate-950 hover:border-rak-magenta/50 border border-slate-200 dark:border-rak-slate-800 text-slate-900 dark:text-white text-xs font-bold uppercase tracking-wider rounded-full transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rak-magenta"
+                        >
+                          <span>Explore {lebanonPage.shortLabel} in Lebanon</span>
+                          <ArrowUpRight className="w-4 h-4 text-rak-magenta" />
+                        </a>
+                      )}
                     </div>
 
                   </div>
@@ -208,6 +239,7 @@ export const ServicesPage = ({ onOpenPlanner }) => {
       </section>
 
       <LebanonDigitalMarketingFaqSection
+        setActiveTab={setActiveTab}
         onOpenPlanner={onOpenPlanner}
         compact
       />

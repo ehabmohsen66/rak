@@ -3,6 +3,7 @@ import { BrandLogo } from './BrandLogo';
 import { ArrowUp, Mail, MapPin, Shield } from 'lucide-react';
 import { useCms } from '../lib/cmsContext';
 import { formatWhatsAppHref, getActiveSocialLinks, WhatsAppIcon } from '../lib/socialLinks';
+import { LEBANON_SERVICE_PAGES } from '../data/lebanonServicePages';
 
 export const Footer = ({ 
   setActiveTab = () => {}, 
@@ -26,7 +27,7 @@ export const Footer = ({
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10 pb-12 border-b border-white/10">
           
           {/* Column 1: Brand Info */}
-          <div className="md:col-span-6 lg:col-span-5 space-y-4">
+          <div className="md:col-span-6 lg:col-span-4 space-y-4">
             <a 
               href="/"
               onClick={(e) => { e.preventDefault(); setActiveTab('home'); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
@@ -78,7 +79,7 @@ export const Footer = ({
           </div>
 
           {/* Column 2: Navigation */}
-          <div className="md:col-span-3 lg:col-span-3 space-y-3">
+          <div className="md:col-span-3 lg:col-span-2 space-y-3">
             <h3 className="text-xs font-bold text-white uppercase tracking-widest">
               Navigation
             </h3>
@@ -97,8 +98,31 @@ export const Footer = ({
             </ul>
           </div>
 
-          {/* Column 3: Global Offices */}
-          <div className="md:col-span-3 lg:col-span-4 space-y-3">
+          {/* Column 3: Lebanon Services */}
+          <div className="md:col-span-3 lg:col-span-3 space-y-3">
+            <h3 className="text-xs font-bold text-white uppercase tracking-widest">
+              Lebanon Services
+            </h3>
+            <ul className="space-y-2 text-xs">
+              {LEBANON_SERVICE_PAGES.map((srv) => (
+                <li key={srv.slug}>
+                  <a
+                    href={`/services/${srv.slug}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setActiveTab('service-detail', `/services/${srv.slug}`);
+                    }}
+                    className="hover:text-rak-magenta transition-colors text-slate-300 inline-block py-0.5 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-rak-magenta rounded"
+                  >
+                    {srv.shortLabel}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
+
+          {/* Column 4: Global Offices */}
+          <div className="md:col-span-6 lg:col-span-3 space-y-3">
             <h3 className="text-xs font-bold text-white uppercase tracking-widest">
               Global Offices
             </h3>

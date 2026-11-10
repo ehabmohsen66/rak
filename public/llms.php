@@ -59,6 +59,20 @@ $lines[] = "- [Editorial Blog & Insights]({$baseUrl}/blog): Guides on choosing a
 $lines[] = "- [Careers & Open Roles]({$baseUrl}/careers): Open positions in brand strategy, paid media buying, UI/UX design systems, and full-stack creative engineering.";
 $lines[] = "- [Contact & Project Planner]({$baseUrl}/contact): Beirut and Toronto office details and executive project inquiry form.";
 
+$lebanonServicePages = function_exists('rakGetLebanonServicePages') ? rakGetLebanonServicePages() : [];
+if (!empty($lebanonServicePages)) {
+    $lines[] = '';
+    $lines[] = '## Specialized Commercial Services in Lebanon';
+    $lines[] = '';
+    foreach ($lebanonServicePages as $srv) {
+        $sSlug = trim((string)($srv['slug'] ?? ''));
+        $sH1 = trim((string)($srv['h1'] ?? ''));
+        $sLead = trim((string)($srv['metaDescription'] ?? $srv['heroLead'] ?? ''));
+        if ($sSlug === '' || $sH1 === '') continue;
+        $lines[] = "- [{$sH1}]({$baseUrl}/services/{$sSlug}): {$sLead}";
+    }
+}
+
 if ($isFull) {
     $pillars = isset($content['pillars']) && is_array($content['pillars']) ? $content['pillars'] : [];
     if (!empty($pillars)) {

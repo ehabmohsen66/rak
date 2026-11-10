@@ -8,6 +8,7 @@ import ProjectEstimatorModal from './components/ProjectEstimatorModal';
 import { useCms } from './lib/cmsContext';
 
 import HomePage from './pages/HomePage';
+import { getLebanonServiceBySlug } from './data/lebanonServicePages';
 
 function lazyWithRetry(importer, chunkKey) {
   return React.lazy(async () => {
@@ -48,6 +49,7 @@ function lazyWithRetry(importer, chunkKey) {
 
 const AboutPage = lazyWithRetry(() => import('./pages/AboutPage'), 'about');
 const ServicesPage = lazyWithRetry(() => import('./pages/ServicesPage'), 'services');
+const ServiceDetailPage = lazyWithRetry(() => import('./pages/ServiceDetailPage'), 'service-detail');
 const WorkPage = lazyWithRetry(() => import('./pages/WorkPage'), 'work');
 const CaseStudiesPage = lazyWithRetry(() => import('./pages/CaseStudiesPage'), 'case-studies');
 const CareersPage = lazyWithRetry(() => import('./pages/CareersPage'), 'careers');
@@ -93,6 +95,10 @@ const getTabFromLocation = () => {
     return 'blog-post';
   }
 
+  if (cleanPath.startsWith('/services/') && cleanPath.length > 10) {
+    return 'service-detail';
+  }
+
   if (cleanPath === '/showcase' || (cleanPath.startsWith('/showcase/') && cleanPath.length > 10)) {
     return 'showcase';
   }
@@ -104,6 +110,12 @@ const getBlogPostSlugFromLocation = () => {
   const pathname = window.location.pathname.replace(/\/$/, '') || '';
   const match = pathname.match(/^\/blog\/(.+)$/i);
   return match ? match[1] : null;
+};
+
+const getServiceSlugFromLocation = () => {
+  const pathname = window.location.pathname.replace(/\/$/, '') || '';
+  const match = pathname.match(/^\/services\/([^/]+)$/i);
+  return match ? decodeURIComponent(match[1]) : null;
 };
 
 const getShowcaseSlugFromLocation = () => {
@@ -135,6 +147,7 @@ export function App() {
   const { content, recordPageView } = useCms();
   const [activeTab, setActiveTabState] = useState(() => getTabFromLocation());
   const [blogSlug, setBlogSlug] = useState(() => getBlogPostSlugFromLocation());
+  const [serviceSlug, setServiceSlug] = useState(() => getServiceSlugFromLocation());
   const [showcaseSlug, setShowcaseSlug] = useState(() => getShowcaseSlugFromLocation());
   const [darkMode, setDarkMode] = useState(false);
 
@@ -145,6 +158,11 @@ export function App() {
     if (tabId === 'blog-post' && pathOverride) {
       const slugMatch = pathOverride.match(/^\/blog\/(.+)$/i);
       setBlogSlug(slugMatch ? slugMatch[1] : null);
+    }
+
+    if (tabId === 'service-detail' && pathOverride) {
+      const srvMatch = pathOverride.replace(/\/$/, '').match(/^\/services\/([^/]+)$/i);
+      setServiceSlug(srvMatch ? decodeURIComponent(srvMatch[1]) : null);
     }
 
     if (tabId === 'showcase') {
@@ -174,6 +192,8 @@ export function App() {
       setActiveTabState(tab);
       if (tab === 'blog-post') {
         setBlogSlug(getBlogPostSlugFromLocation());
+      } else if (tab === 'service-detail') {
+        setServiceSlug(getServiceSlugFromLocation());
       } else if (tab === 'showcase') {
         setShowcaseSlug(getShowcaseSlugFromLocation());
       }
@@ -188,6 +208,8 @@ export function App() {
     const initialTab = getTabFromLocation();
     if (initialTab === 'blog-post') {
       setBlogSlug(getBlogPostSlugFromLocation());
+    } else if (initialTab === 'service-detail') {
+      setServiceSlug(getServiceSlugFromLocation());
     } else if (initialTab === 'showcase') {
       setShowcaseSlug(getShowcaseSlugFromLocation());
     } else {
@@ -355,6 +377,19 @@ export function App() {
           nextOgImage = toAbsoluteAssetUrl(matchedPost.image);
         }
       }
+    } else if (activeTab === 'service-detail' && serviceSlug) {
+      const matchedService = getLebanonServiceBySlug(serviceSlug);
+      routePath = `/services/${matchedService?.slug || serviceSlug}`;
+      if (matchedService) {
+        nextTitle = matchedService.metaTitle;
+        nextDescription = matchedService.metaDescription;
+        if (matchedService.heroImage) {
+          nextOgImage = toAbsoluteAssetUrl(matchedService.heroImage);
+        }
+      } else {
+        nextTitle = 'Service Not Found | RAK 4 CREATIVE';
+        isShowcaseNoindex = true;
+      }
     } else if (activeTab === 'showcase') {
       const showcaseList = Array.isArray(content?.showcases) ? content.showcases : [];
       if (showcaseSlug) {
@@ -413,14 +448,14 @@ export function App() {
     setMetaContent('meta[name="keywords"]', seo.metaKeywords);
     setMetaContent('meta[property="og:image"]', nextOgImage);
     setMetaContent('meta[property="twitter:image"]', nextOgImage);
-  }, [activeTab, blogSlug, showcaseSlug, content?.seo, content?.blogPosts, content?.showcases]);
+  }, [activeTab, blogSlug, serviceSlug, showcaseSlug, content?.seo, content?.blogPosts, content?.showcases]);
 
   // Dispatch SPA PageView pixel events on public route transitions
   useEffect(() => {
     if (activeTab !== 'admin') {
       recordPageView(window.location.pathname, document.title);
     }
-  }, [activeTab, blogSlug, showcaseSlug, recordPageView]);
+  }, [activeTab, blogSlug, serviceSlug, showcaseSlug, recordPageView]);
 
   if (activeTab === 'admin') {
     return (
@@ -477,7 +512,13 @@ export function App() {
     <div className="min-h-screen flex flex-col justify-between selection:bg-rak-magenta selection:text-white transition-colors duration-300 bg-mesh-vibrant">
       {/* Sticky Navigation Bar */}
       <Navbar
-        activeTab={activeTab === 'blog-post' ? 'blog' : activeTab}
+        activeTab={
+          activeTab === 'blog-post'
+            ? 'blog'
+            : activeTab === 'service-detail'
+              ? 'services'
+              : activeTab
+        }
         setActiveTab={setActiveTab}
         darkMode={darkMode}
         setDarkMode={setDarkMode}
@@ -512,7 +553,19 @@ export function App() {
           )}
 
           {activeTab === 'services' && (
-            <ServicesPage onOpenPlanner={() => setPlannerOpen(true)} />
+            <ServicesPage
+              setActiveTab={setActiveTab}
+              onOpenPlanner={() => setPlannerOpen(true)}
+            />
+          )}
+
+          {activeTab === 'service-detail' && (
+            <ServiceDetailPage
+              slug={serviceSlug}
+              setActiveTab={setActiveTab}
+              onSelectProject={(project) => setSelectedProject(project)}
+              onOpenPlanner={() => setPlannerOpen(true)}
+            />
           )}
 
           {activeTab === 'work' && (
