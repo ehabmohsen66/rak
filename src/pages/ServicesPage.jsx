@@ -5,6 +5,7 @@ import { useCms } from '../lib/cmsContext';
 import { getPillarIcon } from '../lib/pillarIcons';
 import { useBanner, RichTitle, BannerMedia, BannerOverlay } from '../components/BannerKit';
 import { followBannerLink } from '../lib/banners';
+import { LebanonDigitalMarketingFaqSection } from '../components/LebanonDigitalMarketingFaqSection';
 
 export const ServicesPage = ({ onOpenPlanner }) => {
   const { content } = useCms();
@@ -46,6 +47,7 @@ export const ServicesPage = ({ onOpenPlanner }) => {
 
           {banner.title && (
             <h1 className="text-3xl sm:text-5xl md:text-6xl lg:text-7xl font-bold text-white uppercase leading-tight font-heading px-2">
+              <span className="sr-only">Digital Marketing &amp; Creative Agency Services in Lebanon: </span>
               <RichTitle text={banner.title} />
             </h1>
           )}
@@ -204,6 +206,11 @@ export const ServicesPage = ({ onOpenPlanner }) => {
           })
         )}
       </section>
+
+      <LebanonDigitalMarketingFaqSection
+        onOpenPlanner={onOpenPlanner}
+        compact
+      />
 
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="p-8 sm:p-12 bg-gradient-to-r from-rak-magenta/10 via-white to-slate-50 dark:from-rak-magenta/20 dark:via-rak-slate-900 dark:to-rak-slate-900 border border-rak-magenta/30 rounded-3xl text-center space-y-6 shadow-xl backdrop-blur-xl">

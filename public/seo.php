@@ -34,6 +34,8 @@ function rakReplaceTag(string $html, string $pattern, string $replacement): stri
 }
 
 // Load CMS data (and auto-upgrade legacy placeholder SEO values if needed)
+require_once __DIR__ . '/api/seo_defaults.php';
+
 $cmsFile = __DIR__ . '/api/storage/cms_data.json';
 $content = [];
 if (file_exists($cmsFile)) {
@@ -42,6 +44,26 @@ if (file_exists($cmsFile)) {
         $decoded = json_decode($raw, true);
         if (is_array($decoded)) {
             $content = $decoded;
+        }
+    }
+}
+
+if (!empty($content) && function_exists('rakUpgradeCmsSeoContent') && rakUpgradeCmsSeoContent($content)) {
+    $tmpCms = $cmsFile . '.tmp.' . uniqid('', true);
+    $encodedCms = json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
+    if ($encodedCms !== false && @file_put_contents($tmpCms, $encodedCms, LOCK_EX) !== false) {
+        @rename($tmpCms, $cmsFile);
+    }
+}
+
+$pixelsFile = __DIR__ . '/api/storage/pixels.json';
+$pixels = [];
+if (file_exists($pixelsFile)) {
+    $rawPixels = @file_get_contents($pixelsFile);
+    if ($rawPixels !== false) {
+        $decodedPixels = json_decode($rawPixels, true);
+        if (is_array($decodedPixels)) {
+            $pixels = $decodedPixels;
         }
     }
 }
@@ -373,63 +395,36 @@ if ($tab !== 'admin' && !$isNotFound) {
         'itemListElement' => $breadcrumbs
     ];
 
-    // Sync dynamic CMS testimonials into #agency AggregateRating & Review JSON-LD
-    $testimonials = isset($content['testimonials']) && is_array($content['testimonials']) ? $content['testimonials'] : [];
-    if (!empty($testimonials)) {
-        $totalRating = 0.0;
-        $validReviews = [];
-        foreach ($testimonials as $tm) {
-            if (!is_array($tm) || empty($tm['quote'])) continue;
-            $rVal = isset($tm['rating']) && is_numeric($tm['rating']) ? max(1, min(5, (float)$tm['rating'])) : 5.0;
-            $totalRating += $rVal;
-            $authorObj = [
-                '@type' => 'Person',
-                'name' => (string)($tm['author'] ?? 'Client Partner')
-            ];
-            if (!empty($tm['role'])) {
-                $authorObj['jobTitle'] = (string)$tm['role'];
-            }
-            $validReviews[] = [
-                '@type' => 'Review',
-                'author' => $authorObj,
-                'reviewRating' => [
-                    '@type' => 'Rating',
-                    'ratingValue' => (string)(int)round($rVal),
-                    'bestRating' => '5',
-                    'worstRating' => '1'
-                ],
-                'reviewBody' => (string)$tm['quote']
-            ];
-        }
-        $revCount = count($validReviews);
-        if ($revCount > 0) {
-            $avgRatingStr = number_format($totalRating / $revCount, 1, '.', '');
-            $html = preg_replace_callback(
-                '/<script\s+id="rak-jsonld"\s+type="application\/ld\+json">\s*(.*?)\s*<\/script>/is',
-                function ($matches) use ($avgRatingStr, $revCount, $validReviews) {
-                    $baseSchema = json_decode($matches[1], true);
-                    if (!is_array($baseSchema) || empty($baseSchema['@graph'][0])) {
-                        return $matches[0];
-                    }
-                    $baseSchema['@graph'][0]['aggregateRating'] = [
-                        '@type' => 'AggregateRating',
-                        'ratingValue' => $avgRatingStr,
-                        'bestRating' => '5',
-                        'worstRating' => '1',
-                        'ratingCount' => $revCount,
-                        'reviewCount' => $revCount
-                    ];
-                    $baseSchema['@graph'][0]['review'] = $validReviews;
-                    $encoded = json_encode($baseSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
-                    return $encoded !== false
-                        ? '<script id="rak-jsonld" type="application/ld+json">' . $encoded . '</script>'
-                        : $matches[0];
-                },
-                $html,
-                1
-            ) ?? $html;
+    // Sync configured CMS social links into #agency sameAs array (without self-serving review markup)
+    $cmsSocials = isset($content['brandInfo']['socials']) && is_array($content['brandInfo']['socials'])
+        ? $content['brandInfo']['socials']
+        : [];
+    $sameAsLinks = [];
+    foreach ($cmsSocials as $socUrl) {
+        $trimmedSoc = trim((string)$socUrl);
+        if ($trimmedSoc !== '' && preg_match('#^https?://#i', $trimmedSoc)) {
+            $sameAsLinks[] = $trimmedSoc;
         }
     }
+    $html = preg_replace_callback(
+        '/<script\s+id="rak-jsonld"\s+type="application\/ld\+json">\s*(.*?)\s*<\/script>/is',
+        function ($matches) use ($sameAsLinks) {
+            $baseSchema = json_decode($matches[1], true);
+            if (!is_array($baseSchema) || empty($baseSchema['@graph'][0])) {
+                return $matches[0];
+            }
+            unset($baseSchema['@graph'][0]['aggregateRating'], $baseSchema['@graph'][0]['review']);
+            if (!empty($sameAsLinks)) {
+                $baseSchema['@graph'][0]['sameAs'] = array_values(array_unique($sameAsLinks));
+            }
+            $encoded = json_encode($baseSchema, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+            return $encoded !== false
+                ? '<script id="rak-jsonld" type="application/ld+json">' . $encoded . '</script>'
+                : $matches[0];
+        },
+        $html,
+        1
+    ) ?? $html;
 
     $pageSchemaType = 'WebPage';
     if ($tab === 'about') $pageSchemaType = 'AboutPage';
@@ -449,12 +444,39 @@ if ($tab !== 'admin' && !$isNotFound) {
     ];
     $routeGraph[] = $webPageNode;
 
+    $activeFaqs = (isset($content['faqs']) && is_array($content['faqs']) && !empty($content['faqs']))
+        ? $content['faqs']
+        : (function_exists('rakGetDefaultLebanonFaqs') ? rakGetDefaultLebanonFaqs() : []);
+
+    if (($tab === 'home' || $tab === 'services') && !empty($activeFaqs)) {
+        $faqEntities = [];
+        foreach ($activeFaqs as $fq) {
+            if (!is_array($fq) || empty($fq['question']) || empty($fq['answer'])) continue;
+            $faqEntities[] = [
+                '@type' => 'Question',
+                'name' => (string)$fq['question'],
+                'acceptedAnswer' => [
+                    '@type' => 'Answer',
+                    'text' => (string)$fq['answer']
+                ]
+            ];
+        }
+        if (!empty($faqEntities)) {
+            $routeGraph[] = [
+                '@type' => 'FAQPage',
+                '@id' => $fullCanonical . '#faq',
+                'mainEntity' => $faqEntities
+            ];
+        }
+    }
+
     if ($tab === 'blog-post' && $matchedPost !== null) {
         $routeGraph[] = [
             '@type' => 'BlogPosting',
             'headline' => (string)($matchedPost['title'] ?? ''),
             'description' => $pageDesc,
             'image' => $ogImage,
+            'datePublished' => '2026-11-01',
             'author' => [
                 '@type' => 'Organization',
                 'name' => is_string($matchedPost['author'] ?? null) ? $matchedPost['author'] : 'RAK 4 CREATIVE'
@@ -511,12 +533,23 @@ if ($tab !== 'admin' && !$isNotFound) {
         '@graph' => $routeGraph
     ], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
 
+    $bootstrapPayload = json_encode([
+        'content' => $content,
+        'pixels' => $pixels
+    ], JSON_HEX_TAG | JSON_HEX_AMP | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+
+    $headScripts = '';
     if ($routeJsonLd !== false) {
-        $scriptTag = "\n    <script type=\"application/ld+json\">{$routeJsonLd}</script>\n  </head>";
-        $html = rakReplaceTag($html, '/<\/head>/i', $scriptTag);
+        $headScripts .= "\n    <script type=\"application/ld+json\">{$routeJsonLd}</script>";
+    }
+    if ($bootstrapPayload !== false) {
+        $headScripts .= "\n    <script id=\"rak-bootstrap\">window.__RAK_BOOTSTRAP__ = {$bootstrapPayload};</script>";
+    }
+    if ($headScripts !== '') {
+        $html = rakReplaceTag($html, '/<\/head>/i', $headScripts . "\n  </head>");
     }
 
-    // Build semantic <noscript> fallback strictly from the exact existing CMS content for this route
+    // Build semantic pre-rendered HTML inside #root (replaced seamlessly on React mount) + <noscript>
     $brand = isset($content['brandInfo']) && is_array($content['brandInfo']) ? $content['brandInfo'] : [];
     $pillars = isset($content['pillars']) && is_array($content['pillars']) ? $content['pillars'] : [];
     $projects = isset($content['projects']) && is_array($content['projects']) ? $content['projects'] : [];
@@ -525,118 +558,148 @@ if ($tab !== 'admin' && !$isNotFound) {
     $roles = isset($content['openRoles']) && is_array($content['openRoles']) ? $content['openRoles'] : [];
     $values = isset($content['values']) && is_array($content['values']) ? $content['values'] : [];
 
-    $ns = "<noscript><main>";
-    $ns .= "<nav><a href=\"{$baseUrl}/\">Home</a> | <a href=\"{$baseUrl}/about\">About</a> | <a href=\"{$baseUrl}/services\">Services</a> | <a href=\"{$baseUrl}/work\">Portfolio</a> | <a href=\"{$baseUrl}/case-studies\">Case Studies</a> | <a href=\"{$baseUrl}/careers\">Careers</a> | <a href=\"{$baseUrl}/blog\">Blog</a> | <a href=\"{$baseUrl}/contact\">Contact</a></nav>";
+    $sem = "<nav><a href=\"{$baseUrl}/\">Home</a> | <a href=\"{$baseUrl}/about\">About</a> | <a href=\"{$baseUrl}/services\">Services</a> | <a href=\"{$baseUrl}/work\">Portfolio</a> | <a href=\"{$baseUrl}/case-studies\">Case Studies</a> | <a href=\"{$baseUrl}/careers\">Careers</a> | <a href=\"{$baseUrl}/blog\">Blog</a> | <a href=\"{$baseUrl}/contact\">Contact</a></nav>";
 
     if ($tab === 'home') {
-        $homeHeroTitle = (string)($content['banners']['home']['title'] ?? $brand['headline'] ?? '');
-        $ns .= '<h1>' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . ': ' . rakEsc((string)($brand['tagline'] ?? 'Your One-Stop Agency')) . '</h1>';
-        $ns .= '<p>' . rakEsc(str_replace('*', '', $homeHeroTitle)) . '</p>';
-        $ns .= '<p>' . rakEsc((string)($brand['description'] ?? '')) . '</p>';
+        $homeEyebrow = (string)($content['banners']['home']['eyebrow'] ?? 'Digital Marketing Agency in Lebanon • Beirut & Toronto');
+        $homeHeroTitle = (string)($content['banners']['home']['title'] ?? $brand['headline'] ?? 'We Create Big Ideas From Ground Zero & Take Them to Next Level.');
+        $homeSubtitle = (string)($content['banners']['home']['subtitle'] ?? 'Full-service digital marketing agency in Lebanon serving Beirut, MENA, GCC, and global brands across social media marketing, Meta & Google paid ads, SEO, branding, web development, and media production.');
+        $sem .= '<h1>' . rakEsc($homeEyebrow) . ': ' . rakEsc(str_replace('*', '', $homeHeroTitle)) . '</h1>';
+        $sem .= '<p>' . rakEsc($homeSubtitle) . '</p>';
+        $sem .= '<p>' . rakEsc((string)($brand['description'] ?? '')) . '</p>';
         foreach ($pillars as $pl) {
-            $ns .= '<section><h2>' . rakEsc((string)($pl['title'] ?? '')) . '</h2><p>' . rakEsc((string)($pl['description'] ?? '')) . '</p></section>';
+            $sem .= '<section><h2>' . rakEsc((string)($pl['title'] ?? '')) . '</h2><p>' . rakEsc((string)($pl['description'] ?? '')) . '</p></section>';
+        }
+        $sem .= '<section><h2>Your Full-Service Digital Marketing Agency in Lebanon</h2>';
+        $sem .= '<p>Headquartered in Badaro, Beirut with a North American hub in Toronto, RAK 4 CREATIVE (part of RAK Group) is a one-stop digital marketing and creative agency in Lebanon engineered for brands that demand measurable commercial growth across social media marketing, Meta and Google Ads PPC, technical SEO, branding, web and e-commerce development, video production, and out-of-home advertising.</p>';
+        if (!empty($activeFaqs)) {
+            $sem .= '<h3>Frequently Asked Questions</h3>';
+            foreach ($activeFaqs as $fq) {
+                if (!is_array($fq) || empty($fq['question']) || empty($fq['answer'])) continue;
+                $sem .= '<article><h4>' . rakEsc((string)$fq['question']) . '</h4><p>' . rakEsc((string)$fq['answer']) . '</p></article>';
+            }
+        }
+        $sem .= '</section>';
+        if (!empty($blogs)) {
+            $sem .= '<section><h2>Latest Digital Marketing &amp; Strategy Insights</h2><ul>';
+            foreach (array_slice($blogs, 0, 6) as $bp) {
+                $bSlug = rakEsc((string)($bp['id'] ?? ''));
+                $sem .= '<li><a href="' . $baseUrl . '/blog/' . $bSlug . '">' . rakEsc((string)($bp['title'] ?? '')) . '</a></li>';
+            }
+            $sem .= '</ul></section>';
         }
     } elseif ($tab === 'services') {
-        $ns .= '<h1>' . count($pillars) . ' Core Pillars: ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
-        $ns .= '<p>' . rakEsc((string)($brand['whatWeDo'] ?? '')) . '</p>';
+        $sem .= '<h1>Digital Marketing &amp; Creative Agency Services in Lebanon: ' . count($pillars) . ' Core Pillars</h1>';
+        $sem .= '<p>' . rakEsc((string)($brand['whatWeDo'] ?? '')) . '</p>';
         foreach ($pillars as $pl) {
-            $ns .= '<section><h2>' . rakEsc((string)($pl['title'] ?? '')) . '</h2><p>' . rakEsc((string)($pl['description'] ?? '')) . '</p>';
+            $sem .= '<section><h2>' . rakEsc((string)($pl['title'] ?? '')) . '</h2><p>' . rakEsc((string)($pl['description'] ?? '')) . '</p>';
             if (!empty($pl['items']) && is_array($pl['items'])) {
-                $ns .= '<ul>';
+                $sem .= '<ul>';
                 foreach ($pl['items'] as $it) {
-                    $ns .= '<li>' . rakEsc((string)$it) . '</li>';
+                    $sem .= '<li>' . rakEsc((string)$it) . '</li>';
                 }
-                $ns .= '</ul>';
+                $sem .= '</ul>';
             }
-            $ns .= '</section>';
+            $sem .= '</section>';
+        }
+        if (!empty($activeFaqs)) {
+            $sem .= '<section><h2>Digital Marketing Agency in Lebanon: Frequently Asked Questions</h2>';
+            foreach ($activeFaqs as $fq) {
+                if (!is_array($fq) || empty($fq['question']) || empty($fq['answer'])) continue;
+                $sem .= '<article><h3>' . rakEsc((string)$fq['question']) . '</h3><p>' . rakEsc((string)$fq['answer']) . '</p></article>';
+            }
+            $sem .= '</section>';
         }
     } elseif ($tab === 'about') {
-        $ns .= '<h1>About ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
-        $ns .= '<p>' . rakEsc((string)($brand['differentiation'] ?? '')) . '</p>';
-        $ns .= '<p>' . rakEsc((string)($brand['whatWeDo'] ?? '')) . '</p>';
+        $sem .= '<h1>About ' . rakEsc((string)($brand['name'] ?? 'RAK 4 CREATIVE')) . ': Full-Service Creative and Digital Marketing Agency in Beirut, Lebanon and Toronto</h1>';
+        $sem .= '<p>' . rakEsc((string)($brand['differentiation'] ?? '')) . '</p>';
+        $sem .= '<p>' . rakEsc((string)($brand['whatWeDo'] ?? '')) . '</p>';
+        if (!empty($brand['ceoBio'])) {
+            $sem .= '<section><h2>' . rakEsc((string)($brand['ceoHeading'] ?? 'Leadership')) . ': ' . rakEsc((string)($brand['ceoName'] ?? 'Farah Younes')) . '</h2><p>' . nl2br(rakEsc((string)$brand['ceoBio'])) . '</p></section>';
+        }
         foreach ($values as $v) {
-            $ns .= '<section><h2>' . rakEsc((string)($v['name'] ?? '')) . '</h2><p>' . rakEsc((string)($v['description'] ?? '')) . '</p></section>';
+            $sem .= '<section><h2>' . rakEsc((string)($v['name'] ?? '')) . '</h2><p>' . rakEsc((string)($v['description'] ?? '')) . '</p></section>';
         }
     } elseif ($tab === 'work' || $tab === 'case-studies') {
-        $ns .= '<h1>' . ($tab === 'work' ? 'The RAK4 Creations' : 'Case Studies & ROI') . '</h1>';
+        $sem .= '<h1>' . ($tab === 'work' ? 'The RAK4 Creations: Digital Marketing, Branding & Web Portfolio' : 'Digital Marketing & Paid Media Case Studies & ROI') . '</h1>';
         foreach ($projects as $pr) {
-            $ns .= '<article><h2>' . rakEsc((string)($pr['title'] ?? '')) . '</h2>';
-            $ns .= '<p>' . rakEsc((string)($pr['summary'] ?? '')) . '</p>';
-            if (!empty($pr['challenge'])) $ns .= '<p>' . rakEsc((string)$pr['challenge']) . '</p>';
-            if (!empty($pr['solution'])) $ns .= '<p>' . rakEsc((string)$pr['solution']) . '</p>';
-            $ns .= '</article>';
+            $sem .= '<article><h2>' . rakEsc((string)($pr['title'] ?? '')) . '</h2>';
+            $sem .= '<p>' . rakEsc((string)($pr['summary'] ?? '')) . '</p>';
+            if (!empty($pr['challenge'])) $sem .= '<p>' . rakEsc((string)$pr['challenge']) . '</p>';
+            if (!empty($pr['solution'])) $sem .= '<p>' . rakEsc((string)$pr['solution']) . '</p>';
+            $sem .= '</article>';
         }
     } elseif ($tab === 'careers') {
         $careersCopy = isset($content['careersCopy']) && is_array($content['careersCopy']) ? $content['careersCopy'] : [];
-        $ns .= '<h1>' . rakEsc((string)($careersCopy['title'] ?? 'Careers at RAK4Creative')) . '</h1>';
-        $ns .= '<p>' . rakEsc((string)($careersCopy['body'] ?? '')) . '</p>';
+        $sem .= '<h1>' . rakEsc((string)($careersCopy['title'] ?? 'Careers at RAK4Creative')) . '</h1>';
+        $sem .= '<p>' . rakEsc((string)($careersCopy['body'] ?? '')) . '</p>';
         foreach ($roles as $rl) {
             if (($rl['active'] ?? true) === false) continue;
-            $ns .= '<section><h2>' . rakEsc((string)($rl['title'] ?? '')) . ' (' . rakEsc((string)($rl['location'] ?? '')) . ')</h2><p>' . rakEsc((string)($rl['description'] ?? '')) . '</p></section>';
+            $sem .= '<section><h2>' . rakEsc((string)($rl['title'] ?? '')) . ' (' . rakEsc((string)($rl['location'] ?? '')) . ')</h2><p>' . rakEsc((string)($rl['description'] ?? '')) . '</p></section>';
         }
     } elseif ($tab === 'blog') {
-        $ns .= '<h1>' . rakEsc($pageTitle) . '</h1>';
+        $sem .= '<h1>' . rakEsc($pageTitle) . '</h1>';
         foreach ($blogs as $bp) {
             $bSlug = rakEsc((string)($bp['id'] ?? ''));
-            $ns .= '<article><h2><a href="' . $baseUrl . '/blog/' . $bSlug . '">' . rakEsc((string)($bp['title'] ?? '')) . '</a></h2>';
-            $ns .= '<p>' . rakEsc((string)($bp['excerpt'] ?? '')) . '</p></article>';
+            $sem .= '<article><h2><a href="' . $baseUrl . '/blog/' . $bSlug . '">' . rakEsc((string)($bp['title'] ?? '')) . '</a></h2>';
+            $sem .= '<p>' . rakEsc((string)($bp['excerpt'] ?? '')) . '</p></article>';
         }
     } elseif ($tab === 'blog-post' && $matchedPost !== null) {
-        $ns .= '<article><h1>' . rakEsc((string)($matchedPost['title'] ?? '')) . '</h1>';
+        $sem .= '<article><h1>' . rakEsc((string)($matchedPost['title'] ?? '')) . '</h1>';
         if (!empty($matchedPost['subtitle'])) {
-            $ns .= '<p>' . rakEsc((string)$matchedPost['subtitle']) . '</p>';
+            $sem .= '<p>' . rakEsc((string)$matchedPost['subtitle']) . '</p>';
         }
         $rawPostBody = (string)($matchedPost['content'] ?? '');
         $allowedTags = '<h1><h2><h3><h4><h5><h6><p><br><hr><ul><ol><li><strong><b><em><i><u><blockquote><table><thead><tbody><tr><th><td><a><img><div><section><article><span><code><pre>';
         if (preg_match('/<\/?[a-z][a-z0-9-]*\b[^>]*>/i', $rawPostBody)) {
             $cleanBody = preg_replace('/<(?:script|style|head)\b[^>]*>[\s\S]*?<\/(?:script|style|head)>/i', '', $rawPostBody);
-            $ns .= '<div>' . strip_tags((string)$cleanBody, $allowedTags) . '</div></article>';
+            $sem .= '<div>' . strip_tags((string)$cleanBody, $allowedTags) . '</div></article>';
         } else {
-            $ns .= '<div>' . nl2br(rakEsc($rawPostBody)) . '</div></article>';
+            $sem .= '<div>' . nl2br(rakEsc($rawPostBody)) . '</div></article>';
         }
     } elseif ($tab === 'contact') {
-        $ns .= '<h1>Contact ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
+        $sem .= '<h1>Contact ' . rakEsc((string)($brand['name'] ?? 'RAK 4 CREATIVE')) . ': Digital Marketing Agency in Beirut, Lebanon &amp; Toronto</h1>';
         foreach ($offices as $of) {
-            $ns .= '<address><strong>' . rakEsc((string)($of['city'] ?? '') . ', ' . (string)($of['country'] ?? '')) . '</strong>: ' . rakEsc((string)($of['address'] ?? '')) . ' • ' . rakEsc((string)($of['phone'] ?? '')) . ' • ' . rakEsc((string)($of['email'] ?? '')) . '</address>';
+            $sem .= '<address><strong>' . rakEsc((string)($of['city'] ?? '') . ', ' . (string)($of['country'] ?? '')) . '</strong>: ' . rakEsc((string)($of['address'] ?? '')) . ' • ' . rakEsc((string)($of['phone'] ?? '')) . ' • ' . rakEsc((string)($of['email'] ?? '')) . '</address>';
         }
     } elseif ($tab === 'showcase') {
-        $ns .= '<h1>Showcase Hubs: ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
+        $sem .= '<h1>Showcase Hubs: ' . rakEsc((string)($brand['name'] ?? 'RAK4Creative')) . '</h1>';
         foreach ($showcases as $sc) {
             if (!is_array($sc) || ($sc['active'] ?? true) === false || ($sc['listedInDirectory'] ?? true) === false) continue;
             $scId = rakEsc((string)($sc['id'] ?? ''));
-            $ns .= '<section><h2><a href="' . $baseUrl . '/showcase/' . $scId . '">' . rakEsc((string)($sc['title'] ?? $scId)) . '</a></h2>';
+            $sem .= '<section><h2><a href="' . $baseUrl . '/showcase/' . $scId . '">' . rakEsc((string)($sc['title'] ?? $scId)) . '</a></h2>';
             if (!empty($sc['subtitle'])) {
-                $ns .= '<p>' . rakEsc((string)$sc['subtitle']) . '</p>';
+                $sem .= '<p>' . rakEsc((string)$sc['subtitle']) . '</p>';
             }
-            $ns .= '</section>';
+            $sem .= '</section>';
         }
     } elseif ($tab === 'showcase-hub' && $matchedShowcase !== null) {
-        $ns .= '<h1>' . rakEsc((string)($matchedShowcase['title'] ?? 'Showcase')) . '</h1>';
+        $sem .= '<h1>' . rakEsc((string)($matchedShowcase['title'] ?? 'Showcase')) . '</h1>';
         if (!empty($matchedShowcase['subtitle'])) {
-            $ns .= '<p>' . rakEsc((string)$matchedShowcase['subtitle']) . '</p>';
+            $sem .= '<p>' . rakEsc((string)$matchedShowcase['subtitle']) . '</p>';
         }
         if (empty($matchedShowcase['pinCode']) && !empty($matchedShowcase['items']) && is_array($matchedShowcase['items'])) {
-            $ns .= '<ul>';
+            $sem .= '<ul>';
             foreach ($matchedShowcase['items'] as $it) {
                 if (!is_array($it) || ($it['active'] ?? true) === false) continue;
                 $itTitle = rakEsc((string)($it['title'] ?? ''));
                 $itUrl = trim((string)($it['url'] ?? ''));
                 if ($itUrl !== '' && ($it['type'] ?? 'link') !== 'header') {
-                    $ns .= '<li><a href="' . rakEsc($itUrl) . '">' . $itTitle . '</a></li>';
+                    $sem .= '<li><a href="' . rakEsc($itUrl) . '">' . $itTitle . '</a></li>';
                 } elseif ($itTitle !== '') {
-                    $ns .= '<li>' . $itTitle . '</li>';
+                    $sem .= '<li>' . $itTitle . '</li>';
                 }
             }
-            $ns .= '</ul>';
+            $sem .= '</ul>';
         }
     }
 
     foreach ($offices as $of) {
-        $ns .= '<footer>' . rakEsc((string)($of['city'] ?? '') . ', ' . (string)($of['country'] ?? '') . ': ' . (string)($of['address'] ?? '') . ' (' . (string)($of['phone'] ?? '') . ')') . '</footer>';
+        $sem .= '<footer>' . rakEsc((string)($of['city'] ?? '') . ', ' . (string)($of['country'] ?? '') . ': ' . (string)($of['address'] ?? '') . ' (' . (string)($of['phone'] ?? '') . ')') . '</footer>';
     }
-    $ns .= '</main></noscript>';
 
-    $html = rakReplaceTag($html, '/<div\s+id="root"\s*><\/div>/i', '<div id="root"></div>' . $ns);
+    $rootHtml = '<div id="root"><main class="sr-only">' . $sem . '</main></div><noscript><main>' . $sem . '</main></noscript>';
+    $html = rakReplaceTag($html, '/<div\s+id="root"\s*><\/div>/i', $rootHtml);
 }
 
 echo $html;

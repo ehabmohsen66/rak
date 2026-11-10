@@ -27,6 +27,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
 }
 
 require_once __DIR__ . '/smtp.php';
+require_once __DIR__ . '/seo_defaults.php';
 
 define('STORAGE_DIR', __DIR__ . '/storage');
 define('UPLOADS_DIR', dirname(__DIR__) . '/uploads');
@@ -448,6 +449,10 @@ function readCmsContent(): array {
             ];
             $changed = true;
         }
+    }
+
+    if (function_exists('rakUpgradeCmsSeoContent') && rakUpgradeCmsSeoContent($content)) {
+        $changed = true;
     }
 
     if ($changed) {

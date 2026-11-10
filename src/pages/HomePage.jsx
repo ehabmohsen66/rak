@@ -15,6 +15,7 @@ import { MarqueeLogoScroller } from '../components/MarqueeLogoScroller';
 import { SpotlightCard } from '../components/SpotlightCard';
 import { InfiniteSlider } from '../components/ui/infinite-slider';
 import { LebanonTributeSection } from '../components/LebanonTributeSection';
+import { LebanonDigitalMarketingFaqSection } from '../components/LebanonDigitalMarketingFaqSection';
 
 export const HomePage = ({ 
   setActiveTab = () => {}, 
@@ -349,6 +350,11 @@ export const HomePage = ({
       )}
 
       {hs.tributeEnabled !== false && <LebanonTributeSection onOpenPlanner={onOpenPlanner} />}
+
+      <LebanonDigitalMarketingFaqSection
+        setActiveTab={setActiveTab}
+        onOpenPlanner={onOpenPlanner}
+      />
 
     </div>
   );

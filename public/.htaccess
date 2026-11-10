@@ -26,6 +26,7 @@ DirectoryIndex seo.php index.html
   # Dynamic XML Sitemap & llms.txt for Google, Bing, Semrush & AI Search Crawlers
   RewriteRule ^sitemap\.xml$ sitemap.php [L]
   RewriteRule ^llms\.txt$ llms.php [L]
+  RewriteRule ^llms-full\.txt$ llms.php?full=1 [L,QSA]
 
   # Root homepage routes through server-side PHP SEO pre-renderer
   RewriteRule ^$ seo.php [L]

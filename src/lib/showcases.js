@@ -1,7 +1,7 @@
 // Branded Showcase Hubs (Link-in-Bio & Industry/Client Pitch Microsites)
 // Managed in /admin -> Showcase Hubs and rendered standalone at /showcase/:slug
 
-import { REAL_ESTATE_CASE_STUDIES } from '../data/realEstateCaseStudies';
+import { REAL_ESTATE_CASE_STUDIES } from '../data/realEstateCaseStudies.js';
 
 export const REAL_ESTATE_RENDERS_MEDIA = [
   {

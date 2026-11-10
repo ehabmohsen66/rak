@@ -294,6 +294,12 @@ export const CinematicHeroScroll = ({ onOpenPlanner = () => {}, setActiveTab = (
               variants={textReveal}
               className="text-3xl sm:text-5xl md:text-6xl font-bold text-white leading-[1.18] font-heading drop-shadow-md"
             >
+              {banner.eyebrow && (
+                <span className="block font-mono text-[11px] sm:text-xs font-bold uppercase tracking-[0.22em] text-rak-magenta-light mb-3">
+                  {banner.eyebrow}
+                  <span className="sr-only">: </span>
+                </span>
+              )}
               <RichTitle text={banner.title} />
               {activePhrase && (
                 <>

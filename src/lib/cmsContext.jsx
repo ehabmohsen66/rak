@@ -102,7 +102,19 @@ function normalizeProjectItem(proj = {}) {
 
 function normalizeContent(raw = {}) {
   const rawProjects = Array.isArray(raw.projects) ? raw.projects : INITIAL_CMS_CONTENT.projects;
+  let mergedBlogPosts = Array.isArray(raw.blogPosts) ? [...raw.blogPosts] : [...INITIAL_CMS_CONTENT.blogPosts];
+  if (Array.isArray(raw.blogPosts) && (!raw.seoSchemaVersion || Number(raw.seoSchemaVersion) < 2)) {
+    const existingIds = new Set(mergedBlogPosts.map((p) => String(p?.id || '').toLowerCase()));
+    const lebanonSeoIds = ['digital-marketing-agency-lebanon-guide', 'scaling-lebanese-brands-to-gcc-paid-media-seo'];
+    for (const seedId of lebanonSeoIds) {
+      if (!existingIds.has(seedId)) {
+        const seedPost = INITIAL_CMS_CONTENT.blogPosts.find((p) => p.id === seedId);
+        if (seedPost) mergedBlogPosts.push(seedPost);
+      }
+    }
+  }
   return {
+    seoSchemaVersion: Math.max(2, Number(raw.seoSchemaVersion) || 0),
     brandInfo: {
       ...INITIAL_CMS_CONTENT.brandInfo,
       ...(raw.brandInfo || {}),
@@ -143,9 +155,10 @@ function normalizeContent(raw = {}) {
     },
     openRoles: Array.isArray(raw.openRoles) ? raw.openRoles : INITIAL_CMS_CONTENT.openRoles,
     projects: rawProjects.map((p) => normalizeProjectItem(p)),
-    blogPosts: Array.isArray(raw.blogPosts) ? raw.blogPosts : INITIAL_CMS_CONTENT.blogPosts,
+    blogPosts: mergedBlogPosts,
     offices: Array.isArray(raw.offices) ? raw.offices : INITIAL_CMS_CONTENT.offices,
     testimonials: Array.isArray(raw.testimonials) ? raw.testimonials : INITIAL_CMS_CONTENT.testimonials,
+    faqs: Array.isArray(raw.faqs) ? raw.faqs : undefined,
     banners: normalizeBanners(raw.banners),
     showcases: normalizeShowcases(raw.showcases),
     seo: normalizeSeo(raw.seo || {})
@@ -162,16 +175,22 @@ function normalizePixels(raw = {}) {
 export function CmsProvider({ children }) {
   const [content, setContent] = useState(() => {
     try {
+      if (typeof window !== 'undefined' && window.__RAK_BOOTSTRAP__?.content) {
+        return normalizeContent(window.__RAK_BOOTSTRAP__.content);
+      }
       const cached = localStorage.getItem(CONTENT_STORAGE_KEY);
       if (cached) return normalizeContent(JSON.parse(cached));
     } catch {
       // ignore storage read error
     }
-    return INITIAL_CMS_CONTENT;
+    return normalizeContent(INITIAL_CMS_CONTENT);
   });
 
   const [pixels, setPixels] = useState(() => {
     try {
+      if (typeof window !== 'undefined' && window.__RAK_BOOTSTRAP__?.pixels) {
+        return normalizePixels(window.__RAK_BOOTSTRAP__.pixels);
+      }
       const cached = localStorage.getItem(PIXELS_STORAGE_KEY);
       if (cached) return normalizePixels(JSON.parse(cached));
     } catch {

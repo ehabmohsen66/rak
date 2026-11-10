@@ -1,5 +1,5 @@
-import { DEFAULT_BANNERS } from '../lib/banners';
-import { DEFAULT_SHOWCASES } from '../lib/showcases';
+import { DEFAULT_BANNERS } from '../lib/banners.js';
+import { DEFAULT_SHOWCASES } from '../lib/showcases.js';
 
 export const BRAND_INFO = {
   name: "RAK4Creative",
@@ -414,6 +414,78 @@ export const RAK4_CREATIONS = [
 export const PROJECTS = RAK4_CREATIONS;
 
 export const BLOG_POSTS = [
+  {
+    id: "digital-marketing-agency-lebanon-guide",
+    title: "How to Choose the Right Digital Marketing Agency in Lebanon: The Complete Executive Guide",
+    subtitle: "What separates a full-service Beirut growth partner from fragmented freelancers across social media, paid media, SEO, branding, and web architecture.",
+    category: "Digital Marketing Lebanon",
+    date: "November 2026",
+    readTime: "7 min read",
+    author: "RAK4Creative Strategy Team",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?q=80&w=1000&fm=webp&auto=format&fit=crop",
+    featured: true,
+    excerpt: "Searching for a digital marketing agency in Lebanon? Learn how ambitious brands in Beirut evaluate strategy, Meta and Google paid ads, technical SEO, creative production, and cross-border GCC scaling.",
+    content: `Beirut has long been the creative heartbeat of the Middle East. Yet for founders, CMOs, and marketing directors searching for a **digital marketing agency in Lebanon**, the market can feel polarized between solo social media freelancers and rigid legacy holding networks.
+
+When your commercial objective is measurable revenue growth across Lebanon, the MENA region, the GCC, or North America, posting attractive graphics is not enough. You need a unified agency engine where brand strategy, media production, web engineering, and performance marketing operate under one roof.
+
+### 1. Look Beyond Social Posting to Full-Funnel Strategy
+Many agencies in Lebanon equate digital marketing exclusively with Instagram grids and community management. While social presence builds brand affinity, sustainable growth requires connecting every stage of the customer journey:
+- **Market Research & Consumer Intelligence**: Auditing competitor positioning, search demand, and audience behavior before spending a dollar on media.
+- **High-Impact Creative & Video Production**: Shooting 4K commercial video, 3D motion graphics, and bilingual (Arabic and English) copy engineered to stop the scroll within the first two seconds.
+- **Conversion-First Web & E-Commerce Architecture**: Routing traffic to fast, mobile-optimized landing pages and e-commerce stores built with clean UI/UX and complete pixel telemetry.
+
+### 2. Demand Transparent Paid Media & PPC Attribution
+Whether you are targeting consumers in Beirut or scaling customer acquisition into Dubai, Riyadh, Doha, or Toronto, paid media buying requires disciplined attribution. A top-tier **digital marketing agency in Beirut** should configure server-side and browser conversion tracking across:
+- **Meta Ads & WhatsApp Marketing**: Full-funnel prospecting, dynamic catalog retargeting, and direct WhatsApp lead flows tailored to how Lebanese and regional buyers communicate.
+- **Google Ads (Search, Display & YouTube)**: Capturing high-intent commercial queries at the exact moment decision-makers search for your category.
+- **TikTok, LinkedIn & Snapchat Campaigns**: Channel-native creative formats matched to B2C impulse velocity or enterprise B2B account-based marketing.
+
+### 3. Technical SEO & Local Search Visibility in Lebanon
+Paid ads stop the day you pause your budget; **Search Engine Optimization (SEO)** compounds month after month. Ranking on Page 1 of Google in Lebanon requires three pillars working together:
+1. **Technical & On-Page Architecture**: Sub-second page speed, semantic HTML heading hierarchy, structured JSON-LD schema markup, and clean canonical routing.
+2. **Local SEO & Google Business Profile**: Optimizing your Beirut headquarters listing, local citations, and verified client reviews to capture Google Map Pack traffic.
+3. **Topical Authority Content**: Publishing authoritative guides, case studies, and bilingual landing pages that answer real buyer questions.
+
+### 4. Why Integrated Execution Beats Split Vendors
+Splitting your brand between a design studio, a separate web developer, an external videographer, and a freelance media buyer creates friction and finger-pointing when campaigns underperform.
+
+At **RAK 4 CREATIVE** (headquartered in Badaro, Beirut with a North America hub in Toronto), our 8 core capability pillars operate as a single team. From brand makeovers and out-of-home (OOH) billboards to custom web platforms, SEO, and omnichannel paid media, nothing gets lost in translation between the big idea and the commercial result.`
+  },
+  {
+    id: "scaling-lebanese-brands-to-gcc-paid-media-seo",
+    title: "Scaling Brands from Beirut to the GCC: Performance Marketing, Meta Ads & SEO Playbook",
+    subtitle: "How Lebanese enterprises and regional challengers use Beirut creative agility to win market share in the UAE, Saudi Arabia, Qatar, and beyond.",
+    category: "Growth & Paid Media",
+    date: "November 2026",
+    readTime: "6 min read",
+    author: "RAK Performance Marketing Team",
+    image: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?q=80&w=1000&fm=webp&auto=format&fit=crop",
+    featured: false,
+    excerpt: "Lebanese brands possess unmatched creative talent. Here is the technical blueprint for pairing Beirut creative production with data-driven Meta Ads, Google PPC, and regional SEO to scale across the GCC.",
+    content: `Some of the most iconic brands across the Middle East are conceived, designed, and managed from Beirut. Lebanon's unique blend of trilingual talent, design craft, and cultural fluency gives local businesses a natural edge when expanding into the **GCC (UAE, Saudi Arabia, Qatar, Kuwait, Bahrain, Oman)**, Europe, and North America.
+
+However, scaling a brand from Lebanon into high-competition Gulf or international markets requires a shift in digital marketing execution.
+
+### Step 1: Localize Creative & Messaging by Market Tier
+A campaign that resonates in Beirut cannot simply be duplicated for Riyadh or Dubai without cultural and commercial calibration:
+- **GCC Market Calibration**: Emphasize rapid fulfillment, trust badges, Arabic Gulf dialect nuances alongside English executive copy, and high-production video storytelling.
+- **Offer & Pricing Architecture**: Align landing page currencies, WhatsApp concierge routing, and payment gateways to each target country.
+
+### Step 2: Omnichannel Paid Media Structure (Meta, Google, TikTok & LinkedIn)
+In higher-CPM markets like the UAE and KSA, wasted ad spend is unforgiving. Our paid media team at **RAK 4 CREATIVE** structures cross-border campaigns around three rules:
+1. **Creative Velocity as Targeting**: Modern ad algorithms on Meta and TikTok rely on creative hooks to find buyers. We produce multiple video hooks, 3D product visuals, and static variations inside our Beirut studio to combat ad fatigue.
+2. **High-Intent Google Search Capture**: Pairing social discovery with exact-match Google Search and Performance Max campaigns ensures competitors do not capture the demand your video ads generate.
+3. **Closed-Loop CRM & Lead Qualification**: Connecting website forms, interactive project planners, and WhatsApp inquiries directly into your CRM so media buyers optimize for qualified revenue, not cheap clicks.
+
+### Step 3: Multi-Regional SEO & E-Commerce Performance
+To win organic search visibility across both Lebanon and the GCC:
+- Deploy structured ` + "`areaServed`" + ` and ` + "`LocalBusiness`" + ` schema markup signaling your regional footprint.
+- Build fast, mobile-first web experiences that pass Core Web Vitals on cellular networks.
+- Establish authority through documented case studies with verified conversion metrics.
+
+Ready to scale your brand from Beirut to the regional and global stage? Partner with **RAK 4 CREATIVE** for end-to-end strategy, production, and performance execution.`
+  },
   {
     id: "ultimate-ai-tier-list",
     title: "The Practical AI Tier List for Agencies and Enterprises",

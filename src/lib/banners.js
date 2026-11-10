@@ -7,7 +7,7 @@ export const BANNER_PAGES = [
     label: 'Home',
     path: '/',
     defaultVisual: null,
-    fields: ['title', 'rotatingWords', 'subtitle', 'primaryCta']
+    fields: ['eyebrow', 'title', 'rotatingWords', 'subtitle', 'primaryCta']
   },
   {
     id: 'about',
@@ -80,10 +80,12 @@ const BASE_BANNER = {
 export const DEFAULT_BANNERS = {
   home: {
     ...BASE_BANNER,
+    eyebrow: 'Digital Marketing Agency in Lebanon • Beirut & Toronto',
     title: 'We Create Big Ideas From Ground Zero & Take Them to',
     rotatingWords: ['Next Level.', 'Galactic Orbit.', 'The Global Stage.', 'Peak Resonance.'],
-    subtitle: '',
-    primaryCtaLabel: 'Learn More',
+    subtitle:
+      'Full-service digital marketing agency in Lebanon serving Beirut, MENA, GCC, and global brands across social media marketing, Meta & Google paid ads, SEO, branding, web development, and media production.',
+    primaryCtaLabel: 'Explore Capabilities',
     mediaType: 'video',
     videoUrl: '/videos/homepage-banner.mp4'
   },
@@ -182,6 +184,11 @@ export function normalizeBanner(pageId, raw) {
   const merged = { ...defaults };
   for (const key of STRING_KEYS) {
     if (typeof raw[key] === 'string') merged[key] = raw[key];
+  }
+  if (pageId === 'home') {
+    if (!merged.eyebrow) merged.eyebrow = defaults.eyebrow;
+    if (!merged.subtitle) merged.subtitle = defaults.subtitle;
+    if (merged.primaryCtaLabel === 'Learn More') merged.primaryCtaLabel = defaults.primaryCtaLabel;
   }
   if (['default', 'video', 'image'].includes(raw.mediaType)) {
     merged.mediaType = raw.mediaType;

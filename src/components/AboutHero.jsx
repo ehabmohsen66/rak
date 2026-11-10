@@ -23,7 +23,7 @@ export const AboutHero = ({ onOpenPlanner = () => {} }) => {
         <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-slate-950/40 pointer-events-none" />
         <BannerOverlay banner={banner} />
 
-        {hasCopy && (
+        {hasCopy ? (
           <div className="absolute inset-x-0 bottom-0 z-10 w-full max-w-7xl mx-auto px-4 sm:px-8 lg:px-16 pb-10 sm:pb-14">
             <div className="max-w-3xl space-y-4 text-left text-white">
               {banner.eyebrow && (
@@ -55,6 +55,10 @@ export const AboutHero = ({ onOpenPlanner = () => {} }) => {
               )}
             </div>
           </div>
+        ) : (
+          <h1 className="sr-only">
+            About RAK 4 CREATIVE: Full-Service Creative and Digital Marketing Agency in Beirut, Lebanon and Toronto
+          </h1>
         )}
       </section>
 

@@ -6,6 +6,8 @@ ini_set('display_errors', '0');
 header('Content-Type: application/xml; charset=UTF-8');
 header('X-Robots-Tag: noindex');
 
+require_once __DIR__ . '/api/seo_defaults.php';
+
 $cmsFile = __DIR__ . '/api/storage/cms_data.json';
 $content = [];
 if (file_exists($cmsFile)) {
@@ -16,6 +18,10 @@ if (file_exists($cmsFile)) {
             $content = $decoded;
         }
     }
+}
+
+if (rakUpgradeCmsSeoContent($content) && is_writable($cmsFile)) {
+    @file_put_contents($cmsFile, json_encode($content, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES), LOCK_EX);
 }
 
 $baseUrl = rtrim($content['seo']['canonicalUrl'] ?? 'https://rak4creative.com', '/');
